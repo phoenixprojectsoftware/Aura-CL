@@ -1,10 +1,8 @@
-﻿OpenAG
+﻿Aura Client
 ======================
-[![Build Status](https://github.com/YaLTeR/OpenAG/workflows/CI/badge.svg?branch=master)](https://github.com/YaLTeR/OpenAG/actions?query=branch:master)
-[![Build Status](https://travis-ci.org/YaLTeR/OpenAG.svg?branch=master)](https://travis-ci.org/YaLTeR/OpenAG)
-[![Chat on Discord](https://discordapp.com/api/guilds/252168904359542784/widget.png)](https://discord.gg/jCYhYNH)
+[![Build Status](https://github.com/phoenixprojectsoftware/Aura-CL/workflows/CI/badge.svg?branch=master)](https://github.com/phoenixprojectsoftware/Aura-CL/actions?query=branch:master)
 
-OpenAG is an open-source client of the Half-Life promod Adrenaline Gamer, completely rewritten from scratch on latest Half-Life SDK. It adds new features, bugfixes and other tweaks over the original mod, while maintaining the ability to play on all currently existing servers.
+**Aura** is the all new multiplayer game engine from The Phoenix Project Software, and a modification of Adrenaline Gamer, built specifically for *Half-Life: Zombies Ate My Neighbours.*
 
 # Building
 ## Windows
@@ -12,7 +10,7 @@ OpenAG is an open-source client of the Half-Life promod Adrenaline Gamer, comple
 1. Install [Visual Studio 2019](https://my.visualstudio.com/Downloads?q=Visual%20Studio%20Community%202019). In the Visual Studio Installer, select Desktop Development for C++.
 1. Open Visual Studio.
 1. On the starting screen, click "Clone or check out code".
-1. Enter `https://github.com/YaLTeR/OpenAG.git` and press the Clone button. Wait for the process to finish.
+1. Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish.
 1. You can build the project using Build→Build All. To find the built client.dll, go to Project→CMake Cache (x86-Debug Only)→Open in Explorer.
 
 ### Visual Studio 2017
@@ -23,7 +21,7 @@ OpenAG is an open-source client of the Half-Life promod Adrenaline Gamer, comple
 
     ![Screenshot of the clone button.](https://user-images.githubusercontent.com/1794388/77243489-8e90ea00-6c1b-11ea-8000-09d576266162.png)
 
-    Enter `https://github.com/YaLTeR/OpenAG.git` and press the Clone button. Wait for the process to finish.
+    Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish.
 1. You can build the project using CMake→Build All. To find the built client.dll, go to CMake→Cache (x86-Debug Only)→Open Cache Folder→OpenAG.
 
 ### Manually using Git and CMake
@@ -48,7 +46,7 @@ OpenAG is an open-source client of the Half-Life promod Adrenaline Gamer, comple
 1. Set up Flathub by following the [guide](https://flatpak.org/setup/) for your distribution.
 1. Install [GNOME Builder](https://flathub.org/apps/details/org.gnome.Builder).
 1. Open GNOME Builder.
-1. Press the Clone Repository button, enter `https://github.com/YaLTeR/OpenAG.git` and press Clone Project. Wait until it finishes.
+1. Press the Clone Repository button, enter `https://github.com/phoenixsoftware/Aura-CL.git` and press Clone Project. Wait until it finishes.
 
    The cloning window should close, and a new window with the OpenAG project should open.
 1. If Builder prompts you to install missing SDKs, press Install and wait for the process to finish. It will take a while. You can monitor the progress by pressing the circle in the top-right.
@@ -64,6 +62,7 @@ OpenAG is an open-source client of the Half-Life promod Adrenaline Gamer, comple
 5. `cmake ..`
 6. `cmake --build . --config Release`
 
+```
 Half Life 1 SDK LICENSE
 ======================
 
@@ -83,41 +82,6 @@ LIMITATION OF LIABILITY.  IN NO EVENT SHALL VALVE OR ITS SUPPLIERS BE LIABLE FOR
  
  
 If you would like to use the SDK for a commercial purpose, please contact Valve at sourceengine@valvesoftware.com.
+```
 
 
-Half-Life 1
-======================
-
-This is the README for the Half-Life 1 engine and its associated games.
-
-Please use this repository to report bugs and feature requests for Half-Life 1 related products.
-
-Reporting Issues
-----------------
-
-If you encounter an issue while using Half-Life 1 games, first search the [issue list](https://github.com/ValveSoftware/halflife/issues) to see if it has already been reported. Include closed issues in your search.
-
-If it has not been reported, create a new issue with at least the following information:
-
-- a short, descriptive title;
-- a detailed description of the issue, including any output from the command line;
-- steps for reproducing the issue;
-- your system information.\*; and
-- the `version` output from the in‐game console.
-
-Please place logs either in a code block (press `M` in your browser for a GFM cheat sheet) or a [gist](https://gist.github.com).
-
-\* The preferred and easiest way to get this information is from Steam's Hardware Information viewer from the menu (`Help -> System Information`). Once your information appears: right-click within the dialog, choose `Select All`, right-click again, and then choose `Copy`. Paste this information into your report, preferably in a code block.
-
-Conduct
--------
-
-
-There are basic rules of conduct that should be followed at all times by everyone participating in the discussions.  While this is generally a relaxed environment, please remember the following:
-
-- Do not insult, harass, or demean anyone.
-- Do not intentionally multi-post an issue.
-- Do not use ALL CAPS when creating an issue report.
-- Do not repeatedly update an open issue remarking that the issue persists.
-
-Remember: Just because the issue you reported was reported here does not mean that it is an issue with Half-Life.  As well, should your issue not be resolved immediately, it does not mean that a resolution is not being researched or tested.  Patience is always appreciated.
