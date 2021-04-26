@@ -5,6 +5,7 @@
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
 *	All Rights Reserved.
+*	All Rights Reserved
 *
 *   Use, distribution, and modification of this source code and/or resulting
 *   object code is restricted to non-commercial enhancements to products from
@@ -161,7 +162,7 @@ int CHudStatusBar :: Draw( float fTime )
 		int x_offset;
 		a = 200;
 
-		UnpackRGB( r, g, b, RGB_NORMAL);
+		UnpackRGB( r, g, b, RGB_GREENISH);
 		ScaleColors( r, g, b, a );
 		ScaleColors( name_r, name_g, name_b, 125 );
 	

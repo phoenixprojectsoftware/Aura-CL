@@ -49,7 +49,7 @@ int CHudSettings::Draw(float time)
 
 	char str[32];
 
-	sprintf(str, "AG version %s", ag_version);
+	sprintf(str, "Aura %s", ag_version);
 	gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
 
 	gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), gamemode, r, g, b);

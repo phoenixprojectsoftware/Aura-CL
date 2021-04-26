@@ -686,7 +686,9 @@ void EV_FireMP5( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_FIRE1 + gEngfuncs.pfnRandomLong(0,2), 2 );
 
-		V_PunchAxis( 0, gEngfuncs.pfnRandomFloat( -2, 2 ) );
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
+		// V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-10, 10)); I did this for https://www.youtube.com/watch?v=MmivmiwH53E
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, (cl_righthand->value != 0.0f ? -1 : 1) * 4 );
