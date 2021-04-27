@@ -19,7 +19,7 @@ namespace discord_integration
 	namespace
 	{
 		// From Discord developer dashboard.
-		constexpr const char CLIENT_ID[] = "378412193567473674";
+		constexpr const char CLIENT_ID[] = "836328170360799284";
 
 		// This seems to be consistent across PCs.
 		constexpr const char STEAM_APP_ID[] = "17215498729465839686";
@@ -53,6 +53,7 @@ namespace discord_integration
 			"subtransit"s,
 			"urethane"s,
 			"vengeance"s,
+			"zamnhlmp_crossfire"s,
 			"zjumps"s,
 			"ztricks"s
 		};

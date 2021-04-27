@@ -87,6 +87,7 @@ cvar_t	*v_centerspeed;
 
 cvar_t	*cl_bobcycle;
 cvar_t	*cl_bob;
+cvar_t* cl_bobtilt;
 cvar_t	*cl_bobup;
 cvar_t	*cl_waterdist;
 cvar_t	*cl_chasedist;
@@ -686,7 +687,7 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	view->angles[YAW]   -= bob * 0.5;
 	view->angles[ROLL]  -= bob * 1;
 	view->angles[PITCH] -= bob * 0.3;
-	VectorCopy(view->angles, view->curstate.angles);
+	if (cl_bobtilt->value == 1) VectorCopy(view->angles, view->curstate.angles);
 
 	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
 	// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
@@ -1773,6 +1774,7 @@ void V_Init (void)
 	cl_bobup			= gEngfuncs.pfnRegisterVariable( "cl_bobup","0.5", 0 );
 	cl_waterdist		= gEngfuncs.pfnRegisterVariable( "cl_waterdist","4", 0 );
 	cl_chasedist		= gEngfuncs.pfnRegisterVariable( "cl_chasedist","112", 0 );
+	cl_bobtilt			= gEngfuncs.pfnRegisterVariable("cl_bobtilt", "0", 0);
 
 	cl_viewmodel_ofs_right		= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_right","0", FCVAR_ARCHIVE ); // x = right
 	cl_viewmodel_ofs_forward	= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_forward","0", FCVAR_ARCHIVE ); // y = forward
