@@ -1,6 +1,6 @@
 ﻿Aura Client
 ======================
-[![Build Status](https://github.com/phoenixprojectsoftware/Aura-CL/workflows/CI/badge.svg?branch=master)](https://github.com/phoenixprojectsoftware/Aura-CL/actions?query=branch:master)
+[![CI](https://github.com/phoenixprojectsoftware/Aura-CL/actions/workflows/CI.yml/badge.svg?branch=master&event=push)](https://github.com/phoenixprojectsoftware/Aura-CL/actions/workflows/CI.yml)
 
 **Aura** is the all new multiplayer game engine from The Phoenix Project Software, and a modification of Adrenaline Gamer, built specifically for *Half-Life: Zombies Ate My Neighbours.*
 
