@@ -407,6 +407,7 @@ Roll is induced by movement and damage
 */
 extern cvar_t *cl_viewrollangle;
 extern cvar_t *cl_viewrollspeed;
+extern cvar_t* cl_viewroll;
 void V_CalcViewRoll ( struct ref_params_s *pparams )
 {
 	float		side;
@@ -415,7 +416,7 @@ void V_CalcViewRoll ( struct ref_params_s *pparams )
 	viewentity = gEngfuncs.GetEntityByIndex( pparams->viewentity );
 	if ( !viewentity )
 		return;
-	pparams->viewangles[ROLL] += V_CalcRoll (pparams->viewangles, pparams->simvel, cl_viewrollangle->value, cl_viewrollspeed->value ) * 4;
+	if (cl_viewroll->value == 1) pparams->viewangles[ROLL] += V_CalcRoll (pparams->viewangles, pparams->simvel, cl_viewrollangle->value, cl_viewrollspeed->value ) * 4;
 
 	side = V_CalcRoll ( viewentity->angles, pparams->simvel, pparams->movevars->rollangle, pparams->movevars->rollspeed );
 
@@ -1775,6 +1776,7 @@ void V_Init (void)
 	cl_waterdist		= gEngfuncs.pfnRegisterVariable( "cl_waterdist","4", 0 );
 	cl_chasedist		= gEngfuncs.pfnRegisterVariable( "cl_chasedist","112", 0 );
 	cl_bobtilt			= gEngfuncs.pfnRegisterVariable("cl_bobtilt", "0", 0);
+	cl_viewroll = gEngfuncs.pfnRegisterVariable("cl_viewroll", "0", 0);
 
 	cl_viewmodel_ofs_right		= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_right","0", FCVAR_ARCHIVE ); // x = right
 	cl_viewmodel_ofs_forward	= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_forward","0", FCVAR_ARCHIVE ); // y = forward

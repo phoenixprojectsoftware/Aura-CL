@@ -26,26 +26,28 @@ namespace discord_integration
 
 		// Maps for which we have thumbnails.
 		const std::unordered_set<std::string> maps_with_thumbnails {
-			"Blimpboom"s,
-			"Boot_Box"s,
-			"Boot_Camp"s,
-			"Bounce"s,
-			"Crossfire"s,
-			"Datacore"s,
-			"Doublecross"s,
-			"Frenzy"s,
-			"Gasworks"s,
-			"Kasino"s,
-			"Kasino2"s,
-			"Lambda_Bunker"s,
-			"Pyrozone"s,
-			"Rapidcore"s,
-			"Snark_Pit"s,
-			"StalkX"s,
-			"Stalkyard"s,
-			"Subtransit"s,
-			"Undertow"s,
-			"Xen"s
+			"blimpboom"s,
+			"boot_box"s,
+			"boot_camp"s,
+			"bounce"s,
+			"city"s,
+			"crossfire"s,
+			"datacore"s,
+			"doublecross"s,
+			"frenzy"s,
+			"gasworks"s,
+			"guardian"s,
+			"kasino"s,
+			"kasino2"s,
+			"lambda_bunker"s,
+			"pyrozone"s,
+			"rapidcore"s,
+			"snark_pit"s,
+			"stalkx"s,
+			"stalkyard"s,
+			"subtransit"s,
+			"undertow"s,
+			"xen"s
 		};
 
 		// Text names of game states

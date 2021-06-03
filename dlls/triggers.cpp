@@ -675,11 +675,6 @@ LINK_ENTITY_TO_CLASS( trigger_cdaudio, CTriggerCDAudio );
 // !!!HACK - overloaded HEALTH to avoid adding new field
 void CTriggerCDAudio :: Touch ( CBaseEntity *pOther )
 {
-	if ( !pOther->IsPlayer() )
-	{// only clients may trigger these events
-		return;
-	}
-
 	PlayTrack();
 }
 
