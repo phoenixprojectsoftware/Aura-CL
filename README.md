@@ -2,7 +2,6 @@
 ======================
 [![CI](https://github.com/phoenixprojectsoftware/Aura-CL/actions/workflows/CI.yml/badge.svg?branch=master&event=push)](https://github.com/phoenixprojectsoftware/Aura-CL/actions/workflows/CI.yml)
 [![Build Status](https://travis-ci.com/phoenixprojectsoftware/Aura-CL.svg?branch=master)](https://travis-ci.com/phoenixprojectsoftware/Aura-CL)
-<iframe src="https://discord.com/widget?id=346623522753216532&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 **Aura** is the all new multiplayer game engine from The Phoenix Project Software, and a modification of Adrenaline Gamer, built specifically for *Half-Life: Zombies Ate My Neighbours.*
 
