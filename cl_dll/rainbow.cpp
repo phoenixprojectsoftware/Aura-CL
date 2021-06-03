@@ -96,13 +96,21 @@ void CRainbow::SPR_DrawAdditiveRainbow(int frame, int x, int y, const rect_s *pr
 
 int CRainbow::DrawString(int x, int y, const char *str, int r, int g, int b)
 {
-    return DrawRainbowString(x, y, str, gHUD.m_Rainbow.m_pfnDrawString);
+    if (r == 0 && g == 0 && b == 0)
+    {
+        // Draw invisible text without rainbow color
+        return gHUD.m_Rainbow.m_pfnDrawString(x, y, str, r, g, b);
+    }
+    else
+    {
+        return DrawRainbowString(x, y, str, gHUD.m_Rainbow.m_pfnDrawString);
+    }
 }
 
 int CRainbow::DrawStringReverse(int x, int y, const char *str, int r, int g, int b)
 {
-    // Calc string width by drawing outside the screen
-    int width = gEngfuncs.pfnDrawString(ScreenWidth + 1, y, str, r, g, b);
+    // Get string width
+    int width = gHUD.GetHudStringWidth(str);
 
     // Draw it shifted to the left by width pixels
     return x + DrawString(x - width, y, str, r, g, b);

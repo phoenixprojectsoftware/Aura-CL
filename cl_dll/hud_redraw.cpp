@@ -84,11 +84,12 @@ void CHud::Think(void)
 	{  // only let players adjust up in fov,  and only if they are not overriden by something else
 		m_iFOV = max( default_fov->value, 90 );  
 	}
-	
-	if ( gEngfuncs.IsSpectateOnly() )
+
+	// Don't change the FOV for HLTV to a constant, use the updated value like when in a normal game
+	/*if ( gEngfuncs.IsSpectateOnly() )
 	{
-		m_iFOV = gHUD.m_Spectator.GetFOV();	// default_fov->value;
-	}
+		m_iFOV = gHUD.m_Spectator.GetFOV();
+	}*/
 
 	Bench_CheckStart();
 }
@@ -291,6 +292,13 @@ int CHud :: DrawHudNumberString( int xpos, int ypos, int iMinX, int iNumber, int
 	sprintf( szString, "%d", iNumber );
 	return DrawHudStringReverse( xpos, ypos, iMinX, szString, r, g, b );
 
+}
+
+int CHud :: DrawHudNumberStringFixed( int xpos, int ypos, int iNumber, int r, int g, int b )
+{
+	char szString[32];
+	sprintf( szString, "%d", iNumber );
+	return DrawHudStringRightAligned( xpos, ypos, szString, r, g, b );
 }
 
 // draws a string from right to left (right-aligned)

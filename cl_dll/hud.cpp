@@ -563,6 +563,7 @@ void CHud :: Init( void )
 	m_Countdown.Init();
 	m_Crosshairs.Init();
 	m_CTF.Init();
+	m_CustomTimer.Init();
 	m_Debug.Init();
 	m_Location.Init();
 	m_NextMap.Init();
@@ -575,6 +576,7 @@ void CHud :: Init( void )
 	m_Timer.Init();
 	m_Vote.Init();
 	m_Watermark.Init();
+	m_OldScoreBoard.Init();
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 
 	m_Menu.Init();
@@ -727,6 +729,7 @@ void CHud :: VidInit( void )
 	m_Countdown.VidInit();
 	m_Crosshairs.VidInit();
 	m_CTF.VidInit();
+	m_CustomTimer.VidInit();
 	m_Debug.VidInit();
 	m_Location.VidInit();
 	m_NextMap.VidInit();
@@ -739,6 +742,7 @@ void CHud :: VidInit( void )
 	m_Timer.VidInit();
 	m_Vote.VidInit();
 	m_Watermark.VidInit();
+	m_OldScoreBoard.VidInit();
 	GetClientVoiceMgr()->VidInit();
 }
 
