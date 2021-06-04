@@ -182,7 +182,7 @@ namespace discord_integration
 					state = "In a Match"s;
 
 				// Default icon.
-				presence.largeImageKey = "default";
+				presence.largeImageKey = "icon";
 
 				// Declare these outside of the following block, so they are in scope for Discord_UpdatePresence().
 				char map_name[64];
