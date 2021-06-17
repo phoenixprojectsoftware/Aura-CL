@@ -36,7 +36,7 @@ int CHudWatermark::Draw(float time)
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 
 	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build "  __TIMESTAMP__, r, g, b);
-	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "Half-Life: Zombies Ate My Neighbours Multiplayer 2.5.1", r, g, b);
+	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "Half-Life: Zombies Ate My Neighbours Multiplayer 2.6-PPT1", r, g, b);
 
 	if (update_is_available)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight / 2 * 7, " ", r, g, b);
