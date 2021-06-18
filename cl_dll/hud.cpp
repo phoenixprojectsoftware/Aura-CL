@@ -35,6 +35,8 @@
 #include "forcemodel.h"
 #include "steam_id.h"
 
+#include "versioninfo.h"
+
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
 extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
 
@@ -446,6 +448,18 @@ int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
 	return 0;
 }
 
+void PrintVersion()
+{
+	gEngfuncs.Con_Printf("\n  Aura client build %s (%s)", clientDate);
+	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
+	gEngfuncs.Con_Printf("\n  Half-Life: Zombies Ate My Neighbours Multiplayer %s", zamnhlmpVersion);
+	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
+	gEngfuncs.Con_Printf("\n  Aura SDK:");
+	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
+	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
+	gEngfuncs.Con_Printf("\n  ZAMNHLMP Developer Repository - hosts public playtest builds - %s", zamnhlmpRepo "\n");
+}
+
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
 {
@@ -517,7 +531,7 @@ void CHud :: Init( void )
 	m_iFOV = 0;
 
 	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
-	default_fov = CVAR_CREATE( "default_fov", "110", FCVAR_ARCHIVE );
+	default_fov = CVAR_CREATE( "default_fov", "110", FCVAR_ARCHIVE ); // I have set the hard-coded default to 110. Why would you want to use 90 on a widescreen display?
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
@@ -528,6 +542,9 @@ void CHud :: Init( void )
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
 
 	m_pSpriteList = NULL;
+
+	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
+	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
 
 	// Clear any old HUD list
 	if ( m_pHudList )
