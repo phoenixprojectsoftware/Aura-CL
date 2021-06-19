@@ -110,6 +110,7 @@ typedef struct hull_s
 #define STEP_SLOSH		6		// shallow liquid puddle
 #define STEP_WADE		7		// wading in liquid
 #define STEP_LADDER		8		// climbing ladder
+#define STEP_WOOD		9		// wood
 
 #define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
 #define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
@@ -299,6 +300,7 @@ int PM_MapTextureTypeStepType(char chTextureType)
 		case CHAR_TEX_GRATE: return STEP_GRATE;	
 		case CHAR_TEX_TILE: return STEP_TILE;
 		case CHAR_TEX_SLOSH: return STEP_SLOSH;
+		case CHAR_TEX_WOOD: return STEP_WOOD;
 	}
 }
 
@@ -455,6 +457,11 @@ void PM_UpdateStepSound( void )
 				break;
 
 			case CHAR_TEX_SLOSH:
+				fvol = fWalking ? 0.2 : 0.5;
+				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				break;
+
+			case CHAR_TEX_WOOD:
 				fvol = fWalking ? 0.2 : 0.5;
 				pmove->flTimeStepSound = fWalking ? 400 : 300;
 				break;

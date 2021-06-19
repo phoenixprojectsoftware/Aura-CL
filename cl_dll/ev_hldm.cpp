@@ -195,9 +195,10 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 		cnt = 4;
 		break;
 	case CHAR_TEX_WOOD: fvol = 0.9; fvolbar = 0.2;
-		rgsz[0] = "debris/wood1.wav";
-		rgsz[1] = "debris/wood2.wav";
-		rgsz[2] = "debris/wood3.wav";
+		rgsz[0] = "player/pl_wood1.wav";
+		rgsz[1] = "player/pl_wood2.wav";
+		rgsz[2] = "player/pl_wood3.wav";
+		rgsz[3] = "player/pl_wood4.wav";
 		cnt = 3;
 		break;
 	case CHAR_TEX_GLASS:
