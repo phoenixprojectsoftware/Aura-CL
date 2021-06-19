@@ -419,8 +419,8 @@ void PM_PlayStepSound( int step, float fvol )
 		switch (irand)
 		{
 		// right foot
-		case 0: pmove > PM_PlaySound(CHAN_BODY, "player/pl_wood1.wav", fvol, ATTN_NORM, 0, PITCH_NORM); break;
-		case 1: pmove > PM_PlaySound(CHAN_BODY, "player/pl_wood3.wav", fvol, ATTN_NORM, 0, PITCH_NORM); break;
+		case 0: pmove->PM_PlaySound(CHAN_BODY, "player/pl_wood1.wav", fvol, ATTN_NORM, 0, PITCH_NORM); break;
+		case 1: pmove->PM_PlaySound(CHAN_BODY, "player/pl_wood3.wav", fvol, ATTN_NORM, 0, PITCH_NORM); break;
 		// left foot
 		case 2:	pmove->PM_PlaySound(CHAN_BODY, "player/pl_wood2.wav", fvol, ATTN_NORM, 0, PITCH_NORM);	break;
 		case 3:	pmove->PM_PlaySound(CHAN_BODY, "player/pl_wood4.wav", fvol, ATTN_NORM, 0, PITCH_NORM);	break;
