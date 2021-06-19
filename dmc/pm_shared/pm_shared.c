@@ -27,17 +27,7 @@
 #include <stdlib.h> // atoi
 #include <ctype.h>  // isspace
 
-#ifdef CLIENT_DLL
-	// Spectator Mode
-	int		iJumpSpectator;
-#ifndef DISABLE_JUMP_ORIGIN
-	float	vJumpOrigin[3];
-	float	vJumpAngles[3];
-#else
-	extern float	vJumpOrigin[3];
-	extern float	vJumpAngles[3];
-#endif
-#endif
+
 
 static int pm_shared_initialized = 0;
 

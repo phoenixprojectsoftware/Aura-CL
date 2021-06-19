@@ -92,7 +92,6 @@ cvar_t *cl_lw = NULL;
 cvar_t *cl_righthand = nullptr;
 cvar_t *cl_viewrollangle;
 cvar_t *cl_viewrollspeed;
-cvar_t* cl_viewroll;
 
 void ShutdownInput (void);
 

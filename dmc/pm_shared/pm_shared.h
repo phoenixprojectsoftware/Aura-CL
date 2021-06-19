@@ -33,4 +33,16 @@ char PM_FindTextureType( char *name );
 #define OBS_MAP_FREE			5
 #define OBS_MAP_CHASE			6
 
+#ifdef CLIENT_DLL
+	// Spectator Mode
+int		iJumpSpectator;
+#ifndef DISABLE_JUMP_ORIGIN
+float	vJumpOrigin[3];
+float	vJumpAngles[3];
+#else
+extern float	vJumpOrigin[3];
+extern float	vJumpAngles[3];
+#endif
+#endif
+
 #endif

@@ -37,10 +37,10 @@
 
 extern cvar_t *tfc_newmodels;
 extern float g_flRenderFOV;
-extern Vector g_vViewOrigin;
-extern Vector g_vViewForward;
-extern Vector g_vViewRight;
-extern Vector g_vViewUp;
+Vector g_vViewOrigin;
+Vector g_vViewForward;
+Vector g_vViewRight;
+Vector g_vViewUp;
 
 extern extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];
 
