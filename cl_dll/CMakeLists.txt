@@ -109,6 +109,7 @@ add_sources(
 	update_checker.h
 	util.cpp
 	util_vector.h
+	versioninfo.h
 	vgui_ClassMenu.cpp
 	vgui_ControlConfigPanel.cpp
 	vgui_ControlConfigPanel.h
