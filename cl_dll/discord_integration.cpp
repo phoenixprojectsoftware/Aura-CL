@@ -11,8 +11,11 @@
 #include "cl_util.h"
 #include "vgui_TeamFortressViewport.h"
 #include "discord_integration.h"
+#include <algorithm>
 
 using namespace std::literals;
+
+int tolower(int c);
 
 namespace discord_integration
 {
@@ -25,7 +28,7 @@ namespace discord_integration
 		constexpr const char STEAM_APP_ID[] = "17215498729465839686";
 
 		// Maps for which we have thumbnails.
-		const std::unordered_set<std::string> maps_with_thumbnails {
+		const std::unordered_set<std::string> maps_with_thumbnails{
 			"Blimpboom"s,
 			"Boot_Box"s,
 			"Boot_Camp"s,
@@ -47,7 +50,7 @@ namespace discord_integration
 			"Stalkyard"s,
 			"Subtransit"s,
 			"Undertow"s,
-			"Xen"s
+			"Xen"s,
 		};
 
 		// Text names of game states
