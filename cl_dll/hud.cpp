@@ -90,6 +90,7 @@ extern client_sprite_t *GetSpriteList(client_sprite_t *pList, const char *psz, i
 extern cvar_t *sensitivity;
 cvar_t *cl_lw = NULL;
 cvar_t *cl_righthand = nullptr;
+cvar_t* cl_viewmodel_lag_enabled;
 
 void ShutdownInput (void);
 

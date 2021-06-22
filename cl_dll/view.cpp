@@ -97,7 +97,7 @@ cvar_t* cl_viewmodel_ofs_right;
 cvar_t* cl_viewmodel_ofs_forward;
 cvar_t* cl_viewmodel_ofs_up;
 
-cvar_t* cl_viewmodel_lag_enabled;
+extern cvar_t* cl_viewmodel_lag_enabled;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
@@ -966,7 +966,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 	V_DropPunchAngle(pparams->frametime, (float*)&ev_punchangle);
 
-	if (cl_viewmodel_lag_enabled.value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
+	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
 
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
 	view->curstate.angles = view->curstate.angles + Vector(pparams->punchangle);
