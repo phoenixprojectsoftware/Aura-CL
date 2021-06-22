@@ -44,6 +44,7 @@ float	vJumpOrigin[3];
 float	vJumpAngles[3];
 
 
+void NewPunch(float* ev_punchangle, float frametime);
 void V_DropPunchAngle(float frametime, float* ev_punchangle);
 void VectorAngles(const float* forward, float* angles);
 
@@ -891,6 +892,8 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 	V_DropPunchAngle(pparams->frametime, (float*)&ev_punchangle);
 
+	NewPunch((float*)&ev_punchangle, pparams->frametime);
+
 	V_ApplySmoothing(pparams, view);
 
 	// Store off v_angles before munging for third person
@@ -1057,7 +1060,7 @@ void V_GetChaseOrigin(float* angles, float* origin, float distance, float* retur
 	// v_lastDistance = Distance(trace->endpos, origin);	// real distance without offset
 }
 
-/*void V_GetDeathCam(cl_entity_t * ent1, cl_entity_t * ent2, float * angle, float * origin)
+void V_GetDeathCam(cl_entity_t * ent1, cl_entity_t * ent2, float * angle, float * origin)
 {
 	float newAngle[3]; float newOrigin[3];
 
@@ -1097,7 +1100,7 @@ void V_GetChaseOrigin(float* angles, float* origin, float distance, float* retur
 	V_GetChaseOrigin( angle, newOrigin, distance, origin );
 
 	VectorCopy(angle, v_lastAngles);
-}*/
+}
 
 void V_GetSingleTargetCam(cl_entity_t* ent1, float* angle, float* origin)
 {
@@ -1800,6 +1803,59 @@ void V_PunchAxis(int axis, float punch)
 {
 	ev_punchangle[axis] = punch;
 }
+
+/*
+=============
+NewPunch
+
+
+Client punch behaviour from HL2/Source 2013
+=============
+*/
+#define PUNCH_DAMPING			9.0f // bigger number makes the response more damped, smaller is less damped
+// currently the system will overshoot, with larger damping values it won't
+#define PUNCH_SPRING_CONSTANT 65.0f // bigger number increases the speed at which the view corrects
+#define clamp( val, min, max ) ( ((val) > (max)) ? (max) : ( ((val) < (min)) ? (min) : (val) ) )
+
+vec3_t punch;
+
+void NewPunch(float* ev_punchangle, float frametime)
+{
+	float damping;
+	float springForceMagnitude;
+
+	if (Length(ev_punchangle) > 0.001 || Length(punch) > 0.001)
+	{
+		VectorMA(ev_punchangle, frametime, punch, ev_punchangle);
+		damping = 1 - (PUNCH_DAMPING * frametime);
+
+		if (damping < 0)
+		{
+			damping = 0;
+		}
+		VectorScale(punch, damping, punch);
+
+		// torsional spring
+		// UNDONE: Per-axis spring constant?
+		springForceMagnitude = PUNCH_SPRING_CONSTANT * frametime;
+		springForceMagnitude = clamp(springForceMagnitude, 0, 2);
+
+		VectorMA(punch, -springForceMagnitude, ev_punchangle, punch);
+
+		// dont' wrap around
+		ev_punchangle[0] = clamp(ev_punchangle[0], -7, 7);
+		ev_punchangle[1] = clamp(ev_punchangle[1], -179, 179);
+		ev_punchangle[2] = clamp(ev_punchangle[2], -7, 7);
+	}
+}
+
+void Punch(float p, float y, float r)
+{
+	punch[0] -= p * 20;
+	punch[1] += y * 20;
+	punch[2] += r * 20;
+}
+
 
 /*
 =============

@@ -2688,6 +2688,47 @@ void PM_CheckWaterJump (void)
 	pmove->usehull = savehull;
 }
 
+/*
+=============
+PLut Client Punch From HL2
+=============
+*/
+#define PUNCH_DAMPING        9.0f        // bigger number makes the response more damped, smaller is less damped
+// currently the system will overshoot, with larger damping values it won't
+#define PUNCH_SPRING_CONSTANT    65.0f    // bigger number increases the speed at which the view corrects
+#define clamp( val, min, max ) ( ((val) > (max)) ? (max) : ( ((val) < (min)) ? (min) : (val) ) )
+
+void PM_NewPunch(vec3_t ev_punchangle, float frametime)
+{
+	// pmove->vuser1 is punch
+	float damping;
+	float springForceMagnitude;
+
+	if (Length(ev_punchangle) > 0.001 || Length(pmove->vuser1) > 0.001)
+	{
+		VectorMA(ev_punchangle, frametime, pmove->vuser1, ev_punchangle);
+		damping = 1 - (PUNCH_DAMPING * frametime);
+
+		if (damping < 0)
+		{
+			damping = 0;
+		}
+		VectorScale(pmove->vuser1, damping, pmove->vuser1);
+
+		// torsional spring
+		// UNDONE: Per-axis spring constant?
+		springForceMagnitude = PUNCH_SPRING_CONSTANT * frametime;
+		springForceMagnitude = clamp(springForceMagnitude, 0, 2);
+
+		VectorMA(pmove->vuser1, -springForceMagnitude, ev_punchangle, pmove->vuser1);
+
+		// don't wrap around
+		ev_punchangle[0] = clamp(ev_punchangle[0], -7, 7);
+		ev_punchangle[1] = clamp(ev_punchangle[1], -179, 179);
+		ev_punchangle[2] = clamp(ev_punchangle[2], -7, 7);
+	}
+}
+
 void PM_CheckFalling( void )
 {
 	if ( pmove->onground != -1 &&
@@ -2742,16 +2783,16 @@ void PM_CheckFalling( void )
 			PM_PlayStepSound( PM_MapTextureTypeStepType( pmove->chtexturetype ), fvol );
 
 			// Knock the screen around a little bit, temporary effect
-			pmove->punchangle[ 2 ] = pmove->flFallVelocity * 0.013;	// punch z axis
+			pmove->vuser1[0] = (-2 * 0.013) * 20;	// punch z axis
 
-			if ( pmove->punchangle[ 0 ] > 8 )
+			if (pmove->punchangle[0] > 8)
 			{
 				pmove->punchangle[ 0 ] = 8;
 			}
 		}
 	}
 
-	if ( pmove->onground != -1 ) 
+	if (pmove->onground != -1)
 	{		
 		pmove->flFallVelocity = 0;
 	}
@@ -2881,6 +2922,7 @@ void PM_CheckParamters( void )
 
 
 	PM_DropPunchAngle( pmove->punchangle );
+	PM_NewPunch(pmove->punchangle, pmove->frametime);
 
 	// Take angles from command.
 	if ( !pmove->dead )
