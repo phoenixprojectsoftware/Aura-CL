@@ -97,6 +97,8 @@ cvar_t* cl_viewmodel_ofs_right;
 cvar_t* cl_viewmodel_ofs_forward;
 cvar_t* cl_viewmodel_ofs_up;
 
+cvar_t* cl_viewmodel_lag_enabled;
+
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
 cvar_t	v_iyaw_cycle = { "v_iyaw_cycle", "2", 0, 2 };
@@ -438,8 +440,8 @@ void V_CalcGunAngle(struct ref_params_s* pparams)
 	if (!viewent)
 		return;
 
-	viewent->angles[YAW] = pparams->viewangles[YAW] + pparams->crosshairangle[YAW];
-	viewent->angles[PITCH] = -pparams->viewangles[PITCH] + pparams->crosshairangle[PITCH] * 0.25;
+	viewent->angles[YAW] = pparams->cl_viewangles[YAW] + pparams->crosshairangle[YAW];
+	viewent->angles[PITCH] = -pparams->cl_viewangles[PITCH] + pparams->crosshairangle[PITCH] * 0.25;
 	viewent->angles[ROLL] -= v_idlescale * sin(pparams->time * v_iroll_cycle.value) * v_iroll_level.value;
 
 	// don't apply all of the v_ipitch to prevent normally unseen parts of viewmodel from coming into view.
@@ -964,9 +966,10 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 	V_DropPunchAngle(pparams->frametime, (float*)&ev_punchangle);
 
-	V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
+	if (cl_viewmodel_lag_enabled.value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
 
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
+	view->curstate.angles = view->curstate.angles + Vector(pparams->punchangle);
 
 	V_ApplySmoothing(pparams, view);
 
@@ -1956,6 +1959,8 @@ void V_Init(void)
 	cl_viewmodel_ofs_right = gEngfuncs.pfnRegisterVariable("cl_viewmodel_ofs_right", "0", FCVAR_ARCHIVE); // x = right
 	cl_viewmodel_ofs_forward = gEngfuncs.pfnRegisterVariable("cl_viewmodel_ofs_forward", "0", FCVAR_ARCHIVE); // y = forward
 	cl_viewmodel_ofs_up = gEngfuncs.pfnRegisterVariable("cl_viewmodel_ofs_up", "0", FCVAR_ARCHIVE); // z = up
+
+	cl_viewmodel_lag_enabled = gEngfuncs.pfnRegisterVariable("cl_viewmodel_lag_enabled", "1", FCVAR_ARCHIVE);
 }
 
 
