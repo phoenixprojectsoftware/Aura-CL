@@ -11,8 +11,6 @@
 #include "cl_util.h"
 #include "vgui_TeamFortressViewport.h"
 #include "discord_integration.h"
-#include <algorithm>
-#include <cctype>
 
 using namespace std::literals;
 
