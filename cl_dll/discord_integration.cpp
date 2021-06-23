@@ -24,6 +24,13 @@ namespace discord_integration
 		// This seems to be consistent across PCs.
 		constexpr const char STEAM_APP_ID[] = "17215498729465839686";
 
+		void LowerCase(const char* in, char* out, int size)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				out[i] = (char)tolower(in[i]);
+			}
+		}
 
 
 		// Maps for which we have thumbnails.
@@ -49,7 +56,7 @@ namespace discord_integration
 			"Stalkyard"s,
 			"Subtransit"s,
 			"Undertow"s,
-			"Xen"s
+			"Xen"s,
 		};
 
 		// Text names of game states
@@ -206,10 +213,13 @@ namespace discord_integration
 					get_map_name(map_name, ARRAYSIZE(map_name));
 					if (map_name[0])
 					{
-						if (maps_with_thumbnails.find(map_name) != maps_with_thumbnails.cend())
-							presence.largeImageKey = map_name;
+						char newmapname[64];
 
-						presence.largeImageText = map_name;
+						LowerCase((const char*)map_name, newmapname, strlen(map_name));
+						if (maps_with_thumbnails.find(map_name) != maps_with_thumbnails.cend())
+							presence.largeImageKey = newmapname;
+
+						presence.largeImageText = newmapname;
 					}
 
 					// Get the server address.
