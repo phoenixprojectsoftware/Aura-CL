@@ -28,6 +28,11 @@ namespace discord_integration
 		{
 			for (int i = 0; i < size; i++)
 			{
+				if (!out[i] || out[i] == '\0')
+				{
+					out[i] = in[i];
+					continue;
+				}
 				out[i] = (char)tolower(in[i]);
 			}
 		}
@@ -215,11 +220,11 @@ namespace discord_integration
 					{
 						char newmapname[64];
 
-						LowerCase((const char*)map_name, newmapname, strlen(map_name));
+						LowerCase((const char*)map_name, newmapname, ARRAYSIZE(map_name));
 						if (maps_with_thumbnails.find(map_name) != maps_with_thumbnails.cend())
 							presence.largeImageKey = newmapname;
 
-						presence.largeImageText = newmapname;
+						presence.largeImageText = map_name;
 					}
 
 					// Get the server address.
