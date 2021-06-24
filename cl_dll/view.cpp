@@ -52,7 +52,6 @@ void VectorAngles(const float* forward, float* angles);
 #include "com_model.h"
 #include "kbutton.h"
 #include "view.h"
-
 extern engine_studio_api_t IEngineStudio;
 
 extern kbutton_t	in_mlook;
@@ -745,6 +744,8 @@ void V_ApplySmoothing(struct ref_params_s* pparams, cl_entity_t* view)
 
 	lasttime = pparams->time;
 }
+
+
 
 
 /*
@@ -1631,7 +1632,6 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 		return 0;
 
 }
-
 
 /*
 ==================
