@@ -6,8 +6,8 @@ env:
   - CONFIGURATION=Release
 
 script:
-  - mkdir build
-  - cd build
+  - mkdir Mac-Build
+  - cd Mac-Build
   - cmake -DCMAKE_BUILD_TYPE="${CONFIGURATION}" ..
   - make
 
