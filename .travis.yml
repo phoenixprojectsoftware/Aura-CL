@@ -20,4 +20,4 @@ deploy:
     tags: true
     condition: $CONFIGURATION = Release
   api_key:
-    secure: "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"
+    secure: "GITHUB OAUTH TOKEN"
