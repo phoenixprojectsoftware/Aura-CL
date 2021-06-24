@@ -6,5 +6,4 @@ compile_commands.json
 thirdparty
 .vs/
 Linux-Build/
-Mac-Build/
 out/
