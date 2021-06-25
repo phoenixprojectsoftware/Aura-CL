@@ -55,7 +55,8 @@
 1. Once the build finishes, in the same bar menu click the Export Bundle button. The file manager will open in a path that looks like `gnome-builder/projects/OpenAG/flatpak/staging/x86_64-master`. Navigate up to the `OpenAG` folder, then down to `builds/pro.openag.OpenAG.json-...` where you will find the built `client.so`.
 1. Now you can make some changes to the code and press Build, then grab `client.so` from the same folder.
 
-### Manually
+### Manually via Terminal / WSL 2
+Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the Microsoft Store.
 1. Get a 32-bit/multilib **gcc** (6 and above) or **clang** (3.9 and above) build environment set up, as well as CMake.
 2. `git submodule update --init`
 3. `mkdir build`
