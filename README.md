@@ -56,6 +56,7 @@
 1. Now you can make some changes to the code and press Build, then grab `client.so` from the same folder.
 
 ### Manually via Terminal / WSL 2
+Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the Microsoft Store.
 1. Get a 32-bit/multilib **gcc** (6 and above) or **clang** (3.9 and above) build environment set up, as well as CMake.
 2. `git submodule update --init`
 3. `mkdir build`
