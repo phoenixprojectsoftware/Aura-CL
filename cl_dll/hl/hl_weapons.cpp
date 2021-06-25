@@ -860,6 +860,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	if ( ( player.pev->deadflag != ( DEAD_DISCARDBODY + 1 ) ) && 
 		 !CL_IsDead() && player.pev->viewmodel && !g_iUser1 )
 	{
+		player.NewPunch();
 		if ( player.m_flNextAttack <= 0 )
 		{
 			pWeapon->ItemPostFrame();
@@ -1042,6 +1043,63 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	// Wipe it so we can't use it after this frame
 	g_finalstate = NULL;
+}
+
+/*
+=============
+PLut Client Punch From HL2
+=============
+*/
+#define PUNCH_DAMPING        9.0f        // bigger number makes the response more damped, smaller is less damped
+// currently the system will overshoot, with larger damping values it won't
+#define PUNCH_SPRING_CONSTANT    65.0f    // bigger number increases the speed at which the view corrects
+#define clamp( val, min, max ) ( ((val) > (max)) ? (max) : ( ((val) < (min)) ? (min) : (val) ) )
+
+#define VectorMA(veca, scale, vecb, vecc) \
+{\
+	vecc[0] = veca[0] + scale * vecb[0];\
+	vecc[1] = veca[1] + scale * vecb[1];\
+	vecc[2] = veca[2] + scale * vecb[2];\
+}
+
+// No need to calculate this client side, but just in case
+void CBasePlayer::NewPunch()
+{
+	// pmove->vuser1 is punch
+	float damping;
+	float springForceMagnitude;
+
+	if (pev->punchangle.Length() > 0.001 || m_vecPunchangle.Length() > 0.001)
+	{
+		VectorMA(pev->punchangle, gpGlobals->frametime, m_vecPunchangle, pev->punchangle);
+		damping = 1 - (PUNCH_DAMPING * gpGlobals->frametime);
+
+		if (damping < 0)
+		{
+			damping = 0;
+		}
+
+		m_vecPunchangle = m_vecPunchangle * damping;
+
+		// torsional spring
+		// UNDONE: Per-axis spring constant?
+		springForceMagnitude = PUNCH_SPRING_CONSTANT * gpGlobals->frametime;
+		springForceMagnitude = clamp(springForceMagnitude, 0, 2);
+
+		VectorMA(m_vecPunchangle, -springForceMagnitude, pev->punchangle, m_vecPunchangle);
+
+		// don't wrap around
+		pev->punchangle[0] = clamp(pev->punchangle[0], -7, 7);
+		pev->punchangle[1] = clamp(pev->punchangle[1], -179, 179);
+		pev->punchangle[2] = clamp(pev->punchangle[2], -7, 7);
+	}
+}
+
+// Used by pm_shared
+extern "C" void SetPunchAngle(int index, int axis, float punch);
+void SetPunchAngle(int index, int axis, float punch)
+{
+	player.m_vecPunchangle[axis] = punch * 20;
 }
 
 /*
