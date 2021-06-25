@@ -322,7 +322,10 @@ public:
 	char m_SbarString1[ SBAR_STRING_SIZE ];
 	
 	float m_flNextChatTime;
-	
+
+public:
+	// BlueNightHawk : Server Side HL2 Punch
+	void NewPunch();
 };
 
 #define AUTOAIM_2DEGREES  0.0348994967025

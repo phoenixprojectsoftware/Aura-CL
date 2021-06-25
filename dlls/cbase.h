@@ -360,6 +360,13 @@ public:
 
 	enum EGON_FIRESTATE { FIRE_OFF, FIRE_CHARGE };
 	int m_fireState;
+public:
+	// BlueNightHawk : Server Side HL2 Punch
+	Vector m_vecPunchangle;
+	void SetPunchAngle(int axis, float punch)
+	{
+		m_vecPunchangle[axis] = punch * 20;
+	}
 };
 
 
