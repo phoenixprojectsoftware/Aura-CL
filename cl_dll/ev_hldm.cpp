@@ -35,9 +35,6 @@
 #include "r_studioint.h"
 #include "com_model.h"
 
-// Opposing Force weapons go here.
-#include "CPenguin.h"
-
 extern engine_studio_api_t IEngineStudio;
 
 static int tracerCount[ 32 ];
@@ -76,7 +73,6 @@ void EV_EgonStop( struct event_args_s *args  );
 void EV_HornetGunFire( struct event_args_s *args  );
 void EV_TripmineFire( struct event_args_s *args  );
 void EV_SnarkFire( struct event_args_s *args  );
-void EV_PenguinFire(event_args_t* args);
 
 
 void EV_TrainPitchAdjust( struct event_args_s *args );
@@ -1658,38 +1654,6 @@ void EV_SnarkFire( event_args_t *args )
 //======================
 //	   SQUEAK END
 //======================
-
-//======================
-//		PENGUIN START
-//======================
-void EV_PenguinFire(event_args_t* args)
-{
-	Vector origin = args->origin;
-	Vector angles = args->angles;
-	Vector forward;
-	gEngfuncs.pfnAngleVectors(angles, forward, nullptr, nullptr);
-
-	if (EV_IsLocal(args->entindex))
-	{
-		if (args->ducking)
-			origin.z += 18;
-
-		gEngfuncs.pEventAPI->EV_PushPMStates();
-		gEngfuncs.pEventAPI->EV_SetSolidPlayers(args->entindex - 1);
-		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-
-		Vector start = origin + (forward * 20);
-		Vector end = origin + (forward * 64);
-
-		pmtrace_t tr;
-		gEngfuncs.pEventAPI->EV_PlayerTrace(start, end, PM_NORMAL, -1, &tr);
-
-		if (!tr.allsolid && !tr.startsolid && tr.fraction > 0.25)
-			gEngfuncs.pEventAPI->EV_WeaponAnimation(PENGUIN_THROW, 0);
-
-		gEngfuncs.pEventAPI->EV_PopPMStates();
-	}
-}
 
 void EV_TrainPitchAdjust( event_args_t *args )
 {

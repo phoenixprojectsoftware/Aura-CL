@@ -94,7 +94,7 @@ set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 
-add_library(client SHARED ${SOURCE_FILES} "common/Platform.h" "dlls/CPenguin.h")
+add_library(client SHARED ${SOURCE_FILES} "common/Platform.h")
 target_include_directories(client PRIVATE
 	${CMAKE_BINARY_DIR}
 	common
