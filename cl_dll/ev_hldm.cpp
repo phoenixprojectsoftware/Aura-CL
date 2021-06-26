@@ -36,7 +36,7 @@
 #include "com_model.h"
 
 // Opposing Force weapons go here.
-#include "op4/CPenguin.h"
+#include "CPenguin.h"
 
 extern engine_studio_api_t IEngineStudio;
 

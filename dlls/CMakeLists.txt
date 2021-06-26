@@ -1,6 +1,8 @@
 add_subdirectory(wpn_shared)
 
 add_sources(
+	CPenguin.h
+	CPenguin.cpp
 	crossbow.cpp
 	crowbar.cpp
 	egon.cpp
