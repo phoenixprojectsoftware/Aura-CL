@@ -672,6 +672,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	{
 	case WEAPON_CROWBAR: return &g_Crowbar;
 	case WEAPON_GLOCK: return &g_Glock;
+	case WEAPON_EAGLE: return &g_Eagle;
 	case WEAPON_PYTHON: return &g_Python;
 	case WEAPON_MP5: return &g_Mp5;
 	case WEAPON_CROSSBOW: return &g_Crossbow;
