@@ -36,7 +36,7 @@
 #include "com_model.h"
 
 // Opposing Force weapons go here.
-#include "CPenguin.h"
+// #include "CPenguin.h"
 
 extern engine_studio_api_t IEngineStudio;
 
@@ -1662,6 +1662,16 @@ void EV_SnarkFire( event_args_t *args )
 //======================
 //		PENGUIN START
 //======================
+enum PenguinAnim
+{
+	PENGUIN_IDLE1 = 0,
+	PENGUIN_FIDGETFIT,
+	PENGUIN_FIDGETNIP,
+	PENGUIN_DOWN,
+	PENGUIN_UP,
+	PENGUIN_THROW,
+};
+
 void EV_PenguinFire(event_args_t* args)
 {
 	Vector origin = args->origin;
