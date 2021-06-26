@@ -1,4 +1,5 @@
 add_subdirectory(hl)
+add_subdirectory(op4)
 
 add_sources(
 	ammo.cpp
