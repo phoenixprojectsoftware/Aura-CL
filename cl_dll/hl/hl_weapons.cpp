@@ -31,6 +31,9 @@
 #include "../com_weapons.h"
 #include "../demo.h"
 
+// Opposing Force weapons go here.
+#include "CPenguin.h"
+
 #ifndef min
 #define min(a,b)  (((a) < (b)) ? (a) : (b))
 #endif
@@ -70,6 +73,7 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
+CPenguin g_Penguin;
 
 
 /*
@@ -623,6 +627,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
+	HUD_PrepEntity(&g_Penguin, &player);
 }
 
 /*
@@ -658,6 +663,40 @@ void HUD_SetLastOrg( void )
 	for ( i = 0; i < 3; i++ )
 	{
 		previousorigin[i] = g_finalstate->playerstate.origin[i] + g_finalstate->client.view_ofs[ i ];
+	}
+}
+
+CBasePlayerWeapon* GetLocalWeapon(int id)
+{
+	switch (id)
+	{
+	case WEAPON_CROWBAR: return &g_Crowbar;
+	case WEAPON_GLOCK: return &g_Glock;
+	case WEAPON_PYTHON: return &g_Python;
+	case WEAPON_MP5: return &g_Mp5;
+	case WEAPON_CROSSBOW: return &g_Crossbow;
+	case WEAPON_SHOTGUN: return &g_Shotgun;
+	case WEAPON_RPG: return &g_Rpg;
+	case WEAPON_GAUSS: return &g_Gauss;
+	case WEAPON_EGON: return &g_Egon;
+	case WEAPON_HORNETGUN: return &g_HGun;
+	case WEAPON_HANDGRENADE: return &g_HandGren;
+	case WEAPON_SATCHEL: return &g_Satchel;
+	case WEAPON_TRIPMINE: return &g_Tripmine;
+	case WEAPON_SNARK: return &g_Snark;
+	case WEAPON_PENGUIN: return &g_Penguin;
+
+	default: return nullptr;
+	}
+}
+
+void SetLocalBody(int id, int body)
+{
+	auto pWeapon = GetLocalWeapon(id);
+
+	if (pWeapon)
+	{
+		pWeapon->pev->body = body;
 	}
 }
 
