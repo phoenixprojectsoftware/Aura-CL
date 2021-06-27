@@ -5,6 +5,7 @@ add_sources(
 	cdll_dll.h
 	crossbow.cpp
 	crowbar.cpp
+	combat.cpp
 	egon.cpp
 	gauss.cpp
 	handgrenade.cpp
@@ -14,5 +15,6 @@ add_sources(
 	rpg.cpp
 	satchel.cpp
 	shotgun.cpp
+	skill.h
 	squeakgrenade.cpp
 	tripmine.cpp)
