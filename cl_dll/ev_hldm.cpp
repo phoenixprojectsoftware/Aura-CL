@@ -12,6 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#define EV_HLDM_WEAPONS
+
 #include "hud.h"
 #include "cl_util.h"
 #include "const.h"

@@ -1,4 +1,34 @@
-#ifndef WEAPONS_NO_CLASSES
+/***
+*
+*	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+*	All Rights Reserved.
+*
+*   Use, distribution, and modification of this source code and/or resulting
+*   object code is restricted to non-commercial enhancements to products from
+*   Valve LLC.  All other use, distribution, or modification is prohibited
+*   without written permission from Valve LLC.
+*
+****/
+#pragma once
+
+enum PenguinAnim
+{
+	PENGUIN_IDLE1 = 0,
+	PENGUIN_FIDGETFIT,
+	PENGUIN_FIDGETNIP,
+	PENGUIN_DOWN,
+	PENGUIN_UP,
+	PENGUIN_THROW,
+};
+
+#if !defined(EV_HLDM_WEAPONS) && !defined(WEAPONS_H)
+#include "weapons.h"
+#endif
+
+#ifndef EV_HLDM_WEAPONS
 class CPenguin : public CBasePlayerWeapon
 {
 public:

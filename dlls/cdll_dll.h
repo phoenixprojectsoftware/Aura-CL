@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -25,7 +25,7 @@
 #define MAX_WEAPON_SLOTS		7	// hud item selection slots
 #define MAX_ITEM_TYPES			6	// hud item selection slots
 
-#define MAX_ITEMS				5	// hard coded item types
+#define MAX_ITEMS				7	// hard coded item types
 
 #define	HIDEHUD_WEAPONS		( 1<<0 )
 #define	HIDEHUD_FLASHLIGHT	( 1<<1 )
