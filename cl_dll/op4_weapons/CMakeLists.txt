@@ -1,6 +1,8 @@
 add_sources(
 	CM249.cpp
     CM249.h
+	CPipewrench.cpp
+	CPipewrench.h
 	CPenguin.cpp
 	CPenguin.h
 )

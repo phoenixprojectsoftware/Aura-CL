@@ -83,6 +83,7 @@ public:
 #define	WEAPON_SNARK			15
 #define WEAPON_GRAPPLE   16
 #define WEAPON_EAGLE			17
+#define WEAPON_PIPEWRENCH 18
 #define WEAPON_M249				19
 #define WEAPON_SNIPERRIFLE 24
 #define WEAPON_PENGUIN   26
@@ -113,6 +114,7 @@ public:
 #define SATCHEL_WEIGHT		-10
 #define TRIPMINE_WEIGHT		-10
 #define EAGLE_WEIGHT				15
+#define PIPEWRENCH_WEIGHT 2
 #define SNIPERRIFLE_WEIGHT 10
 #define M249_WEIGHT					20
 #define PENGUIN_WEIGHT		5

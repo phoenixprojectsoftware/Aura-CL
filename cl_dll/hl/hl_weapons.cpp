@@ -32,6 +32,7 @@
 #include "../demo.h"
 
 // Opposing Force weapons go here.
+#include "CPipewrench.h"
 #include "CPenguin.h"
 #include "CM249.h"
 
@@ -74,6 +75,7 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
+CPipewrench g_Pipewrench;
 CM249 g_M249;
 CPenguin g_Penguin;
 
@@ -629,6 +631,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
+	HUD_PrepEntity(&g_Pipewrench, &player);
 	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
 }

@@ -83,6 +83,7 @@ public:
 #define	WEAPON_SNARK			15
 #define WEAPON_GRAPPLE   16
 #define WEAPON_EAGLE			17
+#define WEAPON_PIPEWRENCH 18
 #define WEAPON_M249				19
 #define WEAPON_SNIPERRIFLE 24
 #define WEAPON_PENGUIN   26
@@ -113,6 +114,7 @@ public:
 #define SATCHEL_WEIGHT		-10
 #define TRIPMINE_WEIGHT		-10
 #define EAGLE_WEIGHT				15
+#define PIPEWRENCH_WEIGHT 2
 #define SNIPERRIFLE_WEIGHT 10
 #define M249_WEIGHT					20
 #define PENGUIN_WEIGHT		5
@@ -353,7 +355,7 @@ public:
 
 	virtual BOOL CanDeploy(void);
 	virtual BOOL IsUseable(void);
-	BOOL DefaultDeploy(char* szViewModel, char* szWeaponModel, int iAnim, char* szAnimExt, int skiplocal = 0, int body = 0);
+	BOOL DefaultDeploy(const char* szViewModel, const char* szWeaponModel, int iAnim, const char* szAnimExt, int skiplocal = 0, int body = 0);
 	int DefaultReload(int iClipSize, int iAnim, float fDelay, int body = 0);
 
 	virtual void ItemPostFrame(void);	// called each frame by the player PostThink

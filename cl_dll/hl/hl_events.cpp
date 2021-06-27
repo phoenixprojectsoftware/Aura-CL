@@ -37,6 +37,7 @@ void EV_EgonStop( struct event_args_s *args );
 void EV_HornetGunFire( struct event_args_s *args );
 void EV_TripmineFire( struct event_args_s *args );
 void EV_SnarkFire( struct event_args_s *args );
+void EV_Pipewrench(struct event_args_s* args);
 void EV_FireM249(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
 
@@ -79,6 +80,7 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent( "events/firehornet.sc",				EV_HornetGunFire );
 	gEngfuncs.pfnHookEvent( "events/tripfire.sc",				EV_TripmineFire );
 	gEngfuncs.pfnHookEvent( "events/snarkfire.sc",				EV_SnarkFire );
+	gEngfuncs.pfnHookEvent("events/pipewrench.sc", EV_Pipewrench);
 	gEngfuncs.pfnHookEvent("events/m249.sc", EV_FireM249);
 	gEngfuncs.pfnHookEvent("events/penguinfire.sc", EV_PenguinFire);
 }
