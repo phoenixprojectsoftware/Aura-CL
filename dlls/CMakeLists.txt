@@ -4,6 +4,7 @@ add_sources(
 	CM249.h
 	CPipewrench.h
     CPenguin.h
+	CSniperRifle.h
 	cdll_dll.h
 	crossbow.cpp
 	crowbar.cpp

@@ -5,4 +5,6 @@ add_sources(
 	CPipewrench.h
 	CPenguin.cpp
 	CPenguin.h
+	CSniperRifle.cpp
+	CSniperRifle.h
 )

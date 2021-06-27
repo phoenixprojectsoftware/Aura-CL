@@ -38,6 +38,7 @@
 #include "com_model.h"
 
 // Opposing Force weapons go here.
+#include "op4_weapons/CSniperRifle.h"
 #include "op4_weapons/CPipewrench.h"
 #include "op4_weapons/CM249.h"
 #include "op4_weapons/CPenguin.h"
@@ -83,7 +84,7 @@ void EV_SnarkFire( struct event_args_s *args  );
 // TODO: fireeagle
 void EV_Pipewrench(struct event_args_s* args);
 void EV_FireM249(struct event_args_s* args);
-// TODO: SniperRifle
+void EV_SniperRifle(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
 
 
@@ -1687,6 +1688,56 @@ void EV_SnarkFire( event_args_t *args )
 //======================
 //	   SQUEAK END
 //======================
+
+//======================
+//	   SNIPER START
+//======================
+void EV_SniperRifle(event_args_t* args)
+{
+	const int idx = args->entindex;
+	Vector vecOrigin = args->origin;
+	Vector vecAngles = args->angles;
+
+	const int iClip = args->iparam1;
+
+	Vector up, right, forward;
+
+	AngleVectors(vecAngles, forward, right, up);
+
+	if (EV_IsLocal(idx))
+	{
+		EV_MuzzleFlash();
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(iClip <= 0 ? SNIPERRIFLE_FIRELASTROUND : SNIPERRIFLE_FIRE, 0);
+		Punch(2, 0, 0);
+	}
+
+	gEngfuncs.pEventAPI->EV_PlaySound(idx, vecOrigin,
+		CHAN_WEAPON, "weapons/sniper_fire.wav",
+		gEngfuncs.pfnRandomFloat(0.9f, 1.0f), ATTN_NORM, 0, 98 + gEngfuncs.pfnRandomLong(0, 3));
+
+	Vector vecSrc;
+	Vector vecAiming = forward;
+
+	EV_GetGunPosition(args, vecSrc, vecOrigin);
+
+	EV_HLDM_FireBullets(
+		idx,
+		forward,
+		right,
+		up,
+		1,
+		vecSrc,
+		vecAiming,
+		8192.0,
+		BULLET_PLAYER_762,
+		0,
+		0,
+		args->fparam1,
+		args->fparam2);
+	//======================
+//	   SNIPER END
+//======================
+}
 
 //======================
 //	PIPE WRENCH START
