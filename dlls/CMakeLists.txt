@@ -1,6 +1,7 @@
 add_subdirectory(wpn_shared)
 
 add_sources(
+	CM249.h
     CPenguin.h
 	cdll_dll.h
 	crossbow.cpp
