@@ -28,7 +28,11 @@ enum M249Anim
 	M249_SHOOT3
 };
 
-#ifndef WEAPONS_NO_CLASSES
+#if !defined(EV_HLDM_WEAPONS) && !defined(WEAPONS_H)
+#include "weapons.h"
+#endif
+
+#ifndef EV_HLDM_WEAPONS
 class CM249 : public CBasePlayerWeapon
 {
 public:

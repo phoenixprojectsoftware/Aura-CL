@@ -218,7 +218,7 @@ CBasePlayerWeapon :: DefaultDeploy
 
 =====================
 */
-BOOL CBasePlayerWeapon :: DefaultDeploy( const char *szViewModel, const char *szWeaponModel, int iAnim, const char *szAnimExt, int skiplocal, int	body )
+BOOL CBasePlayerWeapon::DefaultDeploy(const char* szViewModel, const char* szWeaponModel, int iAnim, const char* szAnimExt, int skiplocal, int	body)
 {
 	if ( !CanDeploy() )
 		return FALSE;
@@ -1126,4 +1126,9 @@ void CL_DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state
 	
 	// All games can use FOV state
 	g_lastFOV = to->client.fov;
+}
+
+bool UTIL_IsMultiplayer()
+{
+	return gEngfuncs.GetMaxClients() != 1;
 }
