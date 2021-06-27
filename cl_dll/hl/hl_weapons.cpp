@@ -33,7 +33,6 @@
 
 // Opposing Force weapons go here.
 #include "CPenguin.h"
-#include "CM249.h"
 
 #ifndef min
 #define min(a,b)  (((a) < (b)) ? (a) : (b))
@@ -74,7 +73,6 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
-CM249 g_M249;
 CPenguin g_Penguin;
 
 
@@ -629,7 +627,6 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
-	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
 }
 
@@ -687,7 +684,6 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SATCHEL: return &g_Satchel;
 	case WEAPON_TRIPMINE: return &g_Tripmine;
 	case WEAPON_SNARK: return &g_Snark;
-	case WEAPON_M249: return &g_M249;
 	case WEAPON_PENGUIN: return &g_Penguin;
 
 	default: return nullptr;

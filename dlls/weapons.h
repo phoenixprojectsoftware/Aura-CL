@@ -14,17 +14,15 @@
 ****/
 #ifndef WEAPONS_H
 #define WEAPONS_H
-#ifndef WEAPONS_NO_CLASSES
+
 #include "effects.h"
-#include "weaponinfo.h"
-#endif
+
 class CBasePlayer;
 extern int gmsgWeapPickup;
 
 void DeactivateSatchels(CBasePlayer* pOwner);
 
 // Contact Grenade / Timed grenade / Satchel Charge
-#ifndef WEAPONS_NO_CLASSES
 class CGrenade : public CBaseMonster
 {
 public:
@@ -56,7 +54,6 @@ public:
 
 	BOOL m_fRegisteredSound;// whether or not this grenade has issued its DANGER sound to the world sound list yet.
 };
-#endif
 
 
 // constant items
@@ -81,11 +78,9 @@ public:
 #define WEAPON_TRIPMINE			13
 #define	WEAPON_SATCHEL			14
 #define	WEAPON_SNARK			15
-#define WEAPON_GRAPPLE   16
 #define WEAPON_EAGLE			17
 #define WEAPON_M249				19
-#define WEAPON_SNIPERRIFLE 24
-#define WEAPON_PENGUIN   26
+#define WEAPON_PENGUIN		26
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -112,15 +107,12 @@ public:
 #define SNARK_WEIGHT		5
 #define SATCHEL_WEIGHT		-10
 #define TRIPMINE_WEIGHT		-10
-#define EAGLE_WEIGHT				15
-#define SNIPERRIFLE_WEIGHT 10
-#define M249_WEIGHT					20
 #define PENGUIN_WEIGHT		5
 
 
 // weapon clip/carry ammo capacities
-#define URANIUM_MAX_CARRY		200
-#define	_9MM_MAX_CARRY			240
+#define URANIUM_MAX_CARRY		100
+#define	_9MM_MAX_CARRY			250
 #define _357_MAX_CARRY			36
 #define BUCKSHOT_MAX_CARRY		125
 #define BOLT_MAX_CARRY			50
@@ -131,9 +123,7 @@ public:
 #define SNARK_MAX_CARRY			15
 #define HORNET_MAX_CARRY		8
 #define M203_GRENADE_MAX_CARRY	20
-#define M249_MAX_CARRY			200
-#define PENGUIN_MAX_CARRY 9
-#define SNIPERRIFLE_MAX_CARRY 15
+#define PENGUIN_MAX_CARRY		9
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
@@ -153,10 +143,7 @@ public:
 #define SATCHEL_MAX_CLIP		WEAPON_NOCLIP
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
-#define EAGLE_MAX_CLIP			7
-#define M249_MAX_CLIP				60
-#define PENGUIN_MAX_CLIP 3
-#define SNIPERRIFLE_MAX_CLIP 5
+#define PENGUIN_MAX_CLIP		3
 
 
 // the default amount of ammo that comes with each gun when it spawns
@@ -168,16 +155,13 @@ public:
 #define SHOTGUN_DEFAULT_GIVE		12
 #define CROSSBOW_DEFAULT_GIVE		5
 #define RPG_DEFAULT_GIVE			1
-#define GAUSS_DEFAULT_GIVE			120
-#define EGON_DEFAULT_GIVE			80
+#define GAUSS_DEFAULT_GIVE			80
+#define EGON_DEFAULT_GIVE			20
 #define HANDGRENADE_DEFAULT_GIVE	5
 #define SATCHEL_DEFAULT_GIVE		1
 #define TRIPMINE_DEFAULT_GIVE		1
 #define SNARK_DEFAULT_GIVE			5
 #define HIVEHAND_DEFAULT_GIVE		8
-#define EAGLE_DEFAULT_GIVE				7
-#define SNIPERRIFLE_DEFAULT_GIVE 5
-#define M249_DEFAULT_GIVE					60
 
 // The amount of ammo given to a player by an ammo item.
 #define AMMO_URANIUMBOX_GIVE	80
@@ -185,15 +169,12 @@ public:
 #define AMMO_357BOX_GIVE		PYTHON_MAX_CLIP
 #define AMMO_MP5CLIP_GIVE		MP5_MAX_CLIP
 #define AMMO_CHAINBOX_GIVE		200
-#define AMMO_M203BOX_GIVE		5
+#define AMMO_M203BOX_GIVE		2
 #define AMMO_BUCKSHOTBOX_GIVE	12
 #define AMMO_CROSSBOWCLIP_GIVE	CROSSBOW_MAX_CLIP
 #define AMMO_RPGCLIP_GIVE		RPG_MAX_CLIP
-#define AMMO_URANIUMBOX_GIVE	80
+#define AMMO_URANIUMBOX_GIVE	20
 #define AMMO_SNARKBOX_GIVE		5
-#define AMMO_EAGLE_GIVE					7
-#define AMMO_SNIPERRIFLE_GIVE 5
-#define AMMO_M249_GIVE					60
 
 // bullet types
 typedef	enum
@@ -208,10 +189,6 @@ typedef	enum
 	BULLET_MONSTER_9MM,
 	BULLET_MONSTER_MP5,
 	BULLET_MONSTER_12MM,
-
-	BULLET_PLAYER_556,
-	BULLET_PLAYER_762,
-	BULLET_PLAYER_EAGLE,
 } Bullet;
 
 
@@ -223,7 +200,6 @@ typedef	enum
 
 #define WEAPON_IS_ONTARGET 0x40
 
-#ifndef WEAPONS_NO_CLASSES
 typedef struct
 {
 	int		iSlot;
@@ -291,10 +267,6 @@ public:
 
 	virtual CBasePlayerItem* GetWeaponPtr(void) { return NULL; };
 
-	virtual void GetWeaponData(weapon_data_t& data) {}
-
-	virtual void SetWeaponData(const weapon_data_t& data) {}
-
 	static ItemInfo ItemInfoArray[MAX_WEAPONS];
 	static AmmoInfo AmmoInfoArray[MAX_AMMO_SLOTS];
 
@@ -353,7 +325,7 @@ public:
 
 	virtual BOOL CanDeploy(void);
 	virtual BOOL IsUseable(void);
-	BOOL DefaultDeploy(char* szViewModel, char* szWeaponModel, int iAnim, char* szAnimExt, int skiplocal = 0, int body = 0);
+	BOOL DefaultDeploy(const char* szViewModel, const char* szWeaponModel, int iAnim, const char* szAnimExt, int skiplocal = 0, int body = 0);
 	int DefaultReload(int iClipSize, int iAnim, float fDelay, int body = 0);
 
 	virtual void ItemPostFrame(void);	// called each frame by the player PostThink
@@ -375,8 +347,6 @@ public:
 
 	virtual CBasePlayerItem* GetWeaponPtr(void) { return (CBasePlayerItem*)this; };
 	float GetNextAttackDelay(float delay);
-
-	float GetSpawnkillingPotential(CBasePlayer* pPlayer, int bpAmmo) { return 0.0f; };
 
 	float m_flPumpTime;
 	int		m_fInSpecialReload;									// Are we in the middle of a reload for the shotguns
@@ -440,8 +410,6 @@ typedef struct
 
 extern MULTIDAMAGE gMultiDamage;
 
-void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, const Vector& mins, const Vector& maxs, edict_t* pEntity);
-
 
 #define LOUD_GUN_VOLUME			1000
 #define NORMAL_GUN_VOLUME		600
@@ -504,7 +472,7 @@ public:
 
 #ifdef CLIENT_DLL
 bool bIsMultiplayer(void);
-void LoadVModel(char* szViewModel, CBasePlayer* m_pPlayer);
+void LoadVModel(const char* szViewModel, CBasePlayer* m_pPlayer);
 #endif
 
 class CGlock : public CBasePlayerWeapon
@@ -583,7 +551,6 @@ public:
 	void Holster(int skiplocal = 0);
 	void Reload(void);
 	void WeaponIdle(void);
-	float m_flSoundDelay;
 
 	BOOL m_fInZoom;// don't save this. 
 
@@ -708,17 +675,16 @@ private:
 
 class CLaserSpot : public CBaseEntity
 {
-public:
 	void Spawn(void);
 	void Precache(void);
 
 	int	ObjectCaps(void) { return FCAP_DONT_SAVE; }
 
+public:
 	void Suspend(float flSuspendTime);
 	void EXPORT Revive(void);
 
 	static CLaserSpot* CreateSpot(void);
-	inline void LiveForTime(float time) { SetThink(&CLaserSpot::SUB_Remove); pev->nextthink = gpGlobals->time + time; }
 };
 
 class CRpg : public CBasePlayerWeapon
@@ -1056,6 +1022,6 @@ public:
 private:
 	unsigned short m_usSnarkFire;
 };
-#endif
+
 
 #endif // WEAPONS_H
