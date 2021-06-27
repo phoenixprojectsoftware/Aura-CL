@@ -382,7 +382,6 @@ void CSatchel::SecondaryAttack( void )
 	}
 }
 
-
 void CSatchel::Throw( void )
 {
 	if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] )
@@ -398,8 +397,6 @@ void CSatchel::Throw( void )
 
 		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_satchel_radio.mdl");
 		m_pPlayer->pev->weaponmodel = MAKE_STRING("models/p_satchel_radio.mdl");
-#else
-		LoadVModel ( "models/v_satchel_radio.mdl", m_pPlayer );
 #endif
 
 		SendWeaponAnim( SATCHEL_RADIO_DRAW );
@@ -445,8 +442,6 @@ void CSatchel::WeaponIdle( void )
 #ifndef CLIENT_DLL
 		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_satchel.mdl");
 		m_pPlayer->pev->weaponmodel = MAKE_STRING("models/p_satchel.mdl");
-#else
-		LoadVModel ( "models/v_satchel.mdl", m_pPlayer );
 #endif
 
 		SendWeaponAnim( SATCHEL_DRAW );
