@@ -18,7 +18,7 @@
 #include "weapons.h"
 #include "player.h"
 
-#include "CPenguin.h"
+#include "op4_weapons/CPenguin.h"
 
 #ifndef CLIENT_DLL
 //TODO: this isn't in vanilla Op4 so it won't save properly there
