@@ -1,6 +1,8 @@
 add_subdirectory(wpn_shared)
 
 add_sources(
+    CEagle.h
+	CEagleLaser.h
 	CM249.h
 	CPipewrench.h
     CPenguin.h
@@ -19,4 +21,5 @@ add_sources(
 	shotgun.cpp
 	skill.h
 	squeakgrenade.cpp
-	tripmine.cpp)
+	tripmine.cpp
+	UserMessages.h)

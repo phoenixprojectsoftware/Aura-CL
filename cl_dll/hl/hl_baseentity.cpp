@@ -262,6 +262,8 @@ void CBasePlayer::SetSuitUpdate(const char *name, int fgroup, int iNoRepeatTime)
 void CBasePlayer :: UpdatePlayerSound ( void ) { }
 void CBasePlayer::PostThink() { }
 void CBasePlayer :: Precache( void ) { }
+void CLaserSpot::Spawn() { }
+void CLaserSpot :: Precache(void) {}
 int CBasePlayer::Save( CSave &save ) { return 0; }
 void CBasePlayer::RenewItems(void) { }
 int CBasePlayer::Restore( CRestore &restore ) { return 0; }

@@ -23,6 +23,12 @@ extern int gmsgWeapPickup;
 
 void DeactivateSatchels(CBasePlayer* pOwner);
 
+int UTIL_DefaultPlaybackFlags();
+
+bool UTIL_DefaultUseDecrement();
+
+bool UTIL_UseOldWeapons();
+
 // Contact Grenade / Timed grenade / Satchel Charge
 #ifndef WEAPONS_NO_CLASSES
 class CGrenade : public CBaseMonster
@@ -712,6 +718,7 @@ class CLaserSpot : public CBaseEntity
 {
 public:
 	void Spawn(void);
+	void PostThink();
 	void Precache(void);
 
 	int	ObjectCaps(void) { return FCAP_DONT_SAVE; }

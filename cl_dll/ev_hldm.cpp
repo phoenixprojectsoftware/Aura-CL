@@ -37,7 +37,9 @@
 #include "r_studioint.h"
 #include "com_model.h"
 
+#define WEAPONS_NO_CLASSES
 // Opposing Force weapons go here.
+#include "op4_weapons/CEagle.h"
 #include "op4_weapons/CSniperRifle.h"
 #include "op4_weapons/CPipewrench.h"
 #include "op4_weapons/CM249.h"
@@ -81,7 +83,7 @@ void EV_EgonStop( struct event_args_s *args  );
 void EV_HornetGunFire( struct event_args_s *args  );
 void EV_TripmineFire( struct event_args_s *args  );
 void EV_SnarkFire( struct event_args_s *args  );
-// TODO: fireeagle
+void EV_FireEagle(struct event_args_s* args);
 void EV_Pipewrench(struct event_args_s* args);
 void EV_FireM249(struct event_args_s* args);
 void EV_SniperRifle(struct event_args_s* args);
@@ -1690,6 +1692,65 @@ void EV_SnarkFire( event_args_t *args )
 //======================
 
 //======================
+//	   EAGLE START
+//======================
+void EV_FireEagle(event_args_t* args)
+{
+	const bool bEmpty = args->bparam1 != 0;
+
+	Vector up, right, forward;
+
+	AngleVectors(args->angles, forward, right, up);
+
+	const int iShell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shell.mdl");
+
+	if (EV_IsLocal(args->entindex))
+	{
+		EV_MuzzleFlash();
+
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(bEmpty ? EAGLE_SHOOT_EMPTY : EAGLE_SHOOT, 0);
+		Punch(4, 0, 0);
+	}
+
+	Vector ShellVelocity;
+	Vector ShellOrigin;
+
+	EV_GetDefaultShellInfo(
+		args,
+		args->origin, args->velocity,
+		ShellVelocity,
+		ShellOrigin,
+		forward, right, up,
+		-9.0, 14.0, 9.0);
+
+	EV_EjectBrass(ShellOrigin, ShellVelocity, args->angles[1], iShell, TE_BOUNCE_SHELL);
+
+	gEngfuncs.pEventAPI->EV_PlaySound(
+		args->entindex,
+		args->origin, CHAN_WEAPON, "weapons/desert_eagle_fire.wav",
+		gEngfuncs.pfnRandomFloat(0.92, 1), ATTN_NORM, 0, 98 + gEngfuncs.pfnRandomLong(0, 3));
+
+	Vector vecSrc;
+
+	EV_GetGunPosition(args, vecSrc, args->origin);
+
+	Vector vecAiming = forward;
+
+	EV_HLDM_FireBullets(
+		args->entindex,
+		forward, right, up,
+		1,
+		vecSrc, vecAiming,
+		8192.0,
+		BULLET_PLAYER_EAGLE,
+		0, nullptr,
+		args->fparam1, args->fparam2);
+}
+//======================
+//	   EAGLE END
+//======================
+
+//======================
 //	   SNIPER START
 //======================
 void EV_SniperRifle(event_args_t* args)
@@ -1766,7 +1827,7 @@ void EV_Pipewrench(event_args_t* args)
 	{
 		if (iBigSwing)
 		{
-			V_PunchAxis(0, -2.0);
+			Punch(2, 0, 0);
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(PIPEWRENCH_BIG_SWING_MISS, 1);
 		}
 		else

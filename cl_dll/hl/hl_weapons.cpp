@@ -32,6 +32,7 @@
 #include "../demo.h"
 
 // Opposing Force weapons go here.
+#include "CEagle.h"
 #include "CSniperRifle.h"
 #include "CPipewrench.h"
 #include "CPenguin.h"
@@ -61,6 +62,8 @@ int   g_irunninggausspred = 0;
 
 vec3_t previousorigin;
 
+int giOldWeapons = 0;
+
 // HLDM Weapon placeholder entities.
 CGlock g_Glock;
 CCrowbar g_Crowbar;
@@ -76,6 +79,7 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
+CEagle g_Eagle;
 CSniperRifle g_SniperRifle;
 CPipewrench g_Pipewrench;
 CM249 g_M249;
@@ -112,6 +116,26 @@ bool bIsMultiplayer ( void )
 void LoadVModel ( const char *szViewModel, CBasePlayer *m_pPlayer )
 {
 	gEngfuncs.CL_LoadModel( szViewModel, &m_pPlayer->pev->viewmodel );
+}
+
+int UTIL_DefaultPlaybackFlags()
+{
+	if (giOldWeapons == 1)
+	{
+		return 0;
+	}
+
+	return FEV_NOTHOST;
+}
+
+bool UTIL_DefaultUseDecrement()
+{
+	return !giOldWeapons;
+}
+
+bool UTIL_UseOldWeapons()
+{
+	return !!giOldWeapons;
 }
 
 /*
@@ -633,6 +657,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
+	HUD_PrepEntity(&g_Eagle, &player);
 	HUD_PrepEntity(&g_SniperRifle, &player);
 	HUD_PrepEntity(&g_Pipewrench, &player);
 	HUD_PrepEntity(&g_M249, &player);
