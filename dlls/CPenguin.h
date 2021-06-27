@@ -24,7 +24,11 @@ enum PenguinAnim
 	PENGUIN_THROW,
 };
 
-#ifndef WEAPONS_NO_CLASSES
+#if !defined(EV_HLDM_WEAPONS) && !defined(WEAPONS_H)
+#include "weapons.h"
+#endif
+
+#ifndef EV_HLDM_WEAPONS
 class CPenguin : public CBasePlayerWeapon
 {
 public:
