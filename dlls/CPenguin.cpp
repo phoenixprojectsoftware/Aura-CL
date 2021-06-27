@@ -166,7 +166,7 @@ void CPenguin::PrimaryAttack()
 		flags = 0;
 #endif
 
-		PLAYBACK_EVENT(flags, edict(), m_usPenguinFire);
+		PLAYBACK_EVENT(flags, m_pPlayer->edict(), m_usPenguinFire);
 
 		if (!tr.fAllSolid && !tr.fStartSolid && tr.flFraction > 0.25)
 		{
