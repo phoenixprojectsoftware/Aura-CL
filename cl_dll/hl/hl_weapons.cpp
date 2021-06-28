@@ -720,6 +720,9 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SNARK: return &g_Snark;
 	case WEAPON_M249: return &g_M249;
 	case WEAPON_PENGUIN: return &g_Penguin;
+	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
+	case WEAPON_EAGLE: return &g_Eagle;
+	case WEAPON_PIPEWRENCH: return &g_Pipewrench;
 
 	default: return nullptr;
 	}
