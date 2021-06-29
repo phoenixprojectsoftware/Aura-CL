@@ -932,7 +932,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	to->client.vuser1[0]				= player.ammo_9mm;
 	to->client.vuser1[1]				= player.ammo_357;
 	to->client.vuser1[2]				= player.ammo_argrens;
-	to->client.vuser2[2]				= player.ammo_762;
+	to->client.vuser2.z					= player.ammo_762;
 
 	to->client.ammo_nails				= player.ammo_bolts;
 	to->client.ammo_shells				= player.ammo_buckshot;
