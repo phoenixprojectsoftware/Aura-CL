@@ -1036,8 +1036,8 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	V_DropPunchAngle(pparams->frametime, (float*)&ev_punchangle);
 
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
-	view->curstate.angles = view->curstate.angles + ev_punchangle + sv_punchangle;
-	view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
+	view->angles = view->angles + ev_punchangle + sv_punchangle;
+	// view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
 
 	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
 
