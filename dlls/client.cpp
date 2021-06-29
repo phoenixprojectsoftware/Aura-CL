@@ -558,6 +558,17 @@ void ClientCommand( edict_t *pEntity )
 	{
 		GetClassPtr((CBasePlayer *)pev)->SelectLastItem();
 	}
+	// BNH : Need this for testing purposes
+#ifdef _DEBUG
+	else if (FStrEq(pcmd, "give"))
+	{
+		if (g_flWeaponCheat != 0.0)
+		{
+			int iszItem = ALLOC_STRING(CMD_ARGV(1));	// Make a copy of the classname
+			GetClassPtr((CBasePlayer*)pev)->GiveNamedItem(STRING(iszItem));
+		}
+	}
+#endif
 	else if ( FStrEq( pcmd, "spectate" ) )	// clients wants to become a spectator
 	{
 			// always allow proxies to become a spectator

@@ -22,6 +22,7 @@ add_sources(
 	discord_integration.cpp
 	discord_integration.h
 	entity.cpp
+	ehandle.cpp
 	ev_common.cpp
 	ev_hldm.cpp
 	ev_hldm.h
