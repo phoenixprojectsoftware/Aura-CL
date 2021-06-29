@@ -21,7 +21,7 @@
 #include "particleman.h"
 #include "tri.h"
 extern IParticleMan *g_pParticleMan;
-
+void UpdateLaserSpot();
 /*
 =================
 HUD_DrawNormalTriangles
@@ -32,6 +32,8 @@ Non-transparent triangles-- add them here
 void CL_DLLEXPORT HUD_DrawNormalTriangles( void )
 {
 //	RecClDrawNormalTriangles();
+
+	UpdateLaserSpot();
 
 	gHUD.m_Spectator.DrawOverview();
 }
@@ -54,6 +56,8 @@ void CL_DLLEXPORT HUD_DrawTransparentTriangles( void )
 #if defined( _TFC )
 	RunEventList();
 #endif
+
+	UpdateLaserSpot();
 
 	if ( g_pParticleMan )
 		 g_pParticleMan->Update();

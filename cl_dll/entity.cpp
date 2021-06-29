@@ -21,6 +21,7 @@
 extern IParticleMan *g_pParticleMan;
 
 void Game_AddObjects( void );
+void UpdateLaserSpot();
 
 extern vec3_t v_origin;
 
@@ -334,12 +335,60 @@ void CL_DLLEXPORT HUD_CreateEntities( void )
 	// Add in any game specific objects
 	Game_AddObjects();
 
+	UpdateLaserSpot();
+
 	GetClientVoiceMgr()->CreateEntities();
 }
 
 #if defined( _TFC )
 extern int g_bACSpinning[33];
 #endif 
+
+// nice muzzleflash effect
+void MuzzleFlash(int index, const cl_entity_s* entity)
+{
+	dlight_s* dl = gEngfuncs.pEfxAPI->CL_AllocDlight(entity->index);
+
+	vec3_t viewheight = vec3_t(0,0,0);
+
+	if (entity->player)
+	{
+		if (entity->curstate.usehull)
+			viewheight[2] = 12;
+		else
+			viewheight[2] = 28;
+	}
+
+	if (dl)
+	{
+		if (entity->player)
+			dl->origin = entity->origin + viewheight;
+		else
+			dl->origin = entity->attachment[index];
+
+		dl->color.r = 231;
+		dl->color.g = 219;
+		dl->color.b = 14;
+		dl->die = gEngfuncs.GetClientTime() + 0.05f;
+		dl->radius = gEngfuncs.pfnRandomFloat(245.0f, 256.0f);
+		dl->decay = 512.0f;
+	}
+	dlight_s* el = gEngfuncs.pEfxAPI->CL_AllocElight(entity->index);
+	if (el)
+	{
+		if (entity->player)
+			el->origin = entity->origin + viewheight;
+		else
+			el->origin = entity->attachment[index];
+		el->color.r = 231;
+		el->color.g = 219;
+		el->color.b = 14;
+		el->die = gEngfuncs.GetClientTime() + 0.075f;
+		el->radius = gEngfuncs.pfnRandomFloat(245.0f, 256.0f);
+		el->decay = 512.0f;
+	}
+
+}
 
 /*
 =========================
@@ -367,18 +416,26 @@ void CL_DLLEXPORT HUD_StudioEvent( const struct mstudioevent_s *event, const str
 	case 5001:
 		if ( iMuzzleFlash )
 			gEngfuncs.pEfxAPI->R_MuzzleFlash( (float *)&entity->attachment[0], atoi( event->options) );
+
+		MuzzleFlash(0, entity);
 		break;
 	case 5011:
 		if ( iMuzzleFlash )
 			gEngfuncs.pEfxAPI->R_MuzzleFlash( (float *)&entity->attachment[1], atoi( event->options) );
+
+		MuzzleFlash(1, entity);
 		break;
 	case 5021:
 		if ( iMuzzleFlash )
 			gEngfuncs.pEfxAPI->R_MuzzleFlash( (float *)&entity->attachment[2], atoi( event->options) );
+
+		MuzzleFlash(2, entity);
 		break;
 	case 5031:
 		if ( iMuzzleFlash )
 			gEngfuncs.pEfxAPI->R_MuzzleFlash( (float *)&entity->attachment[3], atoi( event->options) );
+
+		MuzzleFlash(3, entity);
 		break;
 	case 5002:
 		gEngfuncs.pEfxAPI->R_SparkEffect( (float *)&entity->attachment[0], atoi( event->options), -100, 100 );

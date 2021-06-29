@@ -583,7 +583,10 @@ public:
 	Vector	m_vecAngles;
 	int		m_iKeyBits;
 	int		m_iHideHUDDisplay;
-	int		m_iFOV;
+	// Smooth zooming
+	float	m_iFOV;
+	int		m_iTargetFOV;
+
 	int		m_Teamplay;
 	int		m_iRes;
 	cvar_t  *m_pCvarStealMouse;
@@ -726,6 +729,10 @@ public:
 	void AddHudElem(CHudBase *p);
 
 	float GetSensitivity();
+
+	int m_iLaserState;
+
+	float m_iLaserSuspendTime;
 
 };
 

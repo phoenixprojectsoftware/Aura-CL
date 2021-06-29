@@ -58,12 +58,14 @@ void CHud::Think(void)
 	newfov = HUD_GetFOV();
 	if ( newfov == 0 )
 	{
-		m_iFOV = default_fov->value;
+		m_iTargetFOV = default_fov->value;
 	}
 	else
 	{
-		m_iFOV = newfov;
+		m_iTargetFOV = newfov;
 	}
+
+	m_iFOV = lerp(m_iFOV, m_iTargetFOV, gHUD.m_flTimeDelta * max((m_iTargetFOV * 0.35f), 5.5f));
 
 	// the clients fov is actually set in the client data update section of the hud
 
@@ -93,7 +95,7 @@ void CHud::Think(void)
 
 	Bench_CheckStart();
 }
-
+void CheckSuspend();
 // Redraw
 // step through the local data,  placing the appropriate graphics & text as appropriate
 // returns 1 if they've changed, 0 otherwise
@@ -148,6 +150,10 @@ int CHud :: Redraw( float flTime, int intermission )
 		gEngfuncs.pfnClientCmd("stop");
 		m_flStopTime = 0;
 	}
+
+	m_iLaserSuspendTime -= m_flTimeDelta;
+
+	CheckSuspend();
 
 	m_iIntermission = intermission;
 

@@ -37,6 +37,10 @@
 
 #include "versioninfo.h"
 
+#include "event_api.h"
+
+extern tempent_s* pLaserSpot;
+
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
 extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
 
@@ -197,6 +201,81 @@ int __MsgFunc_PlaySound(const char* name, int size, void* buf)
 
 	const auto sound = READ_STRING();
 	gEngfuncs.pfnPlaySoundByName(sound, 1);
+
+	return 1;
+}
+
+// BlueNightHawk : Predicted Laser Spot
+int __MsgFunc_LaserSpot(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	int state = READ_SHORT();
+
+	if (!cl_lw->value)
+	{
+		gHUD.m_iLaserState = 0;
+		if (pLaserSpot)
+		{
+			pLaserSpot->die = 0;
+			pLaserSpot = nullptr;
+		}
+		return 0;
+	}
+
+	if (state == 1)
+	{
+		if (gHUD.m_iLaserState == 3)
+			return 0;
+
+		if (!pLaserSpot || gHUD.m_iLaserState != state)
+			pLaserSpot = gEngfuncs.pEfxAPI->R_TempSprite(vec3_t(0, 0, 0), vec3_t(0, 0, 0), 1, gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/laserdot.spr"), kRenderGlow, kRenderFxNoDissipation, 1, 99999, 0);
+	}
+	else if (state == 2)
+	{
+		if (gHUD.m_iLaserState == 3 || gHUD.m_iLaserState == 4 || gHUD.m_iLaserState == 5)
+			return 0;
+
+		if (!pLaserSpot || gHUD.m_iLaserState != state)
+			pLaserSpot = gEngfuncs.pEfxAPI->R_TempSprite(vec3_t(0, 0, 0), vec3_t(0, 0, 0), 0.5, gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/laserdot.spr"), kRenderGlow, kRenderFxNoDissipation, 1, 99999, 0);
+	}
+	else if (state == 3)
+	{
+		if (pLaserSpot)
+		{
+			pLaserSpot->die = 0.0;
+			pLaserSpot = NULL;
+		}
+		gHUD.m_iLaserSuspendTime = gEngfuncs.GetClientTime() + 2.1;
+	}
+	else if (state == 4)
+	{
+		if (pLaserSpot)
+		{
+			pLaserSpot->die = 0.0;
+			pLaserSpot = NULL;
+		}
+		gHUD.m_iLaserSuspendTime = gEngfuncs.GetClientTime() + 2.6;
+	}
+	else if (state == 5)
+	{
+		if (pLaserSpot)
+		{
+			pLaserSpot->die = 0.0;
+			pLaserSpot = NULL;
+		}
+		gHUD.m_iLaserSuspendTime = gEngfuncs.GetClientTime() + 0.6;
+	}
+	else
+	{
+		if (pLaserSpot)
+		{
+			pLaserSpot->die = 0.0;
+			pLaserSpot = NULL;
+		}
+	}
+
+	gHUD.m_iLaserState = state;
 
 	return 1;
 }
@@ -513,6 +592,10 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( CRC32 );
 	HOOK_MESSAGE( PlaySound );
 
+	HOOK_MESSAGE( LaserSpot );
+
+	gHUD.m_iLaserState = 0;
+
 	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO );		// controls whether or not to suicide immediately on TF class switch
 	CVAR_CREATE( "hud_takesshots", "0", FCVAR_ARCHIVE );		// controls whether or not to automatically take screenshots at the end of a round
 
@@ -525,6 +608,7 @@ void CHud :: Init( void )
 
 	m_iLogo = 0;
 	m_iFOV = 0;
+	m_iTargetFOV = 0;
 
 	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
 	default_fov = CVAR_CREATE( "default_fov", "110", FCVAR_ARCHIVE ); // I have set the hard-coded default to 110. Why would you want to use 90 on a widescreen display?
@@ -878,11 +962,11 @@ int CHud::MsgFunc_SetFOV(const char *pszName,  int iSize, void *pbuf)
 
 	if ( newfov == 0 )
 	{
-		m_iFOV = def_fov;
+		m_iTargetFOV = def_fov;
 	}
 	else
 	{
-		m_iFOV = newfov;
+		m_iTargetFOV = newfov;
 	}
 
 	// the clients fov is actually set in the client data update section of the hud
