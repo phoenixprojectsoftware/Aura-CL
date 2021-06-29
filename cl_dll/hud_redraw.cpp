@@ -95,7 +95,7 @@ void CHud::Think(void)
 
 	Bench_CheckStart();
 }
-
+void CheckSuspend();
 // Redraw
 // step through the local data,  placing the appropriate graphics & text as appropriate
 // returns 1 if they've changed, 0 otherwise
@@ -150,6 +150,10 @@ int CHud :: Redraw( float flTime, int intermission )
 		gEngfuncs.pfnClientCmd("stop");
 		m_flStopTime = 0;
 	}
+
+	m_iLaserSuspendTime -= m_flTimeDelta;
+
+	CheckSuspend();
 
 	m_iIntermission = intermission;
 

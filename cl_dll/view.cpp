@@ -57,6 +57,8 @@ extern engine_studio_api_t IEngineStudio;
 
 extern kbutton_t	in_mlook;
 
+ref_params_s g_pparams;
+
 /*
 The view is allowed to move slightly from it's true position for bobbing,
 but if it exceeds 8 pixels linear distance (spherical, not box), the list of
@@ -1901,6 +1903,8 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	{
 		V_CalcNormalRefdef(pparams);
 	}
+
+	memcpy(&g_pparams, pparams, sizeof(ref_params_s));
 
 	/*
 	// Example of how to overlay the whole screen with red at 50 % alpha

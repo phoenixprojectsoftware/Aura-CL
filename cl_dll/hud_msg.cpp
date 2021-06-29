@@ -68,6 +68,8 @@ void CHud :: MsgFunc_ViewMode( const char *pszName, int iSize, void *pbuf )
 	CAM_ToFirstPerson();
 }
 
+extern tempent_s* pLaserSpot;
+
 void CHud :: MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ(pbuf, iSize);
@@ -104,6 +106,8 @@ void CHud :: MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 #if !defined( _TFC )
 	//Probably not a good place to put this.
 	pBeam = pBeam2 = NULL;
+
+	pLaserSpot = NULL;
 #endif
 }
 

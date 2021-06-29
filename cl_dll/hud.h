@@ -730,6 +730,10 @@ public:
 
 	float GetSensitivity();
 
+	int m_iLaserState;
+
+	float m_iLaserSuspendTime;
+
 };
 
 extern CHud gHUD;

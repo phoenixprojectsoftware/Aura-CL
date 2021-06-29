@@ -21,6 +21,7 @@
 extern IParticleMan *g_pParticleMan;
 
 void Game_AddObjects( void );
+void UpdateLaserSpot();
 
 extern vec3_t v_origin;
 
@@ -333,6 +334,8 @@ void CL_DLLEXPORT HUD_CreateEntities( void )
 
 	// Add in any game specific objects
 	Game_AddObjects();
+
+	UpdateLaserSpot();
 
 	GetClientVoiceMgr()->CreateEntities();
 }
