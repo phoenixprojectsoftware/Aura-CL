@@ -856,6 +856,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	player.ammo_9mm			= (int)from->client.vuser1[0];
 	player.ammo_357			= (int)from->client.vuser1[1];
 	player.ammo_argrens		= (int)from->client.vuser1[2];
+	player.ammo_762			= (int)from->client.vuser2[2];
 	player.ammo_bolts		= (int)from->client.ammo_nails; //is an int anyways...
 	player.ammo_buckshot	= (int)from->client.ammo_shells; 
 	player.ammo_uranium		= (int)from->client.ammo_cells;
@@ -931,6 +932,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	to->client.vuser1[0]				= player.ammo_9mm;
 	to->client.vuser1[1]				= player.ammo_357;
 	to->client.vuser1[2]				= player.ammo_argrens;
+	to->client.vuser2[2]				= player.ammo_762;
 
 	to->client.ammo_nails				= player.ammo_bolts;
 	to->client.ammo_shells				= player.ammo_buckshot;
