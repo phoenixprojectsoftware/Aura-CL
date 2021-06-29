@@ -97,9 +97,12 @@ void UpdateBeams ( void )
 	}
 }
 
+#define MAX_LIGHTS 7
+
 tempent_s* pLaserSpot = NULL;
 extern cvar_s* cl_lw;
-
+dlight_s* pSpotDl[MAX_LIGHTS] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+dlight_s* pSpotEl = { NULL };
 void CheckSuspend()
 {
 	if (gHUD.m_iLaserState > 2 && gHUD.m_iLaserSuspendTime < gEngfuncs.GetClientTime())
@@ -166,6 +169,34 @@ void UpdateLaserSpot()
 	{
 		pLaserSpot->entity.origin = pLaserSpot->entity.curstate.origin = tr.endpos;
 		pLaserSpot->die = gEngfuncs.GetClientTime() + 0.1;
+
+		if (!pSpotEl)
+			pSpotEl = gEngfuncs.pEfxAPI->CL_AllocElight(idx+1);
+
+		for (int i = 0; i < MAX_LIGHTS; i++)
+		{
+			if (!pSpotDl[i])
+				pSpotDl[i] = gEngfuncs.pEfxAPI->CL_AllocDlight((idx)+i);
+
+			if (pSpotDl[i])
+			{
+				pSpotDl[i]->color.r = 255;
+				pSpotDl[i]->color.g = 0;
+				pSpotDl[i]->color.b = 0;
+				pSpotDl[i]->radius = 23;
+				pSpotDl[i]->origin = pLaserSpot->entity.origin;
+				pSpotDl[i]->die = gEngfuncs.GetClientTime() + 0.035f;
+			}
+		}
+		if (pSpotDl)
+		{
+			pSpotEl->color.r = 255;
+			pSpotEl->color.g = 0;
+			pSpotEl->color.b = 0;
+			pSpotEl->radius = 35;
+			pSpotEl->origin = pLaserSpot->entity.origin;
+			pSpotEl->die = gEngfuncs.GetClientTime() + 0.035f;
+		}
 	}
 }
 
