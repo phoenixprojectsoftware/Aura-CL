@@ -131,3 +131,27 @@ HSPRITE LoadSprite(const char *pszName)
 	return SPR_Load(sz);
 }
 
+// frac should always be multiplied by frametime
+float lerp(float start, float end, float frac)
+{
+	// Exact, monotonic, bounded, determinate, and (for start=b=0) consistent:
+	if (start <= 0 && end >= 0 || start >= 0 && end <= 0) return frac * end + (1.0f - frac) * start;
+
+	if (frac == 1) return end;                        // exact
+	// Exact at t=0, monotonic except near t=1,
+	// bounded, determinate, and consistent:
+	const float x = start + frac * (end - start);
+	return frac > 1 == end > start ? max(end, x) : min(end, x);  // monotonic near t=1
+}
+
+double dlerp(double start, double end, double frac)
+{
+	// Exact, monotonic, bounded, determinate, and (for start=b=0) consistent:
+	if (start <= 0 && end >= 0 || start >= 0 && end <= 0) return frac * end + (1.0 - frac) * start;
+
+	if (frac == 1) return end;                        // exact
+	// Exact at t=0, monotonic except near t=1,
+	// bounded, determinate, and consistent:
+	const float x = start + frac * (end - start);
+	return frac > 1 == end > start ? max(end, x) : min(end, x);  // monotonic near t=1
+}

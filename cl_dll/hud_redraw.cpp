@@ -58,12 +58,14 @@ void CHud::Think(void)
 	newfov = HUD_GetFOV();
 	if ( newfov == 0 )
 	{
-		m_iFOV = default_fov->value;
+		m_iTargetFOV = default_fov->value;
 	}
 	else
 	{
-		m_iFOV = newfov;
+		m_iTargetFOV = newfov;
 	}
+
+	m_iFOV = lerp(m_iFOV, m_iTargetFOV, gHUD.m_flTimeDelta * max((m_iTargetFOV * 0.35f), 5.5f));
 
 	// the clients fov is actually set in the client data update section of the hud
 

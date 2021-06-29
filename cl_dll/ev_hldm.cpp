@@ -58,6 +58,9 @@ void Punch(float p, float y, float r);
 void V_PunchAxis( int axis, float punch );
 void VectorAngles( const float *forward, float *angles );
 
+void MuzzleFlash(int index, const cl_entity_s* entity);
+void MuzzleFlash(int index, float r, float g, float b, float a, float radius, float life, float decay, vec3_t vecOrigin = vec3_t(0, 0, 0));
+
 extern cvar_t *cl_lw;
 extern cvar_t *cl_righthand;
 
@@ -106,6 +109,41 @@ void EV_TrainPitchAdjust( struct event_args_s *args );
 #define VECTOR_CONE_15DEGREES Vector( 0.13053, 0.13053, 0.13053 )
 #define VECTOR_CONE_20DEGREES Vector( 0.17365, 0.17365, 0.17365 )
 
+void MuzzleFlash(int index, float r, float g, float b, float a, float radius, float life, float decay, vec3_t vecOrigin)
+{
+	cl_entity_s* entity = gEngfuncs.GetViewModel();
+
+	dlight_s* dl = gEngfuncs.pEfxAPI->CL_AllocDlight(entity->index);
+	dlight_s* el = gEngfuncs.pEfxAPI->CL_AllocElight(entity->index);
+	if (dl)
+	{
+		if (vecOrigin != vec3_t (0,0,0))
+			dl->origin = vecOrigin;
+		else
+			dl->origin = entity->attachment[index];
+
+		dl->color.r = r * a;
+		dl->color.g = g * a;
+		dl->color.b = b * a;
+		dl->die = gEngfuncs.GetClientTime() + life;
+		dl->radius = radius;
+		dl->decay = decay;
+	}
+	if (el)
+	{
+		if (vecOrigin != vec3_t(0, 0, 0))
+			el->origin = vecOrigin;
+		else
+			el->origin = entity->attachment[index];
+
+		el->color.r = r * a;
+		el->color.g = g * a;
+		el->color.b = b * a;
+		el->die = gEngfuncs.GetClientTime() + life;
+		el->radius = radius;
+		el->decay = decay;
+	}
+}
 
 // play a strike sound based on the texture that was hit by the attack traceline.  VecSrc/VecEnd are the
 // original traceline endpoints used by the attacker, iBulletType is the type of bullet that hit the texture.
@@ -962,44 +1000,51 @@ void EV_FireGauss( event_args_t *args )
 
 		if (fFirstBeam)
 		{
-			if ( EV_IsLocal( idx ) )
+			if (EV_IsLocal(idx))
 			{
 				// Add muzzle flash to current weapon model
 				EV_MuzzleFlash();
 			}
 			fFirstBeam = 0;
 
-			gEngfuncs.pEfxAPI->R_BeamEntPoint( 
+			gEngfuncs.pEfxAPI->R_BeamEntPoint(
 				idx | 0x1000,
 				tr.endpos,
 				m_iBeam,
 				0.1,
 				m_fPrimaryFire ? 1.0 : 2.5,
 				0.0,
-				m_fPrimaryFire ? 128.0 : flDamage,
+				(m_fPrimaryFire ? 128.0 : flDamage) / 255.0,
 				0,
 				0,
 				0,
-				m_fPrimaryFire ? 255 : 255,
-				m_fPrimaryFire ? 128 : 255,
-				m_fPrimaryFire ? 0 : 255
+				(m_fPrimaryFire ? 255 : 255) / 255.0,
+				(m_fPrimaryFire ? 128 : 255) / 255.0,
+				(m_fPrimaryFire ? 0 : 255) / 255.0
 			);
+			float alpha = (m_fPrimaryFire ? 125.0f : flDamage);
+			if (EV_IsLocal(idx))
+				MuzzleFlash(0, (m_fPrimaryFire ? 255 : 255), (m_fPrimaryFire ? 128 : 255), (m_fPrimaryFire ? 0 : 255), alpha / 255.0, alpha * 2.4, alpha / 150.0, alpha * 5.5);
+			else
+			{
+				MuzzleFlash(0, (m_fPrimaryFire ? 255 : 255), (m_fPrimaryFire ? 128 : 255), (m_fPrimaryFire ? 0 : 255), alpha / 255.0, alpha * 2.4, alpha / 150.0, alpha * 5.5, origin);
+			}
 		}
 		else
 		{
-			gEngfuncs.pEfxAPI->R_BeamPoints( vecSrc,
+			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc,
 				tr.endpos,
 				m_iBeam,
 				0.1,
 				m_fPrimaryFire ? 1.0 : 2.5,
 				0.0,
-				m_fPrimaryFire ? 128.0 : flDamage,
+				(m_fPrimaryFire ? 128.0 : flDamage) / 255.0,
 				0,
 				0,
 				0,
-				m_fPrimaryFire ? 255 : 255,
-				m_fPrimaryFire ? 128 : 255,
-				m_fPrimaryFire ? 0 : 255
+				(m_fPrimaryFire ? 255 : 255) / 255.0,
+				(m_fPrimaryFire ? 128 : 255) / 255.0,
+				(m_fPrimaryFire ? 0 : 255) / 255.0
 			);
 		}
 
@@ -1427,6 +1472,8 @@ enum EGON_FIREMODE { FIRE_NARROW, FIRE_WIDE};
 
 BEAM *pBeam;
 BEAM *pBeam2;
+dlight_s* pLight;
+
 
 void EV_EgonFire( event_args_t *args )
 {
@@ -1508,6 +1555,17 @@ void EV_EgonFire( event_args_t *args )
 				 pBeam->flags |= ( FBEAM_SINENOISE );
  
 			pBeam2 = gEngfuncs.pEfxAPI->R_BeamEntPoint ( idx | 0x1000, tr.endpos, iBeamModelIndex, 99999, 5.0, 0.08, 0.7, 25, 0, 0, r, g, b );
+
+			pLight = gEngfuncs.pEfxAPI->CL_AllocDlight (idx);
+
+			if (pLight)
+			{
+				pLight->color = {(byte)r, (byte)g, (byte)b};
+				pLight->origin = vecSrc;
+				pLight->radius = 0;
+				pLight->decay = 512.0f * 1.5f;
+				pLight->die = gEngfuncs.GetClientTime() + 999999.0f;
+			}
 		}
 	}
 }
@@ -1538,6 +1596,12 @@ void EV_EgonStop( event_args_t *args )
 		{
 			pBeam2->die = 0.0;
 			pBeam2 = NULL;
+		}
+
+		if (pLight)
+		{
+			pLight->die = gEngfuncs.GetClientTime() + 0.75f;
+			pLight = NULL;
 		}
 	}
 }

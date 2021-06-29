@@ -28,10 +28,18 @@
 
 extern BEAM *pBeam;
 extern BEAM *pBeam2;
+extern dlight_t* pLight;
+
 void HUD_GetLastOrg( float *org );
 
 void UpdateBeams ( void )
 {
+	float r = 50.0f;
+	float g = 50.0f;
+	float b = 125.0f;
+
+	static float randmultiplier = 0;
+
 	vec3_t forward, vecSrc, vecEnd, origin, angles, right, up;
 	vec3_t view_ofs;
 	pmtrace_t tr;
@@ -73,6 +81,19 @@ void UpdateBeams ( void )
 	{
 		pBeam2->target = tr.endpos;
 		pBeam2->die	   = gEngfuncs.GetClientTime() + 0.1; // We keep it alive just a little bit forward in the future, just in case.
+	}
+
+	if ( pLight )
+	{
+		pLight->origin = vecSrc;
+		pLight->radius = lerp(pLight->radius, gEngfuncs.pfnRandomFloat(128, 256), gHUD.m_flTimeDelta * 17.0f);
+		randmultiplier = lerp(randmultiplier, gEngfuncs.pfnRandomFloat(0.1f, 8.0f), gHUD.m_flTimeDelta * 15.0f);
+
+		pLight->color.r = min(max(r * randmultiplier, 0), 255);
+		pLight->color.g = min(max(g * randmultiplier, 0), 255);
+		pLight->color.b = min(max(b * randmultiplier, 0), 255);
+
+		pLight->die = gEngfuncs.GetClientTime() + 0.75f;
 	}
 }
 

@@ -525,6 +525,7 @@ void CHud :: Init( void )
 
 	m_iLogo = 0;
 	m_iFOV = 0;
+	m_iTargetFOV = 0;
 
 	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
 	default_fov = CVAR_CREATE( "default_fov", "110", FCVAR_ARCHIVE ); // I have set the hard-coded default to 110. Why would you want to use 90 on a widescreen display?
@@ -878,11 +879,11 @@ int CHud::MsgFunc_SetFOV(const char *pszName,  int iSize, void *pbuf)
 
 	if ( newfov == 0 )
 	{
-		m_iFOV = def_fov;
+		m_iTargetFOV = def_fov;
 	}
 	else
 	{
-		m_iFOV = newfov;
+		m_iTargetFOV = newfov;
 	}
 
 	// the clients fov is actually set in the client data update section of the hud

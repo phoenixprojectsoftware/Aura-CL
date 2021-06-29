@@ -886,6 +886,9 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 	vec3_t camAngles, camForward, camRight, camUp;
 
+	static vec3_t sv_punchangle;
+	static float forward_add, right_add, up_add;
+
 	float forward_offset = cl_viewmodel_ofs_forward->value;
 	float right_offset = cl_viewmodel_ofs_right->value;
 	float up_offset = cl_viewmodel_ofs_up->value;
@@ -976,11 +979,17 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	{
 		right_offset *= -1;
 	}
+
+	// nice interpolation effect
+	forward_add = lerp(forward_add, forward_offset, pparams->frametime * 15.0f);
+	right_add	= lerp(right_add, right_offset, pparams->frametime * 15.0f);
+	up_add		= lerp(up_add, up_offset, pparams->frametime * 15.0f);
+
 	for (i = 0; i < 3; i++)
 	{
-		view->origin[i] += forward_offset * pparams->forward[i] +
-			right_offset * pparams->right[i] +
-			up_offset * pparams->up[i];
+		view->origin[i] += forward_add * pparams->forward[i] +
+			right_add * pparams->right[i] +
+			up_add * pparams->up[i];
 	}
 
 	// Let the viewmodel shake at about 10% of the amplitude
@@ -1012,8 +1021,12 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 		view->origin[2] += 0.5;
 	}
 
+	// Interpolate server punchangle since it looks shitty without interpolation
+	for (int i = 0; i < 3; i++)
+		sv_punchangle[i] = lerp(sv_punchangle[i], pparams->punchangle[i], pparams->frametime * 15.0f);
+
 	// Add in the punchangle, if any
-	VectorAdd(pparams->viewangles, pparams->punchangle, pparams->viewangles);
+	VectorAdd(pparams->viewangles, sv_punchangle, pparams->viewangles);
 
 	// Include client side punch, too
 	VectorAdd(pparams->viewangles, (float*)&ev_punchangle, pparams->viewangles);
@@ -1021,11 +1034,14 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	V_DropPunchAngle(pparams->frametime, (float*)&ev_punchangle);
 
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
-	view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
+	view->curstate.angles = view->curstate.angles + ev_punchangle + sv_punchangle;
 
 	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
 
 	V_ApplySmoothing(pparams, view);
+
+	// Copy angles
+	VectorCopy(view->angles, view->curstate.angles);
 
 	// Store off v_angles before munging for third person
 	v_angles = pparams->viewangles;

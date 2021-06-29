@@ -278,3 +278,7 @@ inline void UnpackRGB(int &r, int &g, int &b, unsigned long ulRGB)\
 }
 
 HSPRITE LoadSprite(const char *pszName);
+
+// frac should always be multiplied by frametime
+float lerp(float start, float end, float frac);
+double dlerp(double start, double end, double frac);
