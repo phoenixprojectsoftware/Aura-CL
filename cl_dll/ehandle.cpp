@@ -15,7 +15,7 @@
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
-
+#if 0
 edict_t* EHANDLE::Get()
 {
 	if (m_pent)
@@ -63,3 +63,4 @@ CBaseEntity* EHANDLE :: operator -> ()
 {
 	return (CBaseEntity*)GET_PRIVATE(Get());
 }
+#endif
