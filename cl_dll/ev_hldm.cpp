@@ -970,7 +970,7 @@ void EV_FireGauss( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
-		Punch( 2, 0, 0 );
+		Punch( 1, 0, 0 );
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( GAUSS_FIRE2, 2 );
 
 		if ( m_fPrimaryFire == false )
