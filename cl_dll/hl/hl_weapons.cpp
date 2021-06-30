@@ -37,6 +37,7 @@
 #include "CSniperRifle.h"
 #include "CKnife.h"
 #include "CPipewrench.h"
+#include "CDisplacer.h"
 #include "CPenguin.h"
 #include "CM249.h"
 
@@ -86,6 +87,8 @@ CEagle g_Eagle;
 CSniperRifle g_SniperRifle;
 CKnife g_Knife;
 CPipewrench g_Pipewrench;
+CDisplacer g_Displacer;
+// CShockRifle g_ShockRifle;
 CM249 g_M249;
 CPenguin g_Penguin;
 
@@ -666,6 +669,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity(&g_SniperRifle, &player);
 	HUD_PrepEntity(&g_Knife, &player);
 	HUD_PrepEntity(&g_Pipewrench, &player);
+	HUD_PrepEntity(&g_Displacer, &player);
 	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
 }
@@ -731,6 +735,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_KNIFE: return &g_Knife;
 	case WEAPON_EAGLE: return &g_Eagle;
 	case WEAPON_PIPEWRENCH: return &g_Pipewrench;
+	case WEAPON_DISPLACER: return &g_Displacer;
 
 	default: return nullptr;
 	}
