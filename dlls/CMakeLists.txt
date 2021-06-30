@@ -7,6 +7,8 @@ add_sources(
 	CGrapple.h
 	CGrappleTip.cpp
 	CGrappleTip.h
+	CKnife.cpp
+	CKnife.h
 	CM249.h
 	CPipewrench.h
     CPenguin.h
