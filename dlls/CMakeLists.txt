@@ -3,6 +3,10 @@ add_subdirectory(wpn_shared)
 add_sources(
     CEagle.h
 	CEagleLaser.h
+	CGrapple.cpp
+	CGrapple.h
+	CGrappleTip.cpp
+	CGrappleTip.h
 	CM249.h
 	CPipewrench.h
     CPenguin.h

@@ -1009,6 +1009,33 @@ void CBasePlayer::SetAnimation( PLAYER_ANIM playerAnim )
 			m_IdealActivity = ACT_WALK;
 		}
 		break;
+
+	case PLAYER_GRAPPLE:
+	{
+		if (FBitSet(pev->flags, FL_ONGROUND))
+		{
+			if (pev->waterlevel > 1)
+			{
+				if (speed == 0)
+					m_IdealActivity = ACT_HOVER;
+				else
+					m_IdealActivity = ACT_SWIM;
+			}
+			else
+			{
+				m_IdealActivity = ACT_WALK;
+			}
+		}
+		else if (speed == 0)
+		{
+			m_IdealActivity = ACT_HOVER;
+		}
+		else
+		{
+			m_IdealActivity = ACT_SWIM;
+		}
+	}
+	break;
 	}
 
 	switch (m_IdealActivity)

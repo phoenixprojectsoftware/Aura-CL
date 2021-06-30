@@ -272,10 +272,10 @@ void V_ApplyBob(struct ref_params_s* pparams, cl_entity_t* view)
 	view->origin[2] += bob.verticalBob * 0.1f;
 
 	// bob the angles
-	view->angles[ROLL] += bob.verticalBob * 0.5f;
-	view->angles[PITCH] -= bob.verticalBob * 0.4f;
+	// view->angles[ROLL] += bob.verticalBob * 0.5f;
+	// view->angles[PITCH] -= bob.verticalBob * 0.4f;
 
-	view->angles[YAW] -= bob.laterialBob * 0.3f;
+	// view->angles[YAW] -= bob.laterialBob * 0.3f;
 
 	VectorMA(view->origin, bob.laterialBob * 0.8f, pparams->right, view->origin);
 }
@@ -442,8 +442,8 @@ void V_CalcGunAngle(struct ref_params_s* pparams)
 	if (!viewent)
 		return;
 
-	viewent->angles[YAW] = pparams->cl_viewangles[YAW] + pparams->crosshairangle[YAW];
-	viewent->angles[PITCH] = -pparams->cl_viewangles[PITCH] + pparams->crosshairangle[PITCH] * 0.25;
+	viewent->angles[YAW] = pparams->viewangles[YAW] + pparams->crosshairangle[YAW];
+	viewent->angles[PITCH] = -pparams->viewangles[PITCH] + pparams->crosshairangle[PITCH] * 0.25;
 	viewent->angles[ROLL] -= v_idlescale * sin(pparams->time * v_iroll_cycle.value) * v_iroll_level.value;
 
 	// don't apply all of the v_ipitch to prevent normally unseen parts of viewmodel from coming into view.
@@ -1036,7 +1036,8 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	V_DropPunchAngle(pparams->frametime, (float*)&ev_punchangle);
 
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
-	view->curstate.angles = view->curstate.angles + ev_punchangle + sv_punchangle;
+	view->angles = view->angles + ev_punchangle + sv_punchangle;
+	// view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
 
 	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
 
@@ -1889,6 +1890,7 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	//	RecClCalcRefdef(pparams);
 
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
+	gHUD.m_Jumpspeed.UpdateSpeed(pparams->simvel);
 
 		// intermission / finale rendering
 	if (pparams->intermission)

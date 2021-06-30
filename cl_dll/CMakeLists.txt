@@ -22,6 +22,7 @@ add_sources(
 	discord_integration.cpp
 	discord_integration.h
 	entity.cpp
+	ehandle.cpp
 	ev_common.cpp
 	ev_hldm.cpp
 	ev_hldm.h
@@ -49,6 +50,8 @@ add_sources(
 	hud_customtimer.h
 	hud_debug.cpp
 	hud_debug.h
+	hud_jumpspeed.cpp
+	hud_jumpspeed.h
 	hud_location.cpp
 	hud_location.h
 	hud_msg.cpp
