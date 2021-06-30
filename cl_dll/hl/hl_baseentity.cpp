@@ -304,6 +304,31 @@ int CBasePlayer :: GiveAmmo( int iCount, const char *szName, int iMax ) { return
 void CBasePlayer::AddPoints( int score, BOOL bAllowNegativeScore ) { } 
 void CBasePlayer::AddPointsToTeam( int score, BOOL bAllowNegativeScore ) { } 
 
+void UTIL_MakeAimVectors(const Vector& vecAngles)
+{
+	float rgflVec[3];
+	vecAngles.CopyToArray(rgflVec);
+	rgflVec[0] = -rgflVec[0];
+	MAKE_VECTORS(rgflVec);
+}
+
+TraceResult UTIL_GetGlobalTrace()
+{
+	TraceResult tr;
+
+	tr.fAllSolid = gpGlobals->trace_allsolid;
+	tr.fStartSolid = gpGlobals->trace_startsolid;
+	tr.fInOpen = gpGlobals->trace_inopen;
+	tr.fInWater = gpGlobals->trace_inwater;
+	tr.flFraction = gpGlobals->trace_fraction;
+	tr.flPlaneDist = gpGlobals->trace_plane_dist;
+	tr.pHit = gpGlobals->trace_ent;
+	tr.vecEndPos = gpGlobals->trace_endpos;
+	tr.vecPlaneNormal = gpGlobals->trace_plane_normal;
+	tr.iHitgroup = gpGlobals->trace_hitgroup;
+	return tr;
+}
+
 void ClearMultiDamage(void) { }
 void ApplyMultiDamage(entvars_t *pevInflictor, entvars_t *pevAttacker ) { }
 void AddMultiDamage( entvars_t *pevInflictor, CBaseEntity *pEntity, float flDamage, int bitsDamageType) { }

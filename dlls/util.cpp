@@ -856,7 +856,7 @@ void UTIL_ClientPrintAll( int msg_dest, const char *msg_name, const char *param1
 	MESSAGE_END();
 }
 
-void ClientPrint( entvars_t *client, int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4 )
+/*void ClientPrint(entvars_t* client, int msg_dest, const char* msg_name, const char* param1, const char* param2, const char* param3, const char* param4)
 {
 	MESSAGE_BEGIN( MSG_ONE, gmsgTextMsg, NULL, client );
 		WRITE_BYTE( msg_dest );
@@ -872,7 +872,7 @@ void ClientPrint( entvars_t *client, int msg_dest, const char *msg_name, const c
 			WRITE_STRING( param4 );
 
 	MESSAGE_END();
-}
+}*/
 
 void UTIL_SayText( const char *pText, CBaseEntity *pEntity )
 {
