@@ -332,6 +332,12 @@ public:
 		m_bIsClimbing = bIsClimbing;
 	}
 
+	private:
+		float m_flLastClimbTime = 0;
+		bool m_bIsClimbing = false;
+
+		bool m_bRestored;
+
 public:
 	// BlueNightHawk : Server Side HL2 Punch
 	void NewPunch();

@@ -114,7 +114,6 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_FIELD( CBasePlayer, m_fInitHUD, FIELD_BOOLEAN ),
 	DEFINE_FIELD( CBasePlayer, m_tbdPrev, FIELD_TIME ),
 
-	DEFINE_FIELD(CBasePlayer, m_pRope, FIELD_CLASSPTR),
 	DEFINE_FIELD(CBasePlayer, m_flLastClimbTime, FIELD_TIME),
 	DEFINE_FIELD(CBasePlayer, m_bIsClimbing, FIELD_BOOLEAN),
 
@@ -1935,6 +1934,8 @@ void CBasePlayer::PreThink(void)
 		pev->flags |= FL_ONTRAIN;
 	else 
 		pev->flags &= ~FL_ONTRAIN;
+
+
 
 	// Train speed control
 	if ( m_afPhysicsFlags & PFLAG_ONTRAIN )
