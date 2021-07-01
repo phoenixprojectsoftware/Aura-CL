@@ -307,13 +307,6 @@ extern BOOL UTIL_GetNextBestWeapon( CBasePlayer *pPlayer, CBasePlayerItem *pCurr
 
 bool UTIL_IsMultiplayer();
 
-inline void WRITE_COORD_VECTOR(const Vector& vec)
-{
-	WRITE_COORD(vec.x);
-	WRITE_COORD(vec.y);
-	WRITE_COORD(vec.z);
-}
-
 // prints messages through the HUD
 extern void ClientPrint( entvars_t *client, int msg_dest, const char *msg_name, const char *param1 = NULL, const char *param2 = NULL, const char *param3 = NULL, const char *param4 = NULL );
 

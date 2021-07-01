@@ -91,7 +91,6 @@ public:
 #define WEAPON_EAGLE			17
 #define WEAPON_PIPEWRENCH 18
 #define WEAPON_M249				19
-#define WEAPON_DISPLACER 20
 #define WEAPON_SNIPERRIFLE 24
 #define WEAPON_KNIFE 25
 #define WEAPON_PENGUIN   26
@@ -123,7 +122,6 @@ public:
 #define TRIPMINE_WEIGHT		-10
 #define EAGLE_WEIGHT				15
 #define PIPEWRENCH_WEIGHT 2
-#define DISPLACER_WEIGHT 10
 #define SNIPERRIFLE_WEIGHT 10
 #define M249_WEIGHT					20
 #define PENGUIN_WEIGHT		5
@@ -188,7 +186,6 @@ public:
 #define HIVEHAND_DEFAULT_GIVE		8
 #define EAGLE_DEFAULT_GIVE				7
 #define SNIPERRIFLE_DEFAULT_GIVE 5
-#define DISPLACER_DEFAULT_GIVE 40
 #define M249_DEFAULT_GIVE					60
 
 // The amount of ammo given to a player by an ammo item.
@@ -722,6 +719,7 @@ class CLaserSpot : public CBaseEntity
 {
 public:
 	void Spawn(void);
+	void PostThink();
 	void Precache(void);
 
 	int	ObjectCaps(void) { return FCAP_DONT_SAVE; }
