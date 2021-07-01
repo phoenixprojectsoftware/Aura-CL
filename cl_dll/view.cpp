@@ -878,7 +878,7 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 
 void V_CalcViewModelLagSensitive(ref_params_t* pparams, Vector& origin, Vector& angles, Vector original_angles)
 {
-	const float m_flWeaponLag = 2.0f;
+	const float m_flWeaponLag = 1.5f;
 	const float m_flScale = 2.0f;
 
 	static Vector m_vecLastFacing;
@@ -895,7 +895,7 @@ void V_CalcViewModelLagSensitive(ref_params_t* pparams, Vector& origin, Vector& 
 
 		vDifference = forward - m_vecLastFacing;
 
-		float flSpeed = 10.0f;
+		float flSpeed = 5.0f;
 
 		// If we start to lag too far behind, we'll increase the "catch up" speed.
 		// Solves the problem with fast cl_yawspeed, m_yaw or joysticks rotating quickly.
