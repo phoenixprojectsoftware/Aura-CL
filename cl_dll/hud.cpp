@@ -95,7 +95,6 @@ extern cvar_t *sensitivity;
 cvar_t *cl_lw = NULL;
 cvar_t *cl_righthand = nullptr;
 cvar_t* cl_viewmodel_lag_enabled;
-cvar_t* cl_viewmodel_lag_sensitive;
 
 void ShutdownInput (void);
 
