@@ -16,12 +16,6 @@ add_sources(
 	CM249.h
 	CPipewrench.h
     CPenguin.h
-	CRope.cpp
-	CRope.h
-	CRopeSample.cpp
-	CRopeSample.h
-	CRopeSegment.cpp
-	CRopeSegment.h
 	CSniperRifle.h
 	cdll_dll.h
 	crossbow.cpp

@@ -18,8 +18,6 @@
 
 #include "pm_materials.h"
 
-class CRope;
-
 
 #define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
 #define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
@@ -37,7 +35,6 @@ class CRope;
 #define		PFLAG_DUCKING		( 1<<3 )		// In the process of ducking, but totally squatted yet
 #define		PFLAG_USING			( 1<<4 )		// Using a continuous entity
 #define		PFLAG_OBSERVER		( 1<<5 )		// player is locked in stationary cam mode. Spectators can move, observers can't.
-#define		PFLAG_ONROPE		( 1<<6 )
 
 //
 // generic player
@@ -330,32 +327,10 @@ public:
 	
 	float m_flNextChatTime;
 
-	bool IsOnRope() const { return (m_afPhysicsFlags & PFLAG_ONROPE) != 0; }
-
-	void SetOnRopeState(bool bOnRope)
-	{
-		if (bOnRope)
-			m_afPhysicsFlags |= PFLAG_ONROPE;
-		else
-			m_afPhysicsFlags &= ~PFLAG_ONROPE;
-	}
-
-	CRope* GetRope() { return m_pRope; }
-
-	void SetRope(CRope* pRope)
-	{
-		m_pRope = pRope;
-	}
-
 	void SetIsClimbing(const bool bIsClimbing)
 	{
 		m_bIsClimbing = bIsClimbing;
 	}
-
-private:
-	CRope* m_pRope;
-	float m_flLastClimbTime = 0;
-	bool m_bIsClimbing = false;
 
 public:
 	// BlueNightHawk : Server Side HL2 Punch
