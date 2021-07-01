@@ -114,9 +114,17 @@ TYPEDESCRIPTION	CBasePlayer::m_playerSaveData[] =
 	DEFINE_FIELD( CBasePlayer, m_fInitHUD, FIELD_BOOLEAN ),
 	DEFINE_FIELD( CBasePlayer, m_tbdPrev, FIELD_TIME ),
 
+	DEFINE_FIELD(CBasePlayer, m_pRope, FIELD_CLASSPTR),
+	DEFINE_FIELD(CBasePlayer, m_flLastClimbTime, FIELD_TIME),
+	DEFINE_FIELD(CBasePlayer, m_bIsClimbing, FIELD_BOOLEAN),
+
 	DEFINE_FIELD( CBasePlayer, m_pTank, FIELD_EHANDLE ),
 	DEFINE_FIELD( CBasePlayer, m_iHideHUD, FIELD_INTEGER ),
 	DEFINE_FIELD( CBasePlayer, m_iFOV, FIELD_INTEGER ),
+
+	//Vanilla Op4 doesn't restore this. Not a big deal but it can cause you to teleport to the wrong area after a restore
+	DEFINE_FIELD(CBasePlayer, m_DisplacerReturn, FIELD_POSITION_VECTOR),
+	DEFINE_FIELD(CBasePlayer, m_flDisplacerSndRoomtype, FIELD_FLOAT),
 	
 	//DEFINE_FIELD( CBasePlayer, m_fDeadTime, FIELD_FLOAT ), // only used in multiplayer games
 	//DEFINE_FIELD( CBasePlayer, m_fGameHUDInitialized, FIELD_INTEGER ), // only used in multiplayer games
