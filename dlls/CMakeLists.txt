@@ -16,6 +16,8 @@ add_sources(
     CPenguin.h
 	CShockRifle.cpp
 	CShockRifle.h
+	CSporeLauncher.cpp
+	CSporeLauncher.h
 	CSniperRifle.h
 	cdll_dll.h
 	crossbow.cpp
