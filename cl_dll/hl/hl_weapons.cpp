@@ -92,7 +92,6 @@ CDisplacer g_Displacer;
 CM249 g_M249;
 CPenguin g_Penguin;
 
-
 /*
 ======================
 AlertMessage
