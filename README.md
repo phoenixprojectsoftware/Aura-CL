@@ -55,8 +55,7 @@
 1. Once the build finishes, in the same bar menu click the Export Bundle button. The file manager will open in a path that looks like `gnome-builder/projects/OpenAG/flatpak/staging/x86_64-master`. Navigate up to the `OpenAG` folder, then down to `builds/pro.openag.OpenAG.json-...` where you will find the built `client.so`.
 1. Now you can make some changes to the code and press Build, then grab `client.so` from the same folder.
 
-### Manually via Terminal / WSL 2
-Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the Microsoft Store.
+### Manually via Terminal
 1. Get a 32-bit/multilib **gcc** (6 and above) or **clang** (3.9 and above) build environment set up, as well as CMake.
 2. `git submodule update --init`
 3. `mkdir build`
@@ -64,6 +63,22 @@ Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the M
 5. `cmake ..`
 6. `cmake --build . --config Release`
 
+### WSL 2 (Windows 10 & 11)
+Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the Microsoft Store.
+
+Open the Windows Terminal and select the Linux distro's profile (e.g. **Ubuntu 18.04**). Be aware that if you haven't already, you will need to add the `ninja` compiler to the PATH of your distro. It is included with this repository.
+
+1. `sudo apt install gcc`
+2. `sudo apt install clang`
+3. `sudo apt install cmake`
+4. `sudo apt install git`
+5. Assuming you have `cd`'d to your Aura-CL folder; `git submodule update --init`
+6. `mkdir Linux-Build`
+7. `cmake ..` — wait for the process to finish
+8. `cmake --build . --config Release`
+
+
+# LICENSE
 ```
 Half Life 1 SDK LICENSE
 ======================
