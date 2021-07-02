@@ -17,6 +17,9 @@
 #include "cbase.h"
 #include "weapons.h"
 #include "player.h"
+#include "UserMessages.h"
+
+#include "CDisplacer.h"
 
 #ifndef CLIENT_DLL
 #include "rope/CRope.h"
@@ -24,9 +27,10 @@
 
 #include "gamerules.h"
 
-extern edict_t* EntSelectSpawnPoint(CBaseEntity* pPlayer);
+extern edict_t* EntSelectSpawnPoint(CBasePlayer* pPlayer);
 
-extern CBaseEntity* g_pLastSpawn;
+extern std::vector<CBaseEntity*> g_spawnHistory;
+
 #endif
 
 #include "CDisplacer.h"
@@ -196,11 +200,11 @@ void CDisplacer::SpinupThink()
 
 		int flags;
 
-#if defined( CLIENT_WEAPONS )
-		flags = FEV_NOTHOST;
-#else
+		//#if defined( CLIENT_WEAPONS )
+		//		flags = FEV_NOTHOST;
+		//#else
 		flags = 0;
-#endif
+		//#endif
 
 		PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usFireDisplacer, 0, (float*)&g_vecZero, (float*)&g_vecZero,
 			0, 0, static_cast<int>(m_Mode), 0, 0, 0);
@@ -241,11 +245,11 @@ void CDisplacer::AltSpinupThink()
 
 		int flags;
 
-#if defined( CLIENT_WEAPONS )
-		flags = FEV_NOTHOST;
-#else
+		//#if defined( CLIENT_WEAPONS )
+		//		flags = FEV_NOTHOST;
+		//#else
 		flags = 0;
-#endif
+		//#endif
 
 		PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usFireDisplacer, 0, (float*)&g_vecZero, (float*)&g_vecZero,
 			0, 0, static_cast<int>(m_Mode), 0, 0, 0);
@@ -344,13 +348,10 @@ void CDisplacer::AltFireThink()
 
 	m_pPlayer->m_flDisplacerSndRoomtype = m_pPlayer->m_flSndRoomtype;
 
-	//TODO: CTF support - Solokiller
-#if 0
-	if (g_pGameRules->IsCTF() && m_pPlayer->m_hFlag)
+#ifndef CLIENT_DLL
+	if ((m_pPlayer->m_bFlagTeam1 || m_pPlayer->m_bFlagTeam2) && CTF == AgGametype())
 	{
-		CCTFFlag* pFlag = EHANDLE_cast<CCTFFlag*>(m_pPlayer->m_hFlag);
-
-		pFlag->DropFlag(m_pPlayer);
+		g_pGameRules->m_CTF.PlayerDropFlag(m_pPlayer, true);
 	}
 #endif
 
@@ -366,7 +367,7 @@ void CDisplacer::AltFireThink()
 		pDestination = GET_PRIVATE<CBaseEntity>(EntSelectSpawnPoint(m_pPlayer));
 
 		if (!pDestination)
-			pDestination = g_pLastSpawn;
+			pDestination = g_spawnHistory.back();
 
 		Vector vecEnd = pDestination->pev->origin;
 
@@ -413,7 +414,7 @@ void CDisplacer::AltFireThink()
 		//Must always be handled on the server side in order to play the right sounds and effects. - Solokiller
 		int flags = 0;
 
-		PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usFireDisplacer, 0, g_vecZero, g_vecZero,
+		PLAYBACK_EVENT_FULL(flags, m_pPlayer->edict(), m_usFireDisplacer, 0, (float*)&g_vecZero, (float*)&g_vecZero,
 			0, 0, static_cast<int>(DisplacerMode::FIRED), 0, 1, 0);
 
 		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] -= 60;
