@@ -87,14 +87,15 @@ public:
 #define WEAPON_TRIPMINE			13
 #define	WEAPON_SATCHEL			14
 #define	WEAPON_SNARK			15
-#define WEAPON_GRAPPLE   16
+#define WEAPON_GRAPPLE			16
 #define WEAPON_EAGLE			17
-#define WEAPON_PIPEWRENCH 18
+#define WEAPON_PIPEWRENCH		18
 #define WEAPON_M249				19
-#define WEAPON_DISPLACER 20
-#define WEAPON_SNIPERRIFLE 24
-#define WEAPON_KNIFE 25
-#define WEAPON_PENGUIN   26
+#define WEAPON_DISPLACER		20
+#define WEAPON_SHOCKRIFLE		22
+#define WEAPON_SNIPERRIFLE		24
+#define WEAPON_KNIFE			25
+#define WEAPON_PENGUIN			26
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -107,26 +108,27 @@ public:
 
 
 // weapon weight factors (for auto-switching)   (-1 = noswitch)
-#define CROWBAR_WEIGHT		0
-#define GLOCK_WEIGHT		10
-#define PYTHON_WEIGHT		15
-#define MP5_WEIGHT			15
-#define SHOTGUN_WEIGHT		15
-#define CROSSBOW_WEIGHT		10
-#define RPG_WEIGHT			20
-#define GAUSS_WEIGHT		20
-#define EGON_WEIGHT			20
-#define HORNETGUN_WEIGHT	10
-#define HANDGRENADE_WEIGHT	5
-#define SNARK_WEIGHT		5
-#define SATCHEL_WEIGHT		-10
-#define TRIPMINE_WEIGHT		-10
+#define CROWBAR_WEIGHT				0
+#define GLOCK_WEIGHT				10
+#define PYTHON_WEIGHT				15
+#define MP5_WEIGHT					15
+#define SHOTGUN_WEIGHT				15
+#define CROSSBOW_WEIGHT				10
+#define RPG_WEIGHT					20
+#define GAUSS_WEIGHT				20
+#define EGON_WEIGHT					20
+#define HORNETGUN_WEIGHT			10
+#define HANDGRENADE_WEIGHT			5
+#define SNARK_WEIGHT				5
+#define SATCHEL_WEIGHT				-10
+#define TRIPMINE_WEIGHT				-10
 #define EAGLE_WEIGHT				15
-#define PIPEWRENCH_WEIGHT 2
-#define DISPLACER_WEIGHT 10
-#define SNIPERRIFLE_WEIGHT 10
+#define SHOCKRIFLE_WEIGHT			15
+#define PIPEWRENCH_WEIGHT			2
+#define DISPLACER_WEIGHT			10
+#define SNIPERRIFLE_WEIGHT			10
 #define M249_WEIGHT					20
-#define PENGUIN_WEIGHT		5
+#define PENGUIN_WEIGHT				5
 
 
 // weapon clip/carry ammo capacities
@@ -165,6 +167,7 @@ public:
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
 #define EAGLE_MAX_CLIP			7
+#define SHOCKRIFLE_MAX_CLIP		10
 #define M249_MAX_CLIP				60
 #define PENGUIN_MAX_CLIP 3
 #define SNIPERRIFLE_MAX_CLIP 5
@@ -187,6 +190,7 @@ public:
 #define SNARK_DEFAULT_GIVE			5
 #define HIVEHAND_DEFAULT_GIVE		8
 #define EAGLE_DEFAULT_GIVE				7
+#define SHOCKRIFLE_DEFAULT_GIVE 10
 #define SNIPERRIFLE_DEFAULT_GIVE 5
 #define DISPLACER_DEFAULT_GIVE 40
 #define M249_DEFAULT_GIVE					60

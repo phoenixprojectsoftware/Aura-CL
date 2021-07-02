@@ -34,6 +34,7 @@
 // Opposing Force weapons go here.
 #include "CGrapple.h"
 #include "CEagle.h"
+#include "CShockRifle.h"
 #include "CSniperRifle.h"
 #include "CKnife.h"
 #include "CPipewrench.h"
@@ -88,7 +89,7 @@ CSniperRifle g_SniperRifle;
 CKnife g_Knife;
 CPipewrench g_Pipewrench;
 CDisplacer g_Displacer;
-// CShockRifle g_ShockRifle;
+CShockRifle g_ShockRifle;
 CM249 g_M249;
 CPenguin g_Penguin;
 
@@ -665,6 +666,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Snark	, &player );
 	HUD_PrepEntity(&g_Grapple, &player);
 	HUD_PrepEntity(&g_Eagle, &player);
+	HUD_PrepEntity(&g_ShockRifle, &player);
 	HUD_PrepEntity(&g_SniperRifle, &player);
 	HUD_PrepEntity(&g_Knife, &player);
 	HUD_PrepEntity(&g_Pipewrench, &player);
@@ -733,6 +735,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
 	case WEAPON_KNIFE: return &g_Knife;
 	case WEAPON_EAGLE: return &g_Eagle;
+	case WEAPON_SHOCKRIFLE: return &g_Eagle;
 	case WEAPON_PIPEWRENCH: return &g_Pipewrench;
 	case WEAPON_DISPLACER: return &g_Displacer;
 

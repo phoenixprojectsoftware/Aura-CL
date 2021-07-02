@@ -38,10 +38,12 @@
 #include "com_model.h"
 
 #define WEAPONS_NO_CLASSES
+
 // Opposing Force weapons go here.
 #include "op4_weapons/CEagle.h"
 #include "op4_weapons/CSniperRifle.h"
 #include "op4_weapons/CKnife.h"
+#include "op4_weapons/CShockRifle.h"
 #include "op4_weapons/CPipewrench.h"
 #include "op4_weapons/CDisplacer.h"
 #include "op4_weapons/CM249.h"
@@ -89,6 +91,7 @@ void EV_HornetGunFire( struct event_args_s *args  );
 void EV_TripmineFire( struct event_args_s *args  );
 void EV_SnarkFire( struct event_args_s *args  );
 void EV_FireEagle(struct event_args_s* args);
+void EV_FireShockRifle(struct event_args_s* args);
 void EV_Pipewrench(struct event_args_s* args);
 void EV_FireDisplacer(struct event_args_s* args);
 void EV_FireM249(struct event_args_s* args);
@@ -1946,6 +1949,30 @@ void EV_Knife(event_args_t* args)
 }
 //======================
 //	   KNIFE END
+//======================
+
+//======================
+//	SHOCK RIFLE START
+//======================
+void EV_FireShockRifle(event_args_t* args)
+{
+	gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_WEAPON, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, PITCH_NORM);
+
+	if (EV_IsLocal(args->entindex))
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(SHOCKRIFLE_FIRE, 0);
+
+	for (size_t uiIndex = 0; uiIndex < 3; ++uiIndex)
+	{
+		gEngfuncs.pEfxAPI->R_BeamEnts(
+			args->entindex | 0x1000, args->entindex | ((uiIndex + 2) << 12),
+			gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/lgtning.spr"),
+			0.08,
+			1, 75 * 0.01, 190 / 255.0, 30, 0, 10,
+			0, 253 / 255.0, 253 / 255.0);
+	}
+}
+//======================
+//	SHOCK RIFLE END
 //======================
 
 //======================
