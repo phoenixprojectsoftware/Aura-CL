@@ -789,9 +789,9 @@ void NewPunch(float* ev_punchangle, float frametime)
 		VectorMA(punch, -springForceMagnitude, ev_punchangle, punch);
 
 		// dont' wrap around
-		ev_punchangle[0] = clamp(ev_punchangle[0], -7, 7);
-		ev_punchangle[1] = clamp(ev_punchangle[1], -179, 179);
-		ev_punchangle[2] = clamp(ev_punchangle[2], -7, 7);
+		//ev_punchangle[0] = clamp(ev_punchangle[0], -7, 7);
+		//ev_punchangle[1] = clamp(ev_punchangle[1], -179, 179);
+		//ev_punchangle[2] = clamp(ev_punchangle[2], -7, 7);
 	}
 }
 
@@ -801,7 +801,6 @@ void Punch(float p, float y, float r)
 	punch[1] += y * 20;
 	punch[2] += r * 20;
 }
-
 
 /*
 ==============

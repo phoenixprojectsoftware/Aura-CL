@@ -742,6 +742,7 @@ void EV_FireShotGunSingle( event_args_t *args )
 //======================
 //	    MP5 START
 //======================
+#define MP5_PUNCH 2
 void EV_FireMP5( event_args_t *args )
 {
 	int idx;
@@ -771,8 +772,36 @@ void EV_FireMP5( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_FIRE1 + gEngfuncs.pfnRandomLong(0,2), 2 );
 
-		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
+
+		/*for (size_t i = 0; i<MP5_PUNCH; ++i)
+		{
+				switch (rand() % 2)
+				{
+					case 0:
+						{
+							Punch(2, 2, 0);
+							break;
+						}
+					case 1:
+						{
+							Punch(0, -2, 0);
+							break;
+						}
+				}
+		}*/
+
+		switch (gEngfuncs.pfnRandomLong(0, 1))
+		{
+		case 0:
+			Punch(0.5, 0.75, 0);
+			break;
+		case 1:
+			Punch(0.5, -0.75, 0);
+			break;
+		}
+
+		// V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+		// V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
 		// V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-10, 10)); I did this for https://www.youtube.com/watch?v=MmivmiwH53E
 	}
 
