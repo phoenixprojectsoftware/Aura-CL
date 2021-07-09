@@ -28,8 +28,6 @@
 #include "vgui_int.h"
 #include "vgui_TeamFortressViewport.h"
 
-#include "blur.h"
-
 #include "demo.h"
 #include "demo_api.h"
 #include "vgui_ScorePanel.h"
@@ -40,6 +38,8 @@
 #include "versioninfo.h"
 
 #include "event_api.h"
+
+#include "blur.h"
 
 extern tempent_s* pLaserSpot;
 
