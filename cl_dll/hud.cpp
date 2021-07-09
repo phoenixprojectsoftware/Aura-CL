@@ -28,6 +28,8 @@
 #include "vgui_int.h"
 #include "vgui_TeamFortressViewport.h"
 
+#include "blur.h"
+
 #include "demo.h"
 #include "demo_api.h"
 #include "vgui_ScorePanel.h"
@@ -735,6 +737,8 @@ void CHud :: VidInit( void )
 	
 	m_hsprLogo = 0;	
 	m_hsprCursor = 0;
+
+	gBlur.InitScreen();
 
 	if (ScreenWidth < 640)
 		m_iRes = 320;

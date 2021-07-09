@@ -8,6 +8,8 @@ add_sources(
 	ammohistory.cpp
 	ammohistory.h
 	battery.cpp
+	blur.cpp
+	blur.h
 	camera.h
 	cdll_int.cpp
 	cl_dll.h
