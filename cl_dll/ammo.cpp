@@ -230,7 +230,7 @@ WEAPON* WeaponsResource :: GetNextActivePos( int iSlot, int iSlotPos )
 
 int giBucketHeight, giBucketWidth, giABHeight, giABWidth; // Ammo Bar width and height
 
-HSPRITE* ghsprBuckets;					// Sprite for top row of weapons menu
+HSPRITE ghsprBuckets;					// Sprite for top row of weapons menu
 
 DECLARE_MESSAGE(m_Ammo, CurWeapon );	// Current weapon and clip
 DECLARE_MESSAGE(m_Ammo, WeaponList);	// new weapon type
@@ -319,7 +319,7 @@ int CHudAmmo::VidInit(void)
 	m_HUD_bucket0 = gHUD.GetSpriteIndex( "bucket1" );
 	m_HUD_selection = gHUD.GetSpriteIndex( "selection" );
 
-	// ghsprBuckets = gHUD.GetSprite(m_HUD_bucket0);
+	ghsprBuckets = gHUD.GetSprite(m_HUD_bucket0);
 	giBucketWidth = gHUD.GetSpriteRect(m_HUD_bucket0).right - gHUD.GetSpriteRect(m_HUD_bucket0).left;
 	giBucketHeight = gHUD.GetSpriteRect(m_HUD_bucket0).bottom - gHUD.GetSpriteRect(m_HUD_bucket0).top;
 
