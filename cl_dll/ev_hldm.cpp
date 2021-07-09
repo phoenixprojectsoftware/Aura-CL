@@ -606,7 +606,21 @@ void EV_FireGlock2( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( GLOCK_SHOOT, 2 );
 
-		Punch( 2, 0, 0 );
+		switch (gEngfuncs.pfnRandomLong(0, 1))
+		{
+		case 0:
+			Punch(2, 0.75, 0);
+			break;
+		case 1:
+			Punch(2, -0.75, 0);
+			break;
+		}
+		/*
+		* 
+		* Old punch angle:
+		* Punch(2, 0, 0);
+		* 
+		*/
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, (cl_righthand->value != 0.0f ? -1 : 1) * 4 );
