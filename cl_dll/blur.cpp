@@ -6,10 +6,13 @@
 #include "hud.h"
 #include "cl_util.h"
 
+#include <winsani_in.h>
 #include <Windows.h>
+#include <winsani_out.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <gl/GL.h>
+
 
 #include "blur.h"
 
@@ -20,9 +23,6 @@
 extern float m_iBlurActive;
 
 CBlurTexture::CBlurTexture() {};
-
-cvar_t* r_motion_blur;
-cvar_t* r_motion_blur_strength;
 
 void CBlurTexture::Init(int width, int height)
 {
@@ -42,9 +42,12 @@ void CBlurTexture::Init(int width, int height)
         // free the memory
         delete[] pBlankTex;
 
+        // create the commands to control the motion blur
         CVAR_CREATE("r_motion_blur", "0", FCVAR_ARCHIVE);
         CVAR_CREATE("r_motion_blur_strength", "1", FCVAR_ARCHIVE);
 }
+
+
 
 void CBlurTexture::BindTexture(int width, int height)
 {
@@ -71,7 +74,7 @@ void CBlurTexture::Draw(int width, int height)
 
         glColor4f(r, g, b, alpha);
 
-        if (gEngfuncs.pfnGetCvarFloat("r_blur"))
+        if (gEngfuncs.pfnGetCvarFloat("r_motion_blur"))
         {
                 glBegin(GL_QUADS);
                 DrawQuad(width, height, of);
@@ -160,7 +163,7 @@ void CBlur::DrawBlur()
         }
         else
         {
-                int ofset = -(CVAR_GET_FLOAT("r_blur_strength"));
+                int ofset = -(CVAR_GET_FLOAT("r_motion_blur_strength"));
                 glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
                 glEnable(GL_BLEND);
 
