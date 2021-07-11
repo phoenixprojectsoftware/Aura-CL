@@ -2114,7 +2114,7 @@ void EV_FireSpore(event_args_t* args)
 	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(SPLAUNCHER_FIRE, 0);
 
-		V_PunchAxis(0, -3.0);
+		Punch(3, 0, 0);
 
 		if (cl_entity_t* pViewModel = gEngfuncs.GetViewModel())
 		{
