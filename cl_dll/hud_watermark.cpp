@@ -2,6 +2,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "update_checker.h"
+#include "versioninfo.h"
 
 int CHudWatermark::Init()
 {
@@ -35,9 +36,9 @@ int CHudWatermark::Draw(float time)
 	int r, g, b;
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 
-	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build "  __TIMESTAMP__, r, g, b);
-	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "Half-Life: Zombies Ate My Neighbours Multiplayer 2.6-PPT2", r, g, b);
-	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "Season 6: HECU", r, g, b);
+	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " clientDate, r, g, b);
+	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "Half-Life: Zombies Ate My Neighbours Multiplayer " zamnhlmpVersion, r, g, b);
+	gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
 
 	if (update_is_available)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight / 2 * 7, " ", r, g, b);

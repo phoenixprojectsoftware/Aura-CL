@@ -4,7 +4,8 @@
 // These are in the order they appear in PrintVersion()
 #define clientDate __TIMESTAMP__
 #define auraVersion "v2.0"
-#define zamnhlmpVersion "v2.6-PPT1"
+#define season "Season 6: HECU"
+#define zamnhlmpVersion "2.6-PPT3"
 #define Authors "The Phoenix Project Software"
 #define auraCL "https://github.com/phoenixprojectsoftware/Aura-CL"
 #define auraSE "https://github.com/phoenixprojectsoftware/Aura-SE"
