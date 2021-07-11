@@ -69,6 +69,8 @@ void MuzzleFlash(int index, float r, float g, float b, float a, float radius, fl
 extern cvar_t *cl_lw;
 extern cvar_t *cl_righthand;
 extern cvar_t* cl_crowbar_punch_enabled;
+extern cvar_t* cl_displacer_punch_enabled;
+extern cvar_t* cl_displacer_big_punch_enabled;
 extern cvar_t* cl_hornet_random_punch_enabled;
 
 extern "C"
@@ -2183,6 +2185,11 @@ void EV_FireDisplacer(event_args_t* args)
 				args->entindex, args->origin,
 				CHAN_WEAPON, "weapons/displacer_fire.wav",
 				gEngfuncs.pfnRandomFloat(0.8, 0.9), ATTN_NORM, 0, PITCH_NORM);
+
+			if (cl_displacer_punch_enabled->value == 1)
+			{
+				Punch(2, 0, 0);
+			}
 		}
 		else
 		{
@@ -2195,7 +2202,14 @@ void EV_FireDisplacer(event_args_t* args)
 		if (EV_IsLocal(args->entindex))
 		{
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(DISPLACER_FIRE, 0);
-			V_PunchAxis(0, -2);
+			if (cl_displacer_big_punch_enabled->value == 1)
+			{
+				Punch(5, 0, 0);
+			}
+			else
+			{
+				Punch(2, 0, 0);
+			}
 		}
 
 		break;
