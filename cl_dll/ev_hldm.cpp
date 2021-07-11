@@ -69,6 +69,7 @@ void MuzzleFlash(int index, float r, float g, float b, float a, float radius, fl
 extern cvar_t *cl_lw;
 extern cvar_t *cl_righthand;
 extern cvar_t* cl_crowbar_punch_enabled;
+extern cvar_t* cl_hornet_random_punch_enabled;
 
 extern "C"
 {
@@ -1746,7 +1747,23 @@ void EV_HornetGunFire( event_args_t *args )
 	//Only play the weapon anims if I shot it.
 	if ( EV_IsLocal( idx ) )
 	{
-		Punch(2, 0, 0);
+		if (cl_hornet_random_punch_enabled->value == 1)
+		{
+			switch ((gEngfuncs.pfnRandomLong(0, 1)))
+			{
+			case 0:
+				Punch(2, 0, 0);
+				break;
+			case 1:
+				Punch(-2, 0, 0);
+				break;
+			}
+		}
+		else
+		{
+			Punch(2, 0, 0);
+		}
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation ( HGUN_SHOOT, 1 );
 	}
 

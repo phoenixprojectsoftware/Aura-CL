@@ -100,6 +100,7 @@ cvar_t* cl_viewmodel_ofs_forward;
 cvar_t* cl_viewmodel_ofs_up;
 
 cvar_t* cl_crowbar_punch_enabled;
+cvar_t* cl_hornet_random_punch_enabled;
 
 extern cvar_t* cl_viewmodel_lag_enabled;
 
@@ -1986,6 +1987,7 @@ void V_Init(void)
 
 	cl_viewmodel_lag_enabled = gEngfuncs.pfnRegisterVariable("cl_viewmodel_lag_enabled", "1", FCVAR_ARCHIVE);
 	cl_crowbar_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_crowbar_punch_enabled", "1", FCVAR_ARCHIVE);
+	cl_hornet_random_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_hornet_random_punch_enabled", "1", FCVAR_ARCHIVE);
 }
 
 
