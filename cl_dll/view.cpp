@@ -99,6 +99,8 @@ cvar_t* cl_viewmodel_ofs_right;
 cvar_t* cl_viewmodel_ofs_forward;
 cvar_t* cl_viewmodel_ofs_up;
 
+cvar_t* cl_crowbar_punch_enabled;
+
 extern cvar_t* cl_viewmodel_lag_enabled;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
@@ -1983,6 +1985,7 @@ void V_Init(void)
 	cl_viewmodel_ofs_up = gEngfuncs.pfnRegisterVariable("cl_viewmodel_ofs_up", "0", FCVAR_ARCHIVE); // z = up
 
 	cl_viewmodel_lag_enabled = gEngfuncs.pfnRegisterVariable("cl_viewmodel_lag_enabled", "1", FCVAR_ARCHIVE);
+	cl_crowbar_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_crowbar_punch_enabled", "1", FCVAR_ARCHIVE);
 }
 
 

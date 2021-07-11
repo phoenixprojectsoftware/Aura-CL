@@ -68,6 +68,7 @@ void MuzzleFlash(int index, float r, float g, float b, float a, float radius, fl
 
 extern cvar_t *cl_lw;
 extern cvar_t *cl_righthand;
+extern cvar_t* cl_crowbar_punch_enabled;
 
 extern "C"
 {
@@ -1307,6 +1308,19 @@ void EV_Crowbar( event_args_t *args )
 				gEngfuncs.pEventAPI->EV_WeaponAnimation ( CROWBAR_ATTACK2MISS, 1 ); break;
 			case 2:
 				gEngfuncs.pEventAPI->EV_WeaponAnimation ( CROWBAR_ATTACK3MISS, 1 ); break;
+		}
+
+		if (cl_crowbar_punch_enabled->value == 1)
+		{
+			switch ((gEngfuncs.pfnRandomLong(0, 1)))
+			{
+			case 0:
+				Punch(5, 5, 0);
+				break;
+			case 1:
+				Punch(-5, -5, 0);
+				break;
+			}
 		}
 	}
 }
