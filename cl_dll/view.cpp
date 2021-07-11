@@ -102,6 +102,7 @@ cvar_t* cl_viewmodel_ofs_up;
 cvar_t* cl_crowbar_punch_enabled;
 cvar_t* cl_displacer_punch_enabled;
 cvar_t* cl_displacer_big_punch_enabled;
+cvar_t* cl_gauss_random_punch_enabled;
 cvar_t* cl_hornet_random_punch_enabled;
 cvar_t* cl_mp5_new_punch_enabled;
 cvar_t* cl_m249_new_punch_enabled;
@@ -1994,6 +1995,7 @@ void V_Init(void)
 	cl_crowbar_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_crowbar_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_displacer_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_displacer_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_displacer_big_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_displacer_big_punch_enabled", "1", FCVAR_ARCHIVE);
+	cl_gauss_random_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_gauss_random_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_hornet_random_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_hornet_random_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_mp5_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_mp5_new_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_m249_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_m249_new_punch_enabled", "1", FCVAR_ARCHIVE);

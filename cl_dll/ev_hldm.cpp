@@ -1041,7 +1041,7 @@ void EV_FireGauss( event_args_t *args )
 	{
 		if (cl_gauss_random_punch_enabled->value == 1)
 		{
-			switch ((gEngfuncs.pfnRandomFloat(0, 1)))
+			switch ((gEngfuncs.pfnRandomLong(0, 1)))
 			{
 			case 0:
 				Punch(1, 0, 0);
