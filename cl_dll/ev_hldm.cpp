@@ -804,13 +804,19 @@ void EV_FireMP5( event_args_t *args )
 				}
 		}*/
 
-		switch (gEngfuncs.pfnRandomLong(0, 1))
+		switch (gEngfuncs.pfnRandomLong(0, 3))
 		{
 		case 0:
 			Punch(0.5, 0.75, 0);
 			break;
 		case 1:
 			Punch(0.5, -0.75, 0);
+			break;
+		case 2:
+			Punch(-0.5, 0.75, 0);
+			break;
+		case 3:
+			Punch(-0.5, -0.75, 0);
 			break;
 		}
 
@@ -2195,8 +2201,22 @@ void EV_FireM249(event_args_t* args)
 	{
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(gEngfuncs.pfnRandomLong(0, 2) + M249_SHOOT1, iBody);
-		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
+		
+		switch (gEngfuncs.pfnRandomLong(0, 3))
+		{
+		case 0:
+			Punch(1, 0.75, 0);
+			break;
+		case 1:
+			Punch(1, -0.75, 0);
+			break;
+		case 2:
+			Punch(-1, 0.75, 0);
+			break;
+		case 3:
+			Punch(-1, -0.75, 0);
+			break;
+		}
 	}
 
 	Vector ShellVelocity;
