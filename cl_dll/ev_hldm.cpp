@@ -75,6 +75,7 @@ extern cvar_t* cl_gauss_random_punch_enabled;
 extern cvar_t* cl_hornet_random_punch_enabled;
 extern cvar_t* cl_mp5_new_punch_enabled;
 extern cvar_t* cl_m249_new_punch_enabled;
+extern cvar_t* cl_shockrifle_punch_enabled;
 
 extern "C"
 {
@@ -2115,7 +2116,27 @@ void EV_FireShockRifle(event_args_t* args)
 	gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_WEAPON, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, PITCH_NORM);
 
 	if (EV_IsLocal(args->entindex))
+	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(SHOCKRIFLE_FIRE, 0);
+		if (cl_shockrifle_punch_enabled->value == 1)
+		{
+			switch (gEngfuncs.pfnRandomLong(0, 3))
+			{
+			case 0:
+				Punch(0.75, 0.75, 0);
+				break;
+			case 1:
+				Punch(-0.75, -0.75, 0);
+				break;
+			case 2:
+				Punch(0.75, -0.75, 0);
+				break;
+			case 3:
+				Punch(-0.75, 0.75, 0);
+				break;
+			}
+		}
+	}
 
 	for (size_t uiIndex = 0; uiIndex < 3; ++uiIndex)
 	{
