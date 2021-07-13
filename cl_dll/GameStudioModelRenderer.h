@@ -21,7 +21,6 @@ class CGameStudioModelRenderer : public CStudioModelRenderer
 {
 public:
 	CGameStudioModelRenderer( void );
-	virtual int StudioDrawCustomEntity(cl_entity_t* ent);
 };
 
 #endif // GAMESTUDIOMODELRENDERER_H
