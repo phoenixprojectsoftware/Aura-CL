@@ -107,6 +107,8 @@ public:
 	// Calculate the viewmodel fov and set the OpenGL projection matrix
 	virtual void SetViewmodelFovProjection ( void );
 
+	virtual int StudioDrawCustomEntity(cl_entity_t* ent);
+
 public:
 
 	// Client clock
