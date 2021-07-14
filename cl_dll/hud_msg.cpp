@@ -73,8 +73,6 @@ extern tempent_s* pLaserSpot;
 
 void CHud :: MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 {
-	m_iSkyMode = SKY_OFF;
-
 	BEGIN_READ(pbuf, iSize);
 
 	// Playdemo sends InitHUD with nullptr pbuf.
@@ -113,16 +111,6 @@ void CHud :: MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 
 	pLaserSpot = NULL;
 #endif
-}
-
-void CHud::MsgFunc_SetSky(const char* pszName, int iSize, void* pbuf)
-{
-	BEGIN_READ(pbuf, iSize);
-
-	m_iSkyMode = READ_BYTE();
-	m_vecSkyPos.x = READ_COORD();
-	m_vecSkyPos.y = READ_COORD();
-	m_vecSkyPos.z = READ_COORD();
 }
 
 

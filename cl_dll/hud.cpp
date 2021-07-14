@@ -112,12 +112,6 @@ int __MsgFunc_ResetHUD(const char *pszName, int iSize, void *pbuf)
 	return gHUD.MsgFunc_ResetHUD(pszName, iSize, pbuf );
 }
 
-int __MsgFunc_SetSky(const char* pszName, int iSize, void* pbuf)
-{
-	gHUD.MsgFunc_SetSky(pszName, iSize, pbuf);
-	return 1;
-}
-
 int __MsgFunc_InitHUD(const char *pszName, int iSize, void *pbuf)
 {
 	gHUD.MsgFunc_InitHUD( pszName, iSize, pbuf );
@@ -555,8 +549,6 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( ViewMode );
 	HOOK_MESSAGE( SetFOV );
 	HOOK_MESSAGE( Concuss );
-
-	HOOK_MESSAGE( SetSky );
 
 	HOOK_MESSAGE( Gametype );
 

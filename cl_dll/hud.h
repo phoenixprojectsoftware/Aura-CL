@@ -559,8 +559,6 @@ private:
 //-----------------------------------------------------
 //
 
-#define SKY_OFF 0
-#define SKY_ON 1
 
 class CHud
 {
@@ -614,9 +612,6 @@ public:
 	int DrawHudNumberString( int xpos, int ypos, int iMinX, int iNumber, int r, int g, int b );
 	int DrawHudNumberStringFixed( int xpos, int ypos, int iNumber, int r, int g, int b );
 	int GetNumWidth(int iNumber, int iFlags);
-
-	Vector m_vecSkyPos;
-	int m_iSkyMode;
 
 	int DrawHudStringCentered(int x, int y, const char* string, int r, int g, int b);
 	int DrawHudStringRightAligned(int x, int y, const char* string, int r, int g, int b);
@@ -719,8 +714,6 @@ public:
 	void _cdecl MsgFunc_ViewMode( const char *pszName, int iSize, void *pbuf );
 	int _cdecl MsgFunc_SetFOV(const char *pszName,  int iSize, void *pbuf);
 	int  _cdecl MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf );
-
-	void _cdecl MsgFunc_SetSky(const char* pszName, int iSize, void* pbuf);
 
 	int MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf);
 

@@ -528,17 +528,6 @@ void V_CalcIntermissionRefdef(struct ref_params_s* pparams)
 	// view is the weapon model (only visible from inside body )
 	view = gEngfuncs.GetViewModel();
 
-	/*if (gHUD.m_iSkyMode == SKY_ON)
-	{
-		savedviewmodel = view->model;
-		view->model = NULL;
-	}
-	else if (savedviewmodel)
-	{
-		view->model = savedviewmodel;
-		savedviewmodel = NULL;
-	}*/
-
 	VectorCopy(pparams->simorg, pparams->vieworg);
 	VectorCopy(pparams->cl_viewangles, pparams->viewangles);
 
@@ -1106,14 +1095,6 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	}
 
 	v_origin = pparams->vieworg;
-
-	if (gHUD.m_iSkyMode == SKY_ON && pparams->nextView == 0)
-	{
-		pparams->vieworg[0] = gHUD.m_vecSkyPos.x;
-		pparams->vieworg[1] = gHUD.m_vecSkyPos.y;
-		pparams->vieworg[2] = gHUD.m_vecSkyPos.z;
-		pparams->nextView = 1;
-	}
 }
 
 void V_SmoothInterpolateAngles(float* startAngle, float* endAngle, float* finalAngle, float degreesPerSec)
