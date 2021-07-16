@@ -21,9 +21,6 @@ extern float m_iBlurActive;
 
 CBlurTexture::CBlurTexture() {};
 
-cvar_t* r_motion_blur;
-cvar_t* r_motion_blur_strength;
-
 void CBlurTexture::Init(int width, int height)
 {
         // create a load of blank pixels to create textures with
@@ -38,12 +35,12 @@ void CBlurTexture::Init(int width, int height)
         glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA8, width, height, 0, GL_RGBA8, GL_UNSIGNED_BYTE, 0);
 
+        CVAR_CREATE("r_motion_blur", "0", FCVAR_ARCHIVE);
+        CVAR_CREATE("r_motion_blur_strength", "1", FCVAR_ARCHIVE);
+
 
         // free the memory
         delete[] pBlankTex;
-
-        CVAR_CREATE("r_motion_blur", "0", FCVAR_ARCHIVE);
-        CVAR_CREATE("r_motion_blur_strength", "1", FCVAR_ARCHIVE);
 }
 
 void CBlurTexture::BindTexture(int width, int height)
