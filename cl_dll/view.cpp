@@ -105,6 +105,7 @@ cvar_t* cl_displacer_big_punch_enabled;
 cvar_t* cl_gauss_random_punch_enabled;
 cvar_t* cl_hornet_random_punch_enabled;
 cvar_t* cl_mp5_new_punch_enabled;
+cvar_t* cl_mp5_punch_roll_enabled; // Let's add a little tilt to the MP5.
 cvar_t* cl_m249_new_punch_enabled;
 cvar_t* cl_shockrifle_punch_enabled;
 
@@ -1999,6 +2000,7 @@ void V_Init(void)
 	cl_gauss_random_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_gauss_random_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_hornet_random_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_hornet_random_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_mp5_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_mp5_new_punch_enabled", "1", FCVAR_ARCHIVE);
+	cl_mp5_punch_roll_enabled = gEngfuncs.pfnRegisterVariable("cl_mp5_punch_roll_enabled", "1", FCVAR_ARCHIVE);
 	cl_m249_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_m249_new_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
 }

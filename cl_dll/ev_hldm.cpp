@@ -74,6 +74,7 @@ extern cvar_t* cl_displacer_big_punch_enabled;
 extern cvar_t* cl_gauss_random_punch_enabled;
 extern cvar_t* cl_hornet_random_punch_enabled;
 extern cvar_t* cl_mp5_new_punch_enabled;
+extern cvar_t* cl_mp5_punch_roll_enabled;
 extern cvar_t* cl_m249_new_punch_enabled;
 extern cvar_t* cl_shockrifle_punch_enabled;
 
@@ -812,29 +813,59 @@ void EV_FireMP5( event_args_t *args )
 				}
 		}*/
 
-		if (cl_mp5_new_punch_enabled->value == 1)
+		if (cl_mp5_punch_roll_enabled->value == 0)
 		{
-			switch (gEngfuncs.pfnRandomLong(0, 3))
+			if (cl_mp5_new_punch_enabled->value == 1)
 			{
-			case 0:
-				Punch(0.5, 0.75, 0);
-				break;
-			case 1:
-				Punch(0.5, -0.75, 0);
-				break;
-			case 2:
-				Punch(-0.5, 0.75, 0);
-				break;
-			case 3:
-				Punch(-0.5, -0.75, 0);
-				break;
+				switch (gEngfuncs.pfnRandomLong(0, 3))
+				{
+				case 0:
+					Punch(0.5, 0.75, 0);
+					break;
+				case 1:
+					Punch(0.5, -0.75, 0);
+					break;
+				case 2:
+					Punch(-0.5, 0.75, 0);
+					break;
+				case 3:
+					Punch(-0.5, -0.75, 0);
+					break;
+				}
+			}
+			else
+			{
+				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
+				// V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-10, 10)); I did this for https://www.youtube.com/watch?v=MmivmiwH53E
 			}
 		}
 		else
 		{
-			V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-			V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
-			// V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-10, 10)); I did this for https://www.youtube.com/watch?v=MmivmiwH53E
+			if (cl_mp5_new_punch_enabled->value == 1)
+			{
+				switch (gEngfuncs.pfnRandomLong(0, 3))
+				{
+				case 0:
+					Punch(0.5, 0.75, 0.25);
+					break;
+				case 1:
+					Punch(0.5, -0.75, -0.25);
+					break;
+				case 2:
+					Punch(-0.5, 0.75, 0.25);
+					break;
+				case 3:
+					Punch(-0.5, -0.75, -0.25);
+					break;
+				}
+			}
+			else
+			{
+				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
+				V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-1, 1));
+			}
 		}
 
 	}
