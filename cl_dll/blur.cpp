@@ -6,10 +6,10 @@
 #include "hud.h"
 #include "cl_util.h"
 
-#include <Windows.h>
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <gl/GL.h>
+#include <gl\gl.h>
 
 #include "blur.h"
 

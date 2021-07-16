@@ -29,8 +29,6 @@
 #include <stdarg.h>  // "
 #include <string.h> // for strncpy()
 
-
-
 // Macros to hook function calls into the HUD object
 #define HOOK_MESSAGE(x) gEngfuncs.pfnHookUserMsg(#x, __MsgFunc_##x );
 
