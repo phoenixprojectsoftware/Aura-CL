@@ -795,24 +795,6 @@ void EV_FireMP5( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_FIRE1 + gEngfuncs.pfnRandomLong(0,2), 2 );
 
-
-		/*for (size_t i = 0; i<MP5_PUNCH; ++i)
-		{
-				switch (rand() % 2)
-				{
-					case 0:
-						{
-							Punch(2, 2, 0);
-							break;
-						}
-					case 1:
-						{
-							Punch(0, -2, 0);
-							break;
-						}
-				}
-		}*/
-
 		if (cl_mp5_punch_roll_enabled->value == 0)
 		{
 			if (cl_mp5_new_punch_enabled->value == 1)
