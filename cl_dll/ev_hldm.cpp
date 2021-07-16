@@ -817,8 +817,8 @@ void EV_FireMP5( event_args_t *args )
 			}
 			else
 			{
-				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
+				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
+				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 			}
 		}
 		else
@@ -843,9 +843,9 @@ void EV_FireMP5( event_args_t *args )
 			}
 			else
 			{
-				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-2, 2));
-				V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-1, 1));
+				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
+				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
+				V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
 			}
 		}
 
