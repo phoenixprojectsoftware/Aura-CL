@@ -20,7 +20,6 @@
 
 #include "particleman.h"
 #include "tri.h"
-#include "blur.h"
 extern IParticleMan *g_pParticleMan;
 void UpdateLaserSpot();
 /*
@@ -62,6 +61,4 @@ void CL_DLLEXPORT HUD_DrawTransparentTriangles( void )
 
 	if ( g_pParticleMan )
 		 g_pParticleMan->Update();
-
-	gBlur.DrawBlur();
 }
