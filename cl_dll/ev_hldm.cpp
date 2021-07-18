@@ -24,6 +24,11 @@
 #include "pm_defs.h"
 #include "pm_materials.h"
 
+#include "../external/SDL2/SDL.h"
+#include "../external/SDL2/SDL_haptic.h"
+#include "../external/SDL2/SDL_joystick.h"
+#include "../external/SDL2/SDL_timer.h"
+
 #include "eventscripts.h"
 #include "ev_hldm.h"
 
@@ -126,6 +131,61 @@ void EV_TrainPitchAdjust( struct event_args_s *args );
 #define VECTOR_CONE_10DEGREES Vector( 0.08716, 0.08716, 0.08716 )
 #define VECTOR_CONE_15DEGREES Vector( 0.13053, 0.13053, 0.13053 )
 #define VECTOR_CONE_20DEGREES Vector( 0.17365, 0.17365, 0.17365 )
+
+int test_haptic()
+{
+	SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+	//Initialize SDL
+	if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
+	{
+		gEngfuncs.Con_Printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+		return -1;
+	}
+	SDL_Joystick* joystick{};
+	SDL_Haptic* haptic;
+	SDL_HapticEffect effect;
+	int effect_id;
+
+	// Open the device
+	haptic = SDL_HapticOpenFromJoystick(joystick);
+	if (haptic == NULL) {
+		gEngfuncs.Con_Printf("Warning! SDL Error: %s \n", SDL_GetError());
+		return -1; // Most likely joystick isn't haptic
+	}
+
+	// See if it can do sine waves
+	if ((SDL_HapticQuery(haptic) & SDL_HAPTIC_SINE) == 0) {
+		SDL_HapticClose(haptic); // No sine effect
+		return -1;
+	}
+
+	// Create the effect
+	SDL_memset(&effect, 0, sizeof(SDL_HapticEffect)); // 0 is safe default
+	effect.type = SDL_HAPTIC_SINE;
+	effect.periodic.direction.type = SDL_HAPTIC_POLAR; // Polar coordinates
+	effect.periodic.direction.dir[0] = 18000; // Force comes from south
+	effect.periodic.period = 1000; // 1000 ms
+	effect.periodic.magnitude = 20000; // 20000/32767 strength
+	effect.periodic.length = 5000; // 5 seconds long
+	effect.periodic.attack_length = 1000; // Takes 1 second to get max strength
+	effect.periodic.fade_length = 1000; // Takes 1 second to fade away
+
+	// Upload the effect
+	effect_id = SDL_HapticNewEffect(haptic, &effect);
+
+	// Test the effect
+	SDL_HapticRunEffect(haptic, effect_id, 1);
+	SDL_Delay(5000); // Wait for the effect to finish
+
+	// We destroy the effect, although closing the device also does this
+	SDL_HapticDestroyEffect(haptic, effect_id);
+
+	// Close the device
+	SDL_HapticClose(haptic);
+
+	return 0; // Success
+}
+
 
 void MuzzleFlash(int index, float r, float g, float b, float a, float radius, float life, float decay, vec3_t vecOrigin)
 {
@@ -1362,6 +1422,8 @@ void EV_Crowbar( event_args_t *args )
 				break;
 			}
 		}
+
+		test_haptic();
 	}
 }
 //======================
