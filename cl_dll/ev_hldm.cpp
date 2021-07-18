@@ -134,14 +134,38 @@ void EV_TrainPitchAdjust( struct event_args_s *args );
 
 int test_haptic()
 {
-	SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+	// SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER);
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
 	{
 		gEngfuncs.Con_Printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		return -1;
 	}
-	SDL_Joystick* joystick{};
+	
+	SDL_Joystick* joystick = NULL;
+	int numJoysticks;
+	numJoysticks = SDL_NumJoysticks();
+	gEngfuncs.Con_Printf("%d joysticks found\n", numJoysticks);
+
+	if (SDL_IsGameController(0))
+	{
+		gEngfuncs.Con_Printf("SDL ERROR: JOYSTICK 0 IS NOT A GAME CONTROLLER\n");
+		SDL_Quit();
+		return -1;
+	}
+
+	SDL_GameController* gameController = NULL;
+	gameController = SDL_GameControllerOpen(0);
+
+	if (!gameController)
+	{
+		gEngfuncs.Con_Printf("No controller found\n");
+		SDL_Quit();
+	}
+
+	gEngfuncs.Con_Printf("opened controller 0\n");
+	gEngfuncs.Con_Printf("Found a valid controller named %s\n", SDL_GameControllerName(gameController));
+
 	SDL_Haptic* haptic;
 	SDL_HapticEffect effect;
 	int effect_id;
