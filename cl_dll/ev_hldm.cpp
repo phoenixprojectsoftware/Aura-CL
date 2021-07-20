@@ -24,10 +24,12 @@
 #include "pm_defs.h"
 #include "pm_materials.h"
 
-#include "../external/SDL2/SDL.h"
-#include "../external/SDL2/SDL_haptic.h"
-#include "../external/SDL2/SDL_joystick.h"
-#include "../external/SDL2/SDL_timer.h"
+//#include "../external/SDL2/SDL.h"
+//#include "../external/SDL2/SDL_haptic.h"
+//#include "../external/SDL2/SDL_joystick.h"
+//#include "../external/SDL2/SDL_timer.h"
+
+#include <SDL2/SDL.h>
 
 #include "eventscripts.h"
 #include "ev_hldm.h"
@@ -857,11 +859,12 @@ void EV_FireMP5( event_args_t *args )
 		SDL_Joystick* gameController = NULL;
 		SDL_Haptic* ControllerHaptic = NULL;
 
-		if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+		if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
 		{
 			gEngfuncs.Con_Printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		}
-			// Check for any joysticks
+			// Loop through all the joysticks until one with rumble support is found.
+			for (int i = 0; i < SDL_NumJoysticks(); ++i)
 			if (SDL_NumJoysticks() < 1)
 			{
 				gEngfuncs.Con_Printf("No controllers detected.\n");
@@ -869,7 +872,7 @@ void EV_FireMP5( event_args_t *args )
 			else
 			{
 				// Load the joystick
-				gameController = SDL_JoystickOpen(0);
+				gameController = SDL_JoystickOpen(i);
 				if (gameController == NULL)
 				{
 					gEngfuncs.Con_Printf("Unable to open controller. SDL Error: %s\n", SDL_GetError());
@@ -892,15 +895,12 @@ void EV_FireMP5( event_args_t *args )
 					}
 				}
 			}
-
+		
 		if (SDL_HapticRumblePlay(ControllerHaptic, 0.75, 500) != 0)
 		{
 			gEngfuncs.Con_Printf("Failed to play rumble. SDL Error: %s\n", SDL_GetError());
 		}
-		else
-		{
 			SDL_HapticClose(ControllerHaptic);
-		}
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, (cl_righthand->value != 0.0f ? -1 : 1) * 4 );
