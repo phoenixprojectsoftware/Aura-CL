@@ -24,11 +24,6 @@
 #include "pm_defs.h"
 #include "pm_materials.h"
 
-//#include "../external/SDL2/SDL.h"
-//#include "../external/SDL2/SDL_haptic.h"
-//#include "../external/SDL2/SDL_joystick.h"
-//#include "../external/SDL2/SDL_timer.h"
-
 #include <SDL2/SDL.h>
 
 #include "eventscripts.h"
@@ -856,7 +851,7 @@ void EV_FireMP5( event_args_t *args )
 			}
 		}
 
-		SDL_Joystick* gameController = NULL;
+		/*SDL_Joystick* gameController = NULL;
 		SDL_Haptic* ControllerHaptic = NULL;
 
 		if (SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
@@ -900,7 +895,7 @@ void EV_FireMP5( event_args_t *args )
 		{
 			gEngfuncs.Con_Printf("Failed to play rumble. SDL Error: %s\n", SDL_GetError());
 		}
-			SDL_HapticClose(ControllerHaptic);
+			SDL_HapticClose(ControllerHaptic);*/
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, (cl_righthand->value != 0.0f ? -1 : 1) * 4 );
