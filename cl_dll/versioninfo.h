@@ -5,13 +5,8 @@
 #define clientDate __TIMESTAMP__
 #define auraVersion "v2.0"
 #define season "Season 6: HECU"
-#define zamnhlmpVersion "2.6-PPT3"
+#define zamnhlmpVersion "2.6-PPT4"
 #define Authors "The Phoenix Project Software"
 #define auraCL "https://github.com/phoenixprojectsoftware/Aura-CL"
 #define auraSE "https://github.com/phoenixprojectsoftware/Aura-SE"
 #define zamnhlmpRepo "https://github.com/phoenixprojectsoftware/zamnhlmp"
-
-// When I change the version number I will probably do Ctrl+Shift+H in Visual Studio and
-// replace "old version" with "new version," you know what I mean. It's a really shitty
-// way to do it, but I can't be bothered to program it to read the info from a text file.
-// Lol.
