@@ -2394,11 +2394,27 @@ void EV_FireM249(event_args_t* args)
 		-28.0, 24.0, 4.0);
 
 	EV_EjectBrass(ShellOrigin, ShellVelocity, args->angles[1], iShell, TE_BOUNCE_SHELL);
-
-	gEngfuncs.pEventAPI->EV_PlaySound(
-		args->entindex,
-		args->origin, CHAN_WEAPON, "weapons/saw_fire1.wav",
-		VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
+	switch (gEngfuncs.pfnRandomLong(0, 2))
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound(
+			args->entindex,
+			args->origin, CHAN_WEAPON, "weapons/saw_fire1.wav",
+			VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound(
+			args->entindex,
+			args->origin, CHAN_WEAPON, "weapons/saw_fire2.wav",
+			VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound(
+			args->entindex,
+			args->origin, CHAN_WEAPON, "weapons/saw_fire3.wav",
+			VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
+		break;
+	}
 
 	Vector vecSrc;
 
