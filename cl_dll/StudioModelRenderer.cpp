@@ -1403,7 +1403,7 @@ int CStudioModelRenderer::StudioDrawModel( int flags )
 			VectorCopy(angles, legs.angles);
 			VectorCopy(angles, legs.curstate.angles);
 
-			legs.model = IEngineStudio.Mod_ForName("models/player_legs.mdl", 1); // assign the entity model. I don't remember whether it is necessary to pre-cache it on the server, if the game crashes, then make a pre-cache in ClientPrecache in client.cpp
+			legs.model = IEngineStudio.Mod_ForName("models / player_legs.mdl", 1); // assign the entity model. I don't remember whether it is necessary to pre-cache it on the server, if the game crashes, then make a pre-cache in ClientPrecache in client.cpp
 			legs.curstate.framerate = player->curstate.framerate; // copy the frame rate
 			legs.curstate.sequence = player->curstate.gaitsequence; // copy the sequence. That is, the gate sequence. That is why ordinary sexences are not played.
 
