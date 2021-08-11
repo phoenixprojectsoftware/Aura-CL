@@ -5,7 +5,7 @@
 #define clientDate __TIMESTAMP__
 #define auraVersion "v2.0"
 #define season "Season 6: HECU"
-#define zamnhlmpVersion "2.6-PPT4"
+#define zamnhlmpVersion "2.6"
 #define Authors "The Phoenix Project Software"
 #define auraCL "https://github.com/phoenixprojectsoftware/Aura-CL"
 #define auraSE "https://github.com/phoenixprojectsoftware/Aura-SE"
