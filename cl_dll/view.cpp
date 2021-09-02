@@ -109,6 +109,8 @@ cvar_t* cl_mp5_punch_roll_enabled; // Let's add a little tilt to the MP5.
 cvar_t* cl_m249_new_punch_enabled;
 cvar_t* cl_shockrifle_punch_enabled;
 
+cvar_t* cl_vibration_enabled;
+
 extern cvar_t* cl_viewmodel_lag_enabled;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
@@ -2003,6 +2005,8 @@ void V_Init(void)
 	cl_mp5_punch_roll_enabled = gEngfuncs.pfnRegisterVariable("cl_mp5_punch_roll_enabled", "1", FCVAR_ARCHIVE);
 	cl_m249_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_m249_new_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
+
+	cl_vibration_enabled = gEngfuncs.pfnRegisterVariable("cl_vibration_enabled", "0", FCVAR_ARCHIVE);
 }
 
 
