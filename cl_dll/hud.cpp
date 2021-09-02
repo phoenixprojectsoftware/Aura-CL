@@ -527,7 +527,7 @@ int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
 
 void PrintVersion()
 {
-	gEngfuncs.Con_Printf("\n  Aura client build %s (%s)", clientDate);
+	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
 	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
 	gEngfuncs.Con_Printf("\n  Half-Life: Zombies Ate My Neighbours Multiplayer %s", zamnhlmpVersion);
 	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
