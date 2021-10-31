@@ -65,6 +65,7 @@ namespace
 		"monster_zombie",
 		"monster_zombie_barney",
 		"monster_zombie_soldier"
+		"monster_wesley"
 	};
 
 	const char* const grapple_large[] =

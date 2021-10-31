@@ -67,6 +67,7 @@ namespace
 		"monster_grunt_repel",
 		"monster_ichthyosaur",
 		"monster_shocktrooper"
+		"monster_wesley"
 	};
 }
 
