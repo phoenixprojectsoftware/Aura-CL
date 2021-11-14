@@ -586,8 +586,6 @@ void CHud :: Init( void )
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
-	cl_viewrollangle = CVAR_CREATE ( "cl_viewrollangle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
-	cl_viewrollspeed = CVAR_CREATE ( "cl_viewrollspeed", "300", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
 
 	HOOK_MESSAGE( CheatCheck );
 	HOOK_MESSAGE( WhString );
