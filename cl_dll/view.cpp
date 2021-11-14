@@ -1009,9 +1009,9 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
 
 	// throw in a little tilt.
-	view->angles[YAW]   -= bob * 0.5;
+	/*view->angles[YAW] -= bob * 0.5;
 	view->angles[ROLL]  -= bob * 1;
-	view->angles[PITCH] -= bob * 0.3;
+	view->angles[PITCH] -= bob * 0.3;*/
 	VectorCopy(view->angles, view->curstate.angles);
 
 	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
