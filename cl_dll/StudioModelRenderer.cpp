@@ -818,28 +818,6 @@ void CStudioModelRenderer::StudioSetupBones ( void )
 	}
 
 	pseqdesc = (mstudioseqdesc_t *)((byte *)m_pStudioHeader + m_pStudioHeader->seqindex) + m_pCurrentEntity->curstate.sequence;
-	if (m_pCurrentEntity == gEngfuncs.GetViewModel())
-	{
-		if (m_pCvarViewmodelNoIdle->value != 0.0f)
-		{
-			if (strstr(pseqdesc->label, "idle") != NULL || strstr(pseqdesc->label, "fidget") != NULL)
-			{
-				m_pCurrentEntity->curstate.frame = 0; // set current state to first frame
-				m_pCurrentEntity->curstate.framerate = 0; // don't animate at all
-			}
-		}
-		if (m_pCvarViewmodelNoEquip->value != 0.0f)
-		{
-			if (strstr(pseqdesc->label, "holster") != NULL || strstr(pseqdesc->label, "draw") != NULL ||
-				strstr(pseqdesc->label, "deploy") != NULL)
-			{
-				m_pCurrentEntity->curstate.sequence = 0; // instead set to idle sequence
-				pseqdesc = (mstudioseqdesc_t*)((byte*)m_pStudioHeader + m_pStudioHeader->seqindex) + m_pCurrentEntity->curstate.sequence;
-				pseqdesc->numframes = 1;
-				pseqdesc->fps = 1;
-			}
-		}
-	}
 
 	// always want new gait sequences to start on frame zero
 /*	if ( m_pPlayerInfo )
@@ -1007,7 +985,7 @@ void CStudioModelRenderer::StudioSetupBones ( void )
 			extern cvar_t* cl_righthand;
 			if (m_pCurrentEntity == gEngfuncs.GetViewModel()
 				&& IEngineStudio.IsHardware()
-				&& cl_righthand->value != 0.0f)
+				&& cl_righthand->value > 0.0f)
 			{
 				for (size_t j = 0; j < 4; ++j)
 					bonematrix[1][j] *= -1.0;
@@ -2019,16 +1997,20 @@ void CStudioModelRenderer::StudioCalcAttachments( void )
 	{
 		VectorTransform( pattachment[i].org, (*m_plighttransform)[pattachment[i].bone],  m_pCurrentEntity->attachment[i] );
 
-		if (IEngineStudio.IsHardware() && // OpenGL mode
-			m_pCurrentEntity == gEngfuncs.GetViewModel() && // attachments of viewmodel
-			m_pCvarViewmodelFov->value != 0.0f && // viewmodel FOV is changed
-			g_flRenderFOV == gHUD.default_fov->value) // weapon is not zoomed in
+		if (m_pCurrentEntity == gEngfuncs.GetViewModel() && NeedAdjustViewmodelAdjustments())
 		{
 			// Adjust attachment positions to account for different viewmodel FOV.
 			// Otherwise weapon effects (sprites, beams) will be drawn in incorrect position.
 			StudioAdjustViewmodelAttachments(m_pCurrentEntity->attachment[i]);
 		}
 	}
+}
+
+bool CStudioModelRenderer::NeedAdjustViewmodelAdjustments()
+{
+	return IEngineStudio.IsHardware() && // OpenGL mode
+		m_pCvarViewmodelFov->value != 0.0f && // viewmodel FOV is changed.
+		g_flRenderFOV == gHUD.default_fov->value; // weapon is not zoomed in
 }
 
 void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Vector &vOrigin)

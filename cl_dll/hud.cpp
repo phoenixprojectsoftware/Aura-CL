@@ -586,6 +586,8 @@ void CHud :: Init( void )
 
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
+	cl_viewrollangle = CVAR_CREATE ( "cl_viewrollangle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
+	cl_viewrollspeed = CVAR_CREATE ( "cl_viewrollspeed", "300", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
 
 	HOOK_MESSAGE( CheatCheck );
 	HOOK_MESSAGE( WhString );
@@ -616,6 +618,7 @@ void CHud :: Init( void )
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
+	m_pCvarDrawMessagesAlways = CVAR_CREATE( "cl_draw_messages_always", "0", FCVAR_ARCHIVE );
 	m_pCvarAutostop = CVAR_CREATE("cl_autostop", "0", FCVAR_ARCHIVE);
 	m_pCvarViewheightMode = CVAR_CREATE("cl_viewheight_mode", "0", FCVAR_ARCHIVE);
 	m_pCvarHideCorpses = CVAR_CREATE("cl_hidecorpses", "0", FCVAR_ARCHIVE);

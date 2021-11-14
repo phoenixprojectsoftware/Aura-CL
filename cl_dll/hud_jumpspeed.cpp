@@ -14,6 +14,7 @@ int CHudJumpspeed::Init()
 
 	hud_jumpspeed = CVAR_CREATE("hud_jumpspeed", "0", FCVAR_ARCHIVE);
 	hud_jumpspeed_below_cross = CVAR_CREATE("hud_jumpspeed_below_cross", "0", FCVAR_ARCHIVE);
+	hud_jumpspeed_height = CVAR_CREATE("hud_jumpspeed_height", "0", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem(this);
 	return 0;
@@ -36,6 +37,8 @@ int CHudJumpspeed::Draw(float flTime)
 	int y;
 	if (hud_jumpspeed_below_cross->value != 0.0f)
 		y = ScreenHeight / 2 + gHUD.m_iFontHeight / 2 + gHUD.m_iFontHeight;
+	else if (hud_jumpspeed_height->value != 0.0f)
+		y = hud_jumpspeed_height->value;
 	else
 		y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2 - gHUD.m_iFontHeight;
 
@@ -48,8 +51,8 @@ int CHudJumpspeed::Draw(float flTime)
 		passedTime = FADE_DURATION_JUMPSPEED;
 
 	float colorVel[3] = { r - fadingFrom[0] / FADE_DURATION_JUMPSPEED,
-						  g - fadingFrom[1] / FADE_DURATION_JUMPSPEED,
-						  b - fadingFrom[2] / FADE_DURATION_JUMPSPEED };
+	                      g - fadingFrom[1] / FADE_DURATION_JUMPSPEED,
+	                      b - fadingFrom[2] / FADE_DURATION_JUMPSPEED };
 
 	r = static_cast<int>(r - colorVel[0] * (FADE_DURATION_JUMPSPEED - passedTime));
 	g = static_cast<int>(g - colorVel[1] * (FADE_DURATION_JUMPSPEED - passedTime));

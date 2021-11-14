@@ -24,8 +24,16 @@
 #include "eventscripts.h"
 #include "event_api.h"
 #include "pm_shared.h"
+#include "GameStudioModelRenderer.h"
 
 #define IS_FIRSTPERSON_SPEC ( g_iUser1 == OBS_IN_EYE || (g_iUser1 && (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)) )
+
+extern cvar_t *cl_viewmodel_ofs_right;
+extern cvar_t *cl_viewmodel_ofs_forward;
+extern cvar_t *cl_viewmodel_ofs_up;
+
+extern CGameStudioModelRenderer g_StudioRenderer;
+
 /*
 =================
 GetEntity
@@ -149,7 +157,7 @@ EV_GetDefaultShellInfo
 Determine where to eject shells from
 =================
 */
-void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity, float *ShellVelocity, float *ShellOrigin, float *forward, float *right, float *up, float forwardScale, float upScale, float rightScale )
+void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity, float *ShellVelocity, Vector &ShellOrigin, float *forward, float *right, float *up, float forwardScale, float upScale, float rightScale )
 {
 	int i;
 	vec3_t view_ofs;
@@ -175,14 +183,32 @@ void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity,
 	}
 
 	extern cvar_t* cl_righthand;
-	fR = (cl_righthand->value != 0 ? -1 : 1) * gEngfuncs.pfnRandomFloat( 50, 70 );
+	fR = gEngfuncs.pfnRandomFloat( 50, 70 );
 	fU = gEngfuncs.pfnRandomFloat( 100, 150 );
+
+	bool bIsFirstPerson = EV_IsPlayer(idx) && EV_IsLocal(idx);
+
+	if (bIsFirstPerson)
+	{
+		rightScale += cl_viewmodel_ofs_right->value;
+		forwardScale += cl_viewmodel_ofs_forward->value;
+		upScale += cl_viewmodel_ofs_up->value;
+
+		if (cl_righthand->value > 0.0f)
+		{
+			fR *= -1;
+			rightScale *= -1;
+		}
+	}
 
 	for ( i = 0; i < 3; i++ )
 	{
 		ShellVelocity[i] = velocity[i] + right[i] * fR + up[i] * fU + forward[i] * 25;
 		ShellOrigin[i]   = origin[i] + view_ofs[i] + up[i] * upScale + forward[i] * forwardScale + right[i] * rightScale;
 	}
+
+	if (bIsFirstPerson && g_StudioRenderer.NeedAdjustViewmodelAdjustments())
+		g_StudioRenderer.StudioAdjustViewmodelAttachments(ShellOrigin);
 }
 
 /*

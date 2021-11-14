@@ -12,6 +12,7 @@ int CHudSpeedometer::Init()
 
 	hud_speedometer = CVAR_CREATE("hud_speedometer", "0", FCVAR_ARCHIVE);
 	hud_speedometer_below_cross = CVAR_CREATE("hud_speedometer_below_cross", "0", FCVAR_ARCHIVE);
+	hud_speedometer_height = CVAR_CREATE("hud_speedometer_height", "0", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem(this);
 	return 0;
@@ -31,10 +32,12 @@ int CHudSpeedometer::Draw(float time)
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 
 	int y;
-	if (hud_speedometer_below_cross->value != 0)
+	if (hud_speedometer_below_cross->value != 0.0f)
 		y = ScreenHeight / 2 + gHUD.m_iFontHeight / 2;
+	else if (hud_speedometer_height->value != 0.0f)
+		y = hud_speedometer_height->value;
 	else
-		y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
+		y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2 - gHUD.m_iFontHeight;
 
 	gHUD.DrawHudNumberCentered(ScreenWidth / 2, y, speed, r, g, b);
 

@@ -7,8 +7,8 @@
 
 # Building
 ## Windows
-### Visual Studio 2019
-1. Install [Visual Studio 2019](https://my.visualstudio.com/Downloads?q=Visual%20Studio%20Community%202019). In the Visual Studio Installer, select Desktop Development for C++.
+### Visual Studio 2019 & Visual Studio 2022
+1. Install [Visual Studio 2019](https://my.visualstudio.com/Downloads?q=Visual%20Studio%20Community%202019) or [Visual Studio 2022](https://visualstudio.microsoft.com/vs/preview/vs2022/#download-preview). In the Visual Studio Installer, select Desktop Development for C++.
 1. Open Visual Studio.
 1. On the starting screen, click "Clone or check out code".
 1. Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish.
