@@ -628,6 +628,8 @@ void CHud :: Init( void )
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
 	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
 
+	
+
 	// Clear any old HUD list
 	if ( m_pHudList )
 	{
