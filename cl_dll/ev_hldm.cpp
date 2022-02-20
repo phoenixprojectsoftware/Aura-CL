@@ -898,19 +898,17 @@ void EV_FireMP5( event_args_t *args )
 
 			SDL_Joystick* gameController = NULL;
 			SDL_Haptic* ControllerHaptic = NULL;
-
 			// Loop through all the joysticks until one with rumble support is found.
-			//for (int i = 0; i < SDL_NumJoysticks(); ++i)
 			gEngfuncs.Con_DPrintf("Controllers connected: %s\n", SDL_NumJoysticks);
-
-				if (SDL_NumJoysticks() < 0)
+			for (int i = 0; i < SDL_NumJoysticks(); ++i)
+				if (SDL_NumJoysticks() < i)
 				{
 					gEngfuncs.Con_Printf("No controllers detected. %s\n", SDL_GetError());
 				}
 				else
 				{
 					// Load the joystick
-					gameController = SDL_JoystickOpen(0);
+					gameController = SDL_JoystickOpen(i);
 					if (gameController == NULL)
 					{
 						gEngfuncs.Con_Printf("Unable to open controller. SDL Error: %s\n", SDL_GetError());
@@ -927,7 +925,7 @@ void EV_FireMP5( event_args_t *args )
 						else
 						{
 							// Get the init rumble
-							if (SDL_HapticRumbleInit(ControllerHaptic) < 0)
+							if (SDL_HapticRumbleInit(ControllerHaptic) < i)
 							{
 								gEngfuncs.Con_Printf("Failed to init rumble. SDL Error: %s\n", SDL_GetError());
 							}
