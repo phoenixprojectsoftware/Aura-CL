@@ -688,12 +688,8 @@ public:
 	CHudScores	m_Scores;
 	CHudSettings	m_Settings;
 	CHudSpeedometer	m_Speedometer;
-<<<<<<< HEAD
-	CHudJumpspeed m_Jumpspeed;
-=======
 	CHudStrafeGuide	m_StrafeGuide;
 	CHudJumpspeed   m_Jumpspeed;
->>>>>>> e5bea9e (Strafing HUD (#149))
 	CHudSuddenDeath		m_SuddenDeath;
 	CHudTimeout		m_Timeout;
 	CHudTimer		m_Timer;
