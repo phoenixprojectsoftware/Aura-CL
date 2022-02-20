@@ -80,8 +80,6 @@ extern cvar_t* cl_mp5_punch_roll_enabled;
 extern cvar_t* cl_m249_new_punch_enabled;
 extern cvar_t* cl_shockrifle_punch_enabled;
 
-extern cvar_t* cl_vibration_enabled;
-
 extern "C"
 {
 
@@ -886,58 +884,6 @@ void EV_FireMP5( event_args_t *args )
 				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 				V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
 			}
-		}
-		
-		if (cl_vibration_enabled->value == 1)
-		{
-
-			if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-			{
-				gEngfuncs.Con_Printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-			}
-
-			SDL_Joystick* gameController = NULL;
-			SDL_Haptic* ControllerHaptic = NULL;
-			// Loop through all the joysticks until one with rumble support is found.
-			gEngfuncs.Con_DPrintf("Controllers connected: %s\n", SDL_NumJoysticks);
-			for (int i = 0; i < SDL_NumJoysticks(); ++i)
-				if (SDL_NumJoysticks() < i)
-				{
-					gEngfuncs.Con_Printf("No controllers detected. %s\n", SDL_GetError());
-				}
-				else
-				{
-					// Load the joystick
-					gameController = SDL_JoystickOpen(i);
-					if (gameController == NULL)
-					{
-						gEngfuncs.Con_Printf("Unable to open controller. SDL Error: %s\n", SDL_GetError());
-					}
-					else
-					{
-						// Get the haptic
-						SDL_JoystickIsHaptic(gameController);
-						ControllerHaptic = SDL_HapticOpenFromJoystick(gameController);
-						if (ControllerHaptic == NULL)
-						{
-							gEngfuncs.Con_Printf("Controller does not support vibration. SDL Error: %s\n", SDL_GetError());
-						}
-						else
-						{
-							// Get the init rumble
-							if (SDL_HapticRumbleInit(ControllerHaptic) < i)
-							{
-								gEngfuncs.Con_Printf("Failed to init rumble. SDL Error: %s\n", SDL_GetError());
-							}
-						}
-					}
-				}
-
-			if (SDL_HapticRumblePlay(ControllerHaptic, 0.75, 100) != 0)
-			{
-				gEngfuncs.Con_Printf("Failed to play rumble. SDL Error: %s\n", SDL_GetError());
-			}
-			SDL_HapticClose(ControllerHaptic);
 		}
 	}
 
