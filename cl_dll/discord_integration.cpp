@@ -40,6 +40,8 @@ namespace discord_integration
 
 		// Maps for which we have thumbnails.
 		const std::unordered_set<std::string> maps_with_thumbnails{
+			// PLEASE SORT THESE IN ALPHABETICAL ORDER - AND MAKE SURE THAT THE MAP NAMES YOU PUT HERE 
+			// ARE EXACTLY AS THEY ARE CAPITALISED IN THE GAME FILES!
 			"Blimpboom"s,
 			"Boot_Box"s,
 			"Boot_Camp"s,
@@ -56,6 +58,7 @@ namespace discord_integration
 			"Lambda_Bunker"s,
 			"Pyrozone"s,
 			"Rapidcore"s,
+			"Rust"s,
 			"Snark_Pit"s,
 			"StalkX"s,
 			"Stalkyard"s,
