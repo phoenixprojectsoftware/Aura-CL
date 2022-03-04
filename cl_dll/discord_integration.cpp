@@ -22,7 +22,7 @@ namespace discord_integration
 		constexpr const char CLIENT_ID[] = "836328170360799284";
 
 		// This seems to be consistent across PCs.
-		constexpr const char STEAM_APP_ID[] = "17215498729465839686";
+		constexpr const char STEAM_APP_ID[] = "15569587907822878790";
 
 		void LowerCase(const char* in, char* out, int size)
 		{
