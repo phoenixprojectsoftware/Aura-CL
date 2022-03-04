@@ -64,6 +64,8 @@
 
 ### Manually via Terminal
 1. Get a 32-bit/multilib **gcc** (6 and above) or **clang** (3.9 and above) build environment set up, as well as CMake.
+1. `sudo apt install mesa-common-dev`
+1. `sudo apt install libgl1-mesa-dev`
 2. `git submodule update --init`
 3. `mkdir build`
 4. `cd build`
@@ -79,6 +81,8 @@ Open the Windows Terminal and select the Linux distro's profile (e.g. **Ubuntu 1
 2. `sudo apt install clang`
 3. `sudo apt install cmake`
 4. `sudo apt install git`
+4. `sudo apt install mesa-common-dev`
+1. `sudo apt install libgl1-mesa-dev`
 5. Assuming you have `cd`'d to your Aura-CL folder; `git submodule update --init`
 6. `mkdir Linux-Build`
 7. `cmake ..` — wait for the process to finish
