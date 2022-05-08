@@ -22,7 +22,8 @@ namespace discord_integration
 		constexpr const char CLIENT_ID[] = "836328170360799284";
 
 		// This seems to be consistent across PCs.
-		constexpr const char STEAM_APP_ID[] = "15569587907822878790";
+		constexpr const char STEAM_APP_ID[] = "15569587907822878790"; // This app ID will only launch zamnhlmp and not zamnhlmp_dev - so Discord invites will not work for
+																	  // zamnhlmp_dev builds of the game!
 
 		void LowerCase(const char* in, char* out, int size)
 		{
