@@ -4,7 +4,7 @@
 // These are in the order they appear in PrintVersion()
 #define auraVersion "v2.1"
 #define season "Season 7: Black Ops"
-#define zamnhlmpVersion "2.7-PPT2"
+#define zamnhlmpVersion "2.7-PPT3"
 #define Authors "The Phoenix Project Software"
 #define auraCL "https://github.com/phoenixprojectsoftware/Aura-CL"
 #define auraSE "https://github.com/phoenixprojectsoftware/Aura-SE"
