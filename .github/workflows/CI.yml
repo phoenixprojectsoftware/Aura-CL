@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolset: [v141_xp, v141, v142]
+        toolset: [v141, v142]
         configuration: [Release, Debug]
     steps:
       - uses: actions/checkout@v2
