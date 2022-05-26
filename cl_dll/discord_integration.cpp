@@ -97,7 +97,7 @@ namespace discord_integration
 
 		// Text names of game states
 		const std::string STATE_NAMES[] = {
-			"Not Playing"s,
+			"In Menus"s,
 			"Playing"s,
 			"Spectating"s
 		};
