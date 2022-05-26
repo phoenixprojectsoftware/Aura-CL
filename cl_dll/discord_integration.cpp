@@ -95,6 +95,11 @@ namespace discord_integration
 			"Xen"s,
 		};
 
+		// Custom maps with thumbnails.
+		const std::unordered_set<std::string> custom_maps_with_thumbnails{
+			"Bonkfire"s,
+		};
+
 		// Text names of game states
 		const std::string STATE_NAMES[] = {
 			"In Menus"s,
@@ -253,6 +258,9 @@ namespace discord_integration
 
 						LowerCase((const char*)map_name, newmapname, ARRAYSIZE(map_name));
 						if (maps_with_thumbnails.find(map_name) != maps_with_thumbnails.cend())
+							presence.largeImageKey = newmapname;
+
+						if (custom_maps_with_thumbnails.find(map_name) != custom_maps_with_thumbnails.cend())
 							presence.largeImageKey = newmapname;
 
 						presence.largeImageText = map_name;
