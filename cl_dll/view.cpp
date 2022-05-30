@@ -288,6 +288,9 @@ void V_ApplyBob(struct ref_params_s* pparams, cl_entity_t* view)
 	// view->angles[YAW] -= bob.laterialBob * 0.3f;
 
 	VectorMA(view->origin, bob.laterialBob * 0.8f, pparams->right, view->origin);
+
+	gHUD.m_flHudLagOfs[0] = bob.laterialBob;
+	gHUD.m_flHudLagOfs[1] = bob.verticalBob;
 }
 
 /*
@@ -296,7 +299,7 @@ V_CalcRoll
 Used by view and sv_user
 ===============
 */
-float V_CalcRoll(vec3_t angles, vec3_t velocity, float rollangle, float rollspeed)
+float V_CalcRoll(vec3_t angles, vec3_t velocity, float rollangle, float rollspeed, int type = 0)
 {
 	float   sign;
 	float   side;
@@ -305,7 +308,19 @@ float V_CalcRoll(vec3_t angles, vec3_t velocity, float rollangle, float rollspee
 
 	AngleVectors(angles, forward, right, up);
 
-	side = DotProduct(velocity, right);
+	switch (type)
+	{
+	case 0:
+	default:
+		side = DotProduct(velocity, right);
+		break;
+	case 1:
+		side = DotProduct(velocity, forward);
+		break;
+	case 2:
+		side = DotProduct(velocity, up);
+		break;
+	}
 	sign = side < 0 ? -1 : 1;
 	side = fabs(side);
 
@@ -855,6 +870,9 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 		m_vecLastFacing = m_vecLastFacing.Normalize();
 
 		origin = origin + (vDifference * -1.0f) * m_flScale;
+
+		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), 5, 500) * 280.0f;
+		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), 5, 500, 2) * 280.0f;
 	}
 
 	AngleVectors(original_angles, forward, right, up);

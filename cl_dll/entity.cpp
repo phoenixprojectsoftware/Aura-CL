@@ -369,9 +369,9 @@ void MuzzleFlash(int index, const cl_entity_s* entity)
 		dl->color.r = 231;
 		dl->color.g = 219;
 		dl->color.b = 14;
-		dl->die = gEngfuncs.GetClientTime() + 0.05f;
+		dl->die = gEngfuncs.GetClientTime() + 0.15f;
 		dl->radius = gEngfuncs.pfnRandomFloat(245.0f, 256.0f);
-		dl->decay = 512.0f;
+		dl->decay = 1024.0f;
 	}
 	dlight_s* el = gEngfuncs.pEfxAPI->CL_AllocElight(entity->index);
 	if (el)
@@ -383,9 +383,9 @@ void MuzzleFlash(int index, const cl_entity_s* entity)
 		el->color.r = 231;
 		el->color.g = 219;
 		el->color.b = 14;
-		el->die = gEngfuncs.GetClientTime() + 0.075f;
+		el->die = gEngfuncs.GetClientTime() + 0.15f;
 		el->radius = gEngfuncs.pfnRandomFloat(245.0f, 256.0f);
-		el->decay = 512.0f;
+		el->decay = 1024.0f;
 	}
 
 }

@@ -320,7 +320,7 @@ int CHud :: DrawHudNumberStringFixed( int xpos, int ypos, int iNumber, int r, in
 // draws a string from right to left (right-aligned)
 int CHud :: DrawHudStringReverse( int xpos, int ypos, int iMinX, const char *szString, int r, int g, int b )
 {
-	return xpos - gEngfuncs.pfnDrawStringReverse( xpos, ypos, szString, r, g, b);
+	return xpos - gEngfuncs.pfnDrawStringReverse( xpos + m_flHudLagOfs[0], ypos + m_flHudLagOfs[1], szString, r, g, b);
 }
 
 int CHud :: DrawHudNumber( int x, int y, int iFlags, int iNumber, int r, int g, int b)

@@ -742,6 +742,7 @@ public:
 
 	float m_iLaserSuspendTime;
 
+	float m_flHudLagOfs[2];
 };
 
 extern CHud gHUD;
