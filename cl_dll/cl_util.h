@@ -54,18 +54,18 @@ inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int fl
 #define SPR_GetList (*gEngfuncs.pfnSPR_GetList)
 
 // SPR_Draw  draws a the current sprite as solid
-#define SPR_Draw (*gEngfuncs.pfnSPR_Draw)
+#define SPR_Draw(a,x,y,b) (*gEngfuncs.pfnSPR_Draw)(a,x + gHUD.m_flHudLagOfs[0],y + gHUD.m_flHudLagOfs[1],b)
 // SPR_DrawHoles  draws the current sprites,  with color index255 not drawn (transparent)
-#define SPR_DrawHoles (*gEngfuncs.pfnSPR_DrawHoles)
+#define SPR_DrawHoles(a,x,y,b) (*gEngfuncs.pfnSPR_DrawHoles)(a,x + gHUD.m_flHudLagOfs[0],y + gHUD.m_flHudLagOfs[1],b)
 // SPR_DrawAdditive  adds the sprites RGB values to the background  (additive transulency)
-#define SPR_DrawAdditive (*gEngfuncs.pfnSPR_DrawAdditive)
+#define SPR_DrawAdditive(a,x,y,b) (*gEngfuncs.pfnSPR_DrawAdditive)(a,x + gHUD.m_flHudLagOfs[0],y + gHUD.m_flHudLagOfs[1],b)
 
 // SPR_EnableScissor  sets a clipping rect for HUD sprites.  (0,0) is the top-left hand corner of the screen.
 #define SPR_EnableScissor (*gEngfuncs.pfnSPR_EnableScissor)
 // SPR_DisableScissor  disables the clipping rect
 #define SPR_DisableScissor (*gEngfuncs.pfnSPR_DisableScissor)
 //
-#define FillRGBA (*gEngfuncs.pfnFillRGBA)
+#define FillRGBA(x,y,w,h,r,g,b,a) (*gEngfuncs.pfnFillRGBA)(x + gHUD.m_flHudLagOfs[0],y + gHUD.m_flHudLagOfs[1],w,h,r,g,b,a)
 
 
 // ScreenHeight returns the height of the screen, in pixels
