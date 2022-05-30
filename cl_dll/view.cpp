@@ -110,6 +110,8 @@ cvar_t* cl_m249_new_punch_enabled;
 cvar_t* cl_shockrifle_punch_enabled;
 
 extern cvar_t* cl_viewmodel_lag_enabled;
+cvar_t* cl_hud_lag_enabled;
+cvar_t* cl_hud_lag_sensitivity;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
@@ -871,8 +873,8 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 
 		origin = origin + (vDifference * -1.0f) * m_flScale;
 
-		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), 5, 500) * 280.0f;
-		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), 5, 500, 2) * 280.0f;
+		if (cl_hud_lag_enabled->value == 1) gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), cl_hud_lag_sensitivity->value, 500) * 280.0f;
+		if (cl_hud_lag_enabled->value == 1) gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), cl_hud_lag_sensitivity->value, 500, 2) * 280.0f;
 	}
 
 	AngleVectors(original_angles, forward, right, up);
@@ -2014,6 +2016,9 @@ void V_Init(void)
 	cl_viewmodel_ofs_up = gEngfuncs.pfnRegisterVariable("cl_viewmodel_ofs_up", "0", FCVAR_ARCHIVE); // z = up
 
 	cl_viewmodel_lag_enabled = gEngfuncs.pfnRegisterVariable("cl_viewmodel_lag_enabled", "1", FCVAR_ARCHIVE);
+
+	cl_hud_lag_enabled = gEngfuncs.pfnRegisterVariable("cl_hud_lag_enabled", "1", FCVAR_ARCHIVE);
+	cl_hud_lag_sensitivity = gEngfuncs.pfnRegisterVariable("cl_hud_lag_sensitivity", "5", FCVAR_ARCHIVE);
 
 	cl_crowbar_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_crowbar_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_displacer_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_displacer_punch_enabled", "1", FCVAR_ARCHIVE);
