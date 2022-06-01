@@ -894,16 +894,16 @@ void EV_FireMP5( event_args_t *args )
 	switch( gEngfuncs.pfnRandomLong( 0, 3 ) )
 	{
 	case 0:
-		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/hks1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_AUTO, "weapons/hks1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
 		break;
 	case 1:
-		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/hks2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_AUTO, "weapons/hks2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
 		break;
 	case 2:
-		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/hks3.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_AUTO, "weapons/hks3.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
 		break;
 	case 3:
-		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/hks4.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_AUTO, "weapons/hks4.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
 		break;
 	}
 
@@ -2388,19 +2388,19 @@ void EV_FireM249(event_args_t* args)
 	case 0:
 		gEngfuncs.pEventAPI->EV_PlaySound(
 			args->entindex,
-			args->origin, CHAN_WEAPON, "weapons/saw_fire1.wav",
+			args->origin, CHAN_AUTO, "weapons/saw_fire1.wav",
 			VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
 		break;
 	case 1:
 		gEngfuncs.pEventAPI->EV_PlaySound(
 			args->entindex,
-			args->origin, CHAN_WEAPON, "weapons/saw_fire2.wav",
+			args->origin, CHAN_AUTO, "weapons/saw_fire2.wav",
 			VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
 		break;
 	case 2:
 		gEngfuncs.pEventAPI->EV_PlaySound(
 			args->entindex,
-			args->origin, CHAN_WEAPON, "weapons/saw_fire3.wav",
+			args->origin, CHAN_AUTO, "weapons/saw_fire3.wav",
 			VOL_NORM, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 15));
 		break;
 	}
