@@ -628,6 +628,8 @@ void CHud :: Init( void )
 
 	m_pSpriteList = NULL;
 
+	CVAR_CREATE("cl_music_enabled", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_USERINFO );
+
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
 	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
 
