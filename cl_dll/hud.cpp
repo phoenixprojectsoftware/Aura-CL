@@ -604,7 +604,7 @@ void CHud :: Init( void )
 	CVAR_CREATE( "cl_autowepswitch", "1", FCVAR_ARCHIVE | FCVAR_USERINFO | FCVAR_CLIENTDLL );
 
 	// Enabling music - CLIENT SIDE?!?!?! No fucking way.
-	CVAR_CREATE("cl_music", "1", FCVAR_ARCHIVE | FCVAR_USERINFO | FCVAR_CLIENTDLL);
+	//CVAR_CREATE("cl_music", "1", FCVAR_ARCHIVE | FCVAR_USERINFO | FCVAR_CLIENTDLL);
 
 	// This has to be called cl_righthand (there's some stuff compiled into the engine),
 	// and also from my tests it has to be 0 for normal and 1 for left-handed.
