@@ -78,6 +78,7 @@ Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the M
 Open the Windows Terminal and select the Linux distro's profile (e.g. **Ubuntu 18.04**). Be aware that if you haven't already, you will need to add the `ninja` compiler to the PATH of your distro. It is included with this repository.
 
 1. `sudo apt install gcc`
+1. `sudo apt install gcc-multilib`
 2. `sudo apt install clang`
 3. `sudo apt install cmake`
 4. `sudo apt install git`
