@@ -9,7 +9,24 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "CMAKE_INSTALL_PREFIX",
+          "value": "E:/repos/C-DRIVE/Aura-CL/out/install/x86-Debug",
+          "type": "PATH"
+        },
+        {
+          "name": "RAPIDJSON",
+          "value": "${projectDir}/external/discord-rpc/thirdparty/rapidjson-1.1.0",
+          "type": "FILEPATH"
+        },
+        {
+          "name": "RAPIDJSONTEST",
+          "value": "${projectDir}/external/discord-rpc/thirdparty/rapidjson-1.1.0",
+          "type": "FILEPATH"
+        }
+      ]
     },
     {
       "name": "x86-Release",
@@ -20,7 +37,24 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "CMAKE_INSTALL_PREFIX",
+          "value": "${projectDir}/out/install/x86-Release",
+          "type": "PATH"
+        },
+        {
+          "name": "RAPIDJSON",
+          "value": "${projectDir}/external/discord-rpc/thirdparty/rapidjson-1.1.0",
+          "type": "FILEPATH"
+        },
+        {
+          "name": "RAPIDJSONTEST",
+          "value": "${projectDir}/external/discord-rpc/thirdparty/rapidjson-1.1.0",
+          "type": "FILEPATH"
+        }
+      ]
     }
   ]
 }

@@ -42,7 +42,7 @@ int CHudCountdown::Draw(float time)
 		if (name1[0] != '\0')
 			sprintf(str, "The last round was won by %s^0!", name1);
 		else
-			sprintf(str, "Waiting for players to get ready...");
+			sprintf(str, "Waiting for players...");
 	} else {
 		if (gHUD.m_flTime >= draw_until) {
 			m_iFlags &= ~HUD_ACTIVE;
