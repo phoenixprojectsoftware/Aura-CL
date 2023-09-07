@@ -4,6 +4,7 @@
 class CHudCrosshairs : public CHudBase
 {
 	cvar_t* cl_cross;
+	cvar_t* cl_cross_low;
 	cvar_t* cl_cross_color;
 	cvar_t* cl_cross_alpha;
 	cvar_t* cl_cross_thickness;
