@@ -7,47 +7,20 @@
 
 # Building
 ## Windows
-### Visual Studio 2019 & Visual Studio 2022
-1. Install [Visual Studio 2019](https://my.visualstudio.com/Downloads?q=Visual%20Studio%20Community%202019) or [Visual Studio 2022](https://visualstudio.microsoft.com/vs/preview/vs2022/#download-preview). In the Visual Studio Installer, select Desktop Development for C++.
+### Visual Studio 2022
+1. Install  [Visual Studio 2022]([https://visualstudio.microsoft.com/vs/preview/vs2022/#download-preview](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false)). In the Visual Studio Installer, select Desktop Development for C++. We have deprecated support for Visual Studio 2019 for Aura both clientside and serverside, but VS2019 may still work with Aura-CL
 1. Open Visual Studio.
 1. On the starting screen, click "Clone or check out code".
-1. Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish.
+1. Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish. When the repository opens, Visual Studio's built-in CMake tools will setup the project for you.
 1. You can build the project using Build→Build All. To find the built client.dll, go to Project→CMake Cache (x86-Debug Only)→Open in Explorer.
 
-### Visual Studio 2017
-1. Install [Visual Studio 2017](https://my.visualstudio.com/Downloads?q=Visual%20Studio%20Community%202017). In the Visual Studio Installer, select Desktop Development for C++.
-1. Open Visual Studio.
-1. Go to File→Open→Open from Source Control.
-1. Click Clone:
-
-    ![Screenshot of the clone button.](https://user-images.githubusercontent.com/1794388/77243489-8e90ea00-6c1b-11ea-8000-09d576266162.png)
-
-    Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish.
-1. You can build the project using CMake→Build All. To find the built client.dll, go to CMake→Cache (x86-Debug Only)→Open Cache Folder→OpenAG.
-
-### Visual Studio 2022 Preview
-1. Install the [Visual Studio 2022 preview.](https://visualstudio.microsoft.com/vs/preview/vs2022/#download-preview) In the Visual Studio Installer, select **Desktop Development for C++.**
-2. Open Visual Studio.
-3. On the starting screen, click "Clone or check out code."
-4. Enter `https://github.com/YaLTeR/OpenAG.git` and press the Clone button. Wait for the process to finish.
-5. You can build the project using Build→Build All. To find the built client.dll, go to Project→CMake Cache (x86-Debug Only)→Open in Explorer.
-
 ### Manually using Git and CMake
-1. Install Visual Studio 2017 or above, Git and CMake. Make sure to add them to PATH.
+1. Install Visual Studio 2022, Git, and CMake. Make sure to add them to PATH.
 1. Clone the repository.
 1. Open Git Bash in the OpenAG folder.
 1. `git submodule update --init`
 1. `cmake -A Win32 -B build`
 1. `cmake --build build --config Release`
-
-## macOS
-1. Install Xcode.
-2. Install CMake via Homebrew.
-3. `git submodule update --init`
-4. `mkdir build`
-5. `cd build`
-6. `cmake ..`
-7. `cmake --build . --config Release`
 
 ## Linux
 ### GNOME Builder
