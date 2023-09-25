@@ -685,6 +685,7 @@ void CHud :: Init( void )
 	m_Vote.Init();
 	m_Watermark.Init();
 	m_OldScoreBoard.Init();
+	m_NameTags.Init();
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 
 	m_Menu.Init();
@@ -843,6 +844,7 @@ void CHud :: VidInit( void )
 	m_Location.VidInit();
 	m_NextMap.VidInit();
 	m_PlayerId.VidInit();
+	m_NameTags.VidInit();
 	m_Scores.VidInit();
 	m_Settings.VidInit();
 	m_Speedometer.VidInit();
@@ -852,6 +854,7 @@ void CHud :: VidInit( void )
 	m_Vote.VidInit();
 	m_Watermark.VidInit();
 	m_OldScoreBoard.VidInit();
+	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
 }
 
