@@ -22,16 +22,16 @@ int CHudWatermark::VidInit()
 	return 1;
 }
 
-cvar_t *gamedirCvar = NULL;
+//cvar_t *gamedirCvar = NULL;
 
-const char* GetGameDir()
+/*const char* GetGameDir()
 {
 	if (!gamedirCvar)
 	{
 		gamedirCvar = gEngfuncs.pfnGetCvarPointer("gamedir");
 		if (!gamedirCvar)
 		{
-			gEngfuncs.Con_Printf("gamedir cvar not FUCKING FOUND MATE PISS OF\n");
+			gEngfuncs.Con_Printf("gamedir cvar not found\n");
 			return NULL;
 		}
 	}
@@ -52,16 +52,18 @@ const char* GetGameDir()
 		}
 
 		return gamedirValue;
-}
+}*/
 
 int CHudWatermark::Draw(float time)
 {
-	if (refresh_draw_until || (draw_until > gHUD.m_flTime + 15.0f)) {
+	if (refresh_draw_until || (draw_until > gHUD.m_flTime + 15.0f)) 
+	{
 		refresh_draw_until = false;
 		draw_until = gHUD.m_flTime + 15.0f;
 	}
 
-	if (gHUD.m_flTime >= draw_until) {
+	if (gHUD.m_flTime >= draw_until) 
+	{
 		m_iFlags &= ~HUD_ACTIVE;
 		return 0;
 	}
@@ -72,12 +74,10 @@ int CHudWatermark::Draw(float time)
 	char zamnhlmpVersion[256];
 	char displayString[256];
 
-	const char* gamedir = GetGameDir();
+	// const char* gamedir = GetGameDir();
 
-	if (gamedir)
-	{
 		char filepath[_MAX_PATH];
-		snprintf(filepath, sizeof(filepath), "%s/version.txt", gamedir);
+		snprintf(filepath, sizeof(filepath), "zamnhlmp_dev/aura/version.txt");
 		FILE* file = fopen(filepath, "r");
 
 		if (file != NULL)
@@ -97,7 +97,6 @@ int CHudWatermark::Draw(float time)
 		{
 			gEngfuncs.Con_Printf("version.txt not found");
 		}
-	}
 
 	sprintf(displayString, "Half-Life: Zombies Ate My Neighbours Multiplayer %s", zamnhlmpVersion);
 
