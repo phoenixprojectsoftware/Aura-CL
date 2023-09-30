@@ -1,4 +1,4 @@
-#ifndef __APIPROXY__
+//#ifndef __APIPROXY__
 #define __APIPROXY__
 
 #include "archtypes.h"     // DAL
@@ -936,4 +936,4 @@ typedef struct validator_s
 #define k_nModuleVersionCur 0x43210004
 
 
-#endif // __APIPROXY__
+//#endif // __APIPROXY__

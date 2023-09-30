@@ -592,6 +592,10 @@ public:
 	float	m_iFOV;
 	int		m_iTargetFOV;
 
+	int m_iCrosshairRed;
+	int m_iCrosshairGreen;
+	int m_iCrosshairBlue;
+
 	int		m_Teamplay;
 	int		m_iRes;
 	cvar_t  *m_pCvarStealMouse;
