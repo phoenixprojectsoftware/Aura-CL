@@ -2,7 +2,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "update_checker.h"
-#include <stdio.h>
+#include <filesystem>
 #include "versioninfo.h"
 
 int CHudWatermark::Init()
@@ -76,7 +76,7 @@ int CHudWatermark::Draw(float time)
 
 	// const char* gamedir = GetGameDir();
 
-		char filepath[_MAX_PATH];
+		char filepath[260];
 		snprintf(filepath, sizeof(filepath), "zamnhlmp_dev/aura/version.txt");
 		FILE* file = fopen(filepath, "r");
 
