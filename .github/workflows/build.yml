@@ -13,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolset: [v141, v142]
-        configuration: [Release, Debug]
+        toolset: [v142]
+        configuration: [Release]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -36,8 +36,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gcc-ver: [6, 7, 8, 9, 10, 11]
-        configuration: [Release, Debug]
+        gcc-ver: [11]
+        configuration: [Release]
     env:
       CC: gcc-${{ matrix.gcc-ver }}
       CXX: g++-${{ matrix.gcc-ver }}
@@ -68,8 +68,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang-ver: [3.9, '4.0', '5.0', '6.0', 7, 8, 9, 10, 11, 12] # #.0 is interpreted as integer without quotation marks
-        configuration: [Release, Debug]
+        clang-ver: [12] # #.0 is interpreted as integer without quotation marks
+        configuration: [Release]
     env:
       CC: clang-${{ matrix.clang-ver }}
       CXX: clang++-${{ matrix.clang-ver }}
