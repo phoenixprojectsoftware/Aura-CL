@@ -1,26 +1,10 @@
-name: CI
+name: Windows build
 
-on:
-  push:
-    paths-ignore:
-      - '.github/*'
-      - '.github/*_TEMPLATE/**'
-      - '*.bat'
-      - '*.yml'
-      - '*.md'
-      - 'LICENSE*'
-  pull_request:
-    paths-ignore:
-      - '.github/*'
-      - '.github/*_TEMPLATE/**'
-      - '*.bat'
-      - '*.yml'
-      - '*.md'
-      - 'LICENSE*'
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 1 * *' # Monthly
+on: [push]
 
+env:
+    BUILD_CONFIGURATION: Release
+    
 jobs:
   build-windows:
     runs-on: windows-latest
