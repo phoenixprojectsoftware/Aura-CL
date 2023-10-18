@@ -433,6 +433,8 @@ void CAM_ToThirdPerson(void)
 	vec3_t viewangles;
 
 #if !defined( _DEBUG )
+	cvar_t* sv_cheats = NULL;
+	sv_cheats = gEngfuncs.GetCvarPointer("sv_cheats");
 	if ( gEngfuncs.GetMaxClients() > 1 )
 	{
 		// no thirdperson in multiplayer.
