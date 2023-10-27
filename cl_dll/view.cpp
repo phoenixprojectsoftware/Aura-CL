@@ -124,6 +124,8 @@ cvar_t	v_ipitch_level = { "v_ipitch_level", "0.3", 0, 0.3 };
 
 float	v_idlescale;  // used by TFC for concussion grenade effect
 
+cvar_s* crosshair_low;
+
 //=============================================================================
 /*
 void V_NormalizeAngles( vec3_t angles )
@@ -479,6 +481,8 @@ void V_CalcGunAngle(struct ref_params_s* pparams)
 
 	VectorCopy(viewent->angles, viewent->curstate.angles);
 	VectorCopy(viewent->angles, viewent->latched.prevangles);
+
+	pparams->crosshairangle[0] = -((int)crosshair_low->value > 0 ? 5.0f : 0.0f);
 }
 
 /*
@@ -2029,6 +2033,8 @@ void V_Init(void)
 	cl_mp5_punch_roll_enabled = gEngfuncs.pfnRegisterVariable("cl_mp5_punch_roll_enabled", "1", FCVAR_ARCHIVE);
 	cl_m249_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_m249_new_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
+
+	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "1", FCVAR_ARCHIVE);
 }
 
 

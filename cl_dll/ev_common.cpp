@@ -34,6 +34,8 @@ extern cvar_t *cl_viewmodel_ofs_up;
 
 extern CGameStudioModelRenderer g_StudioRenderer;
 
+extern cvar_s* crosshair_low;
+
 /*
 =================
 GetEntity
@@ -112,6 +114,7 @@ void EV_GetGunPosition( event_args_t *args, float *pos, float *origin )
 {
 	int idx;
 	vec3_t view_ofs;
+	vec3_t up;
 
 	idx = args->entindex;
 
@@ -133,6 +136,12 @@ void EV_GetGunPosition( event_args_t *args, float *pos, float *origin )
 	}
 
 	VectorAdd( origin, view_ofs, pos );
+
+	if (EV_IsLocal(idx) && !IS_FIRSTPERSON_SPEC)
+	{
+		// TODO : Add CVAR check
+		pos[2] -= 5.0f;
+	}
 }
 
 /*
