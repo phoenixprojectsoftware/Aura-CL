@@ -747,10 +747,10 @@ void CHud :: VidInit( void )
 	m_hsprLogo = 0;	
 	m_hsprCursor = 0;
 
-	if (ScreenWidth < 2560)
-		m_iRes = 1280;
+	if (ScreenWidth < 640)
+		m_iRes = 320;
 	else
-		m_iRes = 2560;
+		m_iRes = 640;
 
 	// Only load this once
 	if ( !m_pSpriteList )
