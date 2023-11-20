@@ -469,7 +469,7 @@ private:
 //
 //-----------------------------------------------------
 //
-#define MAX_SPRITE_NAME_LENGTH	64
+#define MAX_SPRITE_NAME_LENGTH	320
 
 class CHudStatusIcons: public CHudBase
 {
