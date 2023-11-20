@@ -8,7 +8,7 @@
 # Building
 ## Windows
 ### Visual Studio 2022
-1. Install  [Visual Studio 2022]([https://visualstudio.microsoft.com/vs/preview/vs2022/#download-preview](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false)). In the Visual Studio Installer, select Desktop Development for C++. We have deprecated support for Visual Studio 2019 for Aura both clientside and serverside, but VS2019 may still work with Aura-CL
+1. Install  [Visual Studio 2022]([https://visualstudio.microsoft.com/vs/preview/vs2022/#download-preview](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030&passive=false)). In the Visual Studio Installer, select Desktop Development for C++. Under Individual Components, have **Windows 10 SDK (10.0.20348.0)** selected. We have deprecated support for Visual Studio 2019 for Aura both clientside and serverside, but VS2019 may still work with Aura-CL
 1. Open Visual Studio.
 1. On the starting screen, click "Clone or check out code".
 1. Enter `https://github.com/phoenixsoftware/Aura-CL.git` and press the Clone button. Wait for the process to finish. When the repository opens, Visual Studio's built-in CMake tools will setup the project for you.
