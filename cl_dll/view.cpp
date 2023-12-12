@@ -2033,7 +2033,7 @@ void V_Init(void)
 	cl_m249_new_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_m249_new_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
 
-	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "1", FCVAR_ARCHIVE);
+	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "0", FCVAR_ARCHIVE);
 }
 
 
