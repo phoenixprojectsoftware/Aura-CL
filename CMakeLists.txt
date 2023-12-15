@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.20)
 
 # Set the SDK according to what discord-rpc uses as the lowest common denominator.
 # Must be a cache variable: https://stackoverflow.com/a/34208904

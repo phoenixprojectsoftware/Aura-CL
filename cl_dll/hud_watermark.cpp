@@ -2,7 +2,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "update_checker.h"
-#include <filesystem>
+//#include <filesystem>
 #include "versioninfo.h"
 
 int CHudWatermark::Init()
@@ -21,38 +21,6 @@ int CHudWatermark::VidInit()
 
 	return 1;
 }
-
-//cvar_t *gamedirCvar = NULL;
-
-/*const char* GetGameDir()
-{
-	if (!gamedirCvar)
-	{
-		gamedirCvar = gEngfuncs.pfnGetCvarPointer("gamedir");
-		if (!gamedirCvar)
-		{
-			gEngfuncs.Con_Printf("gamedir cvar not found\n");
-			return NULL;
-		}
-	}
-
-		const char* gamedirValue = gamedirCvar->string;
-
-		const char* prefix = "gamedir is ";
-		const char* prefixPos = strstr(gamedirValue, prefix);
-
-		if (prefixPos)
-		{
-			prefixPos += strlen(prefix);
-			return prefixPos;
-		}
-		else
-		{
-			return gamedirValue;
-		}
-
-		return gamedirValue;
-}*/
 
 int CHudWatermark::Draw(float time)
 {
@@ -74,7 +42,6 @@ int CHudWatermark::Draw(float time)
 	char zamnhlmpVersion[256];
 	char displayString[256];
 
-	// const char* gamedir = GetGameDir();
 
 		char filepath[260];
 		snprintf(filepath, sizeof(filepath), "zamnhlmp_dev/aura/version.txt");
