@@ -895,16 +895,16 @@ void EV_FireMP5( event_args_t *args )
 	switch( gEngfuncs.pfnRandomLong( 0, 3 ) )
 	{
 	case 0:
-		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, 8, "weapons/hks1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEP1, "weapons/hks1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
 		break;
 	case 1:
-		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, 9, "weapons/hks2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEP2, "weapons/hks2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
 		break;
 	case 2:
-		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, 10, "weapons/hks3.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP3, "weapons/hks3.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
 		break;
 	case 3:
-		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, 11, "weapons/hks4.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP4, "weapons/hks4.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
 		break;
 	}
 

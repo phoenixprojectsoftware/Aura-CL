@@ -621,6 +621,13 @@
 #define CHAN_NETWORKVOICE_BASE	7		// voice data coming across the network
 #define CHAN_NETWORKVOICE_END	500		// network voice data reserves slots (CHAN_NETWORKVOICE_BASE through CHAN_NETWORKVOICE_END).
 #define CHAN_BOT			501			// channel used for bot chatter.
+#define CHAN_WEP1 8
+#define CHAN_WEP2 9
+#define CHAN_WEP3 10
+#define CHAN_WEP4 11
+#define CHAN_SHIELD1 12
+#define CHAN_SHIELD2 13
+#define CHAN_SHIELD3 14
 
 // attenuation values
 #define ATTN_NONE		0
