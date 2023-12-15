@@ -8,7 +8,7 @@ project(Aura-Client)
 
 include("CMake/helpers.cmake")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -219,4 +219,4 @@ target_compile_definitions(client PRIVATE
 	-DCLIENT_WEAPONS
 	-DUPDATE_CHECK)
 
-target_link_libraries(client discord-rpc)
+target_link_libraries(client discord-rpc stdc++fs)
