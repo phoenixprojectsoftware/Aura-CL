@@ -219,4 +219,4 @@ target_compile_definitions(client PRIVATE
 	-DCLIENT_WEAPONS
 	-DUPDATE_CHECK)
 
-target_link_libraries(client discord-rpc stdc++fs)
+target_link_libraries(client discord-rpc)
