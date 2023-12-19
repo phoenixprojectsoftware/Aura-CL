@@ -8,7 +8,7 @@ project(Aura-Client)
 
 include("CMake/helpers.cmake")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -202,7 +202,7 @@ elseif(UNIX)
 	else(APPLE)
 		# I wasn't able to do this in any other way.
 		# Things like imported targets result in linking with relative path.
-		set(VGUI_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so")
+		set(VGUI_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so -L${CMAKE_SOURCE_DIR}/linux -l:libSDL2-2.0.so.0")
 
 		# --push-state isn't supported on older compilers. I tried checking for support
 		# using CheckCXXCompilerFlag and CheckCXXSourceCompiles, but they were reporting
