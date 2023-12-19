@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.3)
 
 # Set the SDK according to what discord-rpc uses as the lowest common denominator.
 # Must be a cache variable: https://stackoverflow.com/a/34208904
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.10" CACHE STRING "Minimum OS X deployment version")
 
-project(Aura-Client)
+project(OpenAG)
 
 include("CMake/helpers.cmake")
 
@@ -94,7 +94,7 @@ set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 
-add_library(client SHARED ${SOURCE_FILES} "common/Platform.h")
+add_library(client SHARED ${SOURCE_FILES})
 target_include_directories(client PRIVATE
 	${CMAKE_BINARY_DIR}
 	common
@@ -202,7 +202,8 @@ elseif(UNIX)
 	else(APPLE)
 		# I wasn't able to do this in any other way.
 		# Things like imported targets result in linking with relative path.
-		set(VGUI_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so -L${CMAKE_SOURCE_DIR}/linux -l:libSDL2-2.0.so.0")
+		set(VGUI_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so")
+		set(SDL2_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux -lSDL2")
 
 		# --push-state isn't supported on older compilers. I tried checking for support
 		# using CheckCXXCompilerFlag and CheckCXXSourceCompiles, but they were reporting
@@ -210,7 +211,7 @@ elseif(UNIX)
 		# --no-as-needed for all compilers.
 		set(VGUI_LINK_FLAGS "-Wl,--no-as-needed ${VGUI_LINK_FLAGS}")
 
-		set_property(TARGET client PROPERTY LINK_FLAGS ${VGUI_LINK_FLAGS})
+		set_property(TARGET client PROPERTY LINK_FLAGS "${VGUI_LINK_FLAGS} ${SDL2_LINK_FLAGS}")
 	endif(APPLE)
 endif(WIN32)
 
