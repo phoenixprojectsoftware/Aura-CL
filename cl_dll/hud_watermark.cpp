@@ -44,7 +44,7 @@ int CHudWatermark::Draw(float time)
 
 
 		char filepath[260];
-		snprintf(filepath, sizeof(filepath), "zamnhlmp_dev/aura/version.txt");
+		snprintf(filepath, sizeof(filepath), "zamnhlmp/aura/version.txt");
 		FILE* file = fopen(filepath, "r");
 
 		if (file != NULL)
