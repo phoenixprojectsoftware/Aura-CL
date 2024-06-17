@@ -289,6 +289,7 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 		fvol = 1.0;	fvolbar = 0.2;
 		rgsz[0] = "weapons/bullet_hit1.wav";
 		rgsz[1] = "weapons/bullet_hit2.wav";
+		rgsz[2] = "player/hitsound.wav";
 		fattn = 1.0;
 		cnt = 2;
 		break;
