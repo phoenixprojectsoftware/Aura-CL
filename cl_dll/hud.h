@@ -353,6 +353,7 @@ public:
 	int VidInit( void );
 	int Draw(float flTime);
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
+	bool Blinking;
 	
 private:
 	HSPRITE m_hSprite1;

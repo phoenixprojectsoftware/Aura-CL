@@ -84,7 +84,7 @@ int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 
 int CHudBattery::Draw(float flTime)
 {
-	if ( gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH )
+	if (gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH)
 		return 1;
 
 	int r, g, b, x, y, a;
@@ -94,40 +94,58 @@ int CHudBattery::Draw(float flTime)
 
 #if defined( _TFC )
 	float fScale = 0.0;
-	
-	if ( m_iBatMax > 0 )
+
+	if (m_iBatMax > 0)
 		fScale = 1.0 / (float)m_iBatMax;
 
-	rc.top  += m_iHeight * ((float)(m_iBatMax-(min(m_iBatMax,m_iBat))) * fScale); // battery can go from 0 to m_iBatMax so * fScale goes from 0 to 1
+	rc.top += m_iHeight * ((float)(m_iBatMax - (min(m_iBatMax, m_iBat))) * fScale); // battery can go from 0 to m_iBatMax so * fScale goes from 0 to 1
 #else
-	rc.top  += m_iHeight * ((float)(100-(min(100,m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
+	rc.top += m_iHeight * ((float)(100 - (min(100, m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 #endif
 
-	UnpackRGB(r,g,b, gHUD.m_iDefaultHUDColor);
+	cvar_t* sv_aura_regeneration = gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration");
 
-	if (!(gHUD.m_iWeaponBits & (1<<(WEAPON_SUIT)) ))
-		return 1;
 
-	// Has health changed? Flash the health #
-	if (m_fFade)
+	// DeanAMX: Flash the armour HUD on zero.
+
+	UnpackRGB(r, g, b, RGB_DEFAULT);
+	if (sv_aura_regeneration->value == 1) 
 	{
-		if (m_fFade > FADE_TIME)
-			m_fFade = FADE_TIME;
 
-		m_fFade -= (gHUD.m_flTimeDelta * 20);
-		if (m_fFade <= 0)
+	if (m_iBat <= 0)
+	{
+		if (!Blinking)
 		{
-			a = 128;
-			m_fFade = 0;
+			PlaySound("player/shield_empty.wav", 1);
+			Blinking = true;
 		}
 
-		// Fade the health number back to dim
-
-		a = MIN_ALPHA +  (m_fFade/FADE_TIME) * 128;
-
+		a = (int)(fabs(sin(flTime * 10)) * 256.0);
 	}
 	else
-		a = MIN_ALPHA;
+	{
+		Blinking = false;
+
+		if (0 != m_fFade) // Has health changed? Flash the health #
+		{
+			if (m_fFade > FADE_TIME)
+				m_fFade = FADE_TIME;
+
+			m_fFade -= (gHUD.m_flTimeDelta * 20);
+			if (m_fFade <= 0)
+			{
+				a = 128;
+				m_fFade = 0;
+			}
+
+			// Fade the health number back to dim
+
+			a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+		}
+		else
+			a = MIN_ALPHA;
+	}
+	}
 
 	ScaleColors(r, g, b, a );
 	
