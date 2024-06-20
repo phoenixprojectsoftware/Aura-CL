@@ -39,6 +39,7 @@
 #include "r_studioint.h"
 #include "com_model.h"
 
+
 #define WEAPONS_NO_CLASSES
 
 // Opposing Force weapons go here.
@@ -224,6 +225,8 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 			chTextureType = PM_FindTextureType( szbuffer );	
 		}
 	}
+
+	//PRECACHE_SOUND("player/hitsound.wav");
 	
 	switch (chTextureType)
 	{
@@ -287,11 +290,11 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 		if (iBulletType == BULLET_PLAYER_CROWBAR)
 			return 0.0; // crowbar already makes this sound
 		fvol = 1.0;	fvolbar = 0.2;
-		rgsz[0] = "weapons/bullet_hit1.wav";
-		rgsz[1] = "weapons/bullet_hit2.wav";
-		rgsz[2] = "player/hitsound.wav";
+		//rgsz[0] = "weapons/bullet_hit1.wav";
+		//rgsz[1] = "weapons/bullet_hit2.wav";
+		rgsz[0] = "player/hitsound.wav";
 		fattn = 1.0;
-		cnt = 2;
+		cnt = 1;
 		break;
 	}
 
