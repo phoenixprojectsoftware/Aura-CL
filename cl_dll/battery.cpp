@@ -103,13 +103,13 @@ int CHudBattery::Draw(float flTime)
 	rc.top += m_iHeight * ((float)(100 - (min(100, m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 #endif
 
-	cvar_t* sv_aura_regeneration = gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration");
+	//cvar_t* sv_aura_regeneration = gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration");
 
 
 	// DeanAMX: Flash the armour HUD on zero.
 
 	UnpackRGB(r, g, b, RGB_DEFAULT);
-	if (sv_aura_regeneration->value == 1) 
+	if (gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration")->value == 1)
 	{
 
 	if (m_iBat <= 0)
