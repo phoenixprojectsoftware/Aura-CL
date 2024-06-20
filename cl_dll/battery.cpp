@@ -109,8 +109,7 @@ int CHudBattery::Draw(float flTime)
 	// DeanAMX: Flash the armour HUD on zero.
 
 	UnpackRGB(r, g, b, RGB_DEFAULT);
-	if (gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration")->value == 1)
-	{
+	//if (gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration")->value == 1) {
 
 	if (m_iBat <= 0)
 	{
@@ -145,7 +144,7 @@ int CHudBattery::Draw(float flTime)
 		else
 			a = MIN_ALPHA;
 	}
-	}
+	//}
 
 	ScaleColors(r, g, b, a );
 	
