@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.3)
 # Must be a cache variable: https://stackoverflow.com/a/34208904
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.10" CACHE STRING "Minimum OS X deployment version")
 
-project(OpenAG)
+project(Aura-Client)
 
 include("CMake/helpers.cmake")
 
