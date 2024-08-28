@@ -38,10 +38,7 @@
 1. `sudo apt install mesa-common-dev`
 1. `sudo apt install libgl1-mesa-dev`
 2. `git submodule update --init`
-3. `mkdir build`
-4. `cd build`
-5. `cmake ..`
-6. `cmake --build . --config Release`
+3. `./build.sh`
 
 ### WSL 2 (Windows 10 & 11)
 Side-note: if you're using WSL, it's recommended you use Ubuntu 18.04 from the Microsoft Store.
