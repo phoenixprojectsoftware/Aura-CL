@@ -71,6 +71,7 @@ int giOldWeapons = 0;
 
 // HLDM Weapon placeholder entities.
 CGlock g_Glock;
+COne g_One;
 CCrowbar g_Crowbar;
 CPython g_Python;
 CMP5 g_Mp5;
@@ -653,6 +654,7 @@ void HUD_InitClientWeapons( void )
 
 	// Allocate slot(s) for each weapon that we are going to be predicting
 	HUD_PrepEntity( &g_Glock	, &player );
+	HUD_PrepEntity(&g_One, &player);
 	HUD_PrepEntity( &g_Crowbar	, &player );
 	HUD_PrepEntity( &g_Python	, &player );
 	HUD_PrepEntity( &g_Mp5	, &player );
@@ -720,6 +722,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	{
 	case WEAPON_CROWBAR: return &g_Crowbar;
 	case WEAPON_GLOCK: return &g_Glock;
+	case WEAPON_ONE: return &g_One;
 	case WEAPON_PYTHON: return &g_Python;
 	case WEAPON_MP5: return &g_Mp5;
 	case WEAPON_CROSSBOW: return &g_Crossbow;

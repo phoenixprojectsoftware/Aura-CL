@@ -97,6 +97,7 @@ public:
 #define WEAPON_SNIPERRIFLE		24
 #define WEAPON_KNIFE			25
 #define WEAPON_PENGUIN			26
+#define WEAPON_ONE 27
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -150,12 +151,14 @@ public:
 #define M249_MAX_CARRY			200
 #define PENGUIN_MAX_CARRY 9
 #define SNIPERRIFLE_MAX_CARRY 15
+#define ONE_MAX_CARRY 1
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
 
 //#define CROWBAR_MAX_CLIP		WEAPON_NOCLIP
 #define GLOCK_MAX_CLIP			18
+#define ONE_MAX_CLIP 			WEAPON_NOCLIP
 #define PYTHON_MAX_CLIP			6
 #define MP5_MAX_CLIP			60
 #define MP5_DEFAULT_AMMO		60
@@ -179,6 +182,7 @@ public:
 
 // the default amount of ammo that comes with each gun when it spawns
 #define GLOCK_DEFAULT_GIVE			18
+#define ONE_DEFAULT_GIVE 			1
 #define PYTHON_DEFAULT_GIVE			6
 #define MP5_DEFAULT_GIVE			60
 #define MP5_DEFAULT_AMMO			60
@@ -530,6 +534,38 @@ void LoadVModel(char* szViewModel, CBasePlayer* m_pPlayer);
 #endif
 
 class CGlock : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int iItemSlot(void) { return 2; }
+	int GetItemInfo(ItemInfo* p);
+
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	void GlockFire(float flSpread, float flCycleTime, BOOL fUseAutoAim);
+	BOOL Deploy(void);
+	void Reload(void);
+	void WeaponIdle(void);
+
+	virtual BOOL UseDecrement(void)
+	{
+#if defined( CLIENT_WEAPONS )
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+
+private:
+	int m_iShell;
+
+
+	unsigned short m_usFireGlock1;
+	unsigned short m_usFireGlock2;
+};
+
+class COne : public CBasePlayerWeapon
 {
 public:
 	void Spawn(void);
