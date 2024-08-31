@@ -74,6 +74,7 @@ namespace discord_integration
 			"Debris"s,
 			"Demise"s,
 			"Disposal"s,
+			"Doublefort"s,
 			"Doublecross"s,
 			"Dyce"s,
 			"Flashback"s,
