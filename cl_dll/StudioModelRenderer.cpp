@@ -70,7 +70,7 @@ void CStudioModelRenderer::Init( void )
 	m_pCvarHiModels			= IEngineStudio.GetCvar( "cl_himodels" );
 	m_pCvarDeveloper		= IEngineStudio.GetCvar( "developer" );
 	m_pCvarDrawEntities		= IEngineStudio.GetCvar( "r_drawentities" );
-	m_pCvarViewmodelFov		= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_fov","0", FCVAR_ARCHIVE );
+	//m_pCvarViewmodelFov		= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_fov","0", FCVAR_ARCHIVE );
 	m_pCvarViewmodelNoIdle = gEngfuncs.pfnRegisterVariable("cl_viewmodel_disable_idle", "0", FCVAR_ARCHIVE);
 	m_pCvarViewmodelNoEquip = gEngfuncs.pfnRegisterVariable("cl_viewmodel_disable_equip", "0", FCVAR_ARCHIVE);
 
