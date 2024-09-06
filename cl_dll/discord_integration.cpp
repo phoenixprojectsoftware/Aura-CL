@@ -87,6 +87,7 @@ namespace discord_integration
 			"KBase"s,
 			"Kndyone"s,
 			"Lambda_Bunker"s,
+			"Leveled"s,
 			"Mall"s,
 			"Meanie"s,
 			"Office"s,
