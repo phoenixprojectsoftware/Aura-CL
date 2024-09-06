@@ -25,7 +25,7 @@ namespace discord_integration
 		constexpr const char STEAM_APP_ID[] = "15569587907822878790"; // This app ID will only launch zamnhlmp and not zamnhlmp_dev - so Discord invites will not work for
 																	  // zamnhlmp_dev builds of the game!
 
-		void LowerCase(const char* in, char* out, int size)
+		void LowerCase(const char* in, char* out, int size) // BlueNightHawk : Convert Uppercase Map Names to Lowercase. 2021.
 		{
 			for (int i = 0; i < size; i++)
 			{
