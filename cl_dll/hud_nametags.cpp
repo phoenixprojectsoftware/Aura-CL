@@ -181,7 +181,7 @@ int CHudNameTags::Draw(float flTime)
 			// Or if the localplayer is spectating
 			// TODO: V_GetInEyePos( g_iUser2, origin, angles );
 
-			if (Distance(trace->endpos, localPlayer->origin) < m_hud_nametags_team_max_distance->value && IsTeamMate(localPlayer, i) ||
+			if (Distance(trace->endpos, localPlayer->origin) < m_hud_nametags_team_max_distance->value ||
 				gEngfuncs.pDemoAPI->IsPlayingback() ||
 				!strcmp(gamemode, "Kreedz") ||
 				g_iUser1)
