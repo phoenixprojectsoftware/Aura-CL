@@ -137,7 +137,7 @@ int CHudBattery::Draw(float flTime)
 	{
 		Blinking = false;
 		gEngfuncs.pfnHookUserMsg("StopSound", MsgFunc_StopSound);
-		gEngfuncs.pfnConsolePrint("StopSound MSG successfully broadcast\n");
+		// gEngfuncs.pfnConsolePrint("StopSound MSG successfully broadcast\n");
 
 		if (0 != m_fFade) // Has health changed? Flash the health #
 		{
