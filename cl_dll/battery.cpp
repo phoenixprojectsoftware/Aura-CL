@@ -122,8 +122,18 @@ int CHudBattery::Draw(float flTime)
 
 	UnpackRGB(r, g, b, RGB_DEFAULT);
 	//if (gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration")->value == 1) {
+	if (m_iBat > 25)
+	{
+		UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
+	}
+	else
+	{
+		r = 250;
+		g = 0;
+		b = 0;
+	}
 
-	if (m_iBat <= 0)
+	if (m_iBat <= 10)
 	{
 		if (!Blinking)
 		{
