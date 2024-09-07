@@ -220,4 +220,6 @@ target_compile_definitions(client PRIVATE
 	-DCLIENT_WEAPONS
 	-DUPDATE_CHECK)
 
+add_subdirectory(external/openal-soft)
 target_link_libraries(client discord-rpc)
+target_link_libraries(client OpenAL)
