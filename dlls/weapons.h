@@ -565,38 +565,6 @@ private:
 	unsigned short m_usFireGlock2;
 };
 
-class COne : public CBasePlayerWeapon
-{
-public:
-	void Spawn(void);
-	void Precache(void);
-	int iItemSlot(void) { return 2; }
-	int GetItemInfo(ItemInfo* p);
-
-	void PrimaryAttack(void);
-	void SecondaryAttack(void);
-	void GlockFire(float flSpread, float flCycleTime, BOOL fUseAutoAim);
-	BOOL Deploy(void);
-	void Reload(void);
-	void WeaponIdle(void);
-
-	virtual BOOL UseDecrement(void)
-	{
-#if defined( CLIENT_WEAPONS )
-		return TRUE;
-#else
-		return FALSE;
-#endif
-	}
-
-private:
-	int m_iShell;
-
-
-	unsigned short m_usFireGlock1;
-	unsigned short m_usFireGlock2;
-};
-
 
 class CCrowbar : public CBasePlayerWeapon
 {
@@ -657,6 +625,38 @@ public:
 private:
 	unsigned short m_usFirePython;
 };
+
+class COne : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int iItemSlot(void) { return 2; }
+	int GetItemInfo(ItemInfo* p);
+	int AddToPlayer(CBasePlayer* pPlayer);
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	BOOL Deploy(void);
+	void Holster(int skiplocal = 0);
+	void Reload(void);
+	void WeaponIdle(void);
+	float m_flSoundDelay;
+
+	BOOL m_fInZoom;// don't save this. 
+
+	virtual BOOL UseDecrement(void)
+	{
+#if defined( CLIENT_WEAPONS )
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+
+private:
+	unsigned short m_usFirePython;
+};
+
 
 class CMP5 : public CBasePlayerWeapon
 {

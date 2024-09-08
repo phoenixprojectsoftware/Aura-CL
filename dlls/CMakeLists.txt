@@ -27,6 +27,7 @@ add_sources(
 	handgrenade.cpp
 	hornetgun.cpp
 	mp5.cpp
+	oitc.cpp
 	python.cpp
 	rpg.cpp
 	satchel.cpp
