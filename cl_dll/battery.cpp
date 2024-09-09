@@ -133,11 +133,15 @@ int CHudBattery::Draw(float flTime)
 		b = 0;
 	}
 
+	if (m_iBat <= 0)
+	{
+		PlaySound("player/shield_empty.wav", 1);
+	}
+
 	if (m_iBat <= 10)
 	{
 		if (!Blinking)
 		{
-			PlaySound("player/shield_empty.wav", 1);
 			Blinking = true;
 		}
 
