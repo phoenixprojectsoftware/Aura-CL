@@ -32,7 +32,7 @@ jobs:
 
   build-linux-gcc:
     name: build-linux (gcc-${{ matrix.gcc-ver }}, ${{ matrix.configuration }})
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu
     strategy:
       fail-fast: false
       matrix:
@@ -64,7 +64,7 @@ jobs:
 
   build-linux-clang:
     name: build-linux (clang-${{ matrix.clang-ver }}, ${{ matrix.configuration }})
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu
     strategy:
       fail-fast: false
       matrix:
