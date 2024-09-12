@@ -136,6 +136,12 @@ int CHudBattery::Draw(float flTime)
 	if (m_iBat <= 0)
 	{
 		PlaySound("player/shield_empty.wav", 1);
+		// PlaySound("player/shield_low.wav", 0);
+	}
+
+	if (m_iBat >= 1)
+	{
+		PlaySound("player/shield_empty.wav", 0);
 	}
 
 	if (m_iBat <= 10)
@@ -150,7 +156,7 @@ int CHudBattery::Draw(float flTime)
 	else
 	{
 		Blinking = false;
-		gEngfuncs.pfnHookUserMsg("StopSound", MsgFunc_StopSound);
+		// gEngfuncs.pfnHookUserMsg("StopSound", MsgFunc_StopSound);
 		// gEngfuncs.pfnConsolePrint("StopSound MSG successfully broadcast\n");
 
 		if (0 != m_fFade) // Has health changed? Flash the health #
