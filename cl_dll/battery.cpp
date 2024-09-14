@@ -21,6 +21,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
+#include "event_api.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -56,35 +57,35 @@ int CHudBattery::Init(void)
 
 int CHudBattery::VidInit(void)
 {
-	int HUD_suit_empty = gHUD.GetSpriteIndex( "suit_empty" );
-	int HUD_suit_full = gHUD.GetSpriteIndex( "suit_full" );
+	int HUD_suit_empty = gHUD.GetSpriteIndex("suit_empty");
+	int HUD_suit_full = gHUD.GetSpriteIndex("suit_full");
 
 	m_hSprite1 = m_hSprite2 = 0;  // delaying get sprite handles until we know the sprites are loaded
-	m_prc1 = &gHUD.GetSpriteRect( HUD_suit_empty );
-	m_prc2 = &gHUD.GetSpriteRect( HUD_suit_full );
+	m_prc1 = &gHUD.GetSpriteRect(HUD_suit_empty);
+	m_prc2 = &gHUD.GetSpriteRect(HUD_suit_full);
 	m_iHeight = m_prc2->bottom - m_prc1->top;
 	m_fFade = 0;
 	return 1;
 };
 
-int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
+int CHudBattery::MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 {
 	m_iFlags |= HUD_ACTIVE;
-	
-	BEGIN_READ( pbuf, iSize );
+
+	BEGIN_READ(pbuf, iSize);
 	int x = READ_SHORT();
 
 #if defined( _TFC )
 	int y = READ_SHORT();
 
-	if ( x != m_iBat || y != m_iBatMax )
+	if (x != m_iBat || y != m_iBatMax)
 	{
 		m_fFade = FADE_TIME;
 		m_iBat = x;
 		m_iBatMax = y;
 	}
 #else
-	if ( x != m_iBat )
+	if (x != m_iBat)
 	{
 		m_fFade = FADE_TIME;
 		m_iBat = x;
@@ -133,10 +134,36 @@ int CHudBattery::Draw(float flTime)
 		b = 0;
 	}
 
+	bool emptySound = false;
+	float nextemptySound = 0.0f;
+
+	vec3_t origin;
+	gEngfuncs.GetViewModel()->origin.CopyToArray(origin);
+	
+	float emptyTime = gEngfuncs.GetClientTime();
+
 	if (m_iBat <= 0)
 	{
-		PlaySound("player/shield_empty.wav", 1);
-		// PlaySound("player/shield_low.wav", 0);
+		if (!emptySound && emptyTime >= nextemptySound)
+		{
+			gEngfuncs.pEventAPI->EV_PlaySound(0, origin, CHAN_STATIC, "player/shield_empty.wav", 1, ATTN_NORM, 0, PITCH_NORM);
+			emptySound = true;
+			nextemptySound = emptyTime + 1.0f;
+		}
+	}
+	else
+	{
+		if (emptySound)
+		{
+			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_STATIC, "player/shield_empty.wav");
+			emptySound = false;
+		}
+	}
+
+	if (m_iBat >= 1)
+	{
+		gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_STATIC, "player/shield_empty.wav");
+		emptySound = false;
 	}
 
 	if (m_iBat <= 10)
