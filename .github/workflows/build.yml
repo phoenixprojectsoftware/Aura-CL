@@ -32,7 +32,7 @@ jobs:
 
   build-linux-gcc:
     name: build-linux (gcc-${{ matrix.gcc-ver }}, ${{ matrix.configuration }})
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
