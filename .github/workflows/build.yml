@@ -23,12 +23,6 @@ jobs:
         run: cmake -T ${{ matrix.toolset }} -A Win32 -B build
       - name: Build
         run: cmake --build build -j $env:NUMBER_OF_PROCESSORS --config ${{ matrix.configuration }}
-      - uses: actions/upload-artifact@v2
-        if: matrix.toolset == 'v141_xp'
-        with:
-          name: openag-${{ runner.os }}-${{ matrix.configuration }}
-          path: build\${{ matrix.configuration }}\client.dll
-          if-no-files-found: error
 
   build-linux-gcc:
     name: build-linux (gcc-${{ matrix.gcc-ver }}, ${{ matrix.configuration }})
