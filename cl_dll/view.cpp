@@ -903,7 +903,7 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 		// FIXME: These are the old settings that caused too many exposed polys on some models
 		origin = origin + forward * (-pitch * 0.035f);
 		origin = origin + right * (-pitch * 0.03f);
-		origin = origin + up * (-pitch * 0.02f);
+		origin = origin + up * (pitch * 0.02f);
 	}
 }
 
