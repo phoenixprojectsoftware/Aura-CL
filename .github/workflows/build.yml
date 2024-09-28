@@ -55,16 +55,10 @@ jobs:
       - name: Build
         working-directory: build
         run: ninja
-      - uses: actions/upload-artifact@v2
-        if: matrix.gcc-ver == '11'
-        with:
-          name: openag-${{ runner.os }}-${{ matrix.configuration }}
-          path: build/client.so
-          if-no-files-found: error
 
   build-linux-clang:
     name: build-linux (clang-${{ matrix.clang-ver }}, ${{ matrix.configuration }})
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
