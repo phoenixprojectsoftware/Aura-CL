@@ -120,12 +120,12 @@ namespace discord_integration
 			"Water_Canal"s,
 			"Waypoint"s,
 			"Xen"s,
-			"Xendance"s,
+			"Xendance"s
 		};
 
 		// Custom maps with thumbnails.
 		const std::unordered_set<std::string> custom_maps_with_thumbnails{
-			"Bonkfire"s,
+			"Bonkfire"s
 		};
 
 		// Text names of game states
