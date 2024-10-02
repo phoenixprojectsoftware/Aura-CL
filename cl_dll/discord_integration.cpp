@@ -12,7 +12,7 @@
 #include "vgui_TeamFortressViewport.h"
 #include "discord_integration.h"
 
-using namespace std::literals;
+using namespace std::literals::string_literals;
 
 namespace discord_integration
 {
@@ -24,8 +24,9 @@ namespace discord_integration
 		// This seems to be consistent across PCs.
 		constexpr const char STEAM_APP_ID[] = "15569587907822878790"; // This app ID will only launch zamnhlmp and not zamnhlmp_dev - so Discord invites will not work for
 																	  // zamnhlmp_dev builds of the game!
-
-		void LowerCase(const char* in, char* out, int size) // BlueNightHawk : Convert Uppercase Map Names to Lowercase. 2021.
+		
+		// BlueNightHawk : Convert Uppercase Map Names to Lowercase. 2021.
+		void LowerCase(const char* in, char* out, int size) 
 		{
 			for (int i = 0; i < size; i++)
 			{
