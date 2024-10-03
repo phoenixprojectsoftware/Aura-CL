@@ -2232,10 +2232,7 @@ void EV_FireDisplacer(event_args_t* args)
 				CHAN_WEAPON, "weapons/displacer_fire.wav",
 				gEngfuncs.pfnRandomFloat(0.8, 0.9), ATTN_NORM, 0, PITCH_NORM);
 
-			if (cl_displacer_punch_enabled->value == 1)
-			{
 				Punch(2, 0, 0);
-			}
 		}
 		else
 		{
@@ -2248,14 +2245,7 @@ void EV_FireDisplacer(event_args_t* args)
 		if (EV_IsLocal(args->entindex))
 		{
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(DISPLACER_FIRE, 0);
-			if (cl_displacer_big_punch_enabled->value == 1)
-			{
-				Punch(5, 0, 0);
-			}
-			else
-			{
-				Punch(2, 0, 0);
-			}
+			Punch(5, 0, 0);
 		}
 
 		break;
