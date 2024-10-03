@@ -1776,23 +1776,16 @@ void EV_HornetGunFire( event_args_t *args )
 	iFireMode = args->iparam1;
 
 	//Only play the weapon anims if I shot it.
-	if ( EV_IsLocal( idx ) )
+	if (EV_IsLocal(idx))
 	{
-		if (cl_hornet_random_punch_enabled->value == 1)
+		switch ((gEngfuncs.pfnRandomLong(0, 1)))
 		{
-			switch ((gEngfuncs.pfnRandomLong(0, 1)))
-			{
-			case 0:
-				Punch(2, 0, 0);
-				break;
-			case 1:
-				Punch(-2, 0, 0);
-				break;
-			}
-		}
-		else
-		{
+		case 0:
 			Punch(2, 0, 0);
+			break;
+		case 1:
+			Punch(-2, 0, 0);
+			break;
 		}
 
 		gEngfuncs.pEventAPI->EV_WeaponAnimation ( HGUN_SHOOT, 1 );
