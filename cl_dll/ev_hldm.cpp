@@ -2179,8 +2179,6 @@ void EV_FireShockRifle(event_args_t* args)
 	if (EV_IsLocal(args->entindex))
 	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(SHOCKRIFLE_FIRE, 0);
-		if (cl_shockrifle_punch_enabled->value == 1)
-		{
 			switch (gEngfuncs.pfnRandomLong(0, 3))
 			{
 			case 0:
@@ -2196,7 +2194,6 @@ void EV_FireShockRifle(event_args_t* args)
 				Punch(-0.75, 0.75, 0);
 				break;
 			}
-		}
 	}
 
 	for (size_t uiIndex = 0; uiIndex < 3; ++uiIndex)
