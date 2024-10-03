@@ -2349,8 +2349,8 @@ void EV_FireM249(event_args_t* args)
 	{
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(gEngfuncs.pfnRandomLong(0, 2) + M249_SHOOT1, iBody);
-		
-		if (cl_m249_new_punch_enabled->value == 1)
+
+		/*if (cl_m249_new_punch_enabled->value == 1)
 		{
 			switch (gEngfuncs.pfnRandomLong(0, 3))
 			{
@@ -2369,10 +2369,10 @@ void EV_FireM249(event_args_t* args)
 			}
 		}
 		else
-		{
-			V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-			V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
-		}
+		{*/
+
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 	}
 
 	Vector ShellVelocity;
