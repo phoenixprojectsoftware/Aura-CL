@@ -837,59 +837,9 @@ void EV_FireMP5( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_FIRE1 + gEngfuncs.pfnRandomLong(0,2), 2 );
 
-		if (cl_mp5_punch_roll_enabled->value == 0)
-		{
-			if (cl_mp5_new_punch_enabled->value == 1)
-			{
-				switch (gEngfuncs.pfnRandomLong(0, 3))
-				{
-				case 0:
-					Punch(0.5, 0.75, 0);
-					break;
-				case 1:
-					Punch(0.5, -0.75, 0);
-					break;
-				case 2:
-					Punch(-0.5, 0.75, 0);
-					break;
-				case 3:
-					Punch(-0.5, -0.75, 0);
-					break;
-				}
-			}
-			else
-			{
-				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
-				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
-			}
-		}
-		else
-		{
-			if (cl_mp5_new_punch_enabled->value == 1)
-			{
-				switch (gEngfuncs.pfnRandomLong(0, 3))
-				{
-				case 0:
-					Punch(0.5, 0.75, 0.25);
-					break;
-				case 1:
-					Punch(0.5, -0.75, -0.25);
-					break;
-				case 2:
-					Punch(-0.5, 0.75, 0.25);
-					break;
-				case 3:
-					Punch(-0.5, -0.75, -0.25);
-					break;
-				}
-			}
-			else
-			{
-				V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
-				V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
-				V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
-			}
-		}
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
+		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
+		V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
