@@ -1047,23 +1047,16 @@ void EV_FireGauss( event_args_t *args )
 
 	VectorMA( vecSrc, 8192, forward, vecDest );
 
-	if ( EV_IsLocal( idx ) )
+	if (EV_IsLocal(idx))
 	{
-		if (cl_gauss_random_punch_enabled->value == 1)
+		switch ((gEngfuncs.pfnRandomLong(0, 1)))
 		{
-			switch ((gEngfuncs.pfnRandomLong(0, 1)))
-			{
-			case 0:
-				Punch(1, 0, 0);
-				break;
-			case 1:
-				Punch(-1, 0, 0);
-				break;
-			}
-		}
-		else
-		{
+		case 0:
 			Punch(1, 0, 0);
+			break;
+		case 1:
+			Punch(-1, 0, 0);
+			break;
 		}
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( GAUSS_FIRE2, 2 );
 
