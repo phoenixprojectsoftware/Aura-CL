@@ -1543,7 +1543,7 @@ void EV_FireRpg( event_args_t *args )
 //======================
 
 //======================
-//	    EGON END 
+//	    EGON START 
 //======================
 enum egon_e {
 	EGON_IDLE1 = 0,
