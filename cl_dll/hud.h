@@ -750,6 +750,7 @@ public:
 	float m_iLaserSuspendTime;
 
 	float m_flHudLagOfs[2];
+	void ApplyGreyscaleEffect();
 };
 
 extern CHud gHUD;

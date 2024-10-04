@@ -245,6 +245,11 @@ int CHud :: Redraw( float flTime, int intermission )
 		SPR_DrawAdditive(i, x, y, NULL);
 	}
 
+	if (gHUD.m_Health.m_iHealth <= 0)
+	{
+		ApplyGreyscaleEffect();
+	}
+
 	/*
 	if ( g_iVisibleMouse )
 	{

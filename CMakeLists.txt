@@ -107,6 +107,8 @@ target_include_directories(client PRIVATE
 	public
 	utils/vgui/include)
 
+find_package (OpenGL REQUIRED)
+
 if(APPLE)
 	target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
 endif(APPLE)
@@ -221,3 +223,4 @@ target_compile_definitions(client PRIVATE
 	-DUPDATE_CHECK)
 
 target_link_libraries(client discord-rpc)
+target_link_libraries(client OpenGL::GL)
