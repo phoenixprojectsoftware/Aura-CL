@@ -63,17 +63,31 @@ int CHudCountdown::Draw(float time)
 }
 
 static const char* sound_names[] = {
-	"barney/ba_bring.wav",
-	"fvox/one.wav",
-	"fvox/two.wav",
-	"fvox/three.wav",
-	"fvox/four.wav",
-	"fvox/five.wav",
-	"fvox/six.wav",
-	"fvox/seven.wav",
-	"fvox/eight.wav",
-	"fvox/nine.wav",
-	"fvox/ten.wav"
+	"barney/ba_bring.wav", //0
+	"fvox/one.wav", //1
+	"fvox/two.wav", //2
+	"fvox/three.wav", //3
+	"fvox/four.wav", //4
+	"fvox/five.wav", //5
+	"fvox/six.wav", //6
+	"fvox/seven.wav", //7
+	"fvox/eight.wav", //8
+	"fvox/nine.wav", //9
+	"fvox/ten.wav" //10
+};
+
+static const char* countdown_music[] = {
+	"cd", //0
+	"cd", //1
+	"cd", //2
+	"cd", //3
+	"echo ZEKE WAS HERE", //4
+	"cd", //5
+	"cd", //6
+	"cd", //7
+	"cd", //8
+	"cd play 7", //9
+	"cd stop" //10
 };
 
 // Blacklist all round-based modes from autorecord on countdown.
@@ -99,6 +113,7 @@ int CHudCountdown::MsgFunc_Countdown(const char* name, int size, void* buf)
 
 		if (play_sound && seconds_left <= 10) {
 			gEngfuncs.pfnPlaySoundByName(sound_names[seconds_left], 1.0f);
+			gEngfuncs.pfnClientCmd(countdown_music[seconds_left]);
 
 			if (!gEngfuncs.pDemoAPI->IsRecording() && cl_autorecord->value > 0.0f
 			    && autorecord_gamemode_blacklist.find(gHUD.m_Settings.GetGamemode())
