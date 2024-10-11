@@ -115,13 +115,9 @@ int CHudBattery::Draw(float flTime)
 	rc.top += m_iHeight * ((float)(100 - (min(100, m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 #endif
 
-	//cvar_t* sv_aura_regeneration = gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration");
-
-
 	// DeanAMX: Flash the armour HUD on zero.
 
 	UnpackRGB(r, g, b, RGB_DEFAULT);
-	//if (gEngfuncs.pfnGetCvarPointer("sv_aura_regeneration")->value == 1) {
 	if (m_iBat > 25)
 	{
 		UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
@@ -133,41 +129,43 @@ int CHudBattery::Draw(float flTime)
 		b = 0;
 	}
 
-	if (m_iBat <= 10)
+	float auraRegeneration = CVAR_GET_FLOAT("sv_aura_regeneration");
+
+	if (auraRegeneration != 0)
 	{
-		if (!Blinking)
+		if (m_iBat <= 10)
 		{
-			Blinking = true;
-		}
-
-		a = (int)(fabs(sin(flTime * 10)) * 256.0);
-	}
-	else
-	{
-		Blinking = false;
-		// gEngfuncs.pfnHookUserMsg("StopSound", MsgFunc_StopSound);
-		// gEngfuncs.pfnConsolePrint("StopSound MSG successfully broadcast\n");
-
-		if (0 != m_fFade) // Has health changed? Flash the health #
-		{
-			if (m_fFade > FADE_TIME)
-				m_fFade = FADE_TIME;
-
-			m_fFade -= (gHUD.m_flTimeDelta * 20);
-			if (m_fFade <= 0)
+			if (!Blinking)
 			{
-				a = 128;
-				m_fFade = 0;
+				Blinking = true;
 			}
 
-			// Fade the health number back to dim
-
-			a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+			a = (int)(fabs(sin(flTime * 10)) * 256.0);
 		}
 		else
-			a = MIN_ALPHA;
+		{
+			Blinking = false;
+
+			if (0 != m_fFade) // Has health changed? Flash the health #
+			{
+				if (m_fFade > FADE_TIME)
+					m_fFade = FADE_TIME;
+
+				m_fFade -= (gHUD.m_flTimeDelta * 20);
+				if (m_fFade <= 0)
+				{
+					a = 128;
+					m_fFade = 0;
+				}
+
+				// Fade the health number back to dim
+
+				a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+			}
+			else
+				a = MIN_ALPHA;
+		}
 	}
-	//}
 
 	ScaleColors(r, g, b, a );
 	
