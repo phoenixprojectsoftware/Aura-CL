@@ -165,10 +165,11 @@ int CHudBattery::Draw(float flTime)
 			else
 				a = MIN_ALPHA;
 		}
-	}
+	
 
 	ScaleColors(r, g, b, a );
-	
+	}
+
 	int iOffset = (m_prc1->bottom - m_prc1->top)/6;
 
 	y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
