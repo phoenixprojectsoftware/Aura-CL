@@ -1,5 +1,5 @@
 // view/refresh setup functions
-
+#include <algorithm>
 #include "hud.h"
 #include "cl_util.h"
 #include "cvardef.h"
@@ -908,6 +908,35 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 	}
 }
 
+template <typename T>
+T lerp(T a, T b, T t) {
+	return a + t * (b - a);
+}
+
+#define InvPitch(x) Vector(-x[0], x[1], x[2])
+
+void V_RetractWeapon(ref_params_t* pparams, cl_entity_s* view)
+{
+	static float l_Fraction = 0.0f;
+	pmtrace_t tr;
+	Vector forward;
+	AngleVectors(InvPitch(view->angles), forward, nullptr, nullptr);
+	Vector vecSrc = pparams->vieworg;
+	Vector vecEnd = vecSrc + forward * 32;
+	gEngfuncs.pEventAPI->EV_PushPMStates();
+	gEngfuncs.pEventAPI->EV_SetSolidPlayers(pparams->viewentity - 1);
+	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, pparams->viewentity, &tr);
+	// noclipping
+	if (tr.fraction <= 0.01f)
+		tr.fraction = 1;
+
+	l_Fraction = lerp(l_Fraction, (1 - tr.fraction), pparams->frametime * 10.0f);
+	view->origin = view->origin - (Vector(pparams->forward) * (l_Fraction * 10.0f));
+	view->angles[0] += (l_Fraction * 10.0f);
+	gEngfuncs.pEventAPI->EV_PopPMStates();
+}
+
 /*
 ==================
 V_CalcRefdef
@@ -1075,6 +1104,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
 
 	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
+	V_RetractWeapon(pparams, view);
 
 	V_ApplySmoothing(pparams, view);
 
