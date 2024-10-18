@@ -384,7 +384,7 @@ void CHudAmmo::Think(void)
 		gpActiveSel = NULL;
 		gHUD.m_iKeyBits &= ~IN_ATTACK;
 
-		PlaySound("common/wpn_select.wav", 1);
+		PlaySound("common/wpn_hudoff.wav", 1);
 	}
 
 }
@@ -759,6 +759,7 @@ void CHudAmmo::UserCmd_NextWeapon(void)
 	{
 		pos = gpActiveSel->iSlotPos + 1;
 		slot = gpActiveSel->iSlot;
+		PlaySound("common/wpn_moveselect.wav", 1);
 	}
 
 	for ( int loop = 0; loop <= 1; loop++ )
@@ -800,6 +801,7 @@ void CHudAmmo::UserCmd_PrevWeapon(void)
 	{
 		pos = gpActiveSel->iSlotPos - 1;
 		slot = gpActiveSel->iSlot;
+		PlaySound("common/wpn_moveselect.wav", 1);
 	}
 	
 	for ( int loop = 0; loop <= 1; loop++ )
