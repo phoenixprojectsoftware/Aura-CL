@@ -24,6 +24,8 @@
 
 #define MAX_LOGO_FRAMES 56
 
+extern WEAPON* gpActiveSel;
+
 int grgLogoFrame[MAX_LOGO_FRAMES] = 
 {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13, 13, 13, 13, 13, 12, 11, 10, 9, 8, 14, 15,
@@ -169,6 +171,12 @@ int CHud :: Redraw( float flTime, int intermission )
 
 		while (pList)
 		{
+			if (gpActiveSel && (pList->p != &m_Ammo))
+			{
+				pList = pList->pNext;
+				continue;
+			}
+
 			if ( !Bench_Active() )
 			{
 				if ( !intermission )
