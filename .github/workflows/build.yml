@@ -75,7 +75,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-${{ matrix.clang-ver }} g++-multilib libgl-dev ninja-build rapidjson-dev
       - name: CMake generate
-        run: cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -B build
+        run: |
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -B build
+            ls -1
       - name: Build
         working-directory: build
         run: ninja
