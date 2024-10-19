@@ -25,6 +25,7 @@
 #define RGB_GREY 0x008e8f91 //255,160,0
 #define RGB_GREENISH 0x0000A000 //0,160,0
 #define RGB_REDISH 0x00FF0000
+#define HUD_LAG_VALUE 17 // The sensitivity of the HUD-sway effect.
 
 #ifndef _WIN32
 #define _cdecl 

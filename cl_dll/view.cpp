@@ -878,8 +878,8 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 		origin = origin + (vDifference * -1.0f) * m_flScale;
 
 		// HUD lag
-		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), cl_hud_lag_sensitivity->value, 500) * 280.0f;
-		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * m_flScale), cl_hud_lag_sensitivity->value, 500, 2) * 280.0f;
+		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), HUD_LAG_VALUE, 500) * 280.0f;
+		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * m_flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
 	}
 
 	AngleVectors(original_angles, forward, right, up);
