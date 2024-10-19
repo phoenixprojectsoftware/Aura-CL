@@ -85,7 +85,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
             files: |
-                client.so 
+                Release/client.so 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
