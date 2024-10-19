@@ -1,4 +1,4 @@
-name: Windows build
+name: Compile Windows & Linux.
 
 on: [push]
 
