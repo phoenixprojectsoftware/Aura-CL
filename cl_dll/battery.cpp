@@ -27,17 +27,6 @@
 
 DECLARE_MESSAGE(m_Battery, Battery)
 
-void HUD_StopSound()
-{
-	gEngfuncs.pfnPlaySoundByName("player/shield_empty.wav", 0);
-}
-
-int MsgFunc_StopSound(const char *pszName, int iSize, void* pbuf)
-{
-	HUD_StopSound();
-	return 1;
-}
-
 int CHudBattery::Init(void)
 {
 	m_iBat = 0;
@@ -47,8 +36,6 @@ int CHudBattery::Init(void)
 	HOOK_MESSAGE(Battery);
 
 	gHUD.AddHudElem(this);
-
-	gEngfuncs.pfnHookUserMsg("StopSound", MsgFunc_StopSound);
 
 	return 1;
 };
@@ -93,6 +80,7 @@ int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 
 	return 1;
 }
+
 
 int CHudBattery::Draw(float flTime)
 {
@@ -140,11 +128,12 @@ int CHudBattery::Draw(float flTime)
 				Blinking = true;
 			}
 
-			a = (int)(fabs(sin(flTime * 10)) * 256.0);
-		}
-		else
-		{
-			Blinking = false;
+		a = (int)(fabs(sin(flTime * 10)) * 256.0);
+	}
+	else
+	{
+		Blinking = false;
+
 
 			if (0 != m_fFade) // Has health changed? Flash the health #
 			{
