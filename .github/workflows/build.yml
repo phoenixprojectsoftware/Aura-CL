@@ -79,3 +79,11 @@ jobs:
       - name: Build
         working-directory: build
         run: ninja
+      - name: Publish Linux client binary.
+        uses: softprops/action-gh-release@v1
+        with:
+            files: |
+                client.so 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
