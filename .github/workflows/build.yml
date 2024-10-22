@@ -84,7 +84,7 @@ jobs:
       - name: Publish Linux client binary.
         uses: actions/upload-artifact@v4
         with:
-            files: |
+            path: |
                 build/client.so 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
