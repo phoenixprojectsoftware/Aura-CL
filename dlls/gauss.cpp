@@ -86,7 +86,6 @@ void CGauss::Precache( void )
 	PRECACHE_SOUND("weapons/electro5.wav");
 	PRECACHE_SOUND("weapons/electro6.wav");
 	PRECACHE_SOUND("ambience/pulsemachine.wav");
-	PRECACHE_SOUND("buttons/button6.wav");
 	
 	m_iGlow = PRECACHE_MODEL( "sprites/hotglow.spr" );
 	m_iBalls = PRECACHE_MODEL( "sprites/hotglow.spr" );

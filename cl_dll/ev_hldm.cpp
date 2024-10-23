@@ -57,8 +57,6 @@
 #include "op4_weapons/CDisplacer.h"
 #include "op4_weapons/CM249.h"
 #include "op4_weapons/CPenguin.h"
-#include <thread>
-#include <chrono>
 
 extern engine_studio_api_t IEngineStudio;
 
@@ -100,7 +98,6 @@ void EV_FireMP5( struct event_args_s *args  );
 void EV_FireMP52( struct event_args_s *args  );
 void EV_FirePython( struct event_args_s *args  );
 void EV_FireGauss( struct event_args_s *args  );
-void EV_GaussSuccess(struct event_args_s* args);
 void EV_SpinGauss( struct event_args_s *args  );
 void EV_Crowbar( struct event_args_s *args  );
 void EV_FireCrossbow( struct event_args_s *args  );
@@ -1209,35 +1206,6 @@ void EV_FirePython( event_args_t *args )
 //	   GAUSS START 
 //======================
 #define SND_CHANGE_PITCH	(1<<7)		// duplicated in protocol.h change sound pitch
-bool g_bSoundPlayed = false;
-
-void EV_GaussSuccess(event_args_t* args)
-{
-	int idx;
-
-	vec3_t origin;
-	vec3_t angles;
-	vec3_t velocity;
-
-	idx = args->entindex;
-
-	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP4, "buttons/button6.wav", 1.0, ATTN_NORM, 0, PITCH_NORM);
-}
-
-void DelayedSound(event_args_t* args)
-{
-	if (!g_bSoundPlayed)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1200));
-		EV_GaussSuccess(args);
-		g_bSoundPlayed = true;
-	}
-}
-
-void StopButtonSound()
-{
-	g_bSoundPlayed = false;
-}
 
 void EV_SpinGauss( event_args_t *args )
 {
@@ -1257,8 +1225,6 @@ void EV_SpinGauss( event_args_t *args )
 	pitch = args->iparam1;
 
 	iSoundState = args->bparam1 ? SND_CHANGE_PITCH : 0;
-
-	std::thread(DelayedSound, args).detach();
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "ambience/pulsemachine.wav", 1.0, ATTN_NORM, iSoundState, pitch );
 }
@@ -1368,7 +1334,6 @@ void EV_FireGauss( event_args_t *args )
 
 	}
 
-	StopButtonSound();
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + flDamage * (1.0 / 400.0), ATTN_NORM, 0, 85 + gEngfuncs.pfnRandomLong( 0, 0x1f ) );
 
 	while (flDamage > 10 && nMaxHits > 0)
