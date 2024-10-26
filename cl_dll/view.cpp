@@ -126,6 +126,9 @@ cvar_t	v_ipitch_level = { "v_ipitch_level", "0.3", 0, 0.3 };
 float	v_idlescale;  // used by TFC for concussion grenade effect
 
 cvar_s* crosshair_low;
+int HUD_LAG_VALUE; // The sensitivity of the HUD-sway effect is dependent on the screen resolution.
+
+
 
 //=============================================================================
 /*
@@ -877,6 +880,15 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 
 		origin = origin + (vDifference * -1.0f) * m_flScale;
 
+		if (ScreenWidth > 2560 && ScreenHeight > 1600)
+			HUD_LAG_VALUE = 17;
+		else if (ScreenWidth >= 1280 && ScreenHeight > 720)
+			HUD_LAG_VALUE = 13;
+		else if (ScreenWidth >= 640)
+			HUD_LAG_VALUE = 8;
+		else
+			HUD_LAG_VALUE = 2;
+
 		// HUD lag
 		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), HUD_LAG_VALUE, 500) * 280.0f;
 		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * m_flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
@@ -936,6 +948,11 @@ void V_RetractWeapon(ref_params_t* pparams, cl_entity_s* view)
 	view->origin = view->origin - (Vector(pparams->forward) * (l_Fraction * 10.0f));
 	view->angles[0] += (l_Fraction * 10.0f);
 	gEngfuncs.pEventAPI->EV_PopPMStates();
+}
+
+void ReturnLagValue()
+{
+	gEngfuncs.Con_Printf("%s\n", HUD_LAG_VALUE);
 }
 
 /*
@@ -2067,6 +2084,8 @@ void V_Init(void)
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
 
 	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "0", FCVAR_ARCHIVE);
+
+	gEngfuncs.pfnAddCommand("hud_lag_value", ReturnLagValue);
 }
 
 
