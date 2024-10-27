@@ -1,4 +1,4 @@
-name: Compile Windows & Linux.
+name: Compile Windows & Liability OS.
 
 on: [push]
 
