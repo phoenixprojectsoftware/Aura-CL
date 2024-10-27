@@ -162,6 +162,7 @@ int CHudBattery::Draw(float flTime)
 	int iOffset = (m_prc1->bottom - m_prc1->top)/6;
 
 	y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
+	y += (int)(gHUD.m_iFontHeight * 0.2f);
 	int width = (m_prc1->right - m_prc1->left);
 	// this used to just be ScreenWidth/5 but that caused real issues at higher resolutions. Instead, base it on the width of this sprite.
 	x = 3 * width;
