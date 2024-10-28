@@ -95,6 +95,7 @@ extern cvar_t *sensitivity;
 cvar_t *cl_lw = NULL;
 cvar_t *cl_righthand = nullptr;
 cvar_t* cl_viewmodel_lag_enabled;
+cvar_t* hud_watermark;
 
 void ShutdownInput (void);
 
@@ -629,6 +630,7 @@ void CHud :: Init( void )
 	m_pSpriteList = NULL;
 
 	CVAR_CREATE("cl_music_enabled", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_USERINFO );
+	hud_watermark = CVAR_CREATE("hud_watermark", "1", FCVAR_ARCHIVE);
 
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
 	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
