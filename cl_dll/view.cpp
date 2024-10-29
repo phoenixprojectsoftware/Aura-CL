@@ -880,7 +880,7 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 
 		origin = origin + (vDifference * -1.0f) * m_flScale;
 
-		if (ScreenWidth > 2560 && ScreenHeight > 1600)
+		if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 			HUD_LAG_VALUE = 17;
 		else if (ScreenWidth >= 1280 && ScreenHeight > 720)
 			HUD_LAG_VALUE = 13;
