@@ -77,7 +77,7 @@ void WeaponsResource :: LoadWeaponSprites( WEAPON *pWeapon )
 	if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 		iRes = 2560;
 	else if (ScreenWidth >= 1280 && ScreenHeight > 720)
-		iRes = 1280;
+		iRes = 2560;
 	else if (ScreenWidth >= 640)
 		iRes = 640;
 	else
