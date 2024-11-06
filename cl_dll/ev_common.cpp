@@ -200,8 +200,8 @@ void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity,
 	if (bIsFirstPerson)
 	{
 		rightScale += cl_viewmodel_ofs_right->value;
-		forwardScale += cl_viewmodel_ofs_forward->value;
-		upScale += cl_viewmodel_ofs_up->value;
+		forwardScale += cl_viewmodel_ofs_forward->value + 1;
+		upScale += cl_viewmodel_ofs_up->value + 1.5;
 
 		if (cl_righthand->value > 0.0f)
 		{
