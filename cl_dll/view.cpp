@@ -853,7 +853,7 @@ Weapon Inertia
 void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 {
 	const float m_flWeaponLag = 1.5f;
-	float flSpeed = 2;
+	float flSpeed = 5;
 	float flScale = 2;
 	static Vector m_vecLastFacing;
 	Vector vOriginalOrigin = view->origin;
@@ -879,7 +879,8 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 		// Make sure it doesn't grow out of control!!!
 		m_vecLastFacing = m_vecLastFacing.Normalize();
 
-		origin = origin + (vDifference * -1.0f) * m_flScale;
+		Vector origin;
+		origin = origin + (vDifference * -1.0f) * flScale;
 
 		if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 			HUD_LAG_VALUE = 17;
@@ -891,8 +892,8 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 			HUD_LAG_VALUE = 2;
 
 		// HUD lag
-		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), HUD_LAG_VALUE, 500) * 280.0f;
-		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * m_flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
+		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * flScale), HUD_LAG_VALUE, 500) * 280.0f;
+		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
 		view->origin = view->origin + (vDifference * -1.0f) * flScale;
 	}
 	AngleVectors(InvPitch(vOriginalAngles), forward, right, up);
