@@ -918,13 +918,10 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 		view->origin = view->origin + up * (pitch * 0.002f);
 	}
 }
-
 template <typename T>
 T lerp(T a, T b, T t) {
 	return a + t * (b - a);
 }
-
-#define InvPitch(x) Vector(-x[0], x[1], x[2])
 
 void V_RetractWeapon(ref_params_t* pparams, cl_entity_s* view)
 {
