@@ -974,10 +974,6 @@ void V_Jump(ref_params_s* pparams, cl_entity_t* view)
 		view->angles[i] += gEngfuncs.pfnRandomFloat(-0.0055, 0.0055) * flFallVel * 0.05f;
 	}
 }
-void ReturnLagValue()
-{
-	gEngfuncs.Con_Printf("%s\n", HUD_LAG_VALUE);
-}
 
 /*
 ==================
@@ -2115,8 +2111,6 @@ void V_Init(void)
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
 
 	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "0", FCVAR_ARCHIVE);
-
-	gEngfuncs.pfnAddCommand("hud_lag_value", ReturnLagValue);
 }
 
 
