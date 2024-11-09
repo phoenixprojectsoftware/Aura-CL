@@ -1,4 +1,5 @@
 // view/refresh setup functions
+#include <cmath>
 #include <algorithm>
 #include "hud.h"
 #include "cl_util.h"
@@ -48,6 +49,7 @@ float	vJumpAngles[3];
 void NewPunch(float* ev_punchangle, float frametime);
 void V_DropPunchAngle(float frametime, float* ev_punchangle);
 void VectorAngles(const float* forward, float* angles);
+void V_PunchAngle(float* ev_punchangle, float frametime, float* punch);
 
 #include "r_studioint.h"
 #include "com_model.h"
@@ -306,6 +308,11 @@ V_CalcRoll
 Used by view and sv_user
 ===============
 */
+Vector cl_jumpangle;
+Vector cl_jumppunch;
+
+bool g_bJumpState = false;
+
 float V_CalcRoll(vec3_t angles, vec3_t velocity, float rollangle, float rollspeed, int type = 0)
 {
 	float   sign;
@@ -843,27 +850,21 @@ V_CalcViewModelLag
 Weapon Inertia
 ==============
 */
-void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, Vector original_angles)
+void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 {
-	const float m_flWeaponLag = 2.0f;
-	const float m_flScale = 2.0f;
-
+	const float m_flWeaponLag = 1.5f;
+	float flSpeed = 2;
+	float flScale = 2;
 	static Vector m_vecLastFacing;
-	Vector vOriginalOrigin = origin;
-	Vector vOriginalAngles = pparams->cl_viewangles;
-
+	Vector vOriginalOrigin = view->origin;
+	Vector vOriginalAngles = view->angles;
 	// Calculate our drift
-	Vector    forward, right, up;
-	AngleVectors(vOriginalAngles, forward, right, up);
-
-	if (pparams->frametime != 0.0f)    // not in paused
+	Vector forward, right, up;
+	AngleVectors(InvPitch(view->angles), forward, right, up);
+	if (pparams->frametime != 0.0f) // not in paused
 	{
 		Vector vDifference;
-
 		vDifference = forward - m_vecLastFacing;
-
-		float flSpeed = 5.0f;
-
 		// If we start to lag too far behind, we'll increase the "catch up" speed.
 		// Solves the problem with fast cl_yawspeed, m_yaw or joysticks rotating quickly.
 		// The old code would slam lastfacing with origin causing the viewmodel to pop to a new position
@@ -892,12 +893,10 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 		// HUD lag
 		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * m_flScale), HUD_LAG_VALUE, 500) * 280.0f;
 		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * m_flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
+		view->origin = view->origin + (vDifference * -1.0f) * flScale;
 	}
-
-	AngleVectors(original_angles, forward, right, up);
-
-	float pitch = original_angles[PITCH];
-
+	AngleVectors(InvPitch(vOriginalAngles), forward, right, up);
+	float pitch = -vOriginalAngles[PITCH];
 	if (pitch > 180.0f)
 	{
 		pitch -= 360.0f;
@@ -906,18 +905,17 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, V
 	{
 		pitch += 360.0f;
 	}
-
 	if (m_flWeaponLag <= 0.0f)
 	{
-		origin = vOriginalOrigin;
-		angles = vOriginalAngles;
+		view->origin = vOriginalOrigin;
+		view->angles = vOriginalAngles;
 	}
 	else
 	{
 		// FIXME: These are the old settings that caused too many exposed polys on some models
-		origin = origin + forward * (-pitch * 0.035f);
-		origin = origin + right * (-pitch * 0.03f);
-		origin = origin + up * (pitch * 0.02f);
+		view->origin = view->origin + forward * (-pitch * 0.005f);
+		view->origin = view->origin + right * (-pitch * 0.003f);
+		view->origin = view->origin + up * (pitch * 0.002f);
 	}
 }
 
@@ -1121,7 +1119,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	view->angles = view->angles + ev_punchangle + sv_punchangle;
 	// view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
 
-	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view->origin, view->angles, Vector(pparams->cl_viewangles));
+	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view);
 	V_RetractWeapon(pparams, view);
 
 	V_ApplySmoothing(pparams, view);
