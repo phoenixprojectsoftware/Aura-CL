@@ -944,7 +944,35 @@ void V_RetractWeapon(ref_params_t* pparams, cl_entity_s* view)
 	view->angles[0] += (l_Fraction * 10.0f);
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 }
-
+void V_Jump(ref_params_s* pparams, cl_entity_t* view)
+{
+	static float flFallVel = 0.0f;
+	static float l_FallVel = 0.0f;
+	if (pparams->onground <= 0)
+	{
+		flFallVel = V_max(-pparams->simvel[2], 0);
+		l_FallVel = lerp(l_FallVel, flFallVel, pparams->frametime * 5.0f);
+	}
+	if (pparams->onground != 0)
+		l_FallVel = lerp(l_FallVel, 0, pparams->frametime * 25.0f);
+	if (g_bJumpState && pparams->onground != 0)
+	{
+		cl_jumppunch = Vector(flFallVel * -0.01f, flFallVel * 0.01f, 0) * 20.0f;
+		flFallVel = 0;
+		g_bJumpState = false;
+	}
+	else if (!g_bJumpState && pparams->onground <= 0)
+	{
+		g_bJumpState = true;
+	}
+	float angle = V_min(l_FallVel * 0.05f, 20);
+	view->angles[0] += angle;
+	for (int i = 0; i < 3; i++)
+	{
+		pparams->viewangles[i] += gEngfuncs.pfnRandomFloat(-0.0055, 0.0055) * flFallVel * 0.05f;
+		view->angles[i] += gEngfuncs.pfnRandomFloat(-0.0055, 0.0055) * flFallVel * 0.05f;
+	}
+}
 void ReturnLagValue()
 {
 	gEngfuncs.Con_Printf("%s\n", HUD_LAG_VALUE);
@@ -1118,6 +1146,13 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view);
 	V_RetractWeapon(pparams, view);
+
+	//V_PunchAngle(cl_jumpangle, pparams->frametime, cl_jumppunch);
+	V_Jump(pparams, view);
+
+	VectorAdd(pparams->viewangles, InvPitch(cl_jumpangle) / 3.0f, pparams->viewangles);
+	VectorAdd(view->angles, cl_jumpangle, view->angles);
+	VectorCopy(view->angles, view->curstate.angles);
 
 	V_ApplySmoothing(pparams, view);
 
