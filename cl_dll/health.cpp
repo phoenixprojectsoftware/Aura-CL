@@ -209,6 +209,10 @@ int CHudHealth::Draw(float flTime)
 	}
 	else
 		a = MIN_ALPHA;
+
+	// If health is getting low, make it bright red
+	if (m_iHealth <= 25)
+		a = (int)(fabs(sin(gHUD.m_flTime * 10)) * 256.0); // flash
 		
 	GetPainColor( r, g, b );
 	ScaleColors(r, g, b, a );
