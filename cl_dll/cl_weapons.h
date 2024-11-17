@@ -36,3 +36,5 @@
 #define WEAPON_KNIFE			25
 #define WEAPON_PENGUIN			26
 #define WEAPON_ONE 27
+
+#define WEAPON_NOCLIP -1

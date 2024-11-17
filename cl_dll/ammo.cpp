@@ -649,10 +649,9 @@ void CHudAmmo::Warning()
 {
 	static bool ammoWarningPlayed = false;
 	int ammoCount = m_iCurrentClipAmmo;
+	lowAmmoThreshold = WEAPON_NOCLIP;
 
-	if (m_iCurrentWeapon == WEAPON_CROWBAR || m_iCurrentWeapon == WEAPON_PIPEWRENCH || m_iCurrentWeapon == WEAPON_KNIFE || m_iCurrentWeapon == WEAPON_GRAPPLE || m_iCurrentWeapon == WEAPON_RPG || m_iCurrentWeapon == WEAPON_SATCHEL || m_iCurrentWeapon == WEAPON_SHOCKRIFLE || m_iCurrentWeapon == WEAPON_HORNETGUN)
-		lowAmmoThreshold = -1;
-	else if (m_iCurrentWeapon == WEAPON_GLOCK)
+	if (m_iCurrentWeapon == WEAPON_GLOCK)
 		lowAmmoThreshold = 3;
 	else if (m_iCurrentWeapon == WEAPON_EAGLE)
 		lowAmmoThreshold = 2;
@@ -664,16 +663,13 @@ void CHudAmmo::Warning()
 		lowAmmoThreshold = 2; // give space for a double shot on warning.
 	else if (m_iCurrentWeapon == WEAPON_CROSSBOW)
 		lowAmmoThreshold = 1;
-	else if (m_iCurrentWeapon == WEAPON_GAUSS || m_iCurrentWeapon == WEAPON_EGON)
-		lowAmmoThreshold = 40;
-	else if (m_iCurrentWeapon == WEAPON_DISPLACER)
-		lowAmmoThreshold = 60;
-	else if (m_iCurrentWeapon == WEAPON_HANDGRENADE || m_iCurrentWeapon == WEAPON_TRIPMINE || m_iCurrentWeapon == WEAPON_SPORELAUNCHER || m_iCurrentWeapon == WEAPON_SNARK || m_iCurrentWeapon == WEAPON_PENGUIN)
-		lowAmmoThreshold = 1; // most boobie traps.
 	else if (m_iCurrentWeapon == WEAPON_M249)
 		lowAmmoThreshold = 15;
 	else if (m_iCurrentWeapon == WEAPON_SNIPERRIFLE)
 		lowAmmoThreshold = 1;
+
+	if (lowAmmoThreshold == WEAPON_NOCLIP)
+		return;
 
 	if (ammoCount > lowAmmoThreshold)
 		ammoWarningPlayed = false;
@@ -940,7 +936,7 @@ int CHudAmmo::Draw(float flTime)
 		m_fFade -= (gHUD.m_flTimeDelta * 20);
 
 	UnpackRGB(r, g, b, RGB_DEFAULT);
-	if (m_iCurrentClipAmmo > lowAmmoThreshold)
+	if (m_iCurrentClipAmmo > lowAmmoThreshold || m_iCurrentClipAmmo == WEAPON_NOCLIP)
 	{
 		UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 		if (Blinking)
