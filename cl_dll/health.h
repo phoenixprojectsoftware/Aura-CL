@@ -111,6 +111,7 @@ public:
 	int m_HUD_dmg_bio;
 	int m_HUD_cross;
 	float m_fAttackFront, m_fAttackRear, m_fAttackLeft, m_fAttackRight;
+	bool Blinking;
 	void GetPainColor( int &r, int &g, int &b );
 	float m_fFade;
 

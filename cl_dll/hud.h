@@ -121,10 +121,15 @@ struct HUDLIST {
 class CHudAmmo: public CHudBase
 {
 public:
+	bool Blinking;
+	int lowAmmoThreshold; // the amount of ammo at which the warning sound will play.
+	int m_iCurrentWeapon;
+	int m_iCurrentClipAmmo;
 	int Init( void );
 	int VidInit( void );
 	int Draw(float flTime);
 	void Think(void);
+	void Warning(void);
 	void Reset(void);
 	int DrawWList(float flTime);
 	int MsgFunc_CurWeapon(const char *pszName, int iSize, void *pbuf);

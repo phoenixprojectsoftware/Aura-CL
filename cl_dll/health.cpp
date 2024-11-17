@@ -26,6 +26,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include <string.h>
+#include <cmath>
 
 
 DECLARE_MESSAGE(m_Health, Health )
@@ -178,6 +179,18 @@ int CHudHealth::Draw(float flTime)
 
 	if ( !m_hSprite )
 		m_hSprite = LoadSprite(PAIN_NAME);
+
+	if (m_iHealth > 25)
+	{
+		UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
+		if (Blinking)
+			Blinking = false;
+	}
+	else
+	{
+		Blinking = true;
+		a = (int)(fabs(sin(gHUD.m_flTime * 10)) * 256.0); // flash
+	}
 	
 	// Has health changed? Flash the health #
 	if (m_fFade)
@@ -196,10 +209,6 @@ int CHudHealth::Draw(float flTime)
 	}
 	else
 		a = MIN_ALPHA;
-
-	// If health is getting low, make it bright red
-	if (m_iHealth <= 15)
-		a = 255;
 		
 	GetPainColor( r, g, b );
 	ScaleColors(r, g, b, a );
@@ -227,7 +236,18 @@ int CHudHealth::Draw(float flTime)
 		int iHeight = gHUD.m_iFontHeight;
 		int iWidth = HealthWidth/10;
 
-		UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
+		if (m_iHealth > 25)
+		{
+			UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
+			if (Blinking)
+				Blinking = false;
+		}
+		else
+		{
+			Blinking = true;
+			a = (int)(fabs(sin(gHUD.m_flTime * 10)) * 256.0); // flash
+		}
+
 		FillRGBA(x, y, iWidth, iHeight, r, g, b, a);
 	}
 

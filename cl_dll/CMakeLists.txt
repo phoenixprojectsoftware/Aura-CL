@@ -12,6 +12,7 @@ add_sources(
 	cdll_int.cpp
 	cl_dll.h
 	cl_util.h
+	cl_weapons.h
 	color_tags.cpp
 	color_tags.h
 	com_weapons.cpp

@@ -28,6 +28,7 @@
 
 #include "ammohistory.h"
 #include "vgui_TeamFortressViewport.h"
+#include "cl_weapons.h"
 
 WEAPON *gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
 						// this points to the active weapon menu item
@@ -265,6 +266,8 @@ DECLARE_COMMAND(m_Ammo, PrevWeapon);
 
 int CHudAmmo::Init(void)
 {
+	m_iCurrentWeapon = -1;
+	m_iCurrentClipAmmo = -1;
 	gHUD.AddHudElem(this);
 
 	HOOK_MESSAGE(CurWeapon);
@@ -575,6 +578,8 @@ int CHudAmmo::MsgFunc_CurWeapon(const char *pszName, int iSize, void *pbuf )
 	int iId = READ_CHAR();
 	int iClip = READ_CHAR();
 
+	m_iCurrentWeapon = iId;
+
 	// detect if we're also on target
 	if ( iState > 1 )
 	{
@@ -635,9 +640,50 @@ int CHudAmmo::MsgFunc_CurWeapon(const char *pszName, int iSize, void *pbuf )
 
 	m_fFade = 200.0f; //!!!
 	m_iFlags |= HUD_ACTIVE;
+	m_iCurrentClipAmmo = iClip;
 	
 	return 1;
 }
+
+void CHudAmmo::Warning()
+{
+	static bool ammoWarningPlayed = false;
+	int ammoCount = m_iCurrentClipAmmo;
+
+	if (m_iCurrentWeapon == WEAPON_CROWBAR || m_iCurrentWeapon == WEAPON_PIPEWRENCH || m_iCurrentWeapon == WEAPON_KNIFE || m_iCurrentWeapon == WEAPON_GRAPPLE || m_iCurrentWeapon == WEAPON_RPG || m_iCurrentWeapon == WEAPON_SATCHEL || m_iCurrentWeapon == WEAPON_SHOCKRIFLE || m_iCurrentWeapon == WEAPON_HORNETGUN)
+		lowAmmoThreshold = -1;
+	else if (m_iCurrentWeapon == WEAPON_GLOCK)
+		lowAmmoThreshold = 3;
+	else if (m_iCurrentWeapon == WEAPON_EAGLE)
+		lowAmmoThreshold = 2;
+	else if (m_iCurrentWeapon == WEAPON_PYTHON)
+		lowAmmoThreshold = 1;
+	else if (m_iCurrentWeapon == WEAPON_MP5)
+		lowAmmoThreshold = 10;
+	else if (m_iCurrentWeapon == WEAPON_SHOTGUN)
+		lowAmmoThreshold = 2; // give space for a double shot on warning.
+	else if (m_iCurrentWeapon == WEAPON_CROSSBOW)
+		lowAmmoThreshold = 1;
+	else if (m_iCurrentWeapon == WEAPON_GAUSS || m_iCurrentWeapon == WEAPON_EGON)
+		lowAmmoThreshold = 40;
+	else if (m_iCurrentWeapon == WEAPON_DISPLACER)
+		lowAmmoThreshold = 60;
+	else if (m_iCurrentWeapon == WEAPON_HANDGRENADE || m_iCurrentWeapon == WEAPON_TRIPMINE || m_iCurrentWeapon == WEAPON_SPORELAUNCHER || m_iCurrentWeapon == WEAPON_SNARK || m_iCurrentWeapon == WEAPON_PENGUIN)
+		lowAmmoThreshold = 1; // most boobie traps.
+	else if (m_iCurrentWeapon == WEAPON_M249)
+		lowAmmoThreshold = 15;
+	else if (m_iCurrentWeapon == WEAPON_SNIPERRIFLE)
+		lowAmmoThreshold = 1;
+
+	if (ammoCount > lowAmmoThreshold)
+		ammoWarningPlayed = false;
+	else if (!ammoWarningPlayed)
+	{
+		PlaySound("common/warning.wav", 1.0);
+		ammoWarningPlayed = true;
+	}
+}
+
 
 //
 // WeaponList -- Tells the hud about a new weapon type.
@@ -893,7 +939,21 @@ int CHudAmmo::Draw(float flTime)
 	if (m_fFade > 0)
 		m_fFade -= (gHUD.m_flTimeDelta * 20);
 
-	UnpackRGB(r,g,b, gHUD.m_iDefaultHUDColor);
+	UnpackRGB(r, g, b, RGB_DEFAULT);
+	if (m_iCurrentClipAmmo > lowAmmoThreshold)
+	{
+		UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
+		if (Blinking)
+			Blinking = false;
+	}
+	else
+	{
+		Blinking = true;
+		a = (int)(fabs(sin(flTime * 6)) * 256.0); // flash
+		r = 250;
+		g = 0;
+		b = 0;
+	}
 
 	ScaleColors(r, g, b, a );
 
@@ -986,6 +1046,8 @@ int CHudAmmo::Draw(float flTime)
 			SPR_DrawAdditive(0, x, y - iOffset, &m_pWeapon->rcAmmo2);
 		}
 	}
+
+	Warning();
 	return 1;
 }
 
