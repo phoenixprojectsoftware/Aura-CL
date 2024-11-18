@@ -76,6 +76,7 @@ playermove_t *pmove = NULL;
 #define CHAR_TEX_COMPUTER	'P'
 #define CHAR_TEX_GLASS		'Y'
 #define CHAR_TEX_FLESH		'F'
+#define CHAR_TEX_SNOW		'N'
 
 #define STEP_CONCRETE	0		// default step sound
 #define STEP_METAL		1		// metal floor
@@ -87,6 +88,7 @@ playermove_t *pmove = NULL;
 #define STEP_WADE		7		// wading in liquid
 #define STEP_LADDER		8		// climbing ladder
 #define STEP_WOOD		9		// wood
+#define STEP_SNOW	   10		// snow
 
 #define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
 #define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
@@ -428,6 +430,17 @@ void PM_PlayStepSound( int step, float fvol )
 		case 3:	pmove->PM_PlaySound(CHAN_BODY, "player/pl_wood4.wav", fvol, ATTN_NORM, 0, PITCH_NORM);	break;
 		}
 		break;
+	case STEP_SNOW:
+		switch (irand)
+		{
+		// right foot
+		case 0: pmove->PM_PlaySound(CHAN_BODY, "player/pl_snow1.wav", fvol, ATTN_NORM, 0, PITCH_NORM); break;
+		case 1: pmove->PM_PlaySound(CHAN_BODY, "player/pl_snow3.wav", fvol, ATTN_NORM, 0, PITCH_NORM); break;
+		// left foot
+		case 2:	pmove->PM_PlaySound(CHAN_BODY, "player/pl_snow2.wav", fvol, ATTN_NORM, 0, PITCH_NORM);	break;
+		case 3:	pmove->PM_PlaySound(CHAN_BODY, "player/pl_snow4.wav", fvol, ATTN_NORM, 0, PITCH_NORM);	break;
+		}
+		break;
 	}
 }	
 
@@ -444,6 +457,7 @@ int PM_MapTextureTypeStepType(char chTextureType)
 		case CHAR_TEX_TILE: return STEP_TILE;
 		case CHAR_TEX_SLOSH: return STEP_SLOSH;
 		case CHAR_TEX_WOOD: return STEP_WOOD;
+		case CHAR_TEX_SNOW: return STEP_SNOW;
 	}
 }
 
@@ -612,6 +626,10 @@ void PM_UpdateStepSound( void )
 				pmove->flTimeStepSound = fWalking ? 400 : 300;
 				break;
 			case CHAR_TEX_WOOD:
+				fvol = fWalking ? 0.2 : 0.5;
+				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				break;
+			case CHAR_TEX_SNOW:
 				fvol = fWalking ? 0.2 : 0.5;
 				pmove->flTimeStepSound = fWalking ? 400 : 300;
 				break;
