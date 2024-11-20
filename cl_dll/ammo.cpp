@@ -673,7 +673,7 @@ void CHudAmmo::Warning()
 
 	if (ammoCount > lowAmmoThreshold)
 		ammoWarningPlayed = false;
-	else if (!ammoWarningPlayed)
+	else if (!ammoWarningPlayed && ammoCount <= lowAmmoThreshold)
 	{
 		PlaySound("common/warning.wav", 1.0);
 		ammoWarningPlayed = true;
