@@ -756,7 +756,8 @@ public:
 
 	float m_flHudLagOfs[2];
 	void ApplyGreyscaleEffect();
-};
+	void ApplyPissFilter();
+ };
 
 extern CHud gHUD;
 

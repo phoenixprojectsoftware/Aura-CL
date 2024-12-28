@@ -1055,3 +1055,29 @@ void CHud::ApplyGreyscaleEffect()
 	int alpha = 128;
 	gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
 }
+
+cvar_t* r_pissfilter;
+
+void CHud::ApplyPissFilter()
+{
+	int r = 182;
+	int g = 137;
+	int b = 38;
+
+	static bool PissPrint = false;
+
+	if (r_pissfilter->value != 0)
+	{
+		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, r, g, b, 60);
+		if (!PissPrint)
+		{
+			gEngfuncs.Con_Printf("PISSFILTER ENGAGED!!\n");
+			gEngfuncs.pfnPlaySoundByName("sound/gah.wav", 1);
+			PissPrint = true;
+		}
+	}
+	else
+	{
+		PissPrint = false;
+	}
+}

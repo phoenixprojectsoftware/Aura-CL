@@ -72,6 +72,7 @@ extern cvar_t* cl_forwardspeed;
 extern cvar_t* chase_active;
 extern cvar_t* scr_ofsx, * scr_ofsy, * scr_ofsz;
 extern cvar_t* cl_vsmoothing;
+extern cvar_t* r_pissfilter;
 
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
@@ -2111,6 +2112,8 @@ void V_Init(void)
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
 
 	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "0", FCVAR_ARCHIVE);
+
+	r_pissfilter = gEngfuncs.pfnRegisterVariable("r_pissfilter", "0", FCVAR_ARCHIVE);
 }
 
 

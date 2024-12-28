@@ -249,6 +249,8 @@ int CHud :: Redraw( float flTime, int intermission )
 	{
 		ApplyGreyscaleEffect();
 	}
+	else
+		ApplyPissFilter();
 
 	/*
 	if ( g_iVisibleMouse )
