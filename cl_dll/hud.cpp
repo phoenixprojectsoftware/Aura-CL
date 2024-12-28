@@ -1066,6 +1066,7 @@ void CHud::ApplyPissFilter()
 
 	static bool PissPrint = false;
 
+#ifdef _DEBUG
 	if (r_pissfilter->value != 0)
 	{
 		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, r, g, b, 60);
@@ -1080,4 +1081,5 @@ void CHud::ApplyPissFilter()
 	{
 		PissPrint = false;
 	}
+#endif
 }
