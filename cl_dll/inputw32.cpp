@@ -1261,7 +1261,7 @@ void IN_Init (void)
 	joy_wwhack1				= gEngfuncs.pfnRegisterVariable ( "joywwhack1", "0.0", 0 );
 	joy_wwhack2				= gEngfuncs.pfnRegisterVariable ( "joywwhack2", "0.0", 0 );
 
-	gEngfuncs.pfnRegisterVariable("joysupported", 1, 0); // HL25 CHECKS FOR THIS CMD ,, IF 0 IT LOCKS GAMEPAD USAGE
+	gEngfuncs.pfnRegisterVariable("joysupported", "1", 0); // HL25 CHECKS FOR THIS CMD ,, IF 0 IT LOCKS GAMEPAD USAGE
 
 	m_customaccel			= gEngfuncs.pfnRegisterVariable ( "m_customaccel", "0", FCVAR_ARCHIVE );
 	m_customaccel_scale		= gEngfuncs.pfnRegisterVariable ( "m_customaccel_scale", "0.04", FCVAR_ARCHIVE );
