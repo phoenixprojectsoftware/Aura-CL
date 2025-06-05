@@ -61,6 +61,10 @@ typedef struct cvar_s cvar_t;
 
 #define	MAX_MOTD_LENGTH				1536
 
+#ifdef _STEAMWORKS
+void SetControllerLEDColor(int r, int g, int b, float a);
+#endif
+
 //
 //-----------------------------------------------------
 //

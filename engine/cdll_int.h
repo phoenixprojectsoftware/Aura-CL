@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 #include "const.h"
-#include "steam/steamtypes.h"
+#include "steamworks/steamtypes.h"
 #include "ref_params.h"
 #include "r_efx.h"
 #include "studio_event.h"

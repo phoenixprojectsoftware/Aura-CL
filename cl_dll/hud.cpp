@@ -39,10 +39,38 @@
 
 #include "event_api.h"
 
+#ifdef _STEAMWORKS
+#include "steamworks/steam_api.h"
+#endif
+
 extern tempent_s* pLaserSpot;
 
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
 extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
+
+#ifdef _STEAMWORKS
+void SetControllerLEDColor(int r, int g, int b, float a)
+{
+	a = fmax(0.0f, fmin(1.0f, a));
+
+	int newR = static_cast<int>(r * a);
+	int newG = static_cast<int>(g * a);
+	int newB = static_cast<int>(b * a);
+	ISteamInput* steamInput = SteamInput();
+	if (steamInput)
+	{
+		InputHandle_t* inputHandles = new InputHandle_t[STEAM_INPUT_MAX_COUNT];
+		int inputCount = steamInput->GetConnectedControllers(inputHandles);
+
+		for (int i = 0; i < inputCount; ++i)
+		{
+			steamInput->SetLEDColor(inputHandles[i], newR, newG, newB, 0);
+		}
+
+		delete[] inputHandles;
+	}
+}
+#endif
 
 class CHLVoiceStatusHelper : public IVoiceStatusHelper
 {
@@ -868,6 +896,10 @@ void CHud :: VidInit( void )
 	m_OldScoreBoard.VidInit();
 	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
+
+#ifdef _STEAMWORKS
+	SetControllerLEDColor(255, 128, 0, 0.7);
+#endif
 }
 
 int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
