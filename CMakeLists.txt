@@ -179,6 +179,7 @@ if(WIN32)
 		${CMAKE_SOURCE_DIR}/lib/public/SDL2.lib
 		${CMAKE_SOURCE_DIR}/lib/public/game_controls.lib
 		${CMAKE_SOURCE_DIR}/lib/public/libcurl_a.lib
+		${CMAKE_SOURCE_DIR}/lib/steam_api.lib
 		${CMAKE_SOURCE_DIR}/utils/vgui/lib/win32_vc6/vgui.lib)
 elseif(UNIX)
 	target_compile_definitions(client PRIVATE -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_ORIGIN)
