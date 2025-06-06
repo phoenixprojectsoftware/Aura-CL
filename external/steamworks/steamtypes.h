@@ -1,4 +1,7 @@
 //========= Copyright 1996-2022, Valve LLC, All rights reserved. ============
+// C COMPATIBLE VERSION
+// Purpose: Defines types used by the Steam API
+//          This file is intended to be included in C code bases.
 
 #ifndef STEAMTYPES_H
 #define STEAMTYPES_H
@@ -12,9 +15,9 @@ typedef unsigned char uint8;
 #endif
 
 #ifdef __GNUC__
-	#if __GNUC__ < 4
-		#error "Steamworks requires GCC 4.X (4.2 or 4.4 have been tested)"
-	#endif
+#if __GNUC__ < 4
+#error "Steamworks requires GCC 4.X (4.2 or 4.4 have been tested)"
+#endif
 #endif
 
 #if defined(__LP64__) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__) || defined(__s390x__)
@@ -43,8 +46,8 @@ typedef int64 lint64;
 typedef uint64 ulint64;
 
 #ifdef X64BITS
-typedef __int64 intp;				// intp is an integer that can accomodate a pointer
-typedef unsigned __int64 uintp;		// (ie, sizeof(intp) >= sizeof(int) && sizeof(intp) >= sizeof(void *)
+typedef __int64 intp;				// intp is an integer that can accommodate a pointer
+typedef unsigned __int64 uintp;
 #else
 typedef __int32 intp;
 typedef unsigned __int32 uintp;
@@ -59,12 +62,6 @@ typedef unsigned int uint32;
 typedef long long int64;
 typedef unsigned long long uint64;
 
-// [u]int64 are actually defined as 'long long' and gcc 64-bit
-// doesn't automatically consider them the same as 'long int'.
-// Changing the types for [u]int64 is complicated by
-// there being many definitions, so we just
-// define a 'long int' here and use it in places that would
-// otherwise confuse the compiler.
 typedef long int lint64;
 typedef unsigned long int ulint64;
 
@@ -79,27 +76,21 @@ typedef unsigned int uintp;
 #endif // else _WIN32
 
 typedef uint32 AppId_t;
-const AppId_t k_uAppIdInvalid = 0x0;
-
-// AppIds and DepotIDs also presently share the same namespace
 typedef uint32 DepotId_t;
-const DepotId_t k_uDepotIdInvalid = 0x0;
-
-// RTime32.  Seconds elapsed since Jan 1 1970, i.e. unix timestamp.
-// It's the same as time_t, but it is always 32-bit and unsigned.  
 typedef uint32 RTime32;
-
-// handle to a Steam API call
 typedef uint64 SteamAPICall_t;
-const SteamAPICall_t k_uAPICallInvalid = 0x0;
-
 typedef uint32 AccountID_t;
-const AccountID_t k_uAccountIdInvalid = 0;
-
-// Party Beacon ID
 typedef uint64 PartyBeaconID_t;
-const PartyBeaconID_t k_ulPartyBeaconIdInvalid = 0;
 
+#ifdef __cplusplus
+const AppId_t k_uAppIdInvalid = 0x0;
+const DepotId_t k_uDepotIdInvalid = 0x0;
+const SteamAPICall_t k_uAPICallInvalid = 0x0;
+const AccountID_t k_uAccountIdInvalid = 0;
+const PartyBeaconID_t k_ulPartyBeaconIdInvalid = 0;
+#endif
+
+#ifdef __cplusplus
 enum ESteamIPType
 {
 	k_ESteamIPTypeIPv4 = 0,
@@ -111,26 +102,20 @@ enum ESteamIPType
 struct SteamIPAddress_t
 {
 	union {
-
 		uint32			m_unIPv4;		// Host order
-		uint8			m_rgubIPv6[16];		// Network order! Same as inaddr_in6.  (0011:2233:4455:6677:8899:aabb:ccdd:eeff)
-
-		// Internal use only
-		uint64			m_ipv6Qword[2];	// big endian
+		uint8			m_rgubIPv6[16];	// Network order
+		uint64			m_ipv6Qword[2];	// Big endian
 	};
-
 	ESteamIPType m_eType;
+#endif
 
-	bool IsSet() const 
-	{ 
-		if ( k_ESteamIPTypeIPv4 == m_eType )
-		{
+#ifdef __cplusplus
+	bool IsSet() const
+	{
+		if (k_ESteamIPTypeIPv4 == m_eType)
 			return m_unIPv4 != 0;
-		}
-		else 
-		{
-			return m_ipv6Qword[0] !=0 || m_ipv6Qword[1] != 0; 
-		}
+		else
+			return m_ipv6Qword[0] != 0 || m_ipv6Qword[1] != 0;
 	}
 
 	static SteamIPAddress_t IPv4Any()
@@ -138,7 +123,6 @@ struct SteamIPAddress_t
 		SteamIPAddress_t ipOut;
 		ipOut.m_eType = k_ESteamIPTypeIPv4;
 		ipOut.m_unIPv4 = 0;
-
 		return ipOut;
 	}
 
@@ -148,7 +132,6 @@ struct SteamIPAddress_t
 		ipOut.m_eType = k_ESteamIPTypeIPv6;
 		ipOut.m_ipv6Qword[0] = 0;
 		ipOut.m_ipv6Qword[1] = 0;
-
 		return ipOut;
 	}
 
@@ -157,7 +140,6 @@ struct SteamIPAddress_t
 		SteamIPAddress_t ipOut;
 		ipOut.m_eType = k_ESteamIPTypeIPv4;
 		ipOut.m_unIPv4 = 0x7f000001;
-
 		return ipOut;
 	}
 
@@ -168,10 +150,10 @@ struct SteamIPAddress_t
 		ipOut.m_ipv6Qword[0] = 0;
 		ipOut.m_ipv6Qword[1] = 0;
 		ipOut.m_rgubIPv6[15] = 1;
-
 		return ipOut;
 	}
 };
+#endif // __cplusplus
 
 #pragma pack( pop )
 
