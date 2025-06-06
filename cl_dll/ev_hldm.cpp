@@ -24,11 +24,6 @@
 #include "pm_defs.h"
 #include "pm_materials.h"
 
-#include "../external/SDL2/SDL.h"
-#include "../external/SDL2/SDL_haptic.h"
-#include "../external/SDL2/SDL_joystick.h"
-#include "../external/SDL2/SDL_timer.h"
-
 #include <SDL2/SDL.h>
 
 #include "eventscripts.h"
@@ -85,7 +80,7 @@ extern cvar_t* cl_mp5_new_punch_enabled;
 extern cvar_t* cl_mp5_punch_roll_enabled;
 extern cvar_t* cl_m249_new_punch_enabled;
 extern cvar_t* cl_shockrifle_punch_enabled;
-extern cvar_t* cl_vibration;
+
 extern "C"
 {
 
@@ -120,82 +115,6 @@ void EV_PenguinFire(event_args_t* args);
 
 
 void EV_TrainPitchAdjust( struct event_args_s *args );
-}
-
-SDL_GameController* gGameController = NULL;
-SDL_Joystick* gJoystick = NULL;
-SDL_Haptic* gJoyHaptic = NULL;
-
-void LoadSDL()
-{
-	static bool sdlOn = false;
-	if (!sdlOn)
-	{
-		//Initialize SDL
-		if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_GAMECONTROLLER) < 0)
-		{
-			gEngfuncs.Con_Printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-		}
-
-		//Check for joysticks
-		if (SDL_NumJoysticks() < 1)
-		{
-			gEngfuncs.Con_Printf("Warning: No joysticks connected!\n");
-		}
-		else
-		{
-			//Check if first joystick is game controller interface compatible
-			if (!SDL_IsGameController(0))
-			{
-				gEngfuncs.Con_Printf("Warning: Joystick is not game controller interface compatible! SDL Error: %s\n", SDL_GetError());
-			}
-			else
-			{
-				//Open game controller and check if it supports rumble
-				gGameController = SDL_GameControllerOpen(0);
-				if (!SDL_GameControllerHasRumble(gGameController))
-				{
-					gEngfuncs.Con_Printf("Warning: Game controller does not have rumble! SDL Error: %s\n", SDL_GetError());
-				}
-			}
-		}
-
-		if (gGameController == NULL)
-		{
-			//Open first joystick
-			gJoystick = SDL_JoystickOpen(0);
-			if (gJoystick == NULL)
-			{
-				gEngfuncs.Con_Printf("Warning: Unable to open joystick! SDL Error: %s\n", SDL_GetError());
-			}
-			else
-			{
-				//Check if joystick supports haptic
-				if (!SDL_JoystickIsHaptic(gJoystick))
-				{
-					gEngfuncs.Con_Printf("Warning: Controller does not support haptics! SDL Error: %s\n", SDL_GetError());
-				}
-				else
-				{
-					//Get joystick haptic device
-					gJoyHaptic = SDL_HapticOpenFromJoystick(gJoystick);
-					if (gJoyHaptic == NULL)
-					{
-						gEngfuncs.Con_Printf("Warning: Unable to get joystick haptics! SDL Error: %s\n", SDL_GetError());
-					}
-					else
-					{
-						//Initialize rumble
-						if (SDL_HapticRumbleInit(gJoyHaptic) < 0)
-						{
-							gEngfuncs.Con_Printf("Warning: Unable to initialize haptic rumble! SDL Error: %s\n", SDL_GetError());
-						}
-					}
-				}
-			}
-		}
-
-	}
 }
 
 #define VECTOR_CONE_1DEGREES Vector( 0.00873, 0.00873, 0.00873 )
@@ -399,16 +318,16 @@ char *EV_HLDM_DamageDecal( physent_t *pe )
 	if ( pe->classnumber == 1 )
 	{
 		idx = gEngfuncs.pfnRandomLong( 0, 2 );
-		gEngfuncs.Con_Printf( decalname, "{break%i", idx + 1 );
+		sprintf( decalname, "{break%i", idx + 1 );
 	}
 	else if ( pe->rendermode != kRenderNormal )
 	{
-		gEngfuncs.Con_Printf( decalname, "{bproof1" );
+		sprintf( decalname, "{bproof1" );
 	}
 	else
 	{
 		idx = gEngfuncs.pfnRandomLong( 0, 4 );
-		gEngfuncs.Con_Printf( decalname, "{shot%i", idx + 1 );
+		sprintf( decalname, "{shot%i", idx + 1 );
 	}
 	return decalname;
 }
@@ -667,29 +586,6 @@ void EV_FireGlock1( event_args_t *args )
 
 		Punch(2, 0, 0);
 
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0, 0xFFFF, 80) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0x7FFF, 0xFFFF * 3 / 4, 80) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.45, 80) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
@@ -766,25 +662,6 @@ void EV_FireGlock2( event_args_t *args )
 		* Punch(2, 0, 0);
 		* 
 		*/
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumble(gGameController, 0x7FFF, 0xFFFF * 3 / 4, 80) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.45, 80) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
@@ -855,30 +732,6 @@ void EV_FireShotGunDouble( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE2, 2 );
 		Punch( 10, 0, 0 );
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 200) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 200) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 200) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	for ( j = 0; j < 2; j++ )
@@ -934,30 +787,6 @@ void EV_FireShotGunSingle( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE, 2 );
 
 		Punch( 5, 0, 0 );
-		
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 150) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 150) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 150) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 32, -12, 6 );
@@ -1018,30 +847,6 @@ void EV_FireMP5( event_args_t *args )
 		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
 		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 		V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 200) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 200) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 200) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
@@ -1091,29 +896,6 @@ void EV_FireMP52( event_args_t *args )
 	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_LAUNCH, 2 );
 		Punch( 10, 0, 0 );
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 600) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 600) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 600) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
 	}
 	
 	switch( gEngfuncs.pfnRandomLong( 0, 1 ) )
@@ -1162,30 +944,6 @@ void EV_FirePython( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( PYTHON_FIRE1, multiplayer ? 1 : 0 );
 
 		Punch( 10, 0, 0 );
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	switch( gEngfuncs.pfnRandomLong( 0, 1 ) )
@@ -1286,7 +1044,7 @@ void EV_FireGauss( event_args_t *args )
 		return;
 	}
 
-//	Con_DPrintf( "Firing gauss with %f\n", flDamage );
+//	Con_Printf( "Firing gauss with %f\n", flDamage );
 	EV_GetGunPosition( args, vecSrc, origin );
 
 	m_iBeam = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/smoke.spr" );
@@ -1311,34 +1069,7 @@ void EV_FireGauss( event_args_t *args )
 
 		if ( m_fPrimaryFire == false )
 			 g_flApplyVel = flDamage;	
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0, 250) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0 * 3 / 4, 250) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0, 0xFFFF * 3 / 4, 500) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 600) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
+			 
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + flDamage * (1.0 / 400.0), ATTN_NORM, 0, 85 + gEngfuncs.pfnRandomLong( 0, 0x1f ) );
@@ -1785,30 +1516,6 @@ void EV_FireCrossbow( event_args_t *args )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
 
 		Punch( 2, 0, 0 );
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0, 0xFFFF, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0, 0xFFFF * 3 / 4, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 }
 //======================
@@ -1840,6 +1547,7 @@ void EV_FireRpg( event_args_t *args )
 	VectorCopy( args->origin, origin );
 	
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/rocketfire1.wav", 0.9, ATTN_NORM, 0, PITCH_NORM );
+	// gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_ITEM, "weapons/glauncher.wav", 0.7, ATTN_NORM, 0, PITCH_NORM );
 
 	//Only play the weapon anims if I shot it. 
 	if ( EV_IsLocal( idx ) )
@@ -1847,30 +1555,6 @@ void EV_FireRpg( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_FIRE2, 1 );
 	
 		Punch( 5, 0, 0 );
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0, 50) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0 * 3 / 4, 50) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 50) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 }
 //======================
@@ -1953,34 +1637,8 @@ void EV_EgonFire( event_args_t *args )
 	}
 
 	//Only play the weapon anims if I shot it.
-	if (EV_IsLocal(idx))
-	{
-		gEngfuncs.pEventAPI->EV_WeaponAnimation(g_fireAnims1[gEngfuncs.pfnRandomLong(0, 3)], 1);
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 1, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
-	}
+	if ( EV_IsLocal( idx ) )
+		gEngfuncs.pEventAPI->EV_WeaponAnimation ( g_fireAnims1[ gEngfuncs.pfnRandomLong( 0, 3 ) ], 1 );
 
 	if (iStartup == 1 && EV_IsLocal(idx) && !pBeam && !pBeam2 && !pFlare && cl_lw->value) //Adrian: Added the cl_lw check for those lital people that hate weapon prediction.
 	{
@@ -2150,30 +1808,6 @@ void EV_HornetGunFire( event_args_t *args )
 		}
 
 		gEngfuncs.pEventAPI->EV_WeaponAnimation ( HGUN_SHOOT, 1 );
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 70) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 70) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 70) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	switch ( gEngfuncs.pfnRandomLong ( 0 , 2 ) )
@@ -2312,30 +1946,6 @@ void EV_FireEagle(event_args_t* args)
 
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(bEmpty ? EAGLE_SHOOT_EMPTY : EAGLE_SHOOT, 0);
 		Punch(4, 0, 0);
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	Vector ShellVelocity;
@@ -2396,30 +2006,6 @@ void EV_SniperRifle(event_args_t* args)
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(iClip <= 0 ? SNIPERRIFLE_FIRELASTROUND : SNIPERRIFLE_FIRE, 0);
 		Punch(2, 0, 0);
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound(idx, vecOrigin,
@@ -2563,30 +2149,6 @@ void EV_FireShockRifle(event_args_t* args)
 				Punch(-0.75, 0.75, 0);
 				break;
 			}
-
-			if (cl_vibration->value == 1)
-			{
-				LoadSDL();
-				if (gGameController != NULL)
-				{
-					if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-					}
-					if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-					}
-					else if (gJoyHaptic != NULL)
-					{
-						if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 100) != 0)
-						{
-							gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-						}
-					}
-				}
-			}
-
 	}
 
 	for (size_t uiIndex = 0; uiIndex < 3; ++uiIndex)
@@ -2627,30 +2189,6 @@ void EV_FireSpore(event_args_t* args)
 				gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/tinyspit.spr"),
 				10, 10, 180);
 		}
-
-		if (cl_vibration->value == 1)
-		{
-			LoadSDL();
-			if (gGameController != NULL)
-			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 100) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 100) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
-			}
-		}
-
 	}
 }
 //======================
@@ -2756,32 +2294,30 @@ void EV_FireM249(event_args_t* args)
 	{
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(gEngfuncs.pfnRandomLong(0, 2) + M249_SHOOT1, iBody);
-		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
-		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 
-		if (cl_vibration->value == 1)
+		/*if (cl_m249_new_punch_enabled->value == 1)
 		{
-			LoadSDL();
-			if (gGameController != NULL)
+			switch (gEngfuncs.pfnRandomLong(0, 3))
 			{
-				if (SDL_GameControllerRumbleTriggers(gGameController, 0xFFFF, 0xFFFF, 250) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble triggers. %s\n", SDL_GetError());
-				}
-				if (SDL_GameControllerRumble(gGameController, 0xFFFF, 0xFFFF * 3 / 4, 250) != 0)
-				{
-					gEngfuncs.Con_Printf("Can't rumble. %s\n", SDL_GetError());
-				}
-				else if (gJoyHaptic != NULL)
-				{
-					if (SDL_HapticRumblePlay(gJoyHaptic, 0.80, 250) != 0)
-					{
-						gEngfuncs.Con_Printf("Couldn't rumble joystick. %s\n", SDL_GetError());
-					}
-				}
+			case 0:
+				Punch(1, 0.75, 0);
+				break;
+			case 1:
+				Punch(1, -0.75, 0);
+				break;
+			case 2:
+				Punch(-1, 0.75, 0);
+				break;
+			case 3:
+				Punch(-1, -0.75, 0);
+				break;
 			}
 		}
+		else
+		{*/
 
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 	}
 
 	Vector ShellVelocity;
