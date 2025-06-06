@@ -24,6 +24,10 @@
 #include "Platform.h"
 #include <pm_shared.h>
 
+#ifdef _STEAMWORKS
+#include "steamworks/steam_api.h"
+#endif
+
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
@@ -131,7 +135,28 @@ float	v_idlescale;  // used by TFC for concussion grenade effect
 cvar_s* crosshair_low;
 int HUD_LAG_VALUE; // The sensitivity of the HUD-sway effect is dependent on the screen resolution.
 
+#ifdef _STEAMWORKS
+static Vector GetControllerAngularVelocity()
+{
+	Vector out(0, 0, 0);
+	ISteamInput* input = SteamInput();
+	if (!input)
+		return out;
 
+	InputHandle_t handles[STEAM_INPUT_MAX_COUNT];
+	int count = input->GetConnectedControllers(handles);
+	if (count <= 0)
+		return out;
+
+	InputMotionData_t motion = input->GetMotionData(handles[0]);
+
+	out.x = motion.rotVelX;
+	out.y = motion.rotVelY;
+	out.z = motion.rotVelZ;
+
+	return out;
+}
+#endif
 
 //=============================================================================
 /*
@@ -844,6 +869,11 @@ void Punch(float p, float y, float r)
 	punch[2] += r * 20;
 }
 
+float clampf(float val, float minVal, float maxVal)
+{
+	return (val < minVal) ? minVal : (val > maxVal) ? maxVal : val;
+}
+
 /*
 ==============
 V_CalcViewModelLag
@@ -919,6 +949,28 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 		view->origin = view->origin + right * (-pitch * 0.003f);
 		view->origin = view->origin + up * (pitch * 0.002f);
 	}
+
+	// motion-based 
+	Vector motionAngVel = GetControllerAngularVelocity();
+
+	static Vector smoothedVel(0, 0, 0);
+	smoothedVel = smoothedVel * 0.9f + motionAngVel * 0.1f;
+
+	Vector motionOffset;
+	motionOffset.x = smoothedVel.y * 1.5f; // Yaw affects X offset
+	motionOffset.y = smoothedVel.x * 1.5f; // Pitch affects Y offset
+
+	// Clamp final motion offsets
+	const float maxOffset = 10.0f;
+	motionOffset.x = clampf(motionOffset.x, -maxOffset, maxOffset);
+	motionOffset.y = clampf(motionOffset.y, -maxOffset, maxOffset);
+
+	// Apply HUD and viewmodel offset
+	gHUD.m_flHudLagOfs[0] += motionOffset.x;
+	gHUD.m_flHudLagOfs[1] += motionOffset.y;
+
+	view->origin = view->origin + right * motionOffset.x * 0.05f;
+	view->origin = view->origin + up * motionOffset.y * 0.05f;
 }
 template <typename T>
 T lerp(T a, T b, T t) {
