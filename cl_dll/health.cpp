@@ -171,10 +171,6 @@ void CHudHealth::GetPainColor( int &r, int &g, int &b )
 	{
 		SetControllerLEDColor(255, 0, 0, 1); // Red LED for dead player
 	}
-	else
-	{
-		SetControllerLEDColor(255, 128, 0, 1);
-	}
 #endif
 }
 

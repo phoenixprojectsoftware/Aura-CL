@@ -299,8 +299,14 @@ void CHud::UpdateDefaultHUDColor()
 		b = min(b, 255);
 
 		m_iDefaultHUDColor = (r << 16) | (g << 8) | b;
+#ifdef _STEAMWORKS
+		SetControllerLEDColor(r, g, b, 0.7);
+#endif
 	} else {
 		m_iDefaultHUDColor = RGB_DEFAULT;
+#ifdef _STEAMWORKS
+		SetControllerLEDColor(255, 160, 0, 0.7);
+#endif
 	}
 }
 

@@ -896,10 +896,6 @@ void CHud :: VidInit( void )
 	m_OldScoreBoard.VidInit();
 	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
-
-#ifdef _STEAMWORKS
-	SetControllerLEDColor(255, 128, 0, 0.7);
-#endif
 }
 
 int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
