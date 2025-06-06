@@ -25,7 +25,10 @@
 #include "pm_materials.h"
 
 #include <SDL2/SDL.h>
+
+#ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
+#endif
 
 #include "eventscripts.h"
 #include "ev_hldm.h"
