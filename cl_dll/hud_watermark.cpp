@@ -65,7 +65,7 @@ int CHudWatermark::Draw(float time)
 			gEngfuncs.Con_Printf("version.txt not found");
 		}
 
-	sprintf(displayString, "Half-Life: Zombies Ate My Neighbours Multiplayer %s", zamnhlmpVersion);
+	sprintf(displayString, "Half-Life: Cross Product Multiplayer %s", zamnhlmpVersion);
 
 	extern cvar_t* hud_watermark;
 	const char* sv_aura_version;

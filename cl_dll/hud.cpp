@@ -558,12 +558,11 @@ void PrintVersion()
 {
 	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
 	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
-	gEngfuncs.Con_Printf("\n  Half-Life: Zombies Ate My Neighbours Multiplayer");
+	gEngfuncs.Con_Printf("\n  Half-Life: Cross Product Multiplayer");
 	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
 	gEngfuncs.Con_Printf("\n  Aura SDK:");
 	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
 	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
-	gEngfuncs.Con_Printf("\n  ZAMNHLMP Developer Repository - hosts public playtest builds - %s", zamnhlmpRepo "\n");
 }
 
 
