@@ -19,6 +19,9 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "bench.h"
+#ifdef _STEAMWORKS
+#include "steamworks/steam_api.h"
+#endif
 
 #include "vgui_TeamFortressViewport.h"
 
@@ -274,6 +277,9 @@ int CHud :: Redraw( float flTime, int intermission )
 	}
 	*/
 
+#ifdef _STEAMWORKS
+	SteamInput()->RunFrame();
+#endif
 	return 1;
 }
 
