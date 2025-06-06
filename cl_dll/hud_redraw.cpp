@@ -279,6 +279,7 @@ int CHud :: Redraw( float flTime, int intermission )
 
 #ifdef _STEAMWORKS
 	SteamInput()->RunFrame();
+	UpdateControllerVibration();
 #endif
 	return 1;
 }

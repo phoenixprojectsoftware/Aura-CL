@@ -910,6 +910,62 @@ int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
 
 float g_lastFOV = 0.0;
 
+void CHud::StartControllerVibration(uint16_t left, uint16_t right, uint16 lt, uint16 rt, float duration)
+{
+#ifdef _STEAMWORKS
+	ISteamInput* steamInput = SteamInput();
+	if (!steamInput)
+		return;
+
+	InputHandle_t inputHandles[STEAM_INPUT_MAX_COUNT];
+	int inputCount = steamInput->GetConnectedControllers(inputHandles);
+
+	for (int i = 0; i < inputCount; ++i)
+	{
+		steamInput->TriggerVibrationExtended(inputHandles[i], left, right, lt, rt);
+	}
+
+	m_flVibrationStopTime = gHUD.m_flTime + duration;
+	m_bVibrationActive = true;
+#else
+	return;
+#endif
+}
+
+void CHud::StopControllerVibration()
+{
+#ifdef _STEAMWORKS
+	ISteamInput* steamInput = SteamInput();
+	if (!steamInput)
+		return;
+
+	InputHandle_t inputHandles[STEAM_INPUT_MAX_COUNT];
+	int inputCount = steamInput->GetConnectedControllers(inputHandles);
+
+	for (int i = 0; i < inputCount; ++i)
+	{
+		steamInput->TriggerVibrationExtended(inputHandles[i], 0, 0, 0, 0);
+	}
+
+	m_bVibrationActive = false;
+#else
+	return;
+#endif
+}
+
+void CHud::UpdateControllerVibration()
+{
+#ifdef _STEAMWORKS
+	if (m_bVibrationActive && gHUD.m_flTime >= m_flVibrationStopTime)
+	{
+		StopControllerVibration();
+	}
+#else
+	return;
+#endif
+}
+
+
 /*
 ============
 COM_FileBase

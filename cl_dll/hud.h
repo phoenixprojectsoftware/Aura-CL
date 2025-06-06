@@ -650,6 +650,13 @@ public:
 	);
 	void GetConsoleStringSizeWithColorTags(char* string, int& width, int& height);
 
+	float m_flVibrationStopTime = 0.0f;
+	bool m_bVibrationActive = false;
+
+	void StartControllerVibration(uint16_t left, uint16_t right, uint16_t lt, uint16_t rt, float duration); // Left motor. Right motor. Left trigger. Right trigger. Duration in ms.
+	void StopControllerVibration();
+	void UpdateControllerVibration();
+
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
 	// freed in ~CHud()

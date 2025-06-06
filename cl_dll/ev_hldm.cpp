@@ -25,6 +25,7 @@
 #include "pm_materials.h"
 
 #include <SDL2/SDL.h>
+#include <steamworks/steam_api.h>
 
 #include "eventscripts.h"
 #include "ev_hldm.h"
@@ -80,6 +81,8 @@ extern cvar_t* cl_mp5_new_punch_enabled;
 extern cvar_t* cl_mp5_punch_roll_enabled;
 extern cvar_t* cl_m249_new_punch_enabled;
 extern cvar_t* cl_shockrifle_punch_enabled;
+extern cvar_t* steam_vibrate_enabled;
+extern CHud gHUD;
 
 extern "C"
 {
@@ -588,6 +591,9 @@ void EV_FireGlock1( event_args_t *args )
 
 	}
 
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(5000, 20000, 0, 7500, 0.2f);
+
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
 
 	EV_EjectBrass ( ShellOrigin, ShellVelocity, angles[ YAW ], shell, TE_BOUNCE_SHELL ); 
@@ -663,6 +669,9 @@ void EV_FireGlock2( event_args_t *args )
 		* 
 		*/
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(5000, 20000, 7500, 0, 0.2f);
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
 
@@ -754,6 +763,9 @@ void EV_FireShotGunDouble( event_args_t *args )
 	{
 		EV_HLDM_FireBullets( idx, forward, right, up, 12, vecSrc, vecAiming, 2048, BULLET_PLAYER_BUCKSHOT, 0, &tracerCount[idx-1], 0.08716, 0.08716 );
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(30000, 30000, 65535, 7500, 0.5f);
 }
 
 void EV_FireShotGunSingle( event_args_t *args )
@@ -806,6 +818,9 @@ void EV_FireShotGunSingle( event_args_t *args )
 	{
 		EV_HLDM_FireBullets( idx, forward, right, up, 6, vecSrc, vecAiming, 2048, BULLET_PLAYER_BUCKSHOT, 0, &tracerCount[idx-1], 0.08716, 0.08716 );
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(15000, 30000, 7500, 25000, 0.25f);
 }
 //======================
 //	   SHOTGUN END
@@ -880,6 +895,8 @@ void EV_FireMP5( event_args_t *args )
 	{
 		EV_HLDM_FireBullets( idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_MP5, 2, &tracerCount[idx-1], args->fparam1, args->fparam2 );
 	}
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(30000, 40000, 15000, 20000, 0.2f);
 }
 
 // We only predict the animation and sound
@@ -907,6 +924,9 @@ void EV_FireMP52( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/glauncher2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
 		break;
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 0, 0, 20000, 0.1f);
 }
 //======================
 //		 MP5 END
@@ -961,6 +981,9 @@ void EV_FirePython( event_args_t *args )
 	VectorCopy( forward, vecAiming );
 
 	EV_HLDM_FireBullets( idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_357, 0, 0, args->fparam1, args->fparam2 );
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
 }
 //======================
 //	    PHYTON END 
@@ -1071,6 +1094,9 @@ void EV_FireGauss( event_args_t *args )
 			 g_flApplyVel = flDamage;	
 			 
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 45000, 0, 40000, 0.2f);
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + flDamage * (1.0 / 400.0), ATTN_NORM, 0, 85 + gEngfuncs.pfnRandomLong( 0, 0x1f ) );
 
@@ -1373,6 +1399,9 @@ void EV_Crowbar( event_args_t *args )
 				break;
 			}
 		}
+
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(30000, 30000, 0, 0, 0.1f);
 	}
 }
 //======================
@@ -1516,6 +1545,9 @@ void EV_FireCrossbow( event_args_t *args )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
 
 		Punch( 2, 0, 0 );
+
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.1f);
 	}
 }
 //======================
@@ -1556,6 +1588,9 @@ void EV_FireRpg( event_args_t *args )
 	
 		Punch( 5, 0, 0 );
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 65535, 0, 30000, 0.3f);
 }
 //======================
 //	     RPG END 
@@ -1711,6 +1746,9 @@ void EV_EgonFire( event_args_t *args )
 			pFlare->tentOffset.x = (iFireMode == FIRE_WIDE) ? 1.0f : 1.0f;
 		}
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(20000, 50000, 0, 30000, 0.2f);
 }
 
 void EV_EgonStop( event_args_t *args )
@@ -1767,6 +1805,9 @@ void EV_EgonStop( event_args_t *args )
 			pLight = NULL;
 		}
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 30000, 65535, 65535, 0.5f);
 }
 //======================
 //	    EGON END 
@@ -1816,6 +1857,8 @@ void EV_HornetGunFire( event_args_t *args )
 		case 1:	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "agrunt/ag_fire2.wav", 1, ATTN_NORM, 0, 100 );	break;
 		case 2:	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "agrunt/ag_fire3.wav", 1, ATTN_NORM, 0, 100 );	break;
 	}
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 30000, 65535, 65535, 0.1f);
 }
 //======================
 //	   HORNET END
@@ -1981,6 +2024,9 @@ void EV_FireEagle(event_args_t* args)
 		BULLET_PLAYER_EAGLE,
 		0, nullptr,
 		args->fparam1, args->fparam2);
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
 }
 //======================
 //	   EAGLE END
@@ -2071,6 +2117,9 @@ void EV_Knife(event_args_t* args)
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(KNIFE_ATTACK3, 0); break;
 		}
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 30000, 0, 0, 0.2f);
 }
 //======================
 //	   KNIFE END
@@ -2089,7 +2138,11 @@ void EV_Pipewrench(event_args_t* args)
 
 	//Play Swing sound
 	if (iBigSwing)
+	{
 		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/pwrench_big_miss.wav", 1, ATTN_NORM, 0, PITCH_NORM);
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
+	}
 	else
 	{
 		switch (gEngfuncs.pfnRandomLong(0, 1))
@@ -2160,6 +2213,9 @@ void EV_FireShockRifle(event_args_t* args)
 			1, 75 * 0.01, 190 / 255.0, 30, 0, 10,
 			0, 253 / 255.0, 253 / 255.0);
 	}
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.2f);
 }
 
 void EV_FireSpore(event_args_t* args)
@@ -2369,6 +2425,9 @@ void EV_FireM249(event_args_t* args)
 		BULLET_PLAYER_556,
 		0, nullptr,
 		args->fparam1, args->fparam2);
+
+	if (steam_vibrate_enabled->value >= 1)
+		gHUD.StartControllerVibration(40000, 30000, 20000, 60000, 0.2f);
 }
 //======================
 //  CM249 END
