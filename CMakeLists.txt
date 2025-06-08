@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 
 # Custom build types support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamRelease;Halo" CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
 
 # Project metadata
@@ -20,16 +20,28 @@ if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease")
     set(IS_STEAM_BUILD ON)
 endif()
 
+# Detect if Halo is to be used. Halo should use Steamworx.
+set(IS_HALO OFF)
+if(CMAKE_BUILD_TYPE MATCHES "Halo")
+	set(IS_HALO ON)
+	set(IS_STEAM_BUILD ON)
+endif()
+
 # Steamworks include path
 if(IS_STEAM_BUILD)
     target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
 	target_compile_definitions(client PRIVATE _STEAMWORKS)
 endif()
 
-# Add _STEAMWORKS define for IntelliSense and build config
+# Add _STEAMWORKS and _HALO define for IntelliSense and build config
 foreach(STEAM_CONFIG SteamDebug SteamRelease)
     string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
     set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+endforeach()
+
+foreach(HALO_CONFIG Halo)
+	string(TOUPPER "${HALO_CONFIG}" UPPER_CONFIG)
+    set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS /D_HALO")
 endforeach()
 
 
@@ -208,6 +220,11 @@ if(IS_STEAM_BUILD)
 	elseif(UNIX)
 		target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/libsteam_api.so)
 	endif()
+endif()
+
+# Halo ifdef
+if(IS_HALO)
+	target_compile_definitions(client PRIVATE _HALO)
 endif()
 
 target_compile_definitions(client PRIVATE

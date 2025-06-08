@@ -44,7 +44,11 @@ int CHudWatermark::Draw(float time)
 
 
 		char filepath[260];
+#ifdef _HALO
+		snprintf(filepath, sizeof(filepath), "halogs/aura/version.txt");
+#else
 		snprintf(filepath, sizeof(filepath), "zamnhlmp/aura/version.txt");
+#endif
 		FILE* file = fopen(filepath, "r");
 
 		if (file != NULL)
@@ -65,7 +69,11 @@ int CHudWatermark::Draw(float time)
 			gEngfuncs.Con_Printf("version.txt not found");
 		}
 
+#ifdef _HALO
+		sprintf(displayString, "Halo GS %s", zamnhlmpVersion);
+#else
 	sprintf(displayString, "Half-Life: Cross Product Multiplayer %s", zamnhlmpVersion);
+#endif
 
 	extern cvar_t* hud_watermark;
 	const char* sv_aura_version;
@@ -76,7 +84,9 @@ int CHudWatermark::Draw(float time)
 
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b);
+#ifndef _HALO
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+#endif
 
 		if (update_is_available)
 			gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight / 2 * 7, " ", r, g, b);
