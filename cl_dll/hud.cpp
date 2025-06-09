@@ -558,7 +558,7 @@ void PrintVersion()
 {
 	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
 	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
-	gEngfuncs.Con_Printf("\n  Half-Life: Cross Product Multiplayer");
+	gEngfuncs.Con_Printf("\n  %s", gameName);
 	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
 	gEngfuncs.Con_Printf("\n  Aura SDK:");
 	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);

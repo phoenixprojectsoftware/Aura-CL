@@ -3,6 +3,13 @@
 
 // These are in the order they appear in PrintVersion()
 #define auraVersion "v2.3.2"
+
+#ifdef _HALO
+#define gameName "Halo: GoldSource"
+#else
+#define gameName "Half-Life: Cross Product Multiplayer"
+#endif
+
 #define season "Season 9: White Sands"
 #define Authors "The Phoenix Project Software"
 #define auraCL "https://github.com/phoenixprojectsoftware/Aura-CL"

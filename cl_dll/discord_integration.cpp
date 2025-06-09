@@ -19,11 +19,18 @@ namespace discord_integration
 	namespace
 	{
 		// From Discord developer dashboard.
+#ifdef _HALO
+		constexpr const char CLIENT_ID[] = "1381646338604667072"; // Halo: GoldSource
+#else
 		constexpr const char CLIENT_ID[] = "836328170360799284";
+#endif
 
 		// This seems to be consistent across PCs.
-		constexpr const char STEAM_APP_ID[] = "15569587907822878790"; // This app ID will only launch zamnhlmp and not zamnhlmp_dev - so Discord invites will not work for
-																	  // zamnhlmp_dev builds of the game!
+#ifdef _HALO
+		constexpr const char STEAM_APP_ID[] = "11600264564054163526";
+#else if !defined(_HALO) && defined(_STEAMWORKS)
+		constexpr const char STEAM_APP_ID[] = "3416640"; // zamnhlmp Steam Version
+#endif
 		
 		// BlueNightHawk : Convert Uppercase Map Names to Lowercase. 2021.
 		void LowerCase(const char* in, char* out, int size) 
