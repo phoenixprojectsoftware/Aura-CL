@@ -278,6 +278,19 @@ int CHud :: Redraw( float flTime, int intermission )
 	*/
 
 #ifdef _STEAMWORKS
+	static bool wasControllerConnected = false;
+	InputHandle_t handles[STEAM_INPUT_MAX_COUNT];
+	int connected = SteamInput()->GetConnectedControllers(handles);
+
+	if (wasControllerConnected && connected == 0)
+	{
+		// Controller was disconnected
+		gEngfuncs.pfnClientCmd("toggleconsole\n");
+		gEngfuncs.Con_DPrintf("Controller disconnected, pausing game.\n");
+	}
+
+	wasControllerConnected = (connected > 0);
+
 	SteamInput()->RunFrame();
 	UpdateControllerVibration();
 #endif
