@@ -2185,7 +2185,21 @@ void EV_Pipewrench(event_args_t* args)
 //======================
 void EV_FireShockRifle(event_args_t* args)
 {
-	gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_AUTO, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, PITCH_NORM);
+	switch (gEngfuncs.pfnRandomLong(0, 3))
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_AUTO, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, PITCH_NORM);
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_AUTO, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, 110);
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_AUTO, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, 105);
+		break;
+	case 3:
+		gEngfuncs.pEventAPI->EV_PlaySound(args->entindex, args->origin, CHAN_AUTO, "weapons/shock_fire.wav", 0.9, ATTN_NORM, 0, 95);
+		break;
+	}
 
 	if (EV_IsLocal(args->entindex))
 	{
