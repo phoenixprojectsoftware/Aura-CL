@@ -2232,7 +2232,10 @@ void EV_FireShockRifle(event_args_t* args)
 	}
 
 	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.2f);
+	{
+		//gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.2f);
+		gHUD.StartDualSenseEffect(SCE_PAD_TRIGGER_EFFECT_TRIGGER_MASK_R2, 10, 10, 10);
+	}
 }
 
 void EV_FireSpore(event_args_t* args)
