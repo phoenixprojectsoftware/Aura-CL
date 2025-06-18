@@ -234,44 +234,6 @@ private:
 
 };
 
-#ifdef _STEAMWORKS
-
-// Based on Sony's DualSense trigger effect structure
-#define SCE_PAD_TRIGGER_EFFECT_TRIGGER_MASK_L2 0x01
-#define SCE_PAD_TRIGGER_EFFECT_TRIGGER_MASK_R2 0x02
-#define SCE_PAD_TRIGGER_EFFECT_PARAM_INDEX_FOR_L2 0
-#define SCE_PAD_TRIGGER_EFFECT_PARAM_INDEX_FOR_R2 1
-
-#define SCE_PAD_TRIGGER_EFFECT_MODE_NONE 0
-#define SCE_PAD_TRIGGER_EFFECT_MODE_VIBRATION 3
-
-typedef struct ScePadTriggerEffectVibrationParam
-{
-	uint8_t position;
-	uint8_t amplitude;
-	uint8_t frequency;
-	uint8_t reserved; // padding
-} ScePadTriggerEffectVibrationParam;
-
-typedef struct ScePadTriggerEffectCommand
-{
-	uint8_t mode;
-	union
-	{
-		ScePadTriggerEffectVibrationParam vibrationParam;
-		uint8_t rawData[4];
-	} commandData;
-} ScePadTriggerEffectCommand;
-
-typedef struct ScePadTriggerEffectParam
-{
-	uint8_t triggerMask;
-	uint8_t padding[3]; // 4-byte alignment
-	ScePadTriggerEffectCommand command[2]; // L2 = index 0, R2 = index 1
-} ScePadTriggerEffectParam;
-
-#endif
-
 //
 //-----------------------------------------------------
 //
@@ -694,9 +656,6 @@ public:
 	void StartControllerVibration(uint16_t left, uint16_t right, uint16_t lt, uint16_t rt, float duration); // Left motor. Right motor. Left trigger. Right trigger. Duration in ms.
 	void StopControllerVibration();
 	void UpdateControllerVibration();
-
-	void StartDualSenseEffect(uint8_t triggerMask, uint8_t position, uint8_t amplitude, uint8_t frequency);
-	void ClearDualSenseEffect();
 
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
