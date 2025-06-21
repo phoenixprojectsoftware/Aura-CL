@@ -4,6 +4,7 @@
 #include "update_checker.h"
 //#include <filesystem>
 #include "versioninfo.h"
+#include <steamworks/steam_api.h>
 
 int CHudWatermark::Init()
 {
@@ -30,11 +31,13 @@ int CHudWatermark::Draw(float time)
 		draw_until = gHUD.m_flTime + 15.0f;
 	}
 
+#ifndef _STEAMWORKS
 	if (gHUD.m_flTime >= draw_until) 
 	{
 		m_iFlags &= ~HUD_ACTIVE;
 		return 0;
 	}
+#endif
 
 	int r, g, b;
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
@@ -68,15 +71,26 @@ int CHudWatermark::Draw(float time)
 	sprintf(displayString, "Half-Life: Cross Product Multiplayer %s", zamnhlmpVersion);
 
 	extern cvar_t* hud_watermark;
-	const char* sv_aura_version;
-	sv_aura_version = CVAR_GET_STRING("sv_aura_version");
+
+#ifdef _STEAMWORKS
+	// HSteamUser GetHSteamUser();
+	CSteamID steamID = SteamUser()->GetSteamID();
+	const char* username = SteamFriends()->GetPersonaName();
+#endif
+
 
 	if (hud_watermark->value == 1)
 	{
-
+#ifdef _STEAMWORKS
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "STEAM CLOSED BETA", r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "ZAMNHLMP 2.9.2", r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "cl build " __DATE__, r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, username, r, g, b);
+#else
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+#endif
 
 		if (update_is_available)
 			gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight / 2 * 7, " ", r, g, b);
