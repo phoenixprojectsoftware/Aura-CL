@@ -12,6 +12,10 @@
 #include <GL/gl.h>
 #endif
 
+#ifndef GL_DEPTH_CLAMP
+#define GL_DEPTH_CLAMP 0x864F
+#endif
+
 #include "hud.h"
 #include "cl_util.h"
 #include "const.h"
