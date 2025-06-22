@@ -33,7 +33,7 @@ int CHudWatermark::Draw(float time)
 		draw_until = gHUD.m_flTime + 15.0f;
 	}
 
-#ifndef _STEAMWORKS
+#if !defined(_STEAMWORKS) || defined(_HALO)
 	if (gHUD.m_flTime >= draw_until) 
 	{
 		m_iFlags &= ~HUD_ACTIVE;
