@@ -4,7 +4,9 @@
 #include "update_checker.h"
 //#include <filesystem>
 #include "versioninfo.h"
+#ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
+#endif
 
 int CHudWatermark::Init()
 {
@@ -89,7 +91,7 @@ int CHudWatermark::Draw(float time)
 
 	if (hud_watermark->value == 1)
 	{
-#ifdef _STEAMWORKS
+#if !defined(_HALO) && defined(_STEAMWORKS)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "STEAM CLOSED BETA", r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "ZAMNHLMP 2.9.2", r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "cl build " __DATE__, r, g, b);
@@ -99,6 +101,7 @@ int CHudWatermark::Draw(float time)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b);
 #ifndef _HALO
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+#endif
 #endif
 
 		if (update_is_available)
