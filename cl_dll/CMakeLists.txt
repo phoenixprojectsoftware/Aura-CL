@@ -47,7 +47,6 @@ add_sources(
 	hud_countdown.h
 	hud_crosshairs.cpp
 	hud_crosshairs.h
-	hud_crosshair_colour.cpp
 	hud_ctf.cpp
 	hud_ctf.h
 	hud_customtimer.cpp

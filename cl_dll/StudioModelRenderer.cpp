@@ -12,6 +12,10 @@
 #include <GL/gl.h>
 #endif
 
+#ifndef GL_DEPTH_CLAMP
+#define GL_DEPTH_CLAMP 0x864F
+#endif
+
 #include "hud.h"
 #include "cl_util.h"
 #include "const.h"
@@ -2046,6 +2050,20 @@ void CStudioModelRenderer::StudioRenderModel( void )
 {
 	IEngineStudio.SetChromeOrigin();
 	IEngineStudio.SetForceFaceFlags( 0 );
+
+	//++ NAPOLEON
+	// fix the model clamp
+	if (m_pCurrentEntity == gEngfuncs.GetViewModel())
+		glEnable(GL_DEPTH_CLAMP);
+
+	StudioRenderFinal();
+
+	if(m_pCurrentEntity == gEngfuncs.GetViewModel())
+	{
+		// restore the model clamp
+		glDisable(GL_DEPTH_CLAMP);
+	}
+	//-- NAPOLEON
 
 	if ( m_pCurrentEntity->curstate.renderfx == kRenderFxGlowShell )
 	{
