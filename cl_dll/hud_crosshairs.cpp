@@ -10,7 +10,7 @@ int CHudCrosshairs::Init()
 	m_iFlags = HUD_ACTIVE;
 
 	cl_cross =               CVAR_CREATE("cl_cross", "0", FCVAR_ARCHIVE);
-	cl_cross_low =			 crosshair_low;//CVAR_CREATE("cl_cross_low", "1", FCVAR_ARCHIVE);
+	cl_cross_low =			 crosshair_low;
 	cl_cross_color =         CVAR_CREATE("cl_cross_color", "0 255 0", FCVAR_ARCHIVE);
 	cl_cross_alpha =         CVAR_CREATE("cl_cross_alpha", "200", FCVAR_ARCHIVE);
 	cl_cross_thickness =     CVAR_CREATE("cl_cross_thickness", "2", FCVAR_ARCHIVE);
