@@ -73,19 +73,34 @@ int CHudWatermark::Draw(float time)
 	extern cvar_t* hud_watermark;
 
 #ifdef _STEAMWORKS
-	// HSteamUser GetHSteamUser();
 	CSteamID steamID = SteamUser()->GetSteamID();
+	uint32 accountID = steamID.GetAccountID();
+	uint32 authServer = steamID.GetEAccountType() == k_EAccountTypeIndividual ? steamID.GetUnAccountInstance() & 1 : 0;
+	uint32 accountNumber = accountID;
+
 	const char* username = SteamFriends()->GetPersonaName();
+
+	static char steamIDString[64];
+	snprintf(steamIDString, sizeof(steamIDString), "STEAM_0:%u:%u", authServer, accountNumber / 2);
 #endif
+
+	int charHeight = CharHeight;
+	int charWidth = 8; // Assuming a fixed character width for simplicity
+	int textWidth = strlen(steamIDString) * charWidth;
 
 
 	if (hud_watermark->value == 1)
 	{
 #ifdef _STEAMWORKS
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "STEAM CLOSED BETA", r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "ZAMNHLMP 2.9.2", r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "cl build " __DATE__, r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, username, r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight, "STEAM CLOSED BETA", r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 2, "ZAMNHLMP 2.9.2", r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 3, "cl build " __DATE__, r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
+
+		gEngfuncs.pfnDrawString((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
+
+		// gEngfuncs.pfnDrawString((ScreenWidth - textWidth - ScreenWidth) / 40, ScreenHeight - charHeight * 2, steamIDString, r, g, b);
 #else
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b);

@@ -72,6 +72,8 @@ inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int fl
 #define ScreenHeight (gHUD.m_scrinfo.iHeight)
 // ScreenWidth returns the width of the screen, in pixels
 #define ScreenWidth (gHUD.m_scrinfo.iWidth)
+// Character Height of the text.
+#define CharHeight (gHUD.m_scrinfo.iCharHeight)
 
 #define BASE_XRES 640.f
 
