@@ -1134,9 +1134,12 @@ float CHud::GetSensitivity( void )
 
 void CHud::ApplyGreyscaleEffect()
 {
-	int grey = 128;
-	int alpha = 128;
-	gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
+	if (!g_IsSpectator)
+	{
+		int grey = 128;
+		int alpha = 128;
+		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
+	}
 }
 
 cvar_t* r_pissfilter;
