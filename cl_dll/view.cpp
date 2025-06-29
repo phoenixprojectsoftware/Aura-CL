@@ -2039,7 +2039,7 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	#endif
 	*/
 	
-	bool bJumping = !(pparams->onground & ONGROUND);
+	bool bJumping = !(pparams->onground & FL_ONGROUND);
 	
 	if (bJumping && !gHUD.m_bWasJumping)
 	{
