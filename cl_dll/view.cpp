@@ -2039,23 +2039,52 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	#endif
 	*/
 	
-	bool bJumping = !(pparams->onground & FL_ONGROUND);
+	//++ Sabian Roberts
+	// Jumpbob
+	bool bJumping = !pparams->onground;
+	bool bOnGround = (pparams->onground != 0);
+	bool bJustJumped = (!bOnGround && gHUD.m_bWasJumping);
+	bool bJustLanded = (bOnGround && !gHUD.m_bWasJumping);
 	
-	if (bJumping && !gHUD.m_bWasJumping)
+	if (bJustJumped)
 	{
-	gHUD.m_flJumpViewmodelBob = -6.0f;
+#ifdef _DEBUG
+		gEngfuncs.Con_Printf("Jump initiated.\n");
+#endif
+		gHUD.m_flJumpViewmodelBob = 2.0f;
+	}
+
+	// landing bob
+	if (bJustLanded)
+	{
+#ifdef _DEBUG
+		gEngfuncs.Con_Printf("Landing bob triggered\n");
+#endif
+		gHUD.m_flJumpViewmodelBob = -1.0f;
 	}
 	
-	gHUD.m_bWasJumping = bJumping;
+	// update state for next frame
+	gHUD.m_bWasJumping = bOnGround;
 	
+	// smooth comeback
 	if (gHUD.m_flJumpViewmodelBob < 0.0f)
 	{
-	gHUD.m_flJumpViewmodelBob += pparams->frametime * 30.0f;
-	if (gHUD.m_flJumpViewmodelBob > 0.0f)
-	gHUD.m_flJumpViewmodelBob = 0.0f;
+		gHUD.m_flJumpViewmodelBob += pparams->frametime * 2.0f;
+		if (gHUD.m_flJumpViewmodelBob > 0.0f)
+			gHUD.m_flJumpViewmodelBob = 0.0f;
+	}
+	else if (gHUD.m_flJumpViewmodelBob > 0.0f)
+	{
+		gHUD.m_flJumpViewmodelBob -= pparams->frametime * 2.0f;
+		if (gHUD.m_flJumpViewmodelBob < 0.0f)
+			gHUD.m_flJumpViewmodelBob = 0.0f;
 	}
 	
+	// apply to vieworigin
 	pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
+	pparams->vieworg[0] += gHUD.m_flJumpViewmodelBob;
+
+	//-- Sabian Roberts
 }
 
 /*
