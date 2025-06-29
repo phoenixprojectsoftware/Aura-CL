@@ -2038,6 +2038,24 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 		}
 	#endif
 	*/
+	
+	bool bJumping = !(pparams->onground & ONGROUND);
+	
+	if (bJumping && !gHUD.m_bWasJumping)
+	{
+	gHUD.m_flJumpViewmodelBob = -6.0f;
+	}
+	
+	gHUD.m_bWasJumping = bJumping;
+	
+	if (gHUD.m_flJumpViewmodelBob < 0.0f)
+	{
+	gHUD.m_flJumpViewmodelBob += pparams->frametime * 30.0f;
+	if (gHUD.m_flJumpViewmodelBob > 0.0f)
+	gHUD.m_flJumpViewmodelBob = 0.0f;
+	}
+	
+	pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
 }
 
 /*

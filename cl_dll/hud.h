@@ -602,6 +602,9 @@ public:
 	// Smooth zooming
 	float	m_iFOV;
 	int		m_iTargetFOV;
+	
+	float m_flJumpViewmodelBob = 0.0f;
+	bool m_bWasJumping = false;
 
 	int m_iCrosshairRed;
 	int m_iCrosshairGreen;
