@@ -4,7 +4,9 @@
 #include "update_checker.h"
 //#include <filesystem>
 #include "versioninfo.h"
+#ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
+#endif
 
 int CHudWatermark::Init()
 {
