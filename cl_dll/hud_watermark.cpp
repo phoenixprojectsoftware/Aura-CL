@@ -2,7 +2,6 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "update_checker.h"
-//#include <filesystem>
 #include "versioninfo.h"
 #ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
@@ -88,7 +87,9 @@ int CHudWatermark::Draw(float time)
 
 	int charHeight = CharHeight;
 	int charWidth = 8; // Assuming a fixed character width for simplicity
+#ifdef _STEAMWORKS
 	int textWidth = strlen(steamIDString) * charWidth;
+#endif
 
 
 	if (hud_watermark->value == 1)
