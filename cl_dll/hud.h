@@ -604,7 +604,9 @@ public:
 	int		m_iTargetFOV;
 	
 	float m_flJumpViewmodelBob = 0.0f;
-	bool m_bWasJumping = false;
+	float m_flTargetJumpBob = 0.0f;
+	bool m_bWasJumping = true; // might need to change this back to false
+	float m_flAirborneStartZ = 0.0f; // NEW: z pos when we leave ground
 
 	int m_iCrosshairRed;
 	int m_iCrosshairGreen;

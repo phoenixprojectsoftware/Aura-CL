@@ -2041,48 +2041,63 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	
 	//++ Sabian Roberts
 	// Jumpbob
-	bool bJumping = !pparams->onground;
 	bool bOnGround = (pparams->onground != 0);
 	bool bJustJumped = (!bOnGround && gHUD.m_bWasJumping);
 	bool bJustLanded = (bOnGround && !gHUD.m_bWasJumping);
 	
+	// on jump, store starting Z position
 	if (bJustJumped)
 	{
 #ifdef _DEBUG
 		gEngfuncs.Con_Printf("Jump initiated.\n");
 #endif
-		gHUD.m_flJumpViewmodelBob = 2.0f;
+		gHUD.m_flTargetJumpBob = 2.0f;
+		gHUD.m_flAirborneStartZ = pparams->simorg[2]; // store z for fall tracking
 	}
 
-	// landing bob
+	// on land compare fall height
 	if (bJustLanded)
 	{
+		float flFallDistance = gHUD.m_flAirborneStartZ - pparams->simorg[2];
+
+		if (flFallDistance > 50.0f)
+		{
 #ifdef _DEBUG
-		gEngfuncs.Con_Printf("Landing bob triggered\n");
+			gEngfuncs.Con_Printf("Landing bob triggered\n");
 #endif
-		gHUD.m_flJumpViewmodelBob = -1.0f;
+			gHUD.m_flTargetJumpBob = -2.5f; // thump upward
+		}
 	}
 	
 	// update state for next frame
 	gHUD.m_bWasJumping = bOnGround;
+
+	// smooth approach
+	float approachSpeed = 10.0f;
+
+	if (gHUD.m_flJumpViewmodelBob != gHUD.m_flTargetJumpBob)
+	{
+		float delta = gHUD.m_flTargetJumpBob - gHUD.m_flJumpViewmodelBob;
+		float step = pparams->frametime * approachSpeed;
+
+		// clamp step so we don't overshoot
+		if (fabs(delta) < step)
+		{
+			gHUD.m_flJumpViewmodelBob = gHUD.m_flTargetJumpBob;
+		}
+		else
+		{
+			gHUD.m_flJumpViewmodelBob += (delta > 0.0f ? step : -step);
+		}
+	}
 	
 	// smooth comeback
-	if (gHUD.m_flJumpViewmodelBob < 0.0f)
+	if (gHUD.m_flJumpViewmodelBob == gHUD.m_flTargetJumpBob && gHUD.m_flJumpViewmodelBob != 0.0f)
 	{
-		gHUD.m_flJumpViewmodelBob += pparams->frametime * 2.0f;
-		if (gHUD.m_flJumpViewmodelBob > 0.0f)
-			gHUD.m_flJumpViewmodelBob = 0.0f;
+		gHUD.m_flTargetJumpBob = 0.0f;
 	}
-	else if (gHUD.m_flJumpViewmodelBob > 0.0f)
-	{
-		gHUD.m_flJumpViewmodelBob -= pparams->frametime * 2.0f;
-		if (gHUD.m_flJumpViewmodelBob < 0.0f)
-			gHUD.m_flJumpViewmodelBob = 0.0f;
-	}
-	
 	// apply to vieworigin
 	pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
-	pparams->vieworg[0] += gHUD.m_flJumpViewmodelBob;
 
 	//-- Sabian Roberts
 }
