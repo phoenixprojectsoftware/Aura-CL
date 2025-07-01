@@ -96,7 +96,7 @@ int CHudWatermark::Draw(float time)
 	{
 #ifdef _STEAMWORKS
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight, "STEAM CLOSED BETA", r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 2, "ZAMNHLMP 2.9.2", r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 2, displayString, r, g, b); // read from version.txt
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 3, "cl build " __DATE__, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
@@ -106,7 +106,7 @@ int CHudWatermark::Draw(float time)
 		// gEngfuncs.pfnDrawString((ScreenWidth - textWidth - ScreenWidth) / 40, ScreenHeight - charHeight * 2, steamIDString, r, g, b);
 #else
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b);
+		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
 #endif
 
