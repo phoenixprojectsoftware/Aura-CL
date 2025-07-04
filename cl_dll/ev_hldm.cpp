@@ -587,15 +587,14 @@ void EV_FireGlock1( event_args_t *args )
 
 	if (EV_IsLocal(idx))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(5000, 20000, 0, 7500, 0.2f);
+
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(empty ? GLOCK_SHOOT_EMPTY : GLOCK_SHOOT, 2);
 
 		Punch(2, 0, 0);
-
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(5000, 20000, 0, 7500, 0.2f);
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
 
@@ -652,6 +651,9 @@ void EV_FireGlock2( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(5000, 20000, 7500, 0, 0.2f);
+
 		// Add muzzle flash to current weapon model
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( GLOCK_SHOOT, 2 );
@@ -665,16 +667,7 @@ void EV_FireGlock2( event_args_t *args )
 			Punch(2, -0.75, 0);
 			break;
 		}
-		/*
-		* 
-		* Old punch angle:
-		* Punch(2, 0, 0);
-		* 
-		*/
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(5000, 20000, 7500, 0, 0.2f);
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
 
@@ -740,6 +733,9 @@ void EV_FireShotGunDouble( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(30000, 30000, 65535, 7500, 0.5f);
+
 		// Add muzzle flash to current weapon model
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE2, 2 );
@@ -766,9 +762,6 @@ void EV_FireShotGunDouble( event_args_t *args )
 	{
 		EV_HLDM_FireBullets( idx, forward, right, up, 12, vecSrc, vecAiming, 2048, BULLET_PLAYER_BUCKSHOT, 0, &tracerCount[idx-1], 0.08716, 0.08716 );
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(30000, 30000, 65535, 7500, 0.5f);
 }
 
 void EV_FireShotGunSingle( event_args_t *args )
@@ -797,6 +790,9 @@ void EV_FireShotGunSingle( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(15000, 30000, 7500, 25000, 0.25f);
+
 		// Add muzzle flash to current weapon model
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE, 2 );
@@ -821,9 +817,6 @@ void EV_FireShotGunSingle( event_args_t *args )
 	{
 		EV_HLDM_FireBullets( idx, forward, right, up, 6, vecSrc, vecAiming, 2048, BULLET_PLAYER_BUCKSHOT, 0, &tracerCount[idx-1], 0.08716, 0.08716 );
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(15000, 30000, 7500, 25000, 0.25f);
 }
 //======================
 //	   SHOTGUN END
@@ -858,6 +851,9 @@ void EV_FireMP5( event_args_t *args )
 	
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(30000, 40000, 15000, 20000, 0.2f);
+
 		// Add muzzle flash to current weapon model
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_FIRE1 + gEngfuncs.pfnRandomLong(0,2), 2 );
@@ -898,8 +894,6 @@ void EV_FireMP5( event_args_t *args )
 	{
 		EV_HLDM_FireBullets( idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_MP5, 2, &tracerCount[idx-1], args->fparam1, args->fparam2 );
 	}
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(30000, 40000, 15000, 20000, 0.2f);
 }
 
 // We only predict the animation and sound
@@ -914,6 +908,8 @@ void EV_FireMP52( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 0, 0, 20000, 0.1f);
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_LAUNCH, 2 );
 		Punch( 10, 0, 0 );
 	}
@@ -927,9 +923,6 @@ void EV_FireMP52( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/glauncher2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong( 0, 0xf ) );
 		break;
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 0, 0, 20000, 0.1f);
 }
 //======================
 //		 MP5 END
@@ -959,6 +952,9 @@ void EV_FirePython( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
+
 		// Python uses different body in multiplayer versus single player
 		int multiplayer = gEngfuncs.GetMaxClients() == 1 ? 0 : 1;
 
@@ -984,9 +980,6 @@ void EV_FirePython( event_args_t *args )
 	VectorCopy( forward, vecAiming );
 
 	EV_HLDM_FireBullets( idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_357, 0, 0, args->fparam1, args->fparam2 );
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
 }
 //======================
 //	    PHYTON END 
@@ -1018,6 +1011,8 @@ void EV_SpinGauss( event_args_t *args )
 	iSoundState = args->bparam1 ? SND_CHANGE_PITCH : 0;
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "ambience/pulsemachine.wav", 1.0, ATTN_NORM, iSoundState, pitch );
+
+	//TODO: add vibration increment
 }
 
 /*
@@ -1082,6 +1077,9 @@ void EV_FireGauss( event_args_t *args )
 
 	if (EV_IsLocal(idx))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 45000, 0, 40000, 0.2f);
+
 		switch ((gEngfuncs.pfnRandomLong(0, 1)))
 		{
 		case 0:
@@ -1097,9 +1095,6 @@ void EV_FireGauss( event_args_t *args )
 			 g_flApplyVel = flDamage;	
 			 
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 45000, 0, 40000, 0.2f);
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + flDamage * (1.0 / 400.0), ATTN_NORM, 0, 85 + gEngfuncs.pfnRandomLong( 0, 0x1f ) );
 
@@ -1378,6 +1373,9 @@ void EV_Crowbar( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(30000, 30000, 0, 0, 0.1f);
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( CROWBAR_ATTACK1MISS, 1 );
 
 		switch( (g_iSwing++) % 3 )
@@ -1402,9 +1400,6 @@ void EV_Crowbar( event_args_t *args )
 				break;
 			}
 		}
-
-		if (steam_vibrate_enabled->value >= 1)
-			gHUD.StartControllerVibration(30000, 30000, 0, 0, 0.1f);
 	}
 }
 //======================
@@ -1542,15 +1537,15 @@ void EV_FireCrossbow( event_args_t *args )
 	//Only play the weapon anims if I shot it. 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.1f);
+
 		if ( args->iparam1 )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE1, 1 );
 		else if ( args->iparam2 )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
 
 		Punch( 2, 0, 0 );
-
-		if (steam_vibrate_enabled->value >= 1)
-			gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.1f);
 	}
 }
 //======================
@@ -1587,13 +1582,13 @@ void EV_FireRpg( event_args_t *args )
 	//Only play the weapon anims if I shot it. 
 	if ( EV_IsLocal( idx ) )
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 65535, 0, 30000, 0.3f);
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_FIRE2, 1 );
 	
 		Punch( 5, 0, 0 );
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 65535, 0, 30000, 0.3f);
 }
 //======================
 //	     RPG END 
@@ -1675,8 +1670,13 @@ void EV_EgonFire( event_args_t *args )
 	}
 
 	//Only play the weapon anims if I shot it.
-	if ( EV_IsLocal( idx ) )
-		gEngfuncs.pEventAPI->EV_WeaponAnimation ( g_fireAnims1[ gEngfuncs.pfnRandomLong( 0, 3 ) ], 1 );
+	if (EV_IsLocal(idx))
+	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(20000, 50000, 0, 30000, 0.2f);
+
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(g_fireAnims1[gEngfuncs.pfnRandomLong(0, 3)], 1);
+	}
 
 	if (iStartup == 1 && EV_IsLocal(idx) && !pBeam && !pBeam2 && !pFlare && cl_lw->value) //Adrian: Added the cl_lw check for those lital people that hate weapon prediction.
 	{
@@ -1749,9 +1749,6 @@ void EV_EgonFire( event_args_t *args )
 			pFlare->tentOffset.x = (iFireMode == FIRE_WIDE) ? 1.0f : 1.0f;
 		}
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(20000, 50000, 0, 30000, 0.2f);
 }
 
 void EV_EgonStop( event_args_t *args )
@@ -1769,6 +1766,9 @@ void EV_EgonStop( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) ) 
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 65535, 65535, 0.5f);
+
 		if ( pBeam )
 		{
 			pBeam->die = 0.0;
@@ -1808,9 +1808,6 @@ void EV_EgonStop( event_args_t *args )
 			pLight = NULL;
 		}
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 65535, 65535, 0.5f);
 }
 //======================
 //	    EGON END 
@@ -1841,6 +1838,9 @@ void EV_HornetGunFire( event_args_t *args )
 	//Only play the weapon anims if I shot it.
 	if (EV_IsLocal(idx))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 65535, 65535, 0.1f);
+
 		switch ((gEngfuncs.pfnRandomLong(0, 1)))
 		{
 		case 0:
@@ -1860,8 +1860,6 @@ void EV_HornetGunFire( event_args_t *args )
 		case 1:	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "agrunt/ag_fire2.wav", 1, ATTN_NORM, 0, 100 );	break;
 		case 2:	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "agrunt/ag_fire3.wav", 1, ATTN_NORM, 0, 100 );	break;
 	}
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 65535, 65535, 0.1f);
 }
 //======================
 //	   HORNET END
@@ -1988,6 +1986,9 @@ void EV_FireEagle(event_args_t* args)
 
 	if (EV_IsLocal(args->entindex))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
+
 		EV_MuzzleFlash();
 
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(bEmpty ? EAGLE_SHOOT_EMPTY : EAGLE_SHOOT, 0);
@@ -2027,9 +2028,6 @@ void EV_FireEagle(event_args_t* args)
 		BULLET_PLAYER_EAGLE,
 		0, nullptr,
 		args->fparam1, args->fparam2);
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 0, 30000, 0.2f);
 }
 //======================
 //	   EAGLE END
@@ -2110,6 +2108,9 @@ void EV_Knife(event_args_t* args)
 
 	if (EV_IsLocal(idx))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 0, 0.2f);
+
 		switch ((g_iSwing++) % 3)
 		{
 		case 0:
@@ -2120,9 +2121,6 @@ void EV_Knife(event_args_t* args)
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(KNIFE_ATTACK3, 0); break;
 		}
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 0, 0, 0.2f);
 }
 //======================
 //	   KNIFE END
@@ -2229,6 +2227,9 @@ void EV_FireShockRifle(event_args_t* args)
 
 	if (EV_IsLocal(args->entindex))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.2f);
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(SHOCKRIFLE_FIRE, 0);
 			switch (gEngfuncs.pfnRandomLong(0, 3))
 			{
@@ -2256,9 +2257,6 @@ void EV_FireShockRifle(event_args_t* args)
 			1, 75 * 0.01, 190 / 255.0, 30, 0, 10,
 			0, 253 / 255.0, 253 / 255.0);
 	}
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(0, 30000, 0, 65535, 0.2f);
 }
 
 void EV_FireSpore(event_args_t* args)
@@ -2271,6 +2269,9 @@ void EV_FireSpore(event_args_t* args)
 
 	if (EV_IsLocal(args->entindex))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(20000, 30000, 10000, 40000, 0.35f);
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(SPLAUNCHER_FIRE, 0);
 
 		Punch(3, 0, 0);
@@ -2391,29 +2392,11 @@ void EV_FireM249(event_args_t* args)
 
 	if (EV_IsLocal(args->entindex))
 	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(40000, 30000, 20000, 60000, 0.2f);
+
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(gEngfuncs.pfnRandomLong(0, 2) + M249_SHOOT1, iBody);
-
-		/*if (cl_m249_new_punch_enabled->value == 1)
-		{
-			switch (gEngfuncs.pfnRandomLong(0, 3))
-			{
-			case 0:
-				Punch(1, 0.75, 0);
-				break;
-			case 1:
-				Punch(1, -0.75, 0);
-				break;
-			case 2:
-				Punch(-1, 0.75, 0);
-				break;
-			case 3:
-				Punch(-1, -0.75, 0);
-				break;
-			}
-		}
-		else
-		{*/
 
 		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
 		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
@@ -2468,9 +2451,6 @@ void EV_FireM249(event_args_t* args)
 		BULLET_PLAYER_556,
 		0, nullptr,
 		args->fparam1, args->fparam2);
-
-	if (steam_vibrate_enabled->value >= 1)
-		gHUD.StartControllerVibration(40000, 30000, 20000, 60000, 0.2f);
 }
 //======================
 //  CM249 END
