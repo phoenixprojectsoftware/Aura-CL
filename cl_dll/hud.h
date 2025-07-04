@@ -22,7 +22,16 @@
 
 
 #ifndef _HALO
-#define RGB_DEFAULT 0x00FFA000 //OLD 2.5 AND BEFORE: 54, 146, 248; NEW 2.5.1+ 0, 98, 255; SEASON 6 HECU: 30, 255, 0; SEASON 7 BLACK OPS: 255, 0, 0; SEASON 8 BLACK MESA INBOUND: 5, 147, 255; SEASON 9 WHITE SANDS: 255, 160, 0; 
+/*
+OLD HUD COLOURS
+* 1.0-2.5: 54, 146, 248
+* Season 5, Patch I: 0, 98, 255
+* Season 6: 30, 255, 0
+* Season 7: 255, 0, 0
+* Season 8: 5, 147, 255
+* Season 9: 255, 160, 0
+*/
+#define RGB_DEFAULT 0x00BF00FF
 #else
 #define RGB_DEFAULT 0x00037DFF // 3, 125, 255
 #endif
