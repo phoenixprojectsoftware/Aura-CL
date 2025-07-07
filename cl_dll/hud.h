@@ -363,6 +363,7 @@ public:
 	int VidInit( void );
 	int Draw(float flTime);
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
+	void RunShieldPrediction(float time); // NEW: run shield prediction for battery
 	bool Blinking;
 	
 private:
@@ -372,6 +373,11 @@ private:
 	wrect_t *m_prc2;
 	int	  m_iBat;	
 	int	  m_iBatMax;
+	float m_flLastShieldSoundTime = 0;
+	bool m_bShieldEmpty = false;
+	bool m_bShieldLow = false;
+	bool m_bShieldMaxxed = false;
+	bool m_bShieldRegenOn = false; // NEW: shield regen on/off
 	float m_fFade;
 	int	  m_iHeight;		// width of the battery innards
 };

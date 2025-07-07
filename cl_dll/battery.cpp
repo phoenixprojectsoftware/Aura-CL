@@ -21,9 +21,14 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
+#include "event_api.h"
 
 #include <string.h>
 #include <stdio.h>
+
+#if defined(CLIENT_DLL) && !defined(MAX_NORMAL_BATTERY)
+#define MAX_NORMAL_BATTERY 100
+#endif
 
 DECLARE_MESSAGE(m_Battery, Battery)
 
@@ -53,6 +58,53 @@ int CHudBattery::VidInit(void)
 	m_fFade = 0;
 	return 1;
 };
+
+void CHudBattery::RunShieldPrediction(float time)
+{
+	if (m_iBat >= MAX_NORMAL_BATTERY)
+	{
+		if (!m_bShieldMaxxed)
+		{
+			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_STATIC, "player/shield_lp.wav");
+			m_bShieldMaxxed = true;
+		}
+	}
+	m_bShieldMaxxed = false;
+
+	if (m_iBat <= 0)
+	{
+		if (!m_bShieldEmpty && (time - m_flLastShieldSoundTime > 1.0f)) // prevent spamming the sound
+		{
+			gEngfuncs.pEventAPI->EV_PlaySound(0, vec3_origin, CHAN_AUTO, "player/shield_empty.wav", 0.85, ATTN_NORM, 0, PITCH_NORM);
+			gEngfuncs.pEventAPI->EV_PlaySound(0, vec3_origin, CHAN_AUTO, "player/shield_depleted2.wav", 0.7, ATTN_NORM, 0, PITCH_NORM);
+			m_bShieldEmpty = true;
+			m_flLastShieldSoundTime = time; // update the last sound time
+		}
+	}
+	else
+	{
+		if (m_bShieldEmpty)
+		{
+			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_AUTO, "player/shield_empty.wav");
+			m_bShieldEmpty = false;
+		}
+
+		if (m_iBat <= 10)
+		{
+			if (!m_bShieldLow && (time - m_flLastShieldSoundTime > 1.0f))
+			{
+				gEngfuncs.pEventAPI->EV_PlaySound(0, vec3_origin, CHAN_AUTO, "player/shield_low.wav", 0.75, ATTN_NORM, 0, PITCH_NORM);
+				m_bShieldLow = true;
+				m_flLastShieldSoundTime = time; // update the last sound time
+			}
+		}
+		else if (m_bShieldLow)
+		{
+			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_AUTO, "player/shield_low.wav");
+			m_bShieldLow = false;
+		}
+	}
+}
 
 int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 {
@@ -103,6 +155,8 @@ int CHudBattery::Draw(float flTime)
 	rc.top += m_iHeight * ((float)(100 - (min(100, m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 #endif
 
+	RunShieldPrediction(flTime); // Run shield prediction, if applicable
+
 	// DeanAMX: Flash the armour HUD on zero.
 
 	UnpackRGB(r, g, b, RGB_DEFAULT);
@@ -134,28 +188,26 @@ int CHudBattery::Draw(float flTime)
 	{
 		Blinking = false;
 
+		if (0 != m_fFade) // Has health changed? Flash the health #
+		{
+			if (m_fFade > FADE_TIME)
+				m_fFade = FADE_TIME;
 
-			if (0 != m_fFade) // Has health changed? Flash the health #
+			m_fFade -= (gHUD.m_flTimeDelta * 20);
+			if (m_fFade <= 0)
 			{
-				if (m_fFade > FADE_TIME)
-					m_fFade = FADE_TIME;
-
-				m_fFade -= (gHUD.m_flTimeDelta * 20);
-				if (m_fFade <= 0)
-				{
-					a = 128;
-					m_fFade = 0;
-				}
-
-				// Fade the health number back to dim
-
-				a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+				a = 128;
+				m_fFade = 0;
 			}
-			else
-				a = MIN_ALPHA;
+
+			// Fade the health number back to dim
+
+			a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+		}
+		else
+			a = MIN_ALPHA;
 		}
 	
-
 	ScaleColors(r, g, b, a );
 	}
 
