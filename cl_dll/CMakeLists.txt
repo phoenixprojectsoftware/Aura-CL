@@ -62,6 +62,8 @@ add_sources(
 	hud_nextmap.h
 	hud_playerid.cpp
 	hud_playerid.h
+	hud_radar.cpp
+	hud_radar.h
 	hud_redraw.cpp
 	hud_scores.cpp
 	hud_scores.h

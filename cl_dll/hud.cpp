@@ -565,7 +565,6 @@ void PrintVersion()
 	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
 }
 
-
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
 {
@@ -715,6 +714,7 @@ void CHud :: Init( void )
 	m_Watermark.Init();
 	m_OldScoreBoard.Init();
 	m_NameTags.Init();
+	gRadar.Init();
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 
 	m_Menu.Init();
