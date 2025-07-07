@@ -231,8 +231,6 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 			chTextureType = PM_FindTextureType( szbuffer );	
 		}
 	}
-
-	//PRECACHE_SOUND("player/hitsound.wav");
 	
 	switch (chTextureType)
 	{
