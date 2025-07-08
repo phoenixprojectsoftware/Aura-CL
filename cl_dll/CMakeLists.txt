@@ -1,4 +1,3 @@
-add_subdirectory(gameui)
 add_subdirectory(hl)
 add_subdirectory(op4_weapons)
 
