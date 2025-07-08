@@ -119,12 +119,17 @@ endif()
 add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
+add_subdirectory(source_sdk)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
+
+target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES})
+target_link_libraries(client ${SOURCE_SDK_LIBS})
+
 
 target_include_directories(client PRIVATE
     ${CMAKE_BINARY_DIR}
@@ -136,7 +141,8 @@ target_include_directories(client PRIVATE
     game_shared
     pm_shared
     public
-    utils/vgui/include)
+    utils/vgui/include
+	${SOURCE_SDK_INCLUDE_PATHS})
 
 if(APPLE)
     target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
