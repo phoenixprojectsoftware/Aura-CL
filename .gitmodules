@@ -6,3 +6,6 @@
 [submodule "external/openal-soft"]
 	path = external/openal-soft
 	url = https://github.com/kcat/openal-soft.git
+[submodule "source_sdk"]
+	path = source_sdk
+	url = https://github.com/tmp64/hl1_source_sdk.git
