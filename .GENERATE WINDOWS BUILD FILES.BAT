@@ -1,2 +1,2 @@
-cmake -A Win32 -B build
+cmake -A Win32 -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 pause
