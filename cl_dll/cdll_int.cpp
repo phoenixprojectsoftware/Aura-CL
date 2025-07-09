@@ -57,7 +57,7 @@ IParticleMan *g_pParticleMan = NULL;
 
 #include "gameui.h"
 CSysModule *g_hGameUIModule = nullptr;
-IGameUI *g_pGameUI = nullptr;
+IGameUI *g_pGameUI1 = nullptr;
 
 #include "discord_integration.h"
 #include "update_checker.h"
@@ -365,7 +365,7 @@ void CL_UnloadGameUI(void)
 {
 	Sys_UnloadModule(g_hGameUIModule);
 
-	g_pGameUI = nullptr;
+	g_pGameUI1 = nullptr;
 	g_hGameUIModule = nullptr;
 }
 
@@ -375,7 +375,7 @@ void CL_LoadGameUI(void)
 
 	if (gEngfuncs.COM_ExpandFilename(GAMEUI_DLLNAME, dir, ARRAYSIZE(dir)) == FALSE)
 	{
-		g_pGameUI = nullptr;
+		g_pGameUI1 = nullptr;
 		g_hGameUIModule = nullptr;
 		return;
 	}
@@ -385,13 +385,13 @@ void CL_LoadGameUI(void)
 
 	if (gameUIFactory == nullptr)
 	{
-		g_pGameUI = nullptr;
+		g_pGameUI1 = nullptr;
 		g_hGameUIModule = nullptr;
 		return;
 	}
 
-	g_pGameUI = static_cast<IGameUI*>(gameUIFactory(GAMEUI_INTERFACE, nullptr));
-	// printf("g_pGameUI: %p\n", g_pGameUI);
+	g_pGameUI1 = static_cast<IGameUI*>(gameUIFactory(GAMEUI_INTERFACE, nullptr));
+	// printf("g_pGameUI1: %p\n", g_pGameUI1);
 }
 
 cldll_func_dst_t *g_pcldstAddrs;
