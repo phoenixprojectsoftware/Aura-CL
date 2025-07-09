@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtier2.a CMakeFiles/tier2.dir/KeyValuesCompat.cpp.o CMakeFiles/tier2.dir/steam_api.cpp.o CMakeFiles/tier2.dir/tier2.cpp.o
+/usr/bin/ranlib libtier2.a

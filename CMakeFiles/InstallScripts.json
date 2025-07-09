@@ -1,0 +1,22 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/glitch/Repos/Aura-CL/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/external/discord-rpc/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/external/discord-rpc/src/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/cl_dll/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/cl_dll/hl/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/cl_dll/op4_weapons/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/common/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/dlls/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/dlls/wpn_shared/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/game_shared/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/pm_shared/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/public/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/source_sdk/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/source_sdk/tier1/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/source_sdk/tier2/cmake_install.cmake",
+		"/home/glitch/Repos/Aura-CL/source_sdk/vgui2/vgui_controls/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
