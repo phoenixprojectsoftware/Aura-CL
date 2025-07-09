@@ -26,19 +26,19 @@
 #ifdef __cplusplus
 
 // All interfaces derive from this.
-class IBaseInterface
+class IBaseInterface1
 {
 public:
 
-	virtual			~IBaseInterface() {}
+	virtual			~IBaseInterface1() {}
 };
 
 
 #define CREATEINTERFACE_PROCNAME	"CreateInterface"
-typedef IBaseInterface* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
+typedef IBaseInterface1* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
 
 
-typedef IBaseInterface* (*InstantiateInterfaceFn)();
+typedef IBaseInterface1* (*InstantiateInterfaceFn)();
 
 
 // Used internally to register classes.
@@ -72,13 +72,13 @@ public:
 	static InterfaceReg __g_Create##className##_reg(functionName, versionName);
 
 #define EXPOSE_INTERFACE(className, interfaceName, versionName) \
-	static IBaseInterface* __Create##className##_interface() {return (interfaceName *)new className;}\
-	static InterfaceReg __g_Create##className##_reg(__Create##className##_interface, versionName );
+	static IBaseInterface1* __Create##className##_interface() {return (interfaceName *)new className;}\
+	static InterfaceReg1 __g_Create##className##_reg(__Create##className##_interface, versionName );
 
 // Use this to expose a singleton interface with a global variable you've created.
 #define EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, globalVarName) \
-	static IBaseInterface* __Create##className##interfaceName##_interface() {return (interfaceName *)&globalVarName;}\
-	static InterfaceReg __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName);
+	static IBaseInterface1* __Create##className##interfaceName##_interface() {return (interfaceName *)&globalVarName;}\
+	static InterfaceReg1 __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName);
 
 // Use this to expose a singleton interface. This creates the global variable for you automatically.
 #define EXPOSE_SINGLE_INTERFACE(className, interfaceName, versionName) \
@@ -105,7 +105,7 @@ enum
 
 extern "C"
 {
-	EXPORT_FUNCTION IBaseInterface* CreateInterface(const char *pName, int *pReturnCode);
+	EXPORT_FUNCTION IBaseInterface1* CreateInterface(const char *pName, int *pReturnCode);
 };
 
 

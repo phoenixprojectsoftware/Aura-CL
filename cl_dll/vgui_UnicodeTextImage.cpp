@@ -39,7 +39,7 @@ class VGuiVertex;
 namespace vgui2
 {
 
-class ISurface : public IBaseInterface
+class ISurface : public IBaseInterface1
 {
 public:
 	// call to Shutdown surface; surface can no longer be used after this is called
@@ -238,7 +238,7 @@ public:
 
 #define VGUI_SURFACE_INTERFACE_VERSION "VGUI_Surface026"
 
-class ILocalize : public IBaseInterface
+class ILocalize : public IBaseInterface1
 {
 public:
 	virtual void Something1() = 0;

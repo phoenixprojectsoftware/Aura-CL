@@ -14,7 +14,7 @@
 #error
 #endif
 
-class IGameUI : public IBaseInterface
+class IGameUI : public IBaseInterface1
 {
 public:
 	virtual void Unk1() = 0;

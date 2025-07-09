@@ -35,17 +35,17 @@ void *GetModuleHandle(const char *name)
 #endif
 
 // ------------------------------------------------------------------------------------ //
-// InterfaceReg.
+// InterfaceReg1.
 // ------------------------------------------------------------------------------------ //
-InterfaceReg *InterfaceReg::s_pInterfaceRegs = NULL;
+InterfaceReg1 *InterfaceReg1::s_pInterfaceReg1s = NULL;
 
 
-InterfaceReg::InterfaceReg( InstantiateInterfaceFn fn, const char *pName ) :
+InterfaceReg1::InterfaceReg1( InstantiateInterfaceFn fn, const char *pName ) :
 	m_pName(pName)
 {
 	m_CreateFn = fn;
-	m_pNext = s_pInterfaceRegs;
-	s_pInterfaceRegs = this;
+	m_pNext = s_pInterfaceReg1s;
+	s_pInterfaceReg1s = this;
 }
 
 
@@ -53,11 +53,11 @@ InterfaceReg::InterfaceReg( InstantiateInterfaceFn fn, const char *pName ) :
 // ------------------------------------------------------------------------------------ //
 // CreateInterface.
 // ------------------------------------------------------------------------------------ //
-EXPORT_FUNCTION IBaseInterface *CreateInterface( const char *pName, int *pReturnCode )
+EXPORT_FUNCTION IBaseInterface1 *CreateInterface1( const char *pName, int *pReturnCode )
 {
-	InterfaceReg *pCur;
+	InterfaceReg1 *pCur;
 	
-	for(pCur=InterfaceReg::s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
+	for(pCur=InterfaceReg1::s_pInterfaceReg1s; pCur; pCur=pCur->m_pNext)
 	{
 		if(strcmp(pCur->m_pName, pName) == 0)
 		{
@@ -77,11 +77,11 @@ EXPORT_FUNCTION IBaseInterface *CreateInterface( const char *pName, int *pReturn
 }
 
 #ifdef LINUX
-static IBaseInterface *CreateInterfaceLocal( const char *pName, int *pReturnCode )
+static IBaseInterface1 *CreateInterfaceLocal( const char *pName, int *pReturnCode )
 {
-	InterfaceReg *pCur;
+	InterfaceReg1 *pCur;
 	
-	for(pCur=InterfaceReg::s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
+	for(pCur=InterfaceReg1::s_pInterfaceReg1s; pCur; pCur=pCur->m_pNext)
 	{
 		if(strcmp(pCur->m_pName, pName) == 0)
 		{
@@ -243,7 +243,7 @@ CreateInterfaceFn Sys_GetFactoryThis( void )
 #ifdef LINUX
 	return CreateInterfaceLocal;
 #else
-	return CreateInterface;
+	return CreateInterface1;
 #endif
 }
 

@@ -18,7 +18,7 @@
 
 class CBaseParticle;
 
-class IParticleMan : public IBaseInterface
+class IParticleMan : public IBaseInterface1
 {
 
 protected:
