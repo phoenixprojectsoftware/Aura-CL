@@ -88,7 +88,7 @@ public:
 
 // Use this to expose a singleton interface with a global variable you've created.
 #define EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, globalVarName) \
-	static IBaseInterface1* __Create##className##interfaceName##_interface() {return (IBaseInterface *)&globalVarName;}\
+	static IBaseInterface1* __Create##className##interfaceName##_interface() {return (IBaseInterface1 *)&globalVarName;}\
 	static InterfaceReg1 __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName);
 
 // Use this to expose a singleton interface. This creates the global variable for you automatically.

@@ -192,7 +192,7 @@ CSysModule	*Sys_LoadModule( const char *pModuleName )
 // Input  : *pModuleName - filename of the component
 // Output : opaque handle to the module (hides system dependency)
 //-----------------------------------------------------------------------------
-void Sys_UnloadModule( CSysModule *pModule )
+void Sys_UnloadModule1( CSysModule *pModule )
 {
 	if ( !pModule )
 		return;
