@@ -26,6 +26,7 @@
 
 #include "IClientVGUI.h"
 #include "baseviewport.h"
+#include "gameui_viewport.h"
 
 #ifndef CLIENTVGUI_INTERFACE_VERSION
 #define CLIENTVGUI_INTERFACE_VERSION "ClientVGUI001"
@@ -76,6 +77,9 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 		Warning("Failed to initialize VGUI2 interfaces.\n");
 		Assert(false);
 	}
+
+	new BaseViewport();
+	new CGameUIViewport();
 }
 
 void CClientVGUI::SetParent(VPANEL parent)

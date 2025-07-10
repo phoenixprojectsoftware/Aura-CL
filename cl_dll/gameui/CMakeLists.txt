@@ -1,5 +1,11 @@
 add_sources(
 	baseviewport.cpp
 	baseviewport.h
+	client_viewport.cpp
+	client_viewport.h
+	gameui_test_panel.cpp
+	gameui_test_panel.h
+	gameui_viewport.cpp
+	gameui_viewport.h
 	vgui2_client_impl.cpp
 	vgui2_client_impl.h)

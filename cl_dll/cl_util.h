@@ -17,6 +17,7 @@
 //
 
 #include "cvardef.h"
+#include <convar.h>
 #include "net_api.h"
 #include "color_tags.h"
 

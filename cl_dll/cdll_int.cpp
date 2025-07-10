@@ -22,7 +22,7 @@
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
-#include "../public/interface.h"
+#include <tier1/interface.h>
 //#include "vgui_schememanager.h"
 
 extern "C"
@@ -68,6 +68,7 @@ void CL_LoadGameUI();
 void CL_UnloadGameUI();
 
 void InitInput (void);
+CvarSystem::RegisterCvars();
 void EV_HookEvents( void );
 void IN_Commands( void );
 
