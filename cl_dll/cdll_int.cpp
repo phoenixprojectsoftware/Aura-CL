@@ -68,7 +68,6 @@ void CL_LoadGameUI();
 void CL_UnloadGameUI();
 
 void InitInput (void);
-CvarSystem::RegisterCvars();
 void EV_HookEvents( void );
 void IN_Commands( void );
 
@@ -155,6 +154,8 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
+
+	CvarSystem::RegisterCvars();
 
 //	RecClInitialize(pEnginefuncs, iVersion);
 
@@ -342,7 +343,7 @@ void CL_LoadParticleMan( void )
 	}
 
 	g_hParticleManModule = Sys_LoadModule( szPDir );
-	CreateInterfaceFn particleManFactory = Sys_GetFactory1( g_hParticleManModule );
+	CreateInterfaceFn particleManFactory = Sys_GetFactory( g_hParticleManModule );
 
 	if ( particleManFactory == NULL )
 	{
@@ -382,7 +383,7 @@ void CL_LoadGameUI(void)
 	}
 
 	g_hGameUIModule = Sys_LoadModule(dir);
-	CreateInterfaceFn gameUIFactory = Sys_GetFactory1(g_hGameUIModule);
+	CreateInterfaceFn gameUIFactory = Sys_GetFactory(g_hGameUIModule);
 
 	if (gameUIFactory == nullptr)
 	{
@@ -495,4 +496,4 @@ public:
 	}
 };
 
-V1_EXPOSE_SINGLE_INTERFACE(CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION);
+EXPOSE_SINGLE_INTERFACE(CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION);

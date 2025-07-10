@@ -18,8 +18,8 @@
 //#include "tier1/interface.h"
 //#else
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef INTERFACE1_H
+#define INTERFACE1_H
 
 #if !defined ( _WIN32 )
 
@@ -126,7 +126,7 @@ extern CreateInterfaceFn	Sys_GetFactoryThis( void );
 //-----------------------------------------------------------------------------
 // UNDONE: This is obsolete, use the module load/unload/get instead!!!
 //-----------------------------------------------------------------------------
-extern CreateInterfaceFn	Sys_GetFactory( const char *pModuleName );
+extern CreateInterfaceFn	Sys_GetFactory1( const char *pModuleName );
 
 
 // load/unload components
