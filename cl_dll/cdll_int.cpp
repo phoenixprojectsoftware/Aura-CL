@@ -22,7 +22,7 @@
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
-#include <tier1/interface.h>
+#include "interface.h"
 //#include "vgui_schememanager.h"
 
 extern "C"
@@ -343,7 +343,7 @@ void CL_LoadParticleMan( void )
 	}
 
 	g_hParticleManModule = Sys_LoadModule( szPDir );
-	CreateInterfaceFn particleManFactory = Sys_GetFactory( g_hParticleManModule );
+	CreateInterfaceFn particleManFactory = Sys_GetFactory1( g_hParticleManModule );
 
 	if ( particleManFactory == NULL )
 	{
@@ -383,7 +383,7 @@ void CL_LoadGameUI(void)
 	}
 
 	g_hGameUIModule = Sys_LoadModule(dir);
-	CreateInterfaceFn gameUIFactory = Sys_GetFactory(g_hGameUIModule);
+	CreateInterfaceFn gameUIFactory = Sys_GetFactory1(g_hGameUIModule);
 
 	if (gameUIFactory == nullptr)
 	{
@@ -496,4 +496,4 @@ public:
 	}
 };
 
-EXPOSE_SINGLE_INTERFACE(CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION);
+V1_EXPOSE_SINGLE_INTERFACE(CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION);
