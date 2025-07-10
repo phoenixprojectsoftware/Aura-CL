@@ -216,7 +216,7 @@ void Sys_UnloadModule1( CSysModule *pModule )
 //			*pName - proc name
 // Output : factory for this module
 //-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
+CreateInterfaceFn Sys_GetFactory1( CSysModule *pModule )
 {
 	if ( !pModule )
 		return NULL;
@@ -242,7 +242,7 @@ CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 // Purpose: returns the instance of this module
 // Output : interface_instance_t
 //-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactoryThis( void )
+CreateInterfaceFn Sys_GetFactoryThis1( void )
 {
 #ifdef LINUX
 	return CreateInterfaceLocal;
@@ -256,7 +256,7 @@ CreateInterfaceFn Sys_GetFactoryThis( void )
 // Input  : *pModuleName - name of the module
 // Output : interface_instance_t - instance of that module
 //-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
+CreateInterfaceFn Sys_GetFactory1( const char *pModuleName )
 {
 #if defined ( _WIN32 )
 	return static_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );

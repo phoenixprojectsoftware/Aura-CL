@@ -140,7 +140,7 @@ class CSysModule;
 extern CSysModule			*Sys_LoadModule( const char *pModuleName );
 extern void					Sys_UnloadModule( CSysModule *pModule );
 
-extern CreateInterfaceFn	Sys_GetFactory( CSysModule *pModule );
+extern CreateInterfaceFn	Sys_GetFactory1( CSysModule *pModule );
 
 
 #endif

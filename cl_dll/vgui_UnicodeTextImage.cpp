@@ -330,7 +330,7 @@ void UnicodeTextImage::initInterfaces()
 	{
 		using IfaceType = typename std::remove_reference<decltype(pIface)>::type;
 
-		CreateInterfaceFn fnFactory = Sys_GetFactory(pModule);
+		CreateInterfaceFn fnFactory = Sys_GetFactory1(pModule);
 		if (!fnFactory)
 		{
 			gEngfuncs.Con_Printf("UnicodeTextImage: Error: %s doesn't export factory.\n", moduleName);

@@ -341,7 +341,7 @@ void CL_LoadParticleMan( void )
 	}
 
 	g_hParticleManModule = Sys_LoadModule( szPDir );
-	CreateInterfaceFn particleManFactory = Sys_GetFactory( g_hParticleManModule );
+	CreateInterfaceFn particleManFactory = Sys_GetFactory1( g_hParticleManModule );
 
 	if ( particleManFactory == NULL )
 	{
@@ -381,7 +381,7 @@ void CL_LoadGameUI(void)
 	}
 
 	g_hGameUIModule = Sys_LoadModule(dir);
-	CreateInterfaceFn gameUIFactory = Sys_GetFactory(g_hGameUIModule);
+	CreateInterfaceFn gameUIFactory = Sys_GetFactory1(g_hGameUIModule);
 
 	if (gameUIFactory == nullptr)
 	{
