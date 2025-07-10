@@ -61,7 +61,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CClientVGUI, IClientVGUI, CLIENTVGUI_INTERFACE
 
 namespace vgui2
 {
-	HScheme Vgui_GetDefaultScheme()
+	HScheme VGui_GetDefaultScheme() // hey silly bastad. dont forget the capital fukin letta.
 	{
 		return 0;
 	}
