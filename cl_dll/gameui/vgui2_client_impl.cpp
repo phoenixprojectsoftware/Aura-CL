@@ -1,6 +1,6 @@
 /****
 *
-* Copyright © 2021-2025 The Phoenix Project Software. Some Rights Reserved.
+* Copyright ï¿½ 2021-2025 The Phoenix Project Software. Some Rights Reserved.
 *
 * AURA
 *
@@ -58,6 +58,14 @@ static CClientVGUI g_ClientVGUI;
 IClientVGUI* ClientVGUI = &g_ClientVGUI;
 
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CClientVGUI, IClientVGUI, CLIENTVGUI_INTERFACE_VERSION, g_ClientVGUI);
+
+namespace vgui2
+{
+	HScheme Vgui_GetDefaultScheme()
+	{
+		return 0;
+	}
+}
 
 void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 {
