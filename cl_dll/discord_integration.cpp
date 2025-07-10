@@ -285,8 +285,8 @@ namespace discord_integration
 						state += " | "s + gamemode;
 
 					// Get the server name.
-					if (gViewPort->m_szServerName[0])
-						presence.details = gViewPort->m_szServerName;
+					if (g_pViewport->m_szServerName[0])
+						presence.details = g_pViewport->m_szServerName;
 
 					// Get the map name and icon.
 					get_map_name(map_name, ARRAYSIZE(map_name));

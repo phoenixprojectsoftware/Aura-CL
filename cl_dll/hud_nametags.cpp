@@ -94,7 +94,7 @@ int CHudNameTags::Draw(float flTime)
 	int 			r,g,b;
 
 	// make sure we have player info
-	gViewPort->GetAllPlayersInfo();
+	g_pViewport->GetAllPlayersInfo();
 	// get server's gamemode 
 	auto gamemode = gHUD.m_Settings.GetGamemode();
 	// get yellow/brown HUD color

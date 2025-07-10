@@ -23,7 +23,7 @@
 #include "steamworks/steam_api.h"
 #endif
 
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 
 #define MAX_LOGO_FRAMES 56
 
@@ -115,23 +115,23 @@ int CHud :: Redraw( float flTime, int intermission )
 		m_flTimeDelta = 0;
 
 	// Bring up the scoreboard during intermission
-	if (gViewPort)
+	if (g_pViewport)
 	{
 		if ( m_iIntermission && !intermission )
 		{
 			// Have to do this here so the scoreboard goes away
 			m_iIntermission = intermission;
-			gViewPort->HideCommandMenu();
-			gViewPort->HideScoreBoard();
-			gViewPort->UpdateSpectatorPanel();
+			g_pViewport->HideCommandMenu();
+			g_pViewport->HideScoreBoard();
+			g_pViewport->UpdateSpectatorPanel();
 		}
 		else if ( !m_iIntermission && intermission )
 		{
 			m_iIntermission = intermission;
-			gViewPort->HideCommandMenu();
-			gViewPort->HideVGUIMenu();
-			gViewPort->ShowScoreBoard();
-			gViewPort->UpdateSpectatorPanel();
+			g_pViewport->HideCommandMenu();
+			// g_pViewport->HideVGUIMenu();			FIXME!!! NOW!!!!!
+			g_pViewport->ShowScoreBoard();
+			g_pViewport->UpdateSpectatorPanel();
 
 			// Take a screenshot if the client's got the cvar set
 			if ( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )

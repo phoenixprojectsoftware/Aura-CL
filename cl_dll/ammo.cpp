@@ -27,7 +27,7 @@
 #include <stdio.h>
 
 #include "ammohistory.h"
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 #include "cl_weapons.h"
 
 WEAPON *gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
@@ -720,7 +720,7 @@ int CHudAmmo::MsgFunc_WeaponList(const char *pszName, int iSize, void *pbuf )
 // Slot button pressed
 void CHudAmmo::SlotInput( int iSlot )
 {
-	if ( gViewPort && gViewPort->SlotInput( iSlot ) )
+	if ( g_pViewport && g_pViewport->SlotInput( iSlot ) )
 		return;
 
 	gWR.SelectSlot(iSlot, FALSE, 1);

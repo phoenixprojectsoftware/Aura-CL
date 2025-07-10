@@ -22,7 +22,7 @@ extern "C"
 #include <ctype.h>
 #include "Exports.h"
 
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 
 #include "discord_integration.h"
 
@@ -32,8 +32,6 @@ extern int g_iAlive;
 extern int g_weaponselect;
 extern cl_enginefunc_t gEngfuncs;
 
-// Defined in pm_math.c
-extern "C" float anglemod( float a );
 
 void IN_Init (void);
 void IN_Move ( float frametime, usercmd_t *cmd);
@@ -430,8 +428,8 @@ int CL_DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBind
 {
 //	RecClKeyEvent(down, keynum, pszCurrentBinding);
 
-	if (gViewPort)
-		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
+	if (g_pViewport)
+		return g_pViewport->KeyInput(down, keynum, pszCurrentBinding);
 	
 	return 1;
 }
@@ -585,18 +583,18 @@ void IN_Impulse (void)
 void IN_ScoreDown(void)
 {
 	KeyDown(&in_score);
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->ShowScoreBoard();
+		g_pViewport->ShowScoreBoard();
 	}
 }
 
 void IN_ScoreUp(void)
 {
 	KeyUp(&in_score);
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->HideScoreBoard();
+		g_pViewport->HideScoreBoard();
 	}
 }
 
@@ -1102,7 +1100,7 @@ void ShutdownInput (void)
 	IN_Shutdown();
 	KB_Shutdown();
 }
-
+/*
 #include "interface.h"
 void CL_UnloadParticleMan( void );
 void CL_UnloadGameUI();
@@ -1126,3 +1124,4 @@ void CL_DLLEXPORT HUD_Shutdown( void )
 
 	discord_integration::shutdown();
 }
+*/

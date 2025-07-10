@@ -1,5 +1,7 @@
 add_subdirectory(hl)
 add_subdirectory(op4_weapons)
+add_subdirectory(lodepng)
+add_subdirectory(vgui)
 
 add_sources(
 	ammo.cpp
@@ -12,11 +14,17 @@ add_sources(
 	cdll_int.cpp
 	cl_dll.h
 	cl_util.h
+	client_steam_context.cpp
+	client_steam_context.h
+	client_vgui.cpp
+	client_vgui.h
 	cl_weapons.h
 	color_tags.cpp
 	color_tags.h
 	com_weapons.cpp
 	com_weapons.h
+	console.cpp
+	console.h
 	death.cpp
 	demo.cpp
 	demo.h
@@ -70,7 +78,7 @@ add_sources(
 	hud_servers_priv.h
 	hud_settings.cpp
 	hud_settings.h
-	hud_spectator.cpp
+	hud_spectator_stub.cpp
 	hud_spectator.h
 	hud_speedometer.cpp
 	hud_speedometer.h
@@ -100,6 +108,7 @@ add_sources(
 	kbutton.h
 	menu.cpp
 	message.cpp
+	player_info.cpp
 	rainbow.cpp
 	rainbow.h
 	saytext.cpp
@@ -117,29 +126,17 @@ add_sources(
 	update_checker.cpp
 	update_checker.h
 	util.cpp
-	util_vector.h
 	versioninfo.h
-	vgui_ClassMenu.cpp
 	vgui_ControlConfigPanel.cpp
 	vgui_ControlConfigPanel.h
-	vgui_CustomObjects.cpp
-	vgui_int.cpp
-	vgui_int.h
-	vgui_MOTDWindow.cpp
-	vgui_SchemeManager.cpp
-	vgui_SchemeManager.h
-	vgui_ScorePanel.cpp
-	vgui_ScorePanel.h
 	vgui_ServerBrowser.cpp
 	vgui_ServerBrowser.h
-	vgui_SpectatorPanel.cpp
-	vgui_SpectatorPanel.h
-	vgui_TeamFortressViewport.cpp
-	vgui_teammenu.cpp
 	vgui_UnicodeTextImage.cpp
 	vgui_UnicodeTextImage.h
 	view.cpp
 	view.h
-	voice_status.cpp
+	#voice_status.cpp
+	voice_status_stub.cpp
+	voice_status_stub.h
 	weapons.h
 	wrect.h)

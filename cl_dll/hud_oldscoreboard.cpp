@@ -71,9 +71,9 @@ bool CHudOldScoreboard::IsVisible()
 
 void CHudOldScoreboard::ShowScoreboard(bool bShow)
 {
-	if (bShow && gViewPort && gViewPort->m_pScoreBoard)
+	if (bShow && g_pViewport && g_pViewport->m_pScoreBoard)
 	{
-		gViewPort->m_pScoreBoard->RebuildTeams();
+		g_pViewport->m_pScoreBoard->RebuildTeams();
 		m_iFlags |= HUD_ACTIVE;
 	}
 	else
@@ -146,8 +146,8 @@ int CHudOldScoreboard::Draw(float fTime)
 	list_slot += 0.8;
 
 	// draw the players, in order
-	const auto scoreboard = gViewPort->GetScoreBoard();
-	gViewPort->GetAllPlayersInfo();
+	const auto scoreboard = g_pViewport->GetScoreBoard();
+	g_pViewport->GetAllPlayersInfo();
 
 	for (int iRow = 0; iRow < scoreboard->m_iRows; ++iRow)
 	{
@@ -219,7 +219,7 @@ int CHudOldScoreboard::Draw(float fTime)
 
 			if (pl_info->name == NULL)
 			{
-				gViewPort->m_pScoreBoard->RebuildTeams();
+				g_pViewport->m_pScoreBoard->RebuildTeams();
 				continue;
 			}
 

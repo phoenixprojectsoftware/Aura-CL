@@ -22,7 +22,7 @@ extern int iTeamColors[5][3];
 extern hud_player_info_t   g_PlayerInfoList [MAX_PLAYERS + 1];
 extern extra_player_info_t g_PlayerExtraInfo[MAX_PLAYERS + 1];
 extern team_info_t g_TeamInfo[MAX_TEAMS + 1];
-extern TeamFortressViewport* gViewPort;
+extern TeamFortressViewport* g_pViewport;
 constexpr size_t TEAM_YES = 1; // From vgui_ScorePanel.cpp.
 
 constexpr int PADDING = 10; // Extra fill space from the sides of the scoreboard.
@@ -62,9 +62,9 @@ int CHudScores::Draw(float time)
 	std::array<ScoreRow, NUM_ROWS> rows;
 	size_t row_count = 0;
 
-	const auto scoreboard = gViewPort->GetScoreBoard();
+	const auto scoreboard = g_pViewport->GetScoreBoard();
 	if (!gHUD.m_Teamplay) {
-		gViewPort->GetAllPlayersInfo();
+		g_pViewport->GetAllPlayersInfo();
 
 		for (int row = 0; row < scoreboard->m_iRows; ++row) {
 			if (scoreboard->m_iIsATeam[row])

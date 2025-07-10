@@ -18,12 +18,13 @@
 // this implementation handles the linking of the engine to the DLL
 //
 
+// TODO: https://github.com/tmp64/BugfixedHL-Rebased/commit/c31642aefe32a31cc3276e78bdde19430037899d
+
 #include "hud.h"
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
-#include "../public/interface.h"
-//#include "vgui_schememanager.h"
+#include <tier1/interface.h>
 
 extern "C"
 {
@@ -32,7 +33,6 @@ extern "C"
 
 #include <string.h>
 #include "hud_servers.h"
-#include "vgui_int.h"
 #include "interface.h"
 
 #ifdef _WIN32
@@ -43,13 +43,13 @@ extern "C"
 #include "Exports.h"
 #include "tri.h"
 
-#include "vgui_TeamFortressViewport.h"
-#include "../public/interface.h"
+#include "console.h"
+#include "hud_spectator.h"
+#include "vgui/client_viewport.h"
+#include "client_steam_context.h"
 
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
-TeamFortressViewport *gViewPort = NULL;
-
 
 #include "particleman.h"
 CSysModule *g_hParticleManModule = NULL;
@@ -169,6 +169,11 @@ int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
 
+	console::Initialize();
+	CvarSystem::RegisterCvars();
+
+	console::HudInit();
+
 	// get tracker interface, if any
 	return 1;
 }
@@ -189,8 +194,6 @@ int CL_DLLEXPORT HUD_VidInit( void )
 //	RecClHudVidInit();
 	gHUD.VidInit();
 
-	VGui_Startup();
-
 	return 1;
 }
 
@@ -208,8 +211,9 @@ void CL_DLLEXPORT HUD_Init( void )
 {
 //	RecClHudInit();
 	InitInput();
+	ClientSteamContext().Activate();
 	gHUD.Init();
-	Scheme_Init();
+	console::HudPostInit();
 }
 
 
@@ -319,6 +323,29 @@ void CL_DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
 //	RecClDirectorMessage(iSize, pbuf);
 
 	gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
+}
+
+/*
+==========================
+HUD_ChatInputPosition
+
+Sets the location of the input for chat text
+==========================
+*/
+
+void CL_DLLEXPORT HUD_ChatInputPosition(int* x, int* y)
+{
+	// Do nothing
+}
+
+//---------------------------------------------------
+// Client shutdown
+//---------------------------------------------------
+void ShutdownInput()
+{
+	// gHUD.Shutdown();
+	ShutdownInput();
+	ClientSteamContext().Shutdown();
 }
 
 void CL_UnloadParticleMan( void )
@@ -462,10 +489,10 @@ public:
 	// returns the name of the server the user is connected to, if any
 	virtual const char *GetServerHostName()
 	{
-		/*if (gViewPortInterface)
+		if (g_pViewport)
 		{
-			return gViewPortInterface->GetServerName();
-		}*/
+			return g_pViewport->GetServerName();
+		}
 		return "";
 	}
 

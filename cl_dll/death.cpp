@@ -22,7 +22,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "vgui_TeamFortressViewport.h"
+#include "hud_spectator.h"
+#include "vgui/client_viewport.h"
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );
 
@@ -56,7 +57,7 @@ cvar_t *m_pCvarKillSndPath;
 
 float *GetClientColor( int clientIndex )
 {
-	switch ( g_PlayerExtraInfo[clientIndex].teamnumber )
+	switch (GetPlayerInfo(clientIndex)->GetTeamNumber())
 	{
 	case 1:	return g_ColorBlue;
 	case 2: return g_ColorRed;
@@ -123,7 +124,7 @@ int CHudDeathNotice :: Draw( float flTime )
 		rgDeathNoticeList[i].flDisplayTime = min( rgDeathNoticeList[i].flDisplayTime, gHUD.m_flTime + DEATHNOTICE_DISPLAY_TIME );
 
 		// Only draw if the viewport will let me
-		if ( gViewPort && gViewPort->AllowedToPrintText() )
+		if ( g_pViewport && g_pViewport->AllowedToPrintText() )
 		{
 			// Draw the death notice
 			y = DEATHNOTICE_TOP + 2 + (gap * i);  //!!!
@@ -199,8 +200,8 @@ int CHudDeathNotice :: MsgFunc_DeathMsg( const char *pszName, int iSize, void *p
 	strcpy( killedwith, "d_" );
 	strncat( killedwith, READ_STRING(), ARRAYSIZE(killedwith) - 3 );
 
-	if (gViewPort)
-		gViewPort->DeathMsg( killer, victim );
+	if (g_pViewport)
+		g_pViewport->DeathMsg( killer, victim );
 
 	gHUD.m_Spectator.DeathMessage(victim);
 	int i;
@@ -215,28 +216,31 @@ int CHudDeathNotice :: MsgFunc_DeathMsg( const char *pszName, int iSize, void *p
 		i = MAX_DEATHNOTICES - 1;
 	}
 
-	if (gViewPort)
-		gViewPort->GetAllPlayersInfo();
+	if (g_pViewport)
+		g_pViewport->GetAllPlayersInfo();
 
 	// Get the Killer's name
-	const char *killer_name = g_PlayerInfoList[ killer ].name;
-	if ( !killer_name )
+	CPlayerInfo* killerInfo = nullptr;
+	const char* killer_name;
+	if (killer != 0 && (killerInfo = GetPlayerInfo(killer)->Update()->IsConnected()))
 	{
-		killer_name = "";
+		killer_name = killerInfo->GetName();
 		rgDeathNoticeList[i].szKiller[0] = 0;
-	}
-	else
-	{
 		rgDeathNoticeList[i].KillerColor = GetClientColor( killer );
 		strncpy( rgDeathNoticeList[i].szKiller, killer_name, MAX_PLAYER_NAME_LENGTH );
 		rgDeathNoticeList[i].szKiller[MAX_PLAYER_NAME_LENGTH-1] = 0;
+	}
+	else
+	{
+		killer_name = "";
+		rgDeathNoticeList[i].szKiller[0] = 0;
 	}
 
 	// Get the Victim's name
 	const char *victim_name = NULL;
 	// If victim is -1, the killer killed a specific, non-player object (like a sentrygun)
-	if ( ((char)victim) != -1 )
-		victim_name = g_PlayerInfoList[ victim ].name;
+	if (((char)victim) != -1)
+		victim_name = GetPlayerInfo(victim)->Update()->GetName();
 	if ( !victim_name )
 	{
 		victim_name = "";

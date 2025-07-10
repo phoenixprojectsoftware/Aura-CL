@@ -25,12 +25,10 @@
 #include <stdio.h>
 #include "parsemsg.h"
 #include "hud_servers.h"
-#include "vgui_int.h"
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 
 #include "demo.h"
 #include "demo_api.h"
-#include "vgui_ScorePanel.h"
 
 #include "forcemodel.h"
 #include "steam_id.h"
@@ -44,9 +42,6 @@
 #endif
 
 extern tempent_s* pLaserSpot;
-
-hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
-extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
 
 #ifdef _STEAMWORKS
 void SetControllerLEDColor(int r, int g, int b, float a)
@@ -79,26 +74,22 @@ public:
 	{
 		color[0] = color[1] = color[2] = 255;
 
-		if( entindex >= 0 && entindex < sizeof(g_PlayerExtraInfo)/sizeof(g_PlayerExtraInfo[0]) )
+		int iTeam = 0;
+
+		if (entindex >= 1 && entindex <= MAX_PLAYERS)
 		{
-			int iTeam = g_PlayerExtraInfo[entindex].teamnumber;
+			int iTeam = GetPlayerInfo(entindex)->Update()->GetTeamNumber();
 
 			if ( iTeam < 0 )
 			{
 				iTeam = 0;
 			}
-
-			iTeam = iTeam % iNumberOfTeamColors;
-
-			color[0] = iTeamColors[iTeam][0];
-			color[1] = iTeamColors[iTeam][1];
-			color[2] = iTeamColors[iTeam][2];
 		}
 	}
 
 	virtual void UpdateCursorState()
 	{
-		gViewPort->UpdateCursorState();
+		g_pViewport->UpdateCursorState();
 	}
 
 	virtual int	GetAckIconHeight()
@@ -108,10 +99,12 @@ public:
 
 	virtual bool			CanShowSpeakerLabels()
 	{
-		if( gViewPort && gViewPort->m_pScoreBoard )
-			return !gViewPort->m_pScoreBoard->isVisible();
+		//fixme
+		/*if (g_pViewport && g_pViewport->m_pScoreBoard)
+			return !g_pViewport->m_pScoreBoard->isVisible();
 		else
-			return false;
+			return false;*/
+		return true;
 	}
 };
 static CHLVoiceStatusHelper g_VoiceStatusHelper;
@@ -173,8 +166,8 @@ int __MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
 
 int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_AllowSpec( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_AllowSpec( pszName, iSize, pbuf );
 	return 0;
 }
 
@@ -312,42 +305,42 @@ int __MsgFunc_LaserSpot(const char* name, int size, void* buf)
 // TFFree Command Menu
 void __CmdFunc_OpenCommandMenu(void)
 {
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->ShowCommandMenu( gViewPort->m_StandardMenu );
+		g_pViewport->ShowCommandMenu( g_pViewport->m_StandardMenu );
 	}
 }
 
 // TFC "special" command
 void __CmdFunc_InputPlayerSpecial(void)
 {
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->InputPlayerSpecial();
+		g_pViewport->InputPlayerSpecial();
 	}
 }
 
 void __CmdFunc_CloseCommandMenu(void)
 {
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->InputSignalHideCommandMenu();
+		g_pViewport->InputSignalHideCommandMenu();
 	}
 }
 
 void __CmdFunc_ForceCloseCommandMenu( void )
 {
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->HideCommandMenu();
+		g_pViewport->HideCommandMenu();
 	}
 }
 
 void __CmdFunc_ToggleServerBrowser( void )
 {
-	if ( gViewPort )
+	if ( g_pViewport )
 	{
-		gViewPort->ToggleServerBrowser();
+		g_pViewport->ToggleServerBrowser();
 	}
 }
 
@@ -451,106 +444,106 @@ void __CmdFunc_Writemap()
 // TFFree Command Menu Message Handlers
 int __MsgFunc_ValClass(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_ValClass( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_ValClass( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_TeamNames(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_TeamNames( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_TeamNames( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_Feign(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_Feign( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_Feign( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_Detpack(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_Detpack( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_Detpack( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_VGUIMenu(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_VGUIMenu( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_VGUIMenu( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_MOTD(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_MOTD( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_MOTD( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_BuildSt(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_BuildSt( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_BuildSt( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_RandomPC(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_RandomPC( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_RandomPC( pszName, iSize, pbuf );
 	return 0;
 }
  
 int __MsgFunc_ServerName(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_ServerName( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_ServerName( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_ScoreInfo(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_ScoreInfo( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_ScoreInfo( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_TeamScore(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_TeamScore( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_TeamScore( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_TeamInfo(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_TeamInfo( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_TeamInfo( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_Spectator(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_Spectator( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_Spectator( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_SpecFade(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_SpecFade( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_SpecFade( pszName, iSize, pbuf );
 	return 0;
 }
 
 int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
 {
-	if (gViewPort)
-		return gViewPort->MsgFunc_ResetFade( pszName, iSize, pbuf );
+	if (g_pViewport)
+		return g_pViewport->MsgFunc_ResetFade( pszName, iSize, pbuf );
 	return 0;
 }
 
@@ -677,6 +670,9 @@ void CHud :: Init( void )
 		m_pHudList = NULL;
 	}
 
+	for (int i = 1; i MAX_PLAYERS; i++)
+		CPlayerInfo::m_sPlayerInfo[i].m_iIndex = i;
+
 	// In case we get messages before the first update -- time will be valid
 	m_flTime = 1.0;
 
@@ -715,7 +711,7 @@ void CHud :: Init( void )
 	m_Watermark.Init();
 	m_OldScoreBoard.Init();
 	m_NameTags.Init();
-	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
+	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&g_pViewport);
 
 	m_Menu.Init();
 	
@@ -1131,6 +1127,97 @@ float CHud::GetSensitivity( void )
 {
 	return m_flMouseSensitivity;
 }
+
+/*CON_COMMAND(find, "Searches cars and commands for a string.")
+{
+	struct FindResult
+	{
+		const char* name;
+		cvar_t* cvar;
+	};
+
+	if (ConCommand::ArgC() != 2)
+	{
+		ConPrintf("Searches cvars and commands for a string.\n");
+		ConPrintf("Usage: find <string>\n");
+		return;
+	}
+
+	const char* str_orig = ConCommand::ArgV(1);
+	char str[128];
+	safe_strcpy(str, str_orig, sizeof(str));
+	for (char* c = str; *c; c++)
+		*c = tolower(*c);
+
+	std::vector<FindResult> found;
+
+	// Iterate all cvars
+	{
+		char buf[128];
+		cvar_t* item = gEngfuncs.GetFirstCvarPtr();
+		for (; item; item = item->next)
+		{
+			safe_strcpy(buf, item->name, sizeof(buf));
+			for (char* c = buf; *c; c++)
+				*c = tolower(*c);
+			if (strstr(buf, str))
+				found.push_back(FindResult{ item->name, item });
+		}
+	}
+
+	// Iterate all commands
+	{
+		char buf[128];
+		cmd_function_t* item = gEngfuncs.GetFirstCmdFunctionHandle();
+		for (; item; item = item->next)
+		{
+			safe_strcpy(buf, item->name, sizeof(buf));
+			for (char* c = buf; *c; c++)
+				*c = tolower(*c);
+			if (strstr(buf, str))
+				found.push_back(FindResult{ item->name, nullptr });
+		}
+	}
+
+	// Sort array
+	qsort(found.data(), found.size(), sizeof(FindResult), [](const void* i, const void* j) -> int {
+		const FindResult* lhs = (const FindResult*)i;
+		const FindResult* rhs = (const FindResult*)j;
+		return strcmp(lhs->name, rhs->name);
+		});
+
+	// Display results
+	for (FindResult& i : found)
+	{
+		if (i.cvar)
+		{
+			ConVar* cv = CvarSystem::FindCvar(i.cvar);
+
+			ConPrintf("%s = \"%s\"", i.name, i.cvar->string);
+
+			if (cv)
+			{
+				ConPrintf(" (def. \"%s\")\n", cv->GetDefaultValue());
+				ConPrintf("        %s\n", cv->GetDescription());
+			}
+			else
+			{
+				ConPrintf("\n");
+			}
+		}
+		else
+		{
+			ConCommand* cv = static_cast<ConCommand*>(CvarSystem::FindItem(i.name));
+
+			ConPrintf("%s (command)\n", i.name);
+
+			if (cv)
+			{
+				ConPrintf("        %s\n", cv->GetDescription());
+			}
+		}
+	}
+}*/
 
 void CHud::ApplyGreyscaleEffect()
 {

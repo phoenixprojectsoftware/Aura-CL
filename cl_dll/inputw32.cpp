@@ -8,6 +8,9 @@
 // in_win.c -- windows 95 mouse and joystick code
 // 02/21/97 JCB Added extended DirectInput code to support external controllers.
 
+#include <tier2/tier2.h>
+#include <vgui/ISurface.h>
+
 #include "port.h"
 
 #include "hud.h"
@@ -501,7 +504,7 @@ void CL_DLLEXPORT IN_MouseEvent (int mstate)
 {
 	int		i;
 
-	if ( iMouseInUse || iVisibleMouse )
+	if ( iMouseInUse || iVisibleMouse || g_pVGuiSurface->IsCursorVisible() )
 		return;
 
 	// perform button actions
@@ -695,7 +698,7 @@ void IN_MouseMove ( float frametime, usercmd_t *cmd)
 
 	//jjb - this disbles normal mouse control if the user is trying to 
 	//      move the camera, or if the mouse cursor is visible or if we're in intermission
-	if ( !iMouseInUse && !gHUD.m_iIntermission && !iVisibleMouse )
+	if ( !iMouseInUse && !gHUD.m_iIntermission && !iVisibleMouse && !g_pVGuiSurface->IsCursorVisible() )
 	{
 		IN_GetMouseDelta( &mx, &my );
 
@@ -766,7 +769,7 @@ IN_Accumulate
 void CL_DLLEXPORT IN_Accumulate (void)
 {
 	//only accumulate mouse if we are not moving the camera with the mouse
-	if ( !iMouseInUse && !iVisibleMouse)
+	if ( !iMouseInUse && !iVisibleMouse && !g_pVGuiSurface->IsCursorVisible())
 	{
 	    if (mouseactive)
 	    {
