@@ -7,7 +7,7 @@
 // Linux doesn't have this function so this emulates its functionality
 //
 //
-void *GetModuleHandle(const char *name)
+void *GetModuleHandle1(const char *name)
 {
         void *handle;
 
@@ -114,7 +114,11 @@ static IBaseInterface1 *CreateInterfaceLocal( const char *pName, int *pReturnCod
 //static hlds_run wants to use this function 
 static void *Sys_GetProcAddress( const char *pModuleName, const char *pName )
 {
+#ifdef _WIN32
 	return GetProcAddress( GetModuleHandle(pModuleName), pName );
+#else
+	return GetProcAddress(GetModuleHandle1(pModuleName), pName);
+#endif
 }
 
 //-----------------------------------------------------------------------------
