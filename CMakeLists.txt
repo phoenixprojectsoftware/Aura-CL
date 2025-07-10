@@ -159,6 +159,7 @@ else()
         -Wno-unused-function
         -Wno-unused-variable
         -march=pentium-m
+		-msse
         -fno-strict-aliasing
         -fno-exceptions)
 
