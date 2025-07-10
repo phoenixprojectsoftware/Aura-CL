@@ -46,9 +46,10 @@ int CHudWatermark::Draw(float time)
 	char zamnhlmpVersion[256];
 	char displayString[256];
 
+	const char*  gamedir = gEngfuncs.pfnGetGameDirectory();
 
 		char filepath[260];
-		snprintf(filepath, sizeof(filepath), "zamnhlmp/aura/version.txt");
+		snprintf(filepath, sizeof(filepath), "%s/aura/version.txt", gamedir);
 		FILE* file = fopen(filepath, "r");
 
 		if (file != NULL)
