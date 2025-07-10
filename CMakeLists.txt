@@ -131,8 +131,6 @@ add_library(client SHARED ${SOURCE_FILES})
 target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES})
 # target_link_libraries(client ${SOURCE_SDK_LIBS})
 
-# target_sources(client PRIVATE cl_dll/gameui/vgui2_int.cpp)
-
 
 target_include_directories(client PRIVATE
     ${CMAKE_BINARY_DIR}
