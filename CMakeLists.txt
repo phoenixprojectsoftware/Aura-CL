@@ -129,7 +129,6 @@ set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
 
 target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES})
-# target_link_libraries(client ${SOURCE_SDK_LIBS})
 
 
 target_include_directories(client PRIVATE
@@ -220,6 +219,8 @@ elseif(UNIX)
         set(VGUI_LINK_FLAGS "-Wl,--no-as-needed -L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so")
         set(SDL2_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux -lSDL2")
         set_property(TARGET client PROPERTY LINK_FLAGS "${VGUI_LINK_FLAGS} ${SDL2_LINK_FLAGS}")
+		target_link_libraries(client
+		${SOURCE_SDK_LIBS})
     endif()
 endif()
 
