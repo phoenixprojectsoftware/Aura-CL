@@ -1,5 +1,19 @@
   client dll readme.txt
 -------------------------
+AURA custom header template:
+
+/****
+*
+* Copyright © 2021-2024 The Phoenix Project Software. Some Rights Reserved.
+*
+* AURA
+*
+* cl_weapons.h - a shortcut to define the IDs of weapons clientside.
+*
+*
+****/
+
+boom.
 
 This file details the structure of the half-life client dll,  and
 how it communicates with the half-life game engine.
