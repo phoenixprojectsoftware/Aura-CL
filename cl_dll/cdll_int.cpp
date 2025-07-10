@@ -211,7 +211,7 @@ void CL_DLLEXPORT HUD_Init( void )
 {
 //	RecClHudInit();
 	InitInput();
-	ClientSteamContext().Activate();
+	// TODO: SteamAPI_Init();
 	gHUD.Init();
 	console::HudPostInit();
 }
@@ -345,7 +345,7 @@ void ShutdownInput()
 {
 	// gHUD.Shutdown();
 	ShutdownInput();
-	ClientSteamContext().Shutdown();
+	// TODO: SteamAPI_Shutdown();
 }
 
 void CL_UnloadParticleMan( void )

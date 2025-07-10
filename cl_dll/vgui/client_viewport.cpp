@@ -3,13 +3,13 @@
 #include <IEngineVGui.h>
 
 #include "client_viewport.h"
-#include "client_vgui.h"
+#include "../client_vgui.h"
 
 #include <demo_api.h>
 #include "parsemsg.h"
-#include "hud.h"
-#include "text_message.h"
-#include "cl_util.h"
+#include "../hud.h"
+// #include "../text_message.h" this dont EXIST!
+#include "../cl_util.h"
 
 #include "score_panel.h"
 

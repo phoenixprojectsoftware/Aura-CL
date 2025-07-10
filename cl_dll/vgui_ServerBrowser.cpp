@@ -17,7 +17,7 @@
 #include "hud_servers.h"
 #include "net_api.h"
 
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 #include "vgui_ServerBrowser.h"
 
 using namespace vgui;

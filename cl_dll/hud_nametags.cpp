@@ -9,8 +9,8 @@
 #include "cl_util.h"
 #include "cl_entity.h"
 #include "triangleapi.h"
-#include "vgui_TeamFortressViewport.h"
-#include "vgui_SpectatorPanel.h"
+#include "vgui/client_viewport.h"
+// #include "vgui_SpectatorPanel.h"
 
 #include "pm_shared.h"
 #include "pm_defs.h"
@@ -22,7 +22,6 @@
 #include "demo_api.h"
 #include "event_api.h"
 #include "screenfade.h"
-#include "vgui_TeamFortressViewport.h"
 #include "vgui_helpers.h"
 #include "vgui_loadtga.h"
 

@@ -28,6 +28,6 @@ enum
 #define MAX_TEAMNAME_SIZE 32
 
 #define MAX_MOTD_LENGTH 1536
-#define MAX_UNICODE_MOTD_LEGNTH (MAX_MOTD_LENGTH * 2) // Some unicode characters take two or more bytes in UTF8. I mean, WTF?!?!? That's so dumb bruh. But that's just how COMPUTERS work. I GUESS.
+#define MAX_UNICODE_MOTD_LENGTH (MAX_MOTD_LENGTH * 2) // Some unicode characters take two or more bytes in UTF8. I mean, WTF?!?!? That's so dumb bruh. But that's just how COMPUTERS work. I GUESS.
 
 #endif // GLOBALCONSTS_H

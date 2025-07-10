@@ -14,13 +14,13 @@
 
 #include <demo_api.h>
 #include <convar.h>
-#include "hud.h"
-#include "hud/text_message.h"
-#include "cl_util.h"
+#include "../hud.h"
+// #include "../text_message.h"
+#include "../cl_util.h"
 #include "voice_status.h"
-#include "client_steam_context.h"
+#include <steamworks/steam_api.h>
 
-#include "client_vgui.h"
+#include "../client_vgui.h"
 #include "client_viewport.h"
 #include "score_panel.h"
 #include "player_list_panel.h"
@@ -646,7 +646,7 @@ void CScorePanel::UpdatePlayerAvatar(int playerIndex, KeyValues* kv)
 	// TODO: SteamID
 	//uint64 steamID64 = GetPlayerSteamID64(playerIndex);
 	uint64 steamID64 = 0;
-	if (hud_scoreboard_showavatars.GetBool() && ClientSteamContext().SteamFriends() && ClientSteamContext().SteamUtils() && steamID64)
+	if (hud_scoreboard_showavatars.GetBool() && SteamFriends() && SteamUtils() && steamID64)
 	{
 		CSteamID steamIDForPlayer(steamID64);
 
@@ -957,7 +957,7 @@ void CScorePanel::OnCommand(const char* command)
 			sprintf(string2, CHudTextMessage::BufferedLocaliseTextString("#No_longer_hear_that_player"));
 			sprintf(string, "%c** %s %s\n", HUD_PRINTTALK, string1, string2);
 		}
-		CHudTextMessage::Get()->MsgFunc_TextMsg(NULL, strlen(string) + 1, string);
+		//CHudTextMessage::Get()->MsgFunc_TextMsg(NULL, strlen(string) + 1, string); - TODO: fix this
 		UpdateClientInfo(client); // Update mute icon
 	}
 	//-----------------------------------------------------------------------
@@ -967,7 +967,7 @@ void CScorePanel::OnCommand(const char* command)
 		{
 #ifndef NO_STEAM
 			CSteamID steamId = CSteamID((uint64)m_pMenuInfo.steamID64);
-			ClientSteamContext().SteamFriends()->ActivateGameOverlayToUser("steamid", steamId);
+			SteamFriends()->ActivateGameOverlayToUser("steamid", steamId);
 #else
 			std::string url = STEAM_PROFILE_URL + std::to_string(m_pMenuInfo.steamID64);
 			vgui2::system()->ShellExecute("open", url.c_str());

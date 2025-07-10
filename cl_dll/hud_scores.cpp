@@ -4,8 +4,8 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
-#include "vgui_TeamFortressViewport.h"
-#include "vgui_ScorePanel.h"
+#include "vgui/client_viewport.h"
+#include "vgui/score_panel.h"
 
 #include "steam_id.h"
 
@@ -22,7 +22,6 @@ extern int iTeamColors[5][3];
 extern hud_player_info_t   g_PlayerInfoList [MAX_PLAYERS + 1];
 extern extra_player_info_t g_PlayerExtraInfo[MAX_PLAYERS + 1];
 extern team_info_t g_TeamInfo[MAX_TEAMS + 1];
-extern TeamFortressViewport* g_pViewport;
 constexpr size_t TEAM_YES = 1; // From vgui_ScorePanel.cpp.
 
 constexpr int PADDING = 10; // Extra fill space from the sides of the scoreboard.

@@ -2,7 +2,7 @@
 #define VGUI_CLIENT_VIEWPORT_H
 #include <vector>
 #include <vgui_controls/Frame.h>
-#include <global_consts.h>
+#include "../global_consts.h"
 #include "IViewportPanel.h"
 
 enum

@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <demo_api.h>
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 #include "hud_oldscoreboard.h"
-#include "vgui_ScorePanel.h"
+#include "vgui/score_panel.h"
 #include "steam_id.h"
 
 // Y positions

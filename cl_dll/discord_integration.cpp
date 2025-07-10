@@ -9,7 +9,7 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 #include "discord_integration.h"
 
 using namespace std::literals::string_literals;
@@ -285,8 +285,8 @@ namespace discord_integration
 						state += " | "s + gamemode;
 
 					// Get the server name.
-					if (g_pViewport->m_szServerName[0])
-						presence.details = g_pViewport->m_szServerName;
+					if (g_pViewport->GetServerName())
+						presence.details = g_pViewport->GetServerName();
 
 					// Get the map name and icon.
 					get_map_name(map_name, ARRAYSIZE(map_name));

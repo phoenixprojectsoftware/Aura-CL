@@ -1,15 +1,15 @@
 #include <vgui/ISurface.h>
 #include "avatar_image.h"
 #include "png_image.h"
-#include "lodepng/lodepng.h"
-#include "hud.h"
-#include "cl_dll.h"
+#include "../lodepng/lodepng.h"
+#include "../hud.h"
+#include "../cl_dll.h"
 
 CPngImage::CPngImage(const char* filename)
 {
 	m_Color = Color(255, 255, 255, 255);
 	char fullPath[256];
-	gEngfuncs.COM_ExpandFilename(filename, fullPath, sizeof(fullPath));
+	gEngfuncs.COM_ExpandFilename(filename, fullPath, sizeof(fullPath)); // why is gengfuncs not defined? WTF!
 
 	byte* out = nullptr;
 	unsigned width, height;

@@ -14,8 +14,6 @@ add_sources(
 	cdll_int.cpp
 	cl_dll.h
 	cl_util.h
-	client_steam_context.cpp
-	client_steam_context.h
 	client_vgui.cpp
 	client_vgui.h
 	cl_weapons.h

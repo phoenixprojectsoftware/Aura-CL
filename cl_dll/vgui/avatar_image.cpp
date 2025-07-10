@@ -12,10 +12,10 @@
 #if defined(_X360)
 #include "xbox/xbox_win32stubs.h"
 #endif
-#include "client_steam_context.h"
+#include <steamworks/steam_api.h>
 #include "KeyValues.h"
-#include "hud.h"
-#include "cl_util.h"
+#include "../hud.h"
+#include "../cl_util.h"
 
 using namespace vgui2;
 
@@ -125,21 +125,21 @@ void CAvatarImage::LoadAvatarImage()
 	return;
 #endif
 	// attempt to retrieve the avatar image from Steam
-	if (m_bLoadPending && ClientSteamContext().SteamFriends() && ClientSteamContext().SteamUtils() && gHUD.m_flTime >= m_fNextLoadTime)
+	if (m_bLoadPending && SteamFriends() && SteamUtils() && gHUD.m_flTime >= m_fNextLoadTime)
 	{
-		if (!ClientSteamContext().SteamFriends()->RequestUserInformation(m_SteamID, false))
+		if (!SteamFriends()->RequestUserInformation(m_SteamID, false))
 		{
 			int iAvatar = 0;
 			switch (m_AvatarSize)
 			{
 			case k_EAvatarSize32x32:
-				iAvatar = ClientSteamContext().SteamFriends()->GetSmallFriendAvatar(m_SteamID);
+				iAvatar = SteamFriends()->GetSmallFriendAvatar(m_SteamID);
 				break;
 			case k_EAvatarSize64x64:
-				iAvatar = ClientSteamContext().SteamFriends()->GetMediumFriendAvatar(m_SteamID);
+				iAvatar = SteamFriends()->GetMediumFriendAvatar(m_SteamID);
 				break;
 			case k_EAvatarSize184x184:
-				iAvatar = ClientSteamContext().SteamFriends()->GetLargeFriendAvatar(m_SteamID);
+				iAvatar = SteamFriends()->GetLargeFriendAvatar(m_SteamID);
 				break;
 			}
 
@@ -148,11 +148,11 @@ void CAvatarImage::LoadAvatarImage()
 			if (iAvatar > 0) // if its zero, user doesn't have an avatar.  If -1, Steam is telling us that it's fetching it
 			{
 				uint32 wide = 0, tall = 0;
-				if (ClientSteamContext().SteamUtils()->GetImageSize(iAvatar, &wide, &tall) && wide > 0 && tall > 0)
+				if (SteamUtils()->GetImageSize(iAvatar, &wide, &tall) && wide > 0 && tall > 0)
 				{
 					int destBufferSize = wide * tall * 4;
 					byte* rgbDest = (byte*)stackalloc(destBufferSize);
-					if (ClientSteamContext().SteamUtils()->GetImageRGBA(iAvatar, rgbDest, destBufferSize))
+					if (SteamUtils()->GetImageRGBA(iAvatar, rgbDest, destBufferSize))
 						InitFromRGBA(iAvatar, rgbDest, wide, tall);
 
 					stackfree(rgbDest);
@@ -181,8 +181,8 @@ void CAvatarImage::UpdateFriendStatus(void)
 	if (!m_SteamID.IsValid())
 		return;
 
-	if (ClientSteamContext().SteamFriends() && ClientSteamContext().SteamUtils())
-		m_bFriend = ClientSteamContext().SteamFriends()->HasFriend(m_SteamID, k_EFriendFlagImmediate);
+	if (SteamFriends() && SteamUtils())
+		m_bFriend = SteamFriends()->HasFriend(m_SteamID, k_EFriendFlagImmediate);
 }
 
 //-----------------------------------------------------------------------------
@@ -329,7 +329,7 @@ void CAvatarImagePanel::SetPlayer(int entindex, EAvatarSize avatarSize)
 	//uint64 steamID64 = GetPlayerSteamID64(entindex);
 	uint64 steamID64 = 0;
 
-	if (steamID64 && ClientSteamContext().SteamUtils())
+	if (steamID64 && SteamUtils())
 	{
 		CSteamID steamIDForPlayer = CSteamID(steamID64);
 		SetPlayer(steamIDForPlayer, avatarSize);
