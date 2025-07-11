@@ -170,10 +170,10 @@ static size_t get_player_count()
 
 	for (int i = 0; i < MAX_PLAYERS; ++i) {
 		// Make sure the information is up to date.
-		gEngfuncs.pfnGetPlayerInfo(i + 1, &g_PlayerInfoList[i + 1]);
+		GetPlayerInfo(i + 1)->Update();
 
 		// This player slot is empty.
-		if (g_PlayerInfoList[i + 1].name == nullptr)
+		if (GetPlayerInfo(i + 1) == nullptr)
 			continue;
 
 		++player_count;

@@ -164,13 +164,6 @@ int __MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
 	return gHUD.MsgFunc_Gametype( pszName, iSize, pbuf );
 }
 
-int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_AllowSpec( pszName, iSize, pbuf );
-	return 0;
-}
-
 int __MsgFunc_CheatCheck(const char* name, int size, void* buf)
 {
 	BEGIN_READ(buf, size);
@@ -302,15 +295,6 @@ int __MsgFunc_LaserSpot(const char* name, int size, void* buf)
 	return 1;
 }
 
-// TFFree Command Menu
-void __CmdFunc_OpenCommandMenu(void)
-{
-	if ( g_pViewport )
-	{
-		g_pViewport->ShowCommandMenu( g_pViewport->m_StandardMenu );
-	}
-}
-
 // TFC "special" command
 void __CmdFunc_InputPlayerSpecial(void)
 {
@@ -333,14 +317,6 @@ void __CmdFunc_ForceCloseCommandMenu( void )
 	if ( g_pViewport )
 	{
 		g_pViewport->HideCommandMenu();
-	}
-}
-
-void __CmdFunc_ToggleServerBrowser( void )
-{
-	if ( g_pViewport )
-	{
-		g_pViewport->ToggleServerBrowser();
 	}
 }
 
@@ -441,112 +417,6 @@ void __CmdFunc_Writemap()
 	}
 }
 
-// TFFree Command Menu Message Handlers
-int __MsgFunc_ValClass(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_ValClass( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_TeamNames(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_TeamNames( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_Feign(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_Feign( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_Detpack(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_Detpack( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_VGUIMenu(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_VGUIMenu( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_MOTD(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_MOTD( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_BuildSt(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_BuildSt( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_RandomPC(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_RandomPC( pszName, iSize, pbuf );
-	return 0;
-}
- 
-int __MsgFunc_ServerName(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_ServerName( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_ScoreInfo(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_ScoreInfo( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_TeamScore(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_TeamScore( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_TeamInfo(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_TeamInfo( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_Spectator(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_Spectator( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_SpecFade(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_SpecFade( pszName, iSize, pbuf );
-	return 0;
-}
-
-int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
-{
-	if (g_pViewport)
-		return g_pViewport->MsgFunc_ResetFade( pszName, iSize, pbuf );
-	return 0;
-}
-
 void PrintVersion()
 {
 	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
@@ -587,26 +457,6 @@ void CHud :: Init( void )
 	force_model::hook_commands();
 	steam_id::hook_messages();
 
-	HOOK_MESSAGE( ValClass );
-	HOOK_MESSAGE( TeamNames );
-	HOOK_MESSAGE( Feign );
-	HOOK_MESSAGE( Detpack );
-	HOOK_MESSAGE( MOTD );
-	HOOK_MESSAGE( BuildSt );
-	HOOK_MESSAGE( RandomPC );
-	HOOK_MESSAGE( ServerName );
-	HOOK_MESSAGE( ScoreInfo );
-	HOOK_MESSAGE( TeamScore );
-	HOOK_MESSAGE( TeamInfo );
-
-	HOOK_MESSAGE( Spectator );
-	HOOK_MESSAGE( AllowSpec );
-	
-	HOOK_MESSAGE( SpecFade );
-	HOOK_MESSAGE( ResetFade );
-
-	// VGUI Menus
-	HOOK_MESSAGE( VGUIMenu );
 
 	HOOK_MESSAGE( CheatCheck );
 	HOOK_MESSAGE( WhString );
@@ -670,7 +520,10 @@ void CHud :: Init( void )
 		m_pHudList = NULL;
 	}
 
-	for (int i = 1; i MAX_PLAYERS; i++)
+#ifndef MAX_PLAYERS
+#define MAX_PLAYERS 64
+#endif
+	for (int i = 1; i < MAX_PLAYERS; i++)
 		CPlayerInfo::m_sPlayerInfo[i].m_iIndex = i;
 
 	// In case we get messages before the first update -- time will be valid

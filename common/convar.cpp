@@ -8,8 +8,8 @@
 #include "eiface.h"
 #include "util.h"
 #else
-#include "wrect.h"
-#include "cl_dll.h"
+#include "../cl_dll/wrect.h"
+#include "../cl_dll/cl_dll.h"
 #endif
 
 //---------------------------------------------------
@@ -113,7 +113,7 @@ void ConVar::SetValue(const char* val)
 #ifdef SERVER_DLL
 	CVAR_SET_STRING(GetName(), val);
 #else
-	gEngfuncs.Cvar_Set(GetName(), val);
+	gEngfuncs.Cvar_Set(GetName(), (const char*)val);
 #endif
 }
 
@@ -215,7 +215,7 @@ void ConVarRef::SetValue(const char* val)
 #ifdef SERVER_DLL
 		CVAR_SET_STRING(m_pCvar->name, val);
 #else
-		gEngfuncs.Cvar_Set(m_pCvar->name, val);
+		gEngfuncs.Cvar_Set(m_pCvar->name, (const char*)val);
 #endif
 	}
 }

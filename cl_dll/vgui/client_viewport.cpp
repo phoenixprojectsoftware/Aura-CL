@@ -11,6 +11,7 @@
 // #include "../text_message.h" this dont EXIST!
 #include "../cl_util.h"
 
+#include "../player_info.h"
 #include "score_panel.h"
 
 // FIXME: Move it to hud.cpp

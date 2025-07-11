@@ -3,7 +3,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 
 extern hud_player_info_t   g_PlayerInfoList [MAX_PLAYERS + 1];
 extern extra_player_info_t g_PlayerExtraInfo[MAX_PLAYERS + 1];
