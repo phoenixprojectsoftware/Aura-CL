@@ -109,6 +109,10 @@ else()
     endif()
 endif()
 
+# Enable SSE globally for all targets (needed for mathlib.h intrinsics)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+
 # Source layout
 add_subdirectory(cl_dll)
 add_subdirectory(common)
@@ -159,8 +163,8 @@ else()
         -Wno-unused-function
         -Wno-unused-variable
         -march=pentium-m
-        -mfpmath=387
-        -mno-sse
+		-msse
+		-msse2
         -fno-strict-aliasing
         -fno-exceptions)
 
