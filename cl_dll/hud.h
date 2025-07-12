@@ -45,7 +45,10 @@ typedef struct {
 	int x, y;
 } POSITION;
 
+#include <functional>
+#include <queue>
 #include "global_consts.h"
+#include "player_info.h"
 
 typedef struct {
 	unsigned char r,g,b,a;
@@ -77,6 +80,8 @@ public:
 	virtual		~CHudBase() {}
 	virtual int Init( void ) {return 0;}
 	virtual int VidInit( void ) {return 0;}
+	void Frame(double time);
+	void Shutdown();
 	virtual int Draw(float flTime) {return 0;}
 	virtual void Think(void) {return;}
 	virtual void Reset(void) {return;}
@@ -265,33 +270,6 @@ protected:
 	// an array of colors...one color for each line
 	float *m_pflNameColors[MAX_STATUSBAR_LINES];
 };
-
-struct extra_player_info_t 
-{
-	short frags;
-	short deaths;
-	short playerclass;
-	short health; // UNUSED currently, spectator UI would like this
-	bool dead; // UNUSED currently, spectator UI would like this
-	short teamnumber;
-	char teamname[MAX_TEAM_NAME];
-};
-
-struct team_info_t 
-{
-	char name[MAX_TEAM_NAME];
-	short frags;
-	short deaths;
-	short ping;
-	short packetloss;
-	short ownteam;
-	short players;
-	int already_drawn;
-	int scores_overriden;
-	int teamnumber;
-};
-
-#include "player_info.h"
 
 //
 //-----------------------------------------------------
@@ -675,6 +653,8 @@ private:
 	wrect_t *m_rgrcRects;	/*[HUD_SPRITE_COUNT]*/
 	char *m_rgszSpriteNames; /*[HUD_SPRITE_COUNT][MAX_SPRITE_NAME_LENGTH]*/
 
+	std::queue<std::function<void()>> m_NextFrameQueue;
+
 public:
 	struct cvar_s *default_fov;
 
@@ -771,6 +751,8 @@ public:
 	void AddHudElem(CHudBase *p);
 
 	float GetSensitivity();
+
+	void CallOnNextFrame(std::function<void()> f);
 
 	int m_iLaserState;
 

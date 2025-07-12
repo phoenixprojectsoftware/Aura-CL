@@ -142,10 +142,11 @@ void CHudStatusBar :: ParseStatusString( int line_num )
 						switch ( valtype )
 						{
 						case 'p':  // player name
-							gEngfuncs.pfnGetPlayerInfo( indexval, &g_PlayerInfoList[indexval] );
-							if ( g_PlayerInfoList[indexval].name != NULL )
+							GetPlayerInfo(indexval)->Update();
+
+							if (GetPlayerInfo(indexval)->IsConnected())
 							{
-								strncpy( szRepString, g_PlayerInfoList[indexval].name, MAX_PLAYER_NAME_LENGTH - 1 );
+								safe_strcpy(szRepString, GetPlayerInfo(indexval)->GetName(), MAX_PLAYER_NAME_LENGTH);
 								szRepString[MAX_PLAYER_NAME_LENGTH - 1] = '\0';
 								m_pflNameColors[line_num] = GetClientColor( indexval );
 							}

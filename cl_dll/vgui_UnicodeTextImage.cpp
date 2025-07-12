@@ -15,7 +15,7 @@
 #endif
 
 #include <VGUI_Font.h>
-#include "../public/interface.h"
+#include <tier1/interface.h>
 #include "vgui_UnicodeTextImage.h"
 #include "hud.h"
 #include "cl_util.h"

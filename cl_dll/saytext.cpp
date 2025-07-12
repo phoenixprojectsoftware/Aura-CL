@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "vgui_TeamFortressViewport.h"
+#include "vgui/client_viewport.h"
 #include "discord_integration.h"
 
 extern float *GetClientColor( int clientIndex );
@@ -102,7 +102,7 @@ int CHudSayText :: Draw( float flTime )
 {
 	int y = Y_START;
 
-	if ( ( gViewPort && gViewPort->AllowedToPrintText() == FALSE) || !m_HUD_saytext->value )
+	if ( ( g_pViewport && g_pViewport->AllowedToPrintText() == FALSE) || !m_HUD_saytext->value )
 		return 1;
 
 	// make sure the scrolltime is within reasonable bounds,  to guard against the clock being reset
@@ -216,7 +216,7 @@ static void convert_locations(char* dest, const char* src, size_t count, int pla
 
 void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIndex )
 {
-	if ( gViewPort && gViewPort->AllowedToPrintText() == FALSE )
+	if ( g_pViewport && g_pViewport->AllowedToPrintText() == FALSE )
 	{
 		// Print it straight to the console
 		ConsolePrint( pszBuf );
@@ -243,8 +243,7 @@ void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIn
 	// if it's a say message, search for the players name in the string
 	if ( *pszBuf == 2 && clientIndex > 0 )
 	{
-		gEngfuncs.pfnGetPlayerInfo( clientIndex, &g_PlayerInfoList[clientIndex] );
-		const char *pName = g_PlayerInfoList[clientIndex].name;
+		const char* pName = GetPlayerInfo(clientIndex)->Update()->GetName();
 
 		if ( pName )
 		{

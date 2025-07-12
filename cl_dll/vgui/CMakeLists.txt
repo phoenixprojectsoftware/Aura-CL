@@ -1,0 +1,13 @@
+add_sources(
+	CMakeLists.txt
+	avatar_image.cpp
+	avatar_image.h
+	client_viewport.cpp
+	client_viewport.h
+	player_list_panel.cpp
+	player_list_panel.h
+	png_image.cpp
+	png_image.h
+	score_panel.cpp
+	score_panel.h
+	viewport_panel_names.h)

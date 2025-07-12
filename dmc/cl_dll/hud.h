@@ -651,7 +651,7 @@ public:
 class TeamFortressViewport;
 
 extern CHud gHUD;
-extern TeamFortressViewport *gViewPort;
+extern TeamFortressViewport *g_pViewport;
 
 extern int g_iUser1;
 extern int g_iUser2;

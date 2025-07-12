@@ -9,6 +9,9 @@
 #define VOICE_STATUS_H
 #pragma once
 
+#if 1
+#include "voice_status_stub.h"
+
 #include "voice_common.h"
 #include "voice_banmgr.h"
 
@@ -202,4 +205,5 @@ IVoiceHud* GetClientVoiceHud();
 
 
 
+#endif
 #endif // VOICE_STATUS_H
