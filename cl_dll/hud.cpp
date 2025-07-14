@@ -661,9 +661,6 @@ void CHud :: Init( void )
 	hud_watermark = CVAR_CREATE("hud_watermark", "1", FCVAR_ARCHIVE);
 
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
-
-	//gEngfuncs.pfnAddCommand("gameui_opentest", GameUI_TestPanel);
-
 	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
 
 	
