@@ -165,6 +165,7 @@ int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	update_checker::check_for_updates();
 	discord_integration::initialize();
 
+	CvarSystem::RegisterCvars();
 	EV_HookEvents();
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
