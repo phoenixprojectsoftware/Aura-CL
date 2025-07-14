@@ -1,7 +1,7 @@
 #include <tier1/strtools.h>
 #include "../hud.h"
 #include "gameui_test_panel.h"
-#include "baseviewport.h"
+#include "gameui_viewport.h"
 
 static const char* s_Messages[] = {
 	u8"Hello world!",

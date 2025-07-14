@@ -1,6 +1,7 @@
 add_subdirectory(gameui)
 add_subdirectory(hl)
 add_subdirectory(op4_weapons)
+add_subdirectory(vgui)
 
 add_sources(
 	ammo.cpp
@@ -14,6 +15,8 @@ add_sources(
 	cl_dll.h
 	cl_util.h
 	cl_weapons.h
+	client_vgui.cpp
+	client_vgui.h
 	color_tags.cpp
 	color_tags.h
 	com_weapons.cpp

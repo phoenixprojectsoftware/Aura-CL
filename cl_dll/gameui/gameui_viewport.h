@@ -1,21 +1,6 @@
-/****
-*
-* Copyright © 2021-2025 The Phoenix Project Software. Some Rights Reserved.
-*
-* AURA
-*
-* baseviewport - Base viewport for the VGUI2 client interface. Based upon
-* Source SDK 2013.
-*
-****/
-
 #ifndef GAMEUI_VIEWPORT_H
 #define GAMEUI_VIEWPORT_H
 #include <vgui_controls/EditablePanel.h>
-
-#define VGUI2_ROOT_DIR "ui/"
-#define VGUI2_CLIENTSOURCE_SCHEME_FILE "ui/resource/ClientSourceScheme.res"
-#define VGUI2_CLIENTSOURCE_SCHEME_TAG "ClientSourceScheme"
 
 class CGameUITestPanel;
 

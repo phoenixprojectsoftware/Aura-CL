@@ -3,6 +3,8 @@
 #include <vgui/VGUI2.h>
 #include <IClientVGUI.h>
 
+#define VGUI2_ROOT_DIR "ui/"
+
 class CClientVGUI : public IClientVGUI
 {
 public:
