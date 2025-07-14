@@ -30,31 +30,31 @@ typedef float vec_t;				// needed before including progdefs.h
 // 2DVector - used for many pathfinding and many other 
 // operations that are treated as planar rather than 3d.
 //=========================================================
-class Vector2D
+class Legacy_Vector2D
 {
 public:
-	inline Vector2D(void)									{ }
-	inline Vector2D(float X, float Y)						{ x = X; y = Y; }
-	inline Vector2D operator+(const Vector2D& v)	const	{ return Vector2D(x+v.x, y+v.y);	}
-	inline Vector2D operator-(const Vector2D& v)	const	{ return Vector2D(x-v.x, y-v.y);	}
-	inline Vector2D operator*(float fl)				const	{ return Vector2D(x*fl, y*fl);	}
-	inline Vector2D operator/(float fl)				const	{ return Vector2D(x/fl, y/fl);	}
+	inline Legacy_Vector2D(void)									{ }
+	inline Legacy_Vector2D(float X, float Y)						{ x = X; y = Y; }
+	inline Legacy_Vector2D operator+(const Legacy_Vector2D& v)	const	{ return Legacy_Vector2D(x+v.x, y+v.y);	}
+	inline Legacy_Vector2D operator-(const Legacy_Vector2D& v)	const	{ return Legacy_Vector2D(x-v.x, y-v.y);	}
+	inline Legacy_Vector2D operator*(float fl)				const	{ return Legacy_Vector2D(x*fl, y*fl);	}
+	inline Legacy_Vector2D operator/(float fl)				const	{ return Legacy_Vector2D(x/fl, y/fl);	}
 	
 	inline float Length(void)						const	{ return (float)sqrt(x*x + y*y );		}
 
-	inline Vector2D Normalize ( void ) const
+	inline Legacy_Vector2D Normalize ( void ) const
 	{
-		Vector2D vec2;
+		Legacy_Vector2D vec2;
 
 		float flLen = Length();
 		if ( flLen == 0 )
 		{
-			return Vector2D( (float)0, (float)0 );
+			return Legacy_Vector2D( (float)0, (float)0 );
 		}
 		else
 		{
 			flLen = 1 / flLen;
-			return Vector2D( x * flLen, y * flLen );
+			return Legacy_Vector2D( x * flLen, y * flLen );
 		}
 	}
 
@@ -62,8 +62,8 @@ public:
 };
 
 #undef DotProduct
-inline float DotProduct(const Vector2D& a, const Vector2D& b) { return( a.x*b.x + a.y*b.y ); }
-inline Vector2D operator*(float fl, const Vector2D& v)	{ return v * fl; }
+inline float DotProduct(const Legacy_Vector2D& a, const Legacy_Vector2D& b) { return( a.x*b.x + a.y*b.y ); }
+inline Legacy_Vector2D operator*(float fl, const Legacy_Vector2D& v)	{ return v * fl; }
 
 //=========================================================
 // 3D Vector
@@ -103,9 +103,9 @@ public:
 		return Vector(x * flLen, y * flLen, z * flLen);
 	}
 
-	inline Vector2D Make2D ( void ) const
+	inline Legacy_Vector2D Make2D ( void ) const
 	{
-		Vector2D	Vec2;
+		Legacy_Vector2D	Vec2;
 
 		Vec2.x = x;
 		Vec2.y = y;

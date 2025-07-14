@@ -54,7 +54,7 @@ int CHudCrosshairs::Draw(float time)
 	}
 	
 
-	Vector2D center(ScreenWidth / 2.0f, ScreenHeight / ((int)cl_cross_low->value > 0 ? 1.8f : 2.0f));
+	Legacy_Vector2D center(ScreenWidth / 2.0f, ScreenHeight / ((int)cl_cross_low->value > 0 ? 1.8f : 2.0f));
 
 	HudGL gl;
 
@@ -72,45 +72,45 @@ int CHudCrosshairs::Draw(float time)
 
 		// Top line
 		if (cl_cross_top_line->value) {
-			gl.line(Vector2D(center.x - offset, center.y - gap - size), Vector2D(center.x + offset, center.y - gap - size));
-			gl.line(Vector2D(center.x + half_thickness, center.y - gap - size + half_width), Vector2D(center.x + half_thickness, center.y - gap - half_width));
-			gl.line(Vector2D(center.x + offset, center.y - gap), Vector2D(center.x - offset, center.y - gap));
-			gl.line(Vector2D(center.x - half_thickness, center.y - gap - half_width), Vector2D(center.x - half_thickness, center.y - gap - size + half_width));
+			gl.line(Legacy_Vector2D(center.x - offset, center.y - gap - size), Legacy_Vector2D(center.x + offset, center.y - gap - size));
+			gl.line(Legacy_Vector2D(center.x + half_thickness, center.y - gap - size + half_width), Legacy_Vector2D(center.x + half_thickness, center.y - gap - half_width));
+			gl.line(Legacy_Vector2D(center.x + offset, center.y - gap), Legacy_Vector2D(center.x - offset, center.y - gap));
+			gl.line(Legacy_Vector2D(center.x - half_thickness, center.y - gap - half_width), Legacy_Vector2D(center.x - half_thickness, center.y - gap - size + half_width));
 		}
 
 		// Bottom line
 		if (cl_cross_bottom_line->value) {
-			gl.line(Vector2D(center.x - offset, center.y + gap + size), Vector2D(center.x + offset, center.y + gap + size));
-			gl.line(Vector2D(center.x + half_thickness, center.y + gap + size - half_width), Vector2D(center.x + half_thickness, center.y + gap + half_width));
-			gl.line(Vector2D(center.x + offset, center.y + gap), Vector2D(center.x - offset, center.y + gap));
-			gl.line(Vector2D(center.x - half_thickness, center.y + gap + half_width), Vector2D(center.x - half_thickness, center.y + gap + size - half_width));
+			gl.line(Legacy_Vector2D(center.x - offset, center.y + gap + size), Legacy_Vector2D(center.x + offset, center.y + gap + size));
+			gl.line(Legacy_Vector2D(center.x + half_thickness, center.y + gap + size - half_width), Legacy_Vector2D(center.x + half_thickness, center.y + gap + half_width));
+			gl.line(Legacy_Vector2D(center.x + offset, center.y + gap), Legacy_Vector2D(center.x - offset, center.y + gap));
+			gl.line(Legacy_Vector2D(center.x - half_thickness, center.y + gap + half_width), Legacy_Vector2D(center.x - half_thickness, center.y + gap + size - half_width));
 		}
 
 		// Left line
 		if (cl_cross_left_line->value) {
-			gl.line(Vector2D(center.x - gap - size, center.y - offset), Vector2D(center.x - gap - size, center.y + offset));
-			gl.line(Vector2D(center.x - gap - size + half_width, center.y + half_thickness), Vector2D(center.x - gap - half_width, center.y + half_thickness));
-			gl.line(Vector2D(center.x - gap, center.y + offset), Vector2D(center.x - gap, center.y - offset));
-			gl.line(Vector2D(center.x - gap - half_width, center.y - half_thickness), Vector2D(center.x - gap - size + half_width, center.y - half_thickness));
+			gl.line(Legacy_Vector2D(center.x - gap - size, center.y - offset), Legacy_Vector2D(center.x - gap - size, center.y + offset));
+			gl.line(Legacy_Vector2D(center.x - gap - size + half_width, center.y + half_thickness), Legacy_Vector2D(center.x - gap - half_width, center.y + half_thickness));
+			gl.line(Legacy_Vector2D(center.x - gap, center.y + offset), Legacy_Vector2D(center.x - gap, center.y - offset));
+			gl.line(Legacy_Vector2D(center.x - gap - half_width, center.y - half_thickness), Legacy_Vector2D(center.x - gap - size + half_width, center.y - half_thickness));
 		}
 
 		// Right line
 		if (cl_cross_right_line->value) {
-			gl.line(Vector2D(center.x + gap + size, center.y - offset), Vector2D(center.x + gap + size, center.y + offset));
-			gl.line(Vector2D(center.x + gap + size - half_width, center.y + half_thickness), Vector2D(center.x + gap + half_width, center.y + half_thickness));
-			gl.line(Vector2D(center.x + gap, center.y + offset), Vector2D(center.x + gap, center.y - offset));
-			gl.line(Vector2D(center.x + gap + half_width, center.y - half_thickness), Vector2D(center.x + gap + size - half_width, center.y - half_thickness));
+			gl.line(Legacy_Vector2D(center.x + gap + size, center.y - offset), Legacy_Vector2D(center.x + gap + size, center.y + offset));
+			gl.line(Legacy_Vector2D(center.x + gap + size - half_width, center.y + half_thickness), Legacy_Vector2D(center.x + gap + half_width, center.y + half_thickness));
+			gl.line(Legacy_Vector2D(center.x + gap, center.y + offset), Legacy_Vector2D(center.x + gap, center.y - offset));
+			gl.line(Legacy_Vector2D(center.x + gap + half_width, center.y - half_thickness), Legacy_Vector2D(center.x + gap + size - half_width, center.y - half_thickness));
 		}
 
 		// Dot
 		if (cl_cross_dot_size->value > 0.0f) {
 			auto size = cl_cross_dot_size->value;
-			auto offset = Vector2D(size / 2.0f, size / 2.0f);
+			auto offset = Legacy_Vector2D(size / 2.0f, size / 2.0f);
 
-			gl.line(Vector2D(center.x - offset.x - half_width, center.y - offset.y), Vector2D(center.x + offset.x + half_width, center.y - offset.y));
-			gl.line(Vector2D(center.x + offset.x, center.y - offset.y + half_width), Vector2D(center.x + offset.x, center.y + offset.y - half_width));
-			gl.line(Vector2D(center.x - offset.x, center.y - offset.y + half_width), Vector2D(center.x - offset.x, center.y + offset.y - half_width));
-			gl.line(Vector2D(center.x - offset.x - half_width, center.y + offset.y), Vector2D(center.x + offset.x + half_width, center.y + offset.y));
+			gl.line(Legacy_Vector2D(center.x - offset.x - half_width, center.y - offset.y), Legacy_Vector2D(center.x + offset.x + half_width, center.y - offset.y));
+			gl.line(Legacy_Vector2D(center.x + offset.x, center.y - offset.y + half_width), Legacy_Vector2D(center.x + offset.x, center.y + offset.y - half_width));
+			gl.line(Legacy_Vector2D(center.x - offset.x, center.y - offset.y + half_width), Legacy_Vector2D(center.x - offset.x, center.y + offset.y - half_width));
+			gl.line(Legacy_Vector2D(center.x - offset.x - half_width, center.y + offset.y), Legacy_Vector2D(center.x + offset.x + half_width, center.y + offset.y));
 		}
 	}
 
@@ -124,13 +124,13 @@ int CHudCrosshairs::Draw(float time)
 		auto gap = cl_cross_gap->value;
 
 		if (cl_cross_top_line->value)
-			gl.line(Vector2D(center.x, center.y - gap - size), Vector2D(center.x, center.y - gap));
+			gl.line(Legacy_Vector2D(center.x, center.y - gap - size), Legacy_Vector2D(center.x, center.y - gap));
 		if (cl_cross_bottom_line->value)
-			gl.line(Vector2D(center.x, center.y + gap + size), Vector2D(center.x, center.y + gap));
+			gl.line(Legacy_Vector2D(center.x, center.y + gap + size), Legacy_Vector2D(center.x, center.y + gap));
 		if (cl_cross_left_line->value)
-			gl.line(Vector2D(center.x - gap - size, center.y), Vector2D(center.x - gap, center.y));
+			gl.line(Legacy_Vector2D(center.x - gap - size, center.y), Legacy_Vector2D(center.x - gap, center.y));
 		if (cl_cross_right_line->value)
-			gl.line(Vector2D(center.x + gap + size, center.y), Vector2D(center.x + gap, center.y));
+			gl.line(Legacy_Vector2D(center.x + gap + size, center.y), Legacy_Vector2D(center.x + gap, center.y));
 	}
 
 	// Draw the circle.
@@ -154,7 +154,7 @@ int CHudCrosshairs::Draw(float time)
 			gl.color(r, g, b, alpha);
 
 		auto size = cl_cross_dot_size->value;
-		auto offset = Vector2D(size / 2.0f, size / 2.0f);
+		auto offset = Legacy_Vector2D(size / 2.0f, size / 2.0f);
 
 		gl.rectangle(center - offset, center + offset);
 	}

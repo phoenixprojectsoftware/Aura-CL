@@ -45,14 +45,14 @@ void HudGL::line_width(float width) const {
 	glLineWidth(width);
 }
 
-void HudGL::line(const Vector2D& start, const Vector2D& end) const {
+void HudGL::line(const Legacy_Vector2D& start, const Legacy_Vector2D& end) const {
 	glBegin(GL_LINES);
 	glVertex2f(start.x, start.y);
 	glVertex2f(end.x, end.y);
 	glEnd();
 }
 
-void HudGL::circle(const Vector2D& center, const std::vector<Vector2D>& points) const {
+void HudGL::circle(const Legacy_Vector2D& center, const std::vector<Legacy_Vector2D>& points) const {
 	glBegin(GL_LINE_STRIP);
 
 	for (const auto& point : points)
@@ -62,7 +62,7 @@ void HudGL::circle(const Vector2D& center, const std::vector<Vector2D>& points) 
 	glEnd();
 }
 
-void HudGL::rectangle(const Vector2D& corner_a, const Vector2D& corner_b) const {
+void HudGL::rectangle(const Legacy_Vector2D& corner_a, const Legacy_Vector2D& corner_b) const {
 	glBegin(GL_QUADS);
 	glVertex2f(corner_a.x, corner_a.y);
 	glVertex2f(corner_a.x, corner_b.y);
@@ -71,13 +71,13 @@ void HudGL::rectangle(const Vector2D& corner_a, const Vector2D& corner_b) const 
 	glEnd();
 }
 
-std::vector<Vector2D> HudGL::compute_circle(float radius) {
+std::vector<Legacy_Vector2D> HudGL::compute_circle(float radius) {
 	// Maximum allowed distance between the circle and the rendered line segment.
 	constexpr float MAX_ERROR = 0.1f;
 	const unsigned segment_count =
 		static_cast<unsigned>(std::ceil(M_PI / std::acos((radius - MAX_ERROR) / radius)));
 
-	std::vector<Vector2D> points;
+	std::vector<Legacy_Vector2D> points;
 	points.reserve(segment_count);
 
 	for (unsigned i = 0; i < segment_count; ++i) {

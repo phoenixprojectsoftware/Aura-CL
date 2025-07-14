@@ -39,7 +39,7 @@ static const char* s_Messages[] = {
 	u8"TO PLAY A 1998 GAME"
 };
 
-CGameUITestPanel::CGameUITestPanel(vgui2::Panel* pParent : BaseClass(pParent, "GameUITestPanel"))
+CGameUITestPanel::CGameUITestPanel(vgui2::Panel* pParent) : BaseClass(pParent, "GameUITestPanel"))
 {
 	SetTitle("VGUI2 TEST PANELLLLL", false);
 	SetSizeable(true);
@@ -50,7 +50,7 @@ CGameUITestPanel::CGameUITestPanel(vgui2::Panel* pParent : BaseClass(pParent, "G
 	m_pText = new vgui2::RichText(this, "Text");
 	m_pText->SetUnusedScrollbarInvisible(true);
 
-	SetScheme(GameUIViewport::Get()->GetScheme());
+	SetScheme(CGameUIViewport::Get()->GetScheme());
 	InvalidateLayout();
 }
 

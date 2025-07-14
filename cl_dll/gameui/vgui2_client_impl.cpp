@@ -85,16 +85,3 @@ void CClientVGUI::SetParent(VPANEL parent)
 	m_pViewport = new CGameUIViewport();
 	m_pViewport->SetParent(m_hParent);
 }
-/*
-void CClientVGUI::ActivateClientUI()
-{
-	if (m_pViewport)
-		m_pViewport->ActivateClientUI();
-}
-
-void CClientVGUI::HideClientUI()
-{
-	if (m_pViewport)
-		m_pViewport->HideClientUI();
-}
-*/
