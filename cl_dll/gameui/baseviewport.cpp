@@ -9,46 +9,40 @@
 *
 ****/
 
+#include <IEngineVGui.h>
+#include <tier2/tier2.h>
+#include "../hud.h"
+#include "../cl_util.h"
+#include "vgui2_client_impl.h"
 #include "baseviewport.h"
-#include <vgui/ISurface.h>
-#include <vgui/IVGui.h>
-#include <vgui_controls/Label.h>
+#include "gameui_test_panel.h"
 
-using namespace vgui2;
-
-BaseViewport::BaseViewport() : BaseClass(nullptr, "BaseViewport")
+// TODO: ConVar class
+/*
+CON_COMMAND(gameui_opentest, "")
 {
-	SetBounds(0, 0, 640, 480);
-	SetPaintBackgroundEnabled(true);
+		CGameUIViewport::Get()->OpenTestPanel();
+}
+*/
+
+CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
+{
+	Assert(!m_sInstance);
+	m_sInstance = this;
+
+	SetParent(g_pEngineVGui->GetPanel(PANEL_GAMEUIDLL));
+	SetScheme(vgui2::scheme()->LoadSchemeFromFile(VGUI2_CLIENTSOURCE_SCHEME_FILE, VGUI2_CLIENTSOURCE_SCHEME_TAG));
+	SetProportional(false);
+	SetSize(0, 0);
 }
 
-BaseViewport::~BaseViewport()
+CGameUIViewport::~CGameUIViewport()
 {
+	Assert(m_sInstance);
+	m_sInstance = nullptr;
 }
 
-void BaseViewport::Init()
+void CGameUIViewport::OpenTestPanel()
 {
-	Label* label = new Label(this, "TestLabel", "Hello VGUI2! This is the base viewport.");
-	label->SetPos(100, 100);
-}
-
-void BaseViewport::ShowPanel(bool show)
-{
-	SetVisible(show);
-}
-
-void BaseViewport::SetParent(VPANEL parent)
-{
-	BaseClass::SetParent(parent);
-}
-
-void BaseViewport::ActivateClientUI()
-{
-	SetVisible(true);
-	RequestFocus();
-}
-
-void BaseViewport::HideClientUI() 
-{
-	SetVisible(false);
+	GetDialog(m_hTestPanel)->Activate();
 }

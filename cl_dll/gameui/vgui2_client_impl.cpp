@@ -51,7 +51,7 @@ public:
 
 private:
 	VPANEL m_hParent;
-	BaseViewport* m_pViewport = nullptr;
+	CGameUIViewport* m_pViewport = nullptr;
 };
 
 static CClientVGUI g_ClientVGUI;
@@ -82,10 +82,10 @@ void CClientVGUI::SetParent(VPANEL parent)
 {
 	m_hParent = parent;
 
-	m_pViewport = new BaseViewport();
+	m_pViewport = new CGameUIViewport();
 	m_pViewport->SetParent(m_hParent);
 }
-
+/*
 void CClientVGUI::ActivateClientUI()
 {
 	if (m_pViewport)
@@ -97,3 +97,4 @@ void CClientVGUI::HideClientUI()
 	if (m_pViewport)
 		m_pViewport->HideClientUI();
 }
+*/

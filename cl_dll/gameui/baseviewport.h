@@ -9,22 +9,46 @@
 *
 ****/
 
-#pragma once
-
+#ifndef GAMEUI_VIEWPORT_H
+#define GAMEUI_VIEWPORT_H
 #include <vgui_controls/EditablePanel.h>
 
-class BaseViewport : public vgui2::EditablePanel
+#define VGUI2_ROOT_DIR "ui/"
+#define VGUI2_CLIENTSOURCE_SCHEME_FILE "ui/resource/ClientSourceScheme.res"
+#define VGUI2_CLIENTSOURCE_SCHEME_TAG "ClientSourceScheme"
+
+class CGameUITestPanel;
+
+class CGameUIViewport : public vgui2::EditablePanel
 {
-	DECLARE_CLASS_SIMPLE(BaseViewport, vgui2::EditablePanel);
+	DECLARE_CLASS_SIMPLE(CGameUIViewport, vgui2::EditablePanel);
+
 public:
-	BaseViewport();
-	~BaseViewport();
+	static inline CGameUIViewport* Get()
+	{
+		return m_sInstance;
+	}
 
-	void Init();
-	void ShowPanel(bool show);
-	void SetParent(vgui2::VPANEL parent);
-	void ActivateClientUI();
-	void HideClientUI();
+	CGameUIViewport();
+	~CGameUIViewport();
 
-	//TODO: add private subpanels
+	void OpenTestPanel();
+
+private:
+	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
+
+	template <typename T>
+	inline T* GetDialog(vgui2::DHANDLE<T>& handle)
+	{
+		if (!handle.Get())
+		{
+			handle = new T(this);
+		}
+
+		return handle;
+	}
+
+	static inline CGameUIViewport* m_sInstance = nullptr;
 };
+
+#endif
