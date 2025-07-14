@@ -14,6 +14,8 @@ add_sources(
 	cl_dll.h
 	cl_util.h
 	cl_weapons.h
+	client_viewport.cpp
+	client_viewport.h
 	color_tags.cpp
 	color_tags.h
 	com_weapons.cpp

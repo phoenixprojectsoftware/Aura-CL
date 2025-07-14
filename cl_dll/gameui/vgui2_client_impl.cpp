@@ -20,6 +20,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Controls.h>
 #include "vgui2_client_impl.h"
+#include "../client_viewport.h"
 #include  "baseviewport.h"
 
 namespace vgui2
@@ -43,9 +44,10 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 		Assert(false);
 	}
 
-	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/langauge/bugfixedhl_english.txt");
-
+	new CClientViewport();
 	new CGameUIViewport();
+
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/langauge/bugfixedhl_english.txt");
 }
 
 void CClientVGUI::Start()
@@ -60,7 +62,7 @@ void CClientVGUI::SetParent(vgui2::VPANEL parent)
 
 int CClientVGUI::UseVGUI1()
 {
-	return false;
+	return true;
 }
 
 void CClientVGUI::HideScoreBoard()
