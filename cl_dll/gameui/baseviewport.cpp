@@ -26,7 +26,6 @@
 #include "baseviewport.h"
 #include "gameui_test_panel.h"
 
-// TODO: ConVar class
 CON_COMMAND(gameui_opentest, "Opens a test panel for client GameUI")
 {
 		CGameUIViewport::Get()->OpenTestPanel();

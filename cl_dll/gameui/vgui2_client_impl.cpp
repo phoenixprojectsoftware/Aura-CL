@@ -43,7 +43,7 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 		Assert(false);
 	}
 
-	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/langauge/bugfixedhl_english.txt");
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/bugfixedhl_english.txt");
 
 	new CGameUIViewport();
 }
