@@ -31,8 +31,6 @@ CON_COMMAND(gameui_opentest, "Opens a test panel for client GameUI")
 		CGameUIViewport::Get()->OpenTestPanel();
 }
 
-CGameUIViewport* g_pViewport;
-
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
 {
 	Assert(!m_sInstance);
