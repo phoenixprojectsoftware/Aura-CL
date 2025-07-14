@@ -1,6 +1,6 @@
 /****
 *
-* Copyright � 2021-2025 The Phoenix Project Software. Some Rights Reserved.
+* Copyright (c) 2021-2025 The Phoenix Project Software. Some Rights Reserved.
 *
 * AURA
 *
@@ -9,79 +9,132 @@
 *
 ****/
 
-#include <vgui/VGUI2.h>
-#include <vgui/ISurface.h>
-#include <vgui/IVGui.h>
-#include <vgui/IScheme.h>
-#include <vgui/ISystem.h>
-#include <vgui_controls/Panel.h>
-#include <vgui_controls/Frame.h>
-#include <vgui_controls/Label.h>
-#include <vgui/ILocalize.h>
-
 #include <tier0/dbg.h>
 #include <tier1/interface.h>
 #include <tier1/tier1.h>
 #include <tier2/tier2.h>
-
-#include "IClientVGUI.h"
-#include "baseviewport.h"
-
-#ifndef CLIENTVGUI_INTERFACE_VERSION
-#define CLIENTVGUI_INTERFACE_VERSION "ClientVGUI001"
-#endif
-
-using namespace vgui2;
-
-class CClientVGUI : public IClientVGUI
-{
-public:
-	void Initialize(CreateInterfaceFn* pFactories, int iNumFactories) override;
-	void Start() override {}
-	void Shutdown() override {}
-	void SetParent(VPANEL parent) override;
-	int UseVGUI1() override
-	{
-		return false;
-	}
-	void HideScoreBoard() override {}
-	void HideAllVGUIMenu() override {}
-	void ActivateClientUI() override;
-	void HideClientUI() override;
-
-private:
-	VPANEL m_hParent;
-	CGameUIViewport* m_pViewport = nullptr;
-};
-
-static CClientVGUI g_ClientVGUI;
-IClientVGUI* ClientVGUI = &g_ClientVGUI;
-
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CClientVGUI, IClientVGUI, CLIENTVGUI_INTERFACE_VERSION, g_ClientVGUI);
+#include <IEngineVGui.h>
+#include <FileSystem.h>
+#include <KeyValues.h>
+#include <vgui/IPanel.h>
+#include <vgui/ILocalize.h>
+#include <vgui_controls/Controls.h>
+#include "vgui2_client_impl.h"
+#include  "baseviewport.h"
 
 namespace vgui2
 {
-	HScheme VGui_GetDefaultScheme() // hey silly bastad. dont forget the capital fukin letta.
+	HScheme VGui_GetDefaultScheme()
 	{
 		return 0;
 	}
 }
+
+EXPOSE_SINGLE_INTERFACE(CClientVGUI, IClientVGUI, ICLIENTVGUI_NAME);
 
 void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 {
 	ConnectTier1Libraries(pFactories, iNumFactories);
 	ConnectTier2Libraries(pFactories, iNumFactories);
 
-	if (!vgui2::VGui_InitInterfacesList("CLIENT", pFactories, iNumFactories)) {
-		Warning("Failed to initialize VGUI2 interfaces.\n");
+	if (!vgui2::VGui_InitInterfacesList("CLIENT", pFactories, iNumFactories))
+	{
+		Error("Failed to init VGUI2!! OH NO!!\n");
 		Assert(false);
+	}
+
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/langauge/bugfixedhl_english.txt");
+
+	new CGameUIViewport();
+}
+
+void CClientVGUI::Start()
+{
+	// g_pViewport->Start();
+}
+
+void CClientVGUI::SetParent(vgui2::VPANEL parent)
+{
+
+}
+
+int CClientVGUI::UseVGUI1()
+{
+	return false;
+}
+
+void CClientVGUI::HideScoreBoard()
+{
+	// g_pViewport->HideScoreBoard();
+}
+
+void CClientVGUI::HideAllVGUIMenu()
+{
+	// g_pViewport->HideAllVGUIMenu();
+}
+
+void CClientVGUI::ActivateClientUI()
+{
+	// g_pViewport->ActivateClientUI();
+}
+
+void CClientVGUI::HideClientUI()
+{
+	// g_pViewport->HideClientUI();
+}
+
+void CClientVGUI::Shutdown()
+{
+	// Warning! Only called for CS & CZ
+	// Do not use!
+}
+
+/*
+static void DumpPanel(vgui2::VPANEL panel, int offset, bool bParentVisible)
+{
+	constexpr int INDENT_WIDTH = 4;
+	char indent[256];
+
+	memset(indent, ' ', sizeof(indent));
+	if (offset * INDENT_WIDTH >= sizeof(indent))
+		offset = (sizeof(indent) - 1) / INDENT_WIDTH;
+	indent[offset * INDENT_WIDTH] = '\0';
+
+	int wide, tall, x, y;
+	g_pVGuiPanel->GetSize(panel, wide, tall);
+	g_pVGuiPanel->GetPos(panel, x, y);
+
+	bool bIsVisible = g_pVGuiPanel->IsVisible(panel) && bParentVisible;
+	Color color = console::GetColor();
+	if (bParentVisible)
+	{
+		if (bIsVisible)
+			color = ConColor::Green;
+		else
+			color = ConColor::Red;
+	}
+
+	char flags[32];
+	snprintf(flags, sizeof(flags), "%s%s%s",
+		g_pVGuiPanel->IsKeyBoardInputEnabled(panel) ? "K" : "",
+		g_pVGuiPanel->IsMouseInputEnabled(panel) ? "M" : "",
+		g_pVGuiPanel->IsPopup(panel) ? "P" : "");
+
+	ConPrintf(color, "%s%s [%s %d x %d] @ (%d; %d) [%s]\n", indent,
+		g_pVGuiPanel->GetName(panel),
+		g_pVGuiPanel->GetClassName(panel),
+		wide, tall, x, y, flags);
+
+	int count = g_pVGuiPanel->GetChildCount(panel);
+	for (int i = 0; i < count; i++)
+	{
+		DumpPanel(g_pVGuiPanel->GetChild(panel, i), offset + 1, bIsVisible);
 	}
 }
 
-void CClientVGUI::SetParent(VPANEL parent)
+CON_COMMAND(vgui_dumptree, "Dumps VGUI2 panel tree for debugging.")
 {
-	m_hParent = parent;
-
-	m_pViewport = new CGameUIViewport();
-	m_pViewport->SetParent(m_hParent);
+	ConPrintf("Green - visible\nRed - hidden\n\n");
+	DumpPanel(g_pEngineVGui->GetPanel(PANEL_ROOT), 0, true);
 }
+*/

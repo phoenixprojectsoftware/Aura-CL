@@ -27,12 +27,12 @@
 #include "gameui_test_panel.h"
 
 // TODO: ConVar class
-/*
-CON_COMMAND(gameui_opentest, "")
+CON_COMMAND(gameui_opentest, "Opens a test panel for client GameUI")
 {
 		CGameUIViewport::Get()->OpenTestPanel();
 }
-*/
+
+CGameUIViewport* g_pViewport;
 
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
 {
@@ -53,5 +53,10 @@ CGameUIViewport::~CGameUIViewport()
 
 void CGameUIViewport::OpenTestPanel()
 {
+	if (!m_hTestPanel.Get())
+	{
+		m_hTestPanel = new CGameUITestPanel(this);
+	}
+
 	GetDialog(m_hTestPanel)->Activate();
 }
