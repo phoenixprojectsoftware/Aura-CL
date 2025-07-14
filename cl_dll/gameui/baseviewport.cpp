@@ -9,10 +9,19 @@
 *
 ****/
 
+#include <tier1/interface.h>
 #include <IEngineVGui.h>
 #include <tier2/tier2.h>
 #include "../hud.h"
+
 #include "../cl_util.h"
+#undef VectorAdd
+#undef VectorSubtract
+#undef VectorCopy
+#undef DotProduct
+#undef VectorClear
+#undef AngleVectors
+
 #include "vgui2_client_impl.h"
 #include "baseviewport.h"
 #include "gameui_test_panel.h"

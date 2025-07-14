@@ -98,14 +98,14 @@ void CCrowbar::Holster( int skiplocal /* = 0 */ )
 }
 
 
-void FindHullIntersection( const Vector &vecSrc, TraceResult &tr, float *mins, float *maxs, edict_t *pEntity )
+void FindHullIntersection( const Legacy_Vector &vecSrc, TraceResult &tr, float *mins, float *maxs, edict_t *pEntity )
 {
 	int			i, j, k;
 	float		distance;
 	float		*minmaxs[2] = {mins, maxs};
 	TraceResult tmpTrace;
-	Vector		vecHullEnd = tr.vecEndPos;
-	Vector		vecEnd;
+	Legacy_Vector		vecHullEnd = tr.vecEndPos;
+	Legacy_Vector		vecEnd;
 
 	distance = 1e6f;
 
@@ -172,8 +172,8 @@ int CCrowbar::Swing( int fFirst )
 	TraceResult tr;
 
 	UTIL_MakeVectors (m_pPlayer->pev->v_angle);
-	Vector vecSrc	= m_pPlayer->GetGunPosition( );
-	Vector vecEnd	= vecSrc + gpGlobals->v_forward * 32;
+	Legacy_Vector vecSrc	= m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecEnd	= vecSrc + gpGlobals->v_forward * 32;
 
 	UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 

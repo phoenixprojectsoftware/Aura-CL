@@ -49,7 +49,7 @@ public:
 
 	bool ClassifyTarget(CBaseEntity* pTarget);
 
-	static CDisplacerBall* CreateDisplacerBall(const Vector& vecOrigin, const Vector& vecAngles, CBaseEntity* pOwner);
+	static CDisplacerBall* CreateDisplacerBall(const Legacy_Vector& vecOrigin, const Legacy_Vector& vecAngles, CBaseEntity* pOwner);
 
 private:
 	int m_iTrail;

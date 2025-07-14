@@ -334,7 +334,7 @@ CBaseEntity::FireBulletsPlayer
 Only produces random numbers to match the server ones.
 =====================
 */
-Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecDirShooting, Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker, int shared_rand )
+Legacy_Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Legacy_Vector vecSrc, Legacy_Vector vecDirShooting, Legacy_Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker, int shared_rand )
 {
 	float x = 0.0f, y = 0.0f, z;
 
@@ -360,7 +360,7 @@ Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecD
 			
 	}
 
-    return Vector ( x * vecSpread.x, y * vecSpread.y, 0.0 );
+    return Legacy_Vector ( x * vecSpread.x, y * vecSpread.y, 0.0 );
 }
 
 /*
@@ -531,7 +531,7 @@ UTIL_TraceLine
 Don't actually trace, but act like the trace didn't hit anything.
 =====================
 */
-void UTIL_TraceLine( const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr )
+void UTIL_TraceLine( const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr )
 {
 	memset( ptr, 0, sizeof( *ptr ) );
 	ptr->flFraction = 1.0;
@@ -1176,7 +1176,7 @@ void CL_DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state
 
 	if ( g_irunninggausspred == 1 )
 	{
-		Vector forward;
+		Legacy_Vector forward;
 		gEngfuncs.pfnAngleVectors( v_angles, forward, NULL, NULL );
 		to->client.velocity = to->client.velocity - forward * g_flApplyVel * 5; 
 		g_irunninggausspred = false;

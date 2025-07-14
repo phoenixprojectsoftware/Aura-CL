@@ -224,7 +224,7 @@ void CGrapple::PrimaryAttack()
 				{
 					m_pPlayer->pev->velocity = m_pPlayer->pev->velocity.Normalize() * 450.0;
 
-					Vector vecPitch = UTIL_VecToAngles(m_pPlayer->pev->velocity);
+					Legacy_Vector vecPitch = UTIL_VecToAngles(m_pPlayer->pev->velocity);
 
 					if ((vecPitch.x > 55.0 && vecPitch.x < 205.0) || vecPitch.x < -55.0)
 					{
@@ -307,9 +307,9 @@ void CGrapple::PrimaryAttack()
 	{
 		UTIL_MakeVectors(m_pPlayer->pev->v_angle);
 
-		Vector vecSrc = m_pPlayer->GetGunPosition();
+		Legacy_Vector vecSrc = m_pPlayer->GetGunPosition();
 
-		Vector vecEnd = vecSrc + gpGlobals->v_forward * 16.0;
+		Legacy_Vector vecEnd = vecSrc + gpGlobals->v_forward * 16.0;
 
 		TraceResult tr;
 
@@ -418,7 +418,7 @@ void CGrapple::SecondaryAttack()
 	}
 }
 
-void CGrapple::Fire(const Vector& vecOrigin, const Vector& vecDir)
+void CGrapple::Fire(const Legacy_Vector& vecOrigin, const Legacy_Vector& vecDir)
 {
 #ifndef CLIENT_DLL
 	Vector vecSrc = vecOrigin;

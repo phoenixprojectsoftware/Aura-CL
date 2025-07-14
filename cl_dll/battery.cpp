@@ -75,8 +75,8 @@ void CHudBattery::RunShieldPrediction(float time)
 	{
 		if (!m_bShieldEmpty && (time - m_flLastShieldSoundTime > 1.0f)) // prevent spamming the sound
 		{
-			gEngfuncs.pEventAPI->EV_PlaySound(0, vec3_origin, CHAN_AUTO, "player/shield_empty.wav", 0.85, ATTN_NORM, 0, PITCH_NORM);
-			gEngfuncs.pEventAPI->EV_PlaySound(0, vec3_origin, CHAN_AUTO, "player/shield_depleted2.wav", 0.7, ATTN_NORM, 0, PITCH_NORM);
+			gEngfuncs.pEventAPI->EV_PlaySound(0, legacy_vec3_origin, CHAN_AUTO, "player/shield_empty.wav", 0.85, ATTN_NORM, 0, PITCH_NORM);
+			gEngfuncs.pEventAPI->EV_PlaySound(0, legacy_vec3_origin, CHAN_AUTO, "player/shield_depleted2.wav", 0.7, ATTN_NORM, 0, PITCH_NORM);
 			m_bShieldEmpty = true;
 			m_flLastShieldSoundTime = time; // update the last sound time
 		}
@@ -93,7 +93,7 @@ void CHudBattery::RunShieldPrediction(float time)
 		{
 			if (!m_bShieldLow && (time - m_flLastShieldSoundTime > 1.0f))
 			{
-				gEngfuncs.pEventAPI->EV_PlaySound(0, vec3_origin, CHAN_AUTO, "player/shield_low.wav", 0.75, ATTN_NORM, 0, PITCH_NORM);
+				gEngfuncs.pEventAPI->EV_PlaySound(0, legacy_vec3_origin, CHAN_AUTO, "player/shield_low.wav", 0.75, ATTN_NORM, 0, PITCH_NORM);
 				m_bShieldLow = true;
 				m_flLastShieldSoundTime = time; // update the last sound time
 			}

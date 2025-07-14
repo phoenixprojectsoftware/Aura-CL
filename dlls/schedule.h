@@ -223,7 +223,7 @@ struct Schedule_t
 // !!!LATER- this declaration doesn't belong in this file.
 struct WayPoint_t
 {
-	Vector	vecLocation;
+	Legacy_Vector	vecLocation;
 	int		iType;
 };
 

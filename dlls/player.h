@@ -104,7 +104,7 @@ public:
 
 	int					random_seed;    // See that is shared between client & server for shared weapons code
 
-	Vector m_DisplacerReturn;
+	Legacy_Vector m_DisplacerReturn;
 	float m_flDisplacerSndRoomtype;
 
 	int					m_iPlayerSound;// the index of the sound list slot reserved for this player
@@ -190,7 +190,7 @@ public:
 	int	m_rgAmmo[MAX_AMMO_SLOTS];
 	int	m_rgAmmoLast[MAX_AMMO_SLOTS];
 
-	Vector				m_vecAutoAim;
+	Legacy_Vector				m_vecAutoAim;
 	BOOL				m_fOnTarget;
 	int					m_iDeaths;
 	float				m_iRespawnFrames;	// used in PlayerDeathThink() to make sure players can always respawn
@@ -210,12 +210,12 @@ public:
 	virtual void Duck( void );
 	virtual void PreThink( void );
 	virtual void PostThink( void );
-	virtual Vector GetGunPosition( void );
+	virtual Legacy_Vector GetGunPosition( void );
 	virtual int TakeHealth( float flHealth, int bitsDamageType );
-	virtual void TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
+	virtual void TraceAttack( entvars_t *pevAttacker, float flDamage, Legacy_Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	virtual int TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	virtual void	Killed( entvars_t *pevAttacker, int iGib );
-	virtual Vector BodyTarget( const Vector &posSrc ) { return Center( ) + pev->view_ofs * RANDOM_FLOAT( 0.5, 1.1 ); };		// position to shoot at
+	virtual Legacy_Vector BodyTarget( const Legacy_Vector &posSrc ) { return Center( ) + pev->view_ofs * RANDOM_FLOAT( 0.5, 1.1 ); };		// position to shoot at
 	virtual void StartSneaking( void ) { m_tSneaking = gpGlobals->time - 1; }
 	virtual void StopSneaking( void ) { m_tSneaking = gpGlobals->time + 30; }
 	virtual BOOL IsSneaking( void ) { return m_tSneaking <= gpGlobals->time; }
@@ -260,7 +260,7 @@ public:
 	void CheatImpulseCommands( int iImpulse );
 
 	void StartDeathCam( void );
-	void StartObserver( Vector vecPosition, Vector vecViewAngle );
+	void StartObserver( Legacy_Vector vecPosition, Legacy_Vector vecViewAngle );
 
 	void AddPoints( int score, BOOL bAllowNegativeScore );
 	void AddPointsToTeam( int score, BOOL bAllowNegativeScore );
@@ -299,8 +299,8 @@ public:
 	int Illumination( void );
 
 	void ResetAutoaim( void );
-	Vector GetAutoaimVector( float flDelta  );
-	Vector AutoaimDeflection( Vector &vecSrc, float flDist, float flDelta  );
+	Legacy_Vector GetAutoaimVector( float flDelta  );
+	Legacy_Vector AutoaimDeflection( Legacy_Vector &vecSrc, float flDist, float flDelta  );
 
 	void ForceClientDllUpdate( void );  // Forces all client .dll specific data to be resent to client.
 

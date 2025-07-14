@@ -73,8 +73,8 @@ void CSatchelCharge :: Spawn( void )
 	pev->solid = SOLID_BBOX;
 
 	SET_MODEL(ENT(pev), "models/w_satchel.mdl");
-	//UTIL_SetSize(pev, Vector( -16, -16, -4), Vector(16, 16, 32));	// Old box -- size of headcrab monsters/players get blocked by this
-	UTIL_SetSize(pev, Vector( -4, -4, -4), Vector(4, 4, 4));	// Uses point-sized, and can be stepped over
+	//UTIL_SetSize(pev, Legacy_Vector( -16, -16, -4), Legacy_Vector(16, 16, 32));	// Old box -- size of headcrab monsters/players get blocked by this
+	UTIL_SetSize(pev, Legacy_Vector( -4, -4, -4), Legacy_Vector(4, 4, 4));	// Uses point-sized, and can be stepped over
 	UTIL_SetOrigin( pev, pev->origin );
 
 	SetTouch( &CSatchelCharge::SatchelSlide );
@@ -99,12 +99,12 @@ void CSatchelCharge::SatchelSlide( CBaseEntity *pOther )
 	if ( pOther->edict() == pev->owner )
 		return;
 
-	// pev->avelocity = Vector (300, 300, 300);
+	// pev->avelocity = Legacy_Vector (300, 300, 300);
 	pev->gravity = 1;// normal gravity now
 
 	// HACKHACK - On ground isn't always set, so look for ground underneath
 	TraceResult tr;
-	UTIL_TraceLine( pev->origin, pev->origin - Vector(0,0,10), ignore_monsters, edict(), &tr );
+	UTIL_TraceLine( pev->origin, pev->origin - Legacy_Vector(0,0,10), ignore_monsters, edict(), &tr );
 
 	if ( tr.flFraction < 1.0 )
 	{
@@ -386,9 +386,9 @@ void CSatchel::Throw( void )
 {
 	if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] )
 	{
-		Vector vecSrc = m_pPlayer->pev->origin;
+		Legacy_Vector vecSrc = m_pPlayer->pev->origin;
 
-		Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
+		Legacy_Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
 
 #ifndef CLIENT_DLL
 		CBaseEntity *pSatchel = Create( "monster_satchel", vecSrc, Vector( 0, 0, 0), m_pPlayer->edict() );
