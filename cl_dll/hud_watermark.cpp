@@ -32,7 +32,7 @@ int CHudWatermark::Draw(float time)
 		draw_until = gHUD.m_flTime + 15.0f;
 	}
 
-#ifndef _STEAMWORKS
+#ifndef CLOSED_BETA
 	if (gHUD.m_flTime >= draw_until) 
 	{
 		m_iFlags &= ~HUD_ACTIVE;
@@ -46,9 +46,10 @@ int CHudWatermark::Draw(float time)
 	char zamnhlmpVersion[256];
 	char displayString[256];
 
+	const char*  gamedir = gEngfuncs.pfnGetGameDirectory();
 
 		char filepath[260];
-		snprintf(filepath, sizeof(filepath), "zamnhlmp/aura/version.txt");
+		snprintf(filepath, sizeof(filepath), "%s/aura/version.txt", gamedir);
 		FILE* file = fopen(filepath, "r");
 
 		if (file != NULL)
@@ -87,6 +88,7 @@ int CHudWatermark::Draw(float time)
 
 	int charHeight = CharHeight;
 	int charWidth = 8; // Assuming a fixed character width for simplicity
+
 #ifdef _STEAMWORKS
 	int textWidth = strlen(steamIDString) * charWidth;
 #endif
@@ -94,7 +96,7 @@ int CHudWatermark::Draw(float time)
 
 	if (hud_watermark->value == 1)
 	{
-#ifdef _STEAMWORKS
+#if defined(_STEAMWORKS) && (CLOSED_BETA)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight, "STEAM CLOSED BETA", r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 2, displayString, r, g, b); // read from version.txt
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 3, "cl build " __DATE__, r, g, b);
@@ -102,8 +104,6 @@ int CHudWatermark::Draw(float time)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 
 		gEngfuncs.pfnDrawString((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
-
-		// gEngfuncs.pfnDrawString((ScreenWidth - textWidth - ScreenWidth) / 40, ScreenHeight - charHeight * 2, steamIDString, r, g, b);
 #else
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
