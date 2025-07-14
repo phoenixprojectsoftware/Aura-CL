@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 
 # Custom build types support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
 
 # Set custom flags for SteamDebug and SteamRelease
@@ -15,6 +15,11 @@ set(CMAKE_CXX_FLAGS_STEAMRELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_EXE_LINKER_FLAGS_STEAMRELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(CMAKE_SHARED_LINKER_FLAGS_STEAMRELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 
+set(CMAKE_C_FLAGS_STEAMCLOSEDBETA "${CMAKE_C_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_STEAMCLOSEDBETA "${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_EXE_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+set(CMAKE_SHARED_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+
 # Project metadata
 project(Aura-Client)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -27,7 +32,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Detect if we're building a Steam-enabled configuration
 set(IS_STEAM_BUILD OFF)
-if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease")
+if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta")
     set(IS_STEAM_BUILD ON)
 endif()
 
@@ -38,10 +43,14 @@ if(IS_STEAM_BUILD)
 endif()
 
 # Add _STEAMWORKS define for IntelliSense and build config
-foreach(STEAM_CONFIG SteamDebug SteamRelease)
+foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
     string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
     set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
     set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+    if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+		set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+    endif()
 endforeach()
 
 # Add _DEBUG define only for SteamDebug
@@ -109,6 +118,10 @@ else()
     endif()
 endif()
 
+# Enable SSE globally for all targets (needed for mathlib.h intrinsics)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+
 # Source layout
 add_subdirectory(cl_dll)
 add_subdirectory(common)
@@ -159,8 +172,8 @@ else()
         -Wno-unused-function
         -Wno-unused-variable
         -march=pentium-m
-        -mfpmath=387
-        -mno-sse
+		-msse
+		-msse2
         -fno-strict-aliasing
         -fno-exceptions)
 
