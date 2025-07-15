@@ -38,6 +38,7 @@ EXPOSE_SINGLE_INTERFACE(CClientVGUI, IClientVGUI, ICLIENTVGUI_NAME);
 
 void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 {
+	Msg("CClientVGUI::Initialize called with %d factories\n", iNumFactories);
 	ConnectTier1Libraries(pFactories, iNumFactories);
 	ConnectTier2Libraries(pFactories, iNumFactories);
 
@@ -46,9 +47,24 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 		Error("Failed to init VGUI2!! OH NO!!\n");
 		Assert(false);
 	}
+	else
+	{
+		Msg("VGUI2 interfaces initialized successfully.\n");
+	}
 
-	new CClientViewport();
-	new CGameUIViewport();
+	static CClientViewport* s_pClientViewport = nullptr;
+	static CGameUIViewport* s_pGameUIViewport = nullptr;
+
+	if (!s_pClientViewport)
+	{
+		s_pClientViewport = new CClientViewport();
+		Msg("CClientVGUI::Initialize: Created CClientViewport instance.\n");
+	}
+	if (!s_pGameUIViewport)
+	{
+		s_pGameUIViewport = new CGameUIViewport();
+		Msg("CClientVGUI::Initialize: Created CGameUIViewport instance.\n");
+	}
 }
 
 void CClientVGUI::Start()
@@ -58,7 +74,20 @@ void CClientVGUI::Start()
 
 void CClientVGUI::SetParent(vgui2::VPANEL parent)
 {
+	if (!vgui2::ivgui())
+	{
+		Error("CClientVGUI::SetParent called before vgui2::ivgui() was initialized!\n");
+		Assert(false);
+		return;
+	}
 
+	static bool initialized = false;
+	if (!initialized)
+	{
+		initialized = true;
+
+		new CGameUIViewport();
+	}
 }
 
 int CClientVGUI::UseVGUI1()
