@@ -1,6 +1,6 @@
 #pragma once
 
-#include "interface.h"
+#include <tier1/interface.h>
 
 #define GAMEUI_INTERFACE "GameUI007"
 
@@ -14,7 +14,7 @@
 #error
 #endif
 
-class IGameUI : public IBaseInterface1
+class IGameUI : public IBaseInterface
 {
 public:
 	virtual void Unk1() = 0;

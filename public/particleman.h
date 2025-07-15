@@ -1,7 +1,7 @@
 #ifndef PARTICLEMAN_H
 #define PARTICLEMAN_H
 
-#include "interface.h"
+#include <tier1/interface.h>
 #include "pman_triangleffect.h"
 
 #define PARTICLEMAN_INTERFACE "create_particleman"
@@ -18,7 +18,7 @@
 
 class CBaseParticle;
 
-class IParticleMan : public IBaseInterface1
+class IParticleMan : public IBaseInterface
 {
 
 protected:

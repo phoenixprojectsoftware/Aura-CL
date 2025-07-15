@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 // Purpose: Exports a set of functions for the GameUI interface to interact with the game client
 //-----------------------------------------------------------------------------
-class IGameClientExports : public IBaseInterface1
+class IGameClientExports : public IBaseInterface
 {
 public:
 	// returns the name of the server the user is connected to, if any

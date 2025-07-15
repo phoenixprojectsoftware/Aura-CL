@@ -22,7 +22,7 @@
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
-#include "../public/interface.h"
+#include <tier1/interface.h>
 //#include "vgui_schememanager.h"
 
 extern "C"
@@ -44,7 +44,7 @@ extern "C"
 #include "tri.h"
 
 #include "vgui_TeamFortressViewport.h"
-#include "../public/interface.h"
+// #include "../public/interface.h"
 
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
@@ -342,7 +342,7 @@ void CL_LoadParticleMan( void )
 	}
 
 	g_hParticleManModule = Sys_LoadModule( szPDir );
-	CreateInterfaceFn particleManFactory = Sys_GetFactory1( g_hParticleManModule );
+	CreateInterfaceFn particleManFactory = Sys_GetFactory( g_hParticleManModule );
 
 	if ( particleManFactory == NULL )
 	{
@@ -382,7 +382,7 @@ void CL_LoadGameUI(void)
 	}
 
 	g_hGameUIModule = Sys_LoadModule(dir);
-	CreateInterfaceFn gameUIFactory = Sys_GetFactory1(g_hGameUIModule);
+	CreateInterfaceFn gameUIFactory = Sys_GetFactory(g_hGameUIModule);
 
 	if (gameUIFactory == nullptr)
 	{
@@ -393,6 +393,11 @@ void CL_LoadGameUI(void)
 
 	g_pGameUI1 = static_cast<IGameUI*>(gameUIFactory(GAMEUI_INTERFACE, nullptr));
 	// printf("g_pGameUI1: %p\n", g_pGameUI1);
+}
+
+extern "C" CL_DLLEXPORT void* ClientFactory()
+{
+	return (void *)(Sys_GetFactoryThis());
 }
 
 cldll_func_dst_t *g_pcldstAddrs;
@@ -447,6 +452,8 @@ extern "C" void CL_DLLEXPORT F(void *pv)
 	HUD_DirectorMessage,
 	HUD_GetStudioModelInterface,
 	HUD_ChatInputPosition,
+	nullptr,
+	ClientFactory
 	};
 
 	*pcldll_func = cldll_func;
@@ -495,4 +502,4 @@ public:
 	}
 };
 
-V1_EXPOSE_SINGLE_INTERFACE(CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION);
+EXPOSE_SINGLE_INTERFACE(CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION);
