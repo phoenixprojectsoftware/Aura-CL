@@ -44,7 +44,7 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 
 	if (!vgui2::VGui_InitInterfacesList("CLIENT", pFactories, iNumFactories))
 	{
-		Error("Failed to init VGUI2!! OH NO!!\n");
+		Error("Failed to init VGUI2!!\n");
 		Assert(false);
 	}
 	else
