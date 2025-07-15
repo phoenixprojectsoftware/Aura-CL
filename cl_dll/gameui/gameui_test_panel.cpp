@@ -73,6 +73,4 @@ void CGameUITestPanel::Activate()
 	int idx = gEngfuncs.pfnRandomLong(0, std::size(s_Messages) - 1);
 	Q_UTF8ToWString(s_Messages[idx], wbuf, sizeof(wbuf));
 	m_pText->SetText(wbuf);
-
-	Assert("Panel activated\n");
 }
