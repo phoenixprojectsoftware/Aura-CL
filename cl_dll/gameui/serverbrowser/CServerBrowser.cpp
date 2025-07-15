@@ -1,5 +1,10 @@
 // Ported from Source, but modified for GoldSrc
 
+#include <convar.h>
+#include "../../hud.h"
+
+#include <steamworks/steam_api.h>
+
 #include <vgui/IVGui.h>
 #include <vgui/ISurface.h>
 #include "CServerBrowser.h"
@@ -20,8 +25,7 @@ CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 	// GameUI will hide itself and show the game.
 	// We need to show it again and after that activate CServerBrowser
 	// Otherwise it may be hidden by the dev console
-	gHUD.CallOnNextFrame([]()
-		{ CGameUIViewport::Get()->GetServerBrowser()->OpenBrowser(); });
+	CGameUIViewport::Get()->GetServerBrowser()->OpenBrowser();
 	g_pBaseUI->ActivateGameUI();
 }
 
@@ -109,7 +113,7 @@ bool CServerBrowser::CanOpenGameInfoDialog(uint64 ulSteamIDFriend)
 
 	// none yet, create a new dialog
 	FriendGameInfo_t fgi;
-	if (GetSteamAPI()->SteamFriends()->GetFriendGamePlayed(ulSteamIDFriend, &fgi))
+	if (SteamFriends()->GetFriendGamePlayed(ulSteamIDFriend, &fgi))
 	{
 		CDialogGameInfo* pDialogGameInfo = OpenGameInfoDialog(fgi.m_unGameIP, fgi.m_usGamePort, fgi.m_usGamePort);
 		pDialogGameInfo->SetFriend(ulSteamIDFriend);
@@ -205,9 +209,9 @@ void CServerBrowser::OnConnectToGame(KeyValues* pMessageValues)
 	m_CurrentConnection.m_NetAdr.SetQueryPort(queryPort);
 	m_CurrentConnection.m_NetAdr.SetConnectionPort((unsigned short)connectionPort);
 
-	if (m_pHistory && GetSteamAPI()->SteamMatchmaking())
+	if (m_pHistory && SteamMatchmaking())
 	{
-		GetSteamAPI()->SteamMatchmaking()->AddFavoriteGame(0, unIP, connectionPort, queryPort, k_unFavoriteFlagHistory, time(NULL));
+		SteamMatchmaking()->AddFavoriteGame(0, unIP, connectionPort, queryPort, k_unFavoriteFlagHistory, time(NULL));
 		m_pHistory->SetRefreshOnReload();
 	}
 
@@ -251,7 +255,7 @@ void CServerBrowser::ShowServerBrowserPage(KeyValues* pMessageValues)
 	int iPage = pMessageValues->GetInt("page");
 	if (iPage < 0 || iPage >= m_pTabPanel->GetNumPages())
 	{
-		ConPrintf("Tried to activate invalid server browser tab %d\n", iPage);
+		Msg("Tried to activate invalid server browser tab %d\n", iPage);
 		return;
 	}
 	// switch to that page
@@ -441,9 +445,9 @@ void CServerBrowser::UpdateStatusText(wchar_t* unicode)
 
 void CServerBrowser::AddServerToFavorites(gameserveritem_t& server)
 {
-	if (GetSteamAPI()->SteamMatchmaking())
+	if (SteamMatchmaking())
 	{
-		GetSteamAPI()->SteamMatchmaking()->AddFavoriteGame(
+		SteamMatchmaking()->AddFavoriteGame(
 			server.m_nAppID,
 			server.m_NetAdr.GetIP(),
 			server.m_NetAdr.GetConnectionPort(),

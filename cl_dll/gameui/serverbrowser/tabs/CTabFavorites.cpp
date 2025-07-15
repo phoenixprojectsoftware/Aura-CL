@@ -4,12 +4,13 @@
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
 #include "tier1/KeyValues.h"
-#include "gameui/serverbrowser/ServerListSorter.h"
-#include "gameui/serverbrowser/CServerContextMenu.h"
-#include "gameui/serverbrowser/CServerBrowser.h"
-#include "gameui/serverbrowser/dialogs/CDialogAddServer.h"
-#include "gameui/gameui_viewport.h"
+#include "../ServerListSorter.h"
+#include "../CServerContextMenu.h"
+#include "../CServerBrowser.h"
+#include "../dialogs/CDialogAddServer.h"
+#include "../../gameui_viewport.h"
 #include "CTabFavorites.h"
+#include <time.h>
 
 
 //-----------------------------------------------------------------------------
@@ -33,7 +34,7 @@ CTabFavorites::~CTabFavorites()
 //-----------------------------------------------------------------------------
 void CTabFavorites::LoadFavoritesList()
 {
-	if (GetSteamAPI()->SteamMatchmaking() && GetSteamAPI()->SteamMatchmaking()->GetFavoriteGameCount() == 0)
+	if (SteamMatchmaking() && SteamMatchmaking()->GetFavoriteGameCount() == 0)
 	{
 		// set empty message
 		m_pServerList->SetEmptyListText("#ServerBrowser_NoFavoriteServers");
@@ -64,7 +65,7 @@ bool CTabFavorites::SupportsItem(InterfaceItem_e item)
 		return true;
 
 	case ADDCURRENTSERVER:
-		return GetSteamAPI() ? true : false;
+		return SteamAPI_IsSteamRunning() ? true : false; // the fuck
 
 	case GETNEWLIST:
 	default:
@@ -79,7 +80,7 @@ bool CTabFavorites::SupportsItem(InterfaceItem_e item)
 void CTabFavorites::RefreshComplete(HServerListRequest hReq, EMatchMakingServerResponse response)
 {
 	SetRefreshing(false);
-	if (GetSteamAPI()->SteamMatchmaking() && GetSteamAPI()->SteamMatchmaking()->GetFavoriteGameCount() == 0)
+	if (SteamMatchmaking() && SteamMatchmaking()->GetFavoriteGameCount() == 0)
 	{
 		// set empty message
 		m_pServerList->SetEmptyListText("#ServerBrowser_NoFavoriteServers");
@@ -122,7 +123,7 @@ void CTabFavorites::OnOpenContextMenu(int itemID)
 //-----------------------------------------------------------------------------
 void CTabFavorites::OnRemoveFromFavorites()
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers() || !GetSteamAPI()->SteamMatchmaking())
+	if (!SteamMatchmakingServers() || !SteamMatchmaking())
 		return;
 
 	// iterate the selection
@@ -131,11 +132,11 @@ void CTabFavorites::OnRemoveFromFavorites()
 		int itemID = m_pServerList->GetSelectedItem(iGame);
 		int serverID = m_pServerList->GetItemData(itemID)->userData;
 
-		gameserveritem_t* pServer = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
+		gameserveritem_t* pServer = SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
 
 		if (pServer)
 		{
-			GetSteamAPI()->SteamMatchmaking()->RemoveFavoriteGame(pServer->m_nAppID, pServer->m_NetAdr.GetIP(), pServer->m_NetAdr.GetConnectionPort(), pServer->m_NetAdr.GetQueryPort(), k_unFavoriteFlagFavorite);
+			SteamMatchmaking()->RemoveFavoriteGame(pServer->m_nAppID, pServer->m_NetAdr.GetIP(), pServer->m_NetAdr.GetConnectionPort(), pServer->m_NetAdr.GetQueryPort(), k_unFavoriteFlagFavorite);
 		}
 	}
 
@@ -161,9 +162,9 @@ void CTabFavorites::OnAddServerByName()
 void CTabFavorites::OnAddCurrentServer()
 {
 	gameserveritem_t* pConnected = CGameUIViewport::Get()->GetServerBrowser()->GetCurrentConnectedServer();
-	if (pConnected && GetSteamAPI()->SteamMatchmaking())
+	if (pConnected && SteamMatchmaking())
 	{
-		GetSteamAPI()->SteamMatchmaking()->AddFavoriteGame(pConnected->m_nAppID, pConnected->m_NetAdr.GetIP(), pConnected->m_NetAdr.GetConnectionPort(), pConnected->m_NetAdr.GetQueryPort(), k_unFavoriteFlagFavorite, time(NULL));
+		SteamMatchmaking()->AddFavoriteGame(pConnected->m_nAppID, pConnected->m_NetAdr.GetIP(), pConnected->m_NetAdr.GetConnectionPort(), pConnected->m_NetAdr.GetQueryPort(), k_unFavoriteFlagFavorite, time(NULL));
 		m_bRefreshOnListReload = true;
 	}
 }
