@@ -41,7 +41,7 @@ static const char* s_Messages[] = {
 
 CGameUITestPanel::CGameUITestPanel(vgui2::Panel* pParent) : BaseClass(pParent, "GameUITestPanel")
 {
-	SetTitle("VGUI2 TEST PANELLLLL", false);
+	SetTitle("VGUI2 TEST PANEL", false);
 	SetSizeable(true);
 	SetSize(460, 230);
 	SetDeleteSelfOnClose(true);
@@ -73,4 +73,6 @@ void CGameUITestPanel::Activate()
 	int idx = gEngfuncs.pfnRandomLong(0, std::size(s_Messages) - 1);
 	Q_UTF8ToWString(s_Messages[idx], wbuf, sizeof(wbuf));
 	m_pText->SetText(wbuf);
+
+	Assert("Panel activated\n");
 }

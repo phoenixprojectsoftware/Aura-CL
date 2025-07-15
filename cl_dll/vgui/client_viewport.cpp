@@ -17,9 +17,10 @@ CClientViewport::CClientViewport() : BaseClass(nullptr, "CClientViewport")
 
 	SetSize(10, 10);
 	SetKeyBoardInputEnabled(false);
+	SetMouseInputEnabled(false);
 
 	// Load scheme
-	ReloadScheme(VGUI2_ROOT_DIR "resource/ClientScheme.res");
+	ReloadScheme("ui/resource/ClientScheme.res");
 
 	HideClientUI();
 }
