@@ -50,6 +50,12 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 		Msg("VGUI2 interfaces initialized successfully.\n");
 	}
 
+	// HL25 == 640x480->1280x720
+	vgui2::VGui_SetProportionalBaseCallback(&GetProportionalBase);
+
+	// Add language files
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/bugfixedhl_%language%.txt");
+
 	new CClientViewport();
 	new CGameUIViewport();
 }
@@ -65,7 +71,7 @@ void CClientVGUI::SetParent(vgui2::VPANEL parent)
 
 int CClientVGUI::UseVGUI1()
 {
-	return true;
+	return false;
 }
 
 void CClientVGUI::HideScoreBoard()
@@ -92,4 +98,11 @@ void CClientVGUI::Shutdown()
 {
 	// Warning! Only called for CS & CZ
 	// Do not use!
+}
+
+void CClientVGUI::GetProportionalBase(int& wide, int& tall)
+{
+	// Pre-HL25
+	wide = 640;
+	tall = 480;
 }
