@@ -3,6 +3,7 @@
 #include <vgui_controls/EditablePanel.h>
 
 class CGameUITestPanel;
+class CServerBrowser;
 
 class CGameUIViewport : public vgui2::EditablePanel
 {
@@ -17,10 +18,18 @@ public:
 	CGameUIViewport();
 	~CGameUIViewport();
 
+	// prevents esc from showing gameui
+	// in reality hides gameui whenever it is enabled
+	void PreventEscapeToShow(bool state);
+
 	void OpenTestPanel();
+	CServerBrowser* GetServerBrowser();
 
 private:
+	bool m_bPreventEscape = false;
+	int m_iDelayedPreventEscapeFrame = 0;
 	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
+	vgui2::DHANDLE<CServerBrowser> m_hServerBrowser;
 
 	template <typename T>
 	inline T* GetDialog(vgui2::DHANDLE<T>& handle)

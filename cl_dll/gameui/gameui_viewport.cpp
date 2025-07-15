@@ -32,7 +32,31 @@ CGameUIViewport::~CGameUIViewport()
 	m_sInstance = this;
 }
 
+void CGameUIViewport::PreventEscapeToShow(bool state)
+{
+	if (state)
+	{
+		m_bPreventEscape = true;
+		m_iDelayedPreventEscapeFrame = 0;
+	}
+	else
+	{
+		// PreventEscapeToShow(false) may be called the same frame that esc was pressed
+		// and CGameUIViewport::OnThink wont hide gameui
+		// so the change is delayed by 1 frame
+		m_bPreventEscape = false;
+		m_iDelayedPreventEscapeFrame = 1;
+	}
+}
+
 void CGameUIViewport::OpenTestPanel()
 {
 	GetDialog(m_hTestPanel)->Activate();
 }
+
+CServerBrowser* CGameUIViewport::GetServerBrowser()
+{
+	return GetDialog(m_hServerBrowser);
+}
+
+// TODO: VAC BANNED FUNC
