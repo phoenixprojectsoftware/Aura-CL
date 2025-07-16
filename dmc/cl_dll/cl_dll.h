@@ -40,4 +40,4 @@ typedef int (*pfnUserMsgHook)(const char *pszName, int iSize, void *pbuf);
 #include "../engine/cdll_int.h"
 #include "../dlls/cdll_dll.h"
 
-extern cl_enginefunc_t gEngfuncs;
+extern cldll_enginefunc_t gEngfuncs;

@@ -30,7 +30,7 @@ extern "C"
 extern int g_iAlive;
 
 extern int g_weaponselect;
-extern cl_enginefunc_t gEngfuncs;
+extern cldll_enginefunc_t gEngfuncs;
 
 // Defined in pm_math.c
 extern "C" float anglemod( float a );

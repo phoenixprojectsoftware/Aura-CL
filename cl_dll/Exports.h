@@ -11,7 +11,7 @@ extern "C"
 	void CL_DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s *to, struct usercmd_s *cmd, int runfuncs, double time, unsigned int random_seed );
 
 	// From cdll_int
-	int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion );
+	int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion );
 	int CL_DLLEXPORT HUD_VidInit( void );
 	void CL_DLLEXPORT HUD_Init( void );
 	int CL_DLLEXPORT HUD_Redraw( float flTime, int intermission );

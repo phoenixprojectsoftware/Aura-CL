@@ -35,7 +35,7 @@
 // use IN_SetVisibleMouse to set:
 int	iVisibleMouse = 0;
 
-extern cl_enginefunc_t gEngfuncs;
+extern cldll_enginefunc_t gEngfuncs;
 
 extern int iMouseInUse;
 

@@ -9,7 +9,9 @@
 #endif
 
 // Our include file
+#include "../../../../common/winsani_in.h"
 #include "winsock.h"
+#include "../../../../common/winsani_out.h"
 
 // Undefine these
 #ifdef PropertySheet

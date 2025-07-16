@@ -491,7 +491,7 @@ typedef struct cl_enginefuncs_s
 	pfnEngSrc_pfnGetAppID_t					pfnGetAppID;
 	pfnEngSrc_pfnGetAliases_t				pfnGetAliasList;
 	pfnEngSrc_pfnVguiWrap2_GetMouseDelta_t pfnVguiWrap2_GetMouseDelta;
-} cl_enginefunc_t;
+} cldll_enginefunc_t;
 
 // Function type declarations for engine destination functions
 typedef void	(*pfnEngDst_pfnSPR_Load_t )				( const char ** );
@@ -785,7 +785,7 @@ typedef struct modchelpers_s
 // ********************************************************
 typedef struct engdata_s
 {
-	cl_enginefunc_t	*pcl_enginefuncs;		// functions exported by the engine
+	cldll_enginefunc_t	*pcl_enginefuncs;		// functions exported by the engine
 	cl_enginefunc_dst_t *pg_engdstAddrs;	// destination handlers for engine exports
 	cldll_func_t *pcl_funcs;				// client exports
 	cldll_func_dst_t *pg_cldstAddrs;		// client export destination handlers

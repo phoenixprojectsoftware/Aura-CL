@@ -164,7 +164,7 @@ extern void ClientDLL_ChatInputPosition( int *x, int *y );
 #include "APIProxy.h"
 
 extern cldll_func_t	cl_funcs;
-extern cl_enginefunc_t cl_engsrcProxies;
+extern cldll_enginefunc_t cl_engsrcProxies;
 extern cl_enginefunc_dst_t g_engdstAddrs;
 
 // Module exports

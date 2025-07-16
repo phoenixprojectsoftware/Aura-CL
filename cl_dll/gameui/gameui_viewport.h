@@ -7,7 +7,6 @@
 #include <steamworks/steam_api.h>
 #endif
 
-int iSB_AppID = 3416640;
 #ifdef _HALO
 #define AURA_APPID 70
 #else

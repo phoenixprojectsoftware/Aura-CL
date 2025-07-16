@@ -26,7 +26,7 @@ protected:
 
 public:
 
-	virtual void SetUp( cl_enginefunc_t *pEnginefuncs ) = 0;
+	virtual void SetUp( cldll_enginefunc_t *pEnginefuncs ) = 0;
 	virtual void Update ( void ) = 0;
 	virtual void SetVariables ( float flGravity, Legacy_Vector vViewAngles ) = 0;
 	virtual void ResetParticles ( void ) = 0;

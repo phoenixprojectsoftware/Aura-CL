@@ -46,7 +46,7 @@ extern "C"
 #include "vgui_TeamFortressViewport.h"
 // #include "../public/interface.h"
 
-cl_enginefunc_t gEngfuncs;
+cldll_enginefunc_t gEngfuncs;
 CHud gHUD;
 TeamFortressViewport *gViewPort = NULL;
 
@@ -151,7 +151,7 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
-int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
+int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
 
@@ -160,7 +160,7 @@ int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	if (iVersion != CLDLL_INTERFACE_VERSION)
 		return 0;
 
-	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t));
+	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cldll_enginefunc_t));
 
 	update_checker::check_for_updates();
 	discord_integration::initialize();
