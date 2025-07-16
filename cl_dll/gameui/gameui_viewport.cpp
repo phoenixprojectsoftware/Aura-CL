@@ -22,9 +22,6 @@ CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
 	SetScheme(vgui2::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "resource/ClientSourceScheme.res", "ClientSourceScheme"));
 	SetProportional(false);
 	SetSize(0, 0);
-
-	CGameUITestPanel* pTestPanel = new CGameUITestPanel(this);
-	m_hTestPanel = pTestPanel;
 }
 
 CGameUIViewport::~CGameUIViewport()
