@@ -92,12 +92,12 @@ public:
 		_image[1]->setPos(x + wide, y + (stall * 0.9) - tall);
 	}
 
-	void setColor(Color color)
+	void setColor(vgui::Color color)
 	{
 		_image[0]->setColor(color);
 	}
 
-	void setColor2(Color color)
+	void setColor2(vgui::Color color)
 	{
 		_image[1]->setColor(color);
 	}
@@ -116,7 +116,7 @@ public:
 	CLabelHeader() : Label("")
 	{
 		_dualImage = new CTextImage2();
-		_dualImage->setColor2(Color(255, 170, 0, 0));
+		_dualImage->setColor2(vgui::Color(255, 170, 0, 0));
 		_row = -2;
 		_useFgColorAsImageColor = true;
 		_offset[0] = 0;
@@ -189,7 +189,7 @@ public:
 	void setFgColor(int r,int g,int b,int a)
 	{
 		Label::setFgColor(r,g,b,a);
-		Color color(r,g,b,a);
+		vgui::Color color(r,g,b,a);
 		_dualImage->setColor(color);
 		_dualImage->setColor2(color);
 		repaint();

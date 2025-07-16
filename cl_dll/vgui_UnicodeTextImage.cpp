@@ -15,7 +15,7 @@
 #endif
 
 #include <VGUI_Font.h>
-#include "../public/interface.h"
+#include <tier1/interface.h>
 #include "vgui_UnicodeTextImage.h"
 #include "hud.h"
 #include "cl_util.h"
@@ -39,7 +39,7 @@ class VGuiVertex;
 namespace vgui2
 {
 
-class ISurface : public IBaseInterface1
+class ISurface : public IBaseInterface
 {
 public:
 	// call to Shutdown surface; surface can no longer be used after this is called
@@ -238,7 +238,7 @@ public:
 
 #define VGUI_SURFACE_INTERFACE_VERSION "VGUI_Surface026"
 
-class ILocalize : public IBaseInterface1
+class ILocalize : public IBaseInterface
 {
 public:
 	virtual void Something1() = 0;
@@ -330,7 +330,7 @@ void UnicodeTextImage::initInterfaces()
 	{
 		using IfaceType = typename std::remove_reference<decltype(pIface)>::type;
 
-		CreateInterfaceFn fnFactory = Sys_GetFactory1(pModule);
+		CreateInterfaceFn fnFactory = Sys_GetFactory(pModule);
 		if (!fnFactory)
 		{
 			gEngfuncs.Con_Printf("UnicodeTextImage: Error: %s doesn't export factory.\n", moduleName);

@@ -1103,7 +1103,7 @@ void ShutdownInput (void)
 	KB_Shutdown();
 }
 
-#include "interface.h"
+#include <tier1/interface.h>
 void CL_UnloadParticleMan( void );
 void CL_UnloadGameUI();
 

@@ -33,7 +33,6 @@ extern "C"
 #include <string.h>
 #include "hud_servers.h"
 #include "vgui_int.h"
-#include "interface.h"
 
 #ifdef _WIN32
 #include "winsani_in.h"
@@ -44,7 +43,7 @@ extern "C"
 #include "tri.h"
 
 #include "vgui_TeamFortressViewport.h"
-// #include "../public/interface.h"
+#include "console.h"
 
 cldll_enginefunc_t gEngfuncs;
 CHud gHUD;
@@ -207,7 +206,7 @@ the hud variables.
 
 void CL_DLLEXPORT HUD_Init( void )
 {
-//	RecClHudInit();
+	console::HudInit();
 	InitInput();
 	gHUD.Init();
 	Scheme_Init();
@@ -283,7 +282,6 @@ Called by engine every frame that client .dll is loaded
 void CL_DLLEXPORT HUD_Frame( double time )
 {
 //	RecClHudFrame(time);
-
 	ServersThink( time );
 
 	GetClientVoiceMgr()->Frame(time);

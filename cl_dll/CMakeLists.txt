@@ -21,6 +21,8 @@ add_sources(
 	color_tags.h
 	com_weapons.cpp
 	com_weapons.h
+	console.cpp
+	console.h
 	death.cpp
 	demo.cpp
 	demo.h
