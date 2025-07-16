@@ -1,5 +1,6 @@
 // Ported from Source, but modified for GoldSrc
 
+#include <tier1/interface.h>
 #include <vgui/IInputInternal.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>

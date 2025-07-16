@@ -6,6 +6,7 @@
 #include <vgui_controls/PropertyPage.h>
 #include <steamworks/steam_api.h>
 #include "tier1/utlmap.h"
+#include <string>
 
 class CBaseTab;
 class CServerListPanel : public vgui2::ListPanel

@@ -1,5 +1,6 @@
 // Ported from Source, but modified for GoldSrc
 
+#include <tier1/interface.h>
 #include <vgui/IVGui.h>
 #include <vgui/ISystem.h>
 #include "CDialogGameInfo.h"
@@ -508,7 +509,7 @@ void CDialogGameInfo::ApplyConnectCommand(const gameserveritem_t& server)
 #endif
 	// send engine command to change servers
 	Q_snprintf(command, Q_ARRAYSIZE(command), "\nwait 25\nconnect %s\n", server.m_NetAdr.GetConnectionAddressString());
-	EngineClientCmd(command);
+	// EngineClientCmd(command);
 	Close();
 	CGameUIViewport::Get()->GetServerBrowser()->Close();
 }

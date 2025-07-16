@@ -12,6 +12,7 @@
 #include "CBaseTab.h"
 #include "CServerBrowser.h"
 #include "../gameui_viewport.h"
+#include <time.h>
 
 
 CServerListPanel::CServerListPanel(CBaseTab* pOuter, const char* pName) :
@@ -47,7 +48,7 @@ CBaseTab::CBaseTab(vgui2::Panel* parent, const char* name, EPageType eType, cons
 	m_szMapFilter[0] = 0;
 	m_iPingFilter = 0;
 	// Default to Zombie Panic! AppID if this just shits itself.
-	m_uLimitToAppID = SteamUtils() ? SteamUtils()->GetAppID() : iSB_AppID; // no magic number for AppID please. thanks.
+	m_uLimitToAppID = SteamUtils() ? SteamUtils()->GetAppID() : AURA_APPID; // no magic number for AppID please. thanks.
 	m_iServerRefreshCount = 0;
 	m_bFilterNoFullServers = false;
 	m_bFilterNoEmptyServers = false;

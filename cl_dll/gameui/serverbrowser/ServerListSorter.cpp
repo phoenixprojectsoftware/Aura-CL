@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 // Purpose: List password column sort function
 //-----------------------------------------------------------------------------
-int __cdecl PasswordCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl PasswordCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -33,7 +33,7 @@ int __cdecl PasswordCompare(ListPanel* pPanel, const ListPanelItem& p1, const Li
 //-----------------------------------------------------------------------------
 // Purpose: list column sort function
 //-----------------------------------------------------------------------------
-int __cdecl BotsCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl BotsCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -56,7 +56,7 @@ int __cdecl BotsCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPa
 //-----------------------------------------------------------------------------
 // Purpose: list column sort function
 //-----------------------------------------------------------------------------
-int __cdecl SecureCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl SecureCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -79,7 +79,7 @@ int __cdecl SecureCompare(ListPanel* pPanel, const ListPanelItem& p1, const List
 //-----------------------------------------------------------------------------
 // Purpose: list column sort function
 //-----------------------------------------------------------------------------
-int __cdecl IPAddressCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl IPAddressCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -102,7 +102,7 @@ int __cdecl IPAddressCompare(ListPanel* pPanel, const ListPanelItem& p1, const L
 //-----------------------------------------------------------------------------
 // Purpose: Ping comparison function
 //-----------------------------------------------------------------------------
-int __cdecl PingCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl PingCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -128,7 +128,7 @@ int __cdecl PingCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPa
 //-----------------------------------------------------------------------------
 // Purpose: Map comparison function
 //-----------------------------------------------------------------------------
-int __cdecl MapCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl MapCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -146,7 +146,7 @@ int __cdecl MapCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPan
 //-----------------------------------------------------------------------------
 // Purpose: Game dir comparison function
 //-----------------------------------------------------------------------------
-int __cdecl GameCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl GameCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -167,7 +167,7 @@ int __cdecl GameCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPa
 //-----------------------------------------------------------------------------
 // Purpose: Server name comparison function
 //-----------------------------------------------------------------------------
-int __cdecl ServerNameCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl ServerNameCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -185,7 +185,7 @@ int __cdecl ServerNameCompare(ListPanel* pPanel, const ListPanelItem& p1, const 
 //-----------------------------------------------------------------------------
 // Purpose: Player number comparison function
 //-----------------------------------------------------------------------------
-int __cdecl PlayersCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl PlayersCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -220,7 +220,7 @@ int __cdecl PlayersCompare(ListPanel* pPanel, const ListPanelItem& p1, const Lis
 //-----------------------------------------------------------------------------
 // Purpose: Player number comparison function
 //-----------------------------------------------------------------------------
-int __cdecl LastPlayedCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl LastPlayedCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);
@@ -244,7 +244,7 @@ int __cdecl LastPlayedCompare(ListPanel* pPanel, const ListPanelItem& p1, const 
 //-----------------------------------------------------------------------------
 // Purpose: Tag comparison function
 //-----------------------------------------------------------------------------
-int __cdecl TagsCompare(ListPanel* pPanel, const ListPanelItem& p1, const ListPanelItem& p2)
+int __cdecl TagsCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, const vgui2::ListPanelItem& p2)
 {
 	gameserveritem_t* s1 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p1.userData);
 	gameserveritem_t* s2 = CGameUIViewport::Get()->GetServerBrowser()->GetServer(p2.userData);

@@ -1,8 +1,18 @@
 #ifndef GAMEUI_VIEWPORT_H
 #define GAMEUI_VIEWPORT_H
 #include <vgui_controls/EditablePanel.h>
+#include <vgui_controls/MessageBox.h>
+
+#ifdef _STEAMWORKS
+#include <steamworks/steam_api.h>
+#endif
 
 int iSB_AppID = 3416640;
+#ifdef _HALO
+#define AURA_APPID 70
+#else
+#define AURA_APPID 3416640
+#endif
 
 class CGameUITestPanel;
 class CServerBrowser;

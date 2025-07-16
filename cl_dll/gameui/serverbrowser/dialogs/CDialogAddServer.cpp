@@ -29,6 +29,7 @@
 #include <netdb.h>		// gethostbyname()
 #endif
 
+#include <tier1/interface.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IInputInternal.h>
 #include <vgui_controls/ComboBox.h>
@@ -61,11 +62,11 @@ CDialogAddServer::CDialogAddServer(vgui2::Panel* parent, CBaseTab* gameList) : F
 	m_pDiscoveredGames = new vgui2::ListPanel(this, "Servers");
 
 	// Add the column headers
-	m_pDiscoveredGames->AddColumnHeader(0, "Password", "#ServerBrowser_Password", 16, ListPanel::COLUMN_FIXEDSIZE | ListPanel::COLUMN_IMAGE);
-	m_pDiscoveredGames->AddColumnHeader(1, "Bots", "#ServerBrowser_Bots", 16, ListPanel::COLUMN_FIXEDSIZE | ListPanel::COLUMN_IMAGE | ListPanel::COLUMN_HIDDEN);
-	m_pDiscoveredGames->AddColumnHeader(2, "Secure", "#ServerBrowser_Secure", 16, ListPanel::COLUMN_FIXEDSIZE | ListPanel::COLUMN_IMAGE);
-	m_pDiscoveredGames->AddColumnHeader(3, "Name", "#ServerBrowser_Servers", 20, ListPanel::COLUMN_RESIZEWITHWINDOW | ListPanel::COLUMN_UNHIDABLE);
-	m_pDiscoveredGames->AddColumnHeader(4, "IPAddr", "#ServerBrowser_IPAddress", 60, ListPanel::COLUMN_HIDDEN);
+	m_pDiscoveredGames->AddColumnHeader(0, "Password", "#ServerBrowser_Password", 16, vgui2::ListPanel::COLUMN_FIXEDSIZE | vgui2::ListPanel::COLUMN_IMAGE);
+	m_pDiscoveredGames->AddColumnHeader(1, "Bots", "#ServerBrowser_Bots", 16, vgui2::ListPanel::COLUMN_FIXEDSIZE | vgui2::ListPanel::COLUMN_IMAGE | vgui2::ListPanel::COLUMN_HIDDEN);
+	m_pDiscoveredGames->AddColumnHeader(2, "Secure", "#ServerBrowser_Secure", 16, vgui2::ListPanel::COLUMN_FIXEDSIZE | vgui2::ListPanel::COLUMN_IMAGE);
+	m_pDiscoveredGames->AddColumnHeader(3, "Name", "#ServerBrowser_Servers", 20, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW | vgui2::ListPanel::COLUMN_UNHIDABLE);
+	m_pDiscoveredGames->AddColumnHeader(4, "IPAddr", "#ServerBrowser_IPAddress", 60, vgui2::ListPanel::COLUMN_HIDDEN);
 	m_pDiscoveredGames->AddColumnHeader(5, "GameDesc", "#ServerBrowser_Game", 150);
 	m_pDiscoveredGames->AddColumnHeader(6, "Players", "#ServerBrowser_Players", 60);
 	m_pDiscoveredGames->AddColumnHeader(7, "Map", "#ServerBrowser_Map", 80);
