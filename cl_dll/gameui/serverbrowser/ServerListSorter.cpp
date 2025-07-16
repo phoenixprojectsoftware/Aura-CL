@@ -3,7 +3,7 @@
 #include <vgui_controls/ListPanel.h>
 #include "CServerBrowser.h"
 #include "ServerListSorter.h"
-#include "gameui/gameui_viewport.h"
+#include "../gameui_viewport.h"
 
 
 //-----------------------------------------------------------------------------

@@ -2,6 +2,8 @@
 #define GAMEUI_VIEWPORT_H
 #include <vgui_controls/EditablePanel.h>
 
+int iSB_AppID = 3416640;
+
 class CGameUITestPanel;
 class CServerBrowser;
 
@@ -24,6 +26,8 @@ public:
 
 	void OpenTestPanel();
 	CServerBrowser* GetServerBrowser();
+
+	bool IsVACBanned() const;
 
 private:
 	bool m_bPreventEscape = false;

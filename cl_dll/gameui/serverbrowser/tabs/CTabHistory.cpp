@@ -4,10 +4,10 @@
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
 #include "tier1/KeyValues.h"
-#include "gameui/serverbrowser/ServerListSorter.h"
-#include "gameui/serverbrowser/CServerContextMenu.h"
-#include "gameui/serverbrowser/CServerBrowser.h"
-#include "gameui/gameui_viewport.h"
+#include "../ServerListSorter.h"
+#include "../CServerContextMenu.h"
+#include "../CServerBrowser.h"
+#include "../../gameui_viewport.h"
 #include "CTabHistory.h"
 
 //-----------------------------------------------------------------------------
@@ -21,15 +21,14 @@ CTabHistory::CTabHistory(vgui2::Panel* parent) :
 	m_pServerList->SetSortFunc(9, LastPlayedCompare);
 	m_pServerList->SetSortColumn(9);
 
-	if (!GetSteamAPI())
-	{
+#ifndef _STEAMWORKS
 		m_pServerList->SetEmptyListText("#ServerBrowser_OfflineMode");
 		m_pConnect->SetEnabled(false);
 		m_pRefreshAll->SetEnabled(false);
 		m_pRefreshQuick->SetEnabled(false);
 		m_pAddServer->SetEnabled(false);
 		m_pFilter->SetEnabled(false);
-	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -44,11 +43,10 @@ CTabHistory::~CTabHistory()
 //-----------------------------------------------------------------------------
 void CTabHistory::LoadHistoryList()
 {
-	if (GetSteamAPI())
-	{
+#ifdef _STEAMWORKS
 		// set empty message
 		m_pServerList->SetEmptyListText("#ServerBrowser_NoServersPlayed");
-	}
+#endif
 
 	if (m_bRefreshOnListReload)
 	{
@@ -114,7 +112,7 @@ void CTabHistory::OnOpenContextMenu(int itemID)
 //-----------------------------------------------------------------------------
 void CTabHistory::OnRemoveFromHistory()
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers() || !GetSteamAPI()->SteamMatchmaking())
+	if (!SteamMatchmakingServers() || !SteamMatchmaking())
 		return;
 
 	// iterate the selection
@@ -123,9 +121,9 @@ void CTabHistory::OnRemoveFromHistory()
 		int itemID = m_pServerList->GetSelectedItem(i);
 		int serverID = m_pServerList->GetItemData(itemID)->userData;
 
-		gameserveritem_t* pServer = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
+		gameserveritem_t* pServer = SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
 		if (pServer)
-			GetSteamAPI()->SteamMatchmaking()->RemoveFavoriteGame(pServer->m_nAppID, pServer->m_NetAdr.GetIP(), pServer->m_NetAdr.GetConnectionPort(), pServer->m_NetAdr.GetQueryPort(), k_unFavoriteFlagHistory);
+			SteamMatchmaking()->RemoveFavoriteGame(pServer->m_nAppID, pServer->m_NetAdr.GetIP(), pServer->m_NetAdr.GetConnectionPort(), pServer->m_NetAdr.GetQueryPort(), k_unFavoriteFlagHistory);
 	}
 
 	UpdateStatus();

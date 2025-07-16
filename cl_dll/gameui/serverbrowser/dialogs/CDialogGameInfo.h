@@ -6,7 +6,7 @@
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/ListPanel.h>
 #include <vgui_controls/RadioButton.h>
-#include "steam/steam_api.h"
+#include <steamworks/steam_api.h>
 #include "tier1/netadr.h"
 
 struct challenge_s

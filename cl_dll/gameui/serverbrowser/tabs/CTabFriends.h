@@ -3,7 +3,7 @@
 #ifndef SERVER_BROWSER_TAB_FRIENDS_H
 #define SERVER_BROWSER_TAB_FRIENDS_H
 
-#include "gameui/serverbrowser/CBaseTab.h"
+#include "../CBaseTab.h"
 
 class CTabFriends : public CBaseTab
 {

@@ -11,7 +11,7 @@
 #include "ServerListSorter.h"
 #include "CBaseTab.h"
 #include "CServerBrowser.h"
-#include "gameui/gameui_viewport.h"
+#include "../gameui_viewport.h"
 
 
 CServerListPanel::CServerListPanel(CBaseTab* pOuter, const char* pName) :
@@ -47,7 +47,7 @@ CBaseTab::CBaseTab(vgui2::Panel* parent, const char* name, EPageType eType, cons
 	m_szMapFilter[0] = 0;
 	m_iPingFilter = 0;
 	// Default to Zombie Panic! AppID if this just shits itself.
-	m_uLimitToAppID = GetSteamAPI()->SteamUtils() ? GetSteamAPI()->SteamUtils()->GetAppID() : 3825360;
+	m_uLimitToAppID = SteamUtils() ? SteamUtils()->GetAppID() : iSB_AppID; // no magic number for AppID please. thanks.
 	m_iServerRefreshCount = 0;
 	m_bFilterNoFullServers = false;
 	m_bFilterNoEmptyServers = false;
@@ -130,7 +130,7 @@ CBaseTab::~CBaseTab()
 {
 	if (m_hRequest)
 	{
-		GetSteamAPI()->SteamMatchmakingServers()->ReleaseRequest(m_hRequest);
+		SteamMatchmakingServers()->ReleaseRequest(m_hRequest);
 		m_hRequest = NULL;
 	}
 }
@@ -204,7 +204,7 @@ void CBaseTab::PerformLayout()
 		m_pRefreshQuick->SetEnabled(false);
 	}
 
-	if (!GetSteamAPI()->SteamMatchmakingServers() || !GetSteamAPI()->SteamMatchmaking())
+	if (!SteamMatchmakingServers() || !SteamMatchmaking())
 	{
 		m_pAddCurrentServer->SetVisible(false);
 		m_pRefreshQuick->SetEnabled(false);
@@ -256,12 +256,12 @@ void CBaseTab::ApplySchemeSettings(vgui2::IScheme* pScheme)
 //-----------------------------------------------------------------------------
 gameserveritem_t* CBaseTab::GetServer(unsigned int serverID)
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers())
+	if (!SteamMatchmakingServers())
 		return NULL;
 
 	if (serverID >= 0)
 	{
-		return GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
+		return SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
 	}
 	else
 	{
@@ -366,7 +366,7 @@ void CBaseTab::ServerResponded(gameserveritem_t& server)
 //-----------------------------------------------------------------------------
 void CBaseTab::ServerResponded(HServerListRequest hReq, int iServer)
 {
-	gameserveritem_t* pServerItem = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(hReq, iServer);
+	gameserveritem_t* pServerItem = SteamMatchmakingServers()->GetServerDetails(hReq, iServer);
 	if (!pServerItem)
 	{
 		Assert(!"Missing server response");
@@ -467,7 +467,7 @@ void CBaseTab::ServerResponded(int iServer, gameserveritem_t* pServerItem)
 	if (pServerItem->m_bSecure)
 	{
 		// show the denied icon if banned from secure servers, the secure icon otherwise
-		kv->SetInt("secure", CGameUIViewport::Get()->IsVACBanned() ? 4 : 3);
+		// kv->SetInt("secure", CGameUIViewport::Get()->IsVACBanned() ? 4 : 3);
 	}
 	else
 	{
@@ -669,13 +669,13 @@ void CBaseTab::OnTextChanged(Panel* panel, const char* text)
 //-----------------------------------------------------------------------------
 void CBaseTab::ApplyGameFilters()
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers())
+	if (!SteamMatchmakingServers())
 		return;
 	// loop through all the servers checking filters
 	FOR_EACH_MAP_FAST(m_mapServers, i)
 	{
 		ServerData_t& server = m_mapServers[i];
-		gameserveritem_t* pServer = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(m_hRequest, server.m_iServerID);
+		gameserveritem_t* pServer = SteamMatchmakingServers()->GetServerDetails(m_hRequest, server.m_iServerID);
 		if (!pServer)
 			continue;
 
@@ -693,7 +693,7 @@ void CBaseTab::ApplyGameFilters()
 		{
 			// server passed filters, so it can be refreshed again
 			server.m_bDoNotRefresh = false;
-			gameserveritem_t* pServer = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(m_hRequest, server.m_iServerID);
+			gameserveritem_t* pServer = SteamMatchmakingServers()->GetServerDetails(m_hRequest, server.m_iServerID);
 
 			// re-add item to list
 			if (!m_pServerList->IsValidItemID(server.m_iListID))
@@ -1057,8 +1057,8 @@ void CBaseTab::OnCommand(const char* command)
 	}
 	else if (!Q_stricmp(command, "refresh"))
 	{
-		if (GetSteamAPI()->SteamMatchmakingServers())
-			GetSteamAPI()->SteamMatchmakingServers()->RefreshQuery(m_hRequest);
+		if (SteamMatchmakingServers())
+			SteamMatchmakingServers()->RefreshQuery(m_hRequest);
 		SetRefreshing(true);
 		m_iServerRefreshCount = 0;
 	}
@@ -1142,7 +1142,7 @@ bool CBaseTab::HasGameTag(const std::string& str, const std::string& find)
 //-----------------------------------------------------------------------------
 void CBaseTab::OnAddToFavorites()
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers())
+	if (!SteamMatchmakingServers())
 		return;
 
 	// loop through all the selected favorites
@@ -1150,7 +1150,7 @@ void CBaseTab::OnAddToFavorites()
 	{
 		int serverID = m_pServerList->GetItemUserData(m_pServerList->GetSelectedItem(i));
 
-		gameserveritem_t* pServer = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
+		gameserveritem_t* pServer = SteamMatchmakingServers()->GetServerDetails(m_hRequest, serverID);
 		if (pServer)
 		{
 			// add to favorites list
@@ -1193,7 +1193,7 @@ void CBaseTab::RemoveServer(ServerData_t& server)
 //-----------------------------------------------------------------------------
 void CBaseTab::OnRefreshServer(int serverID)
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers())
+	if (!SteamMatchmakingServers())
 		return;
 
 	// walk the list of selected servers refreshing them
@@ -1202,7 +1202,7 @@ void CBaseTab::OnRefreshServer(int serverID)
 		int serverID = m_pServerList->GetItemUserData(m_pServerList->GetSelectedItem(i));
 
 		// refresh this server
-		GetSteamAPI()->SteamMatchmakingServers()->RefreshServer(m_hRequest, serverID);
+		SteamMatchmakingServers()->RefreshServer(m_hRequest, serverID);
 	}
 
 	SetRefreshing(IsRefreshing());
@@ -1214,7 +1214,7 @@ void CBaseTab::OnRefreshServer(int serverID)
 //-----------------------------------------------------------------------------
 void CBaseTab::StartRefresh()
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers())
+	if (!SteamMatchmakingServers())
 		return;
 
 	ClearServerList();
@@ -1223,26 +1223,26 @@ void CBaseTab::StartRefresh()
 
 	if (m_hRequest)
 	{
-		GetSteamAPI()->SteamMatchmakingServers()->ReleaseRequest(m_hRequest);
+		SteamMatchmakingServers()->ReleaseRequest(m_hRequest);
 		m_hRequest = NULL;
 	}
 
 	switch (m_eMatchMakingType)
 	{
 	case eFavoritesServer:
-		m_hRequest = GetSteamAPI()->SteamMatchmakingServers()->RequestFavoritesServerList(m_uLimitToAppID, &pFilters, nFilters, this);
+		m_hRequest = SteamMatchmakingServers()->RequestFavoritesServerList(m_uLimitToAppID, &pFilters, nFilters, this);
 		break;
 	case eHistoryServer:
-		m_hRequest = GetSteamAPI()->SteamMatchmakingServers()->RequestHistoryServerList(m_uLimitToAppID, &pFilters, nFilters, this);
+		m_hRequest = SteamMatchmakingServers()->RequestHistoryServerList(m_uLimitToAppID, &pFilters, nFilters, this);
 		break;
 	case eInternetServer:
-		m_hRequest = GetSteamAPI()->SteamMatchmakingServers()->RequestInternetServerList(m_uLimitToAppID, &pFilters, nFilters, this);
+		m_hRequest = SteamMatchmakingServers()->RequestInternetServerList(m_uLimitToAppID, &pFilters, nFilters, this);
 		break;
 	case eFriendsServer:
-		m_hRequest = GetSteamAPI()->SteamMatchmakingServers()->RequestFriendsServerList(m_uLimitToAppID, &pFilters, nFilters, this);
+		m_hRequest =SteamMatchmakingServers()->RequestFriendsServerList(m_uLimitToAppID, &pFilters, nFilters, this);
 		break;
 	case eLANServer:
-		m_hRequest = GetSteamAPI()->SteamMatchmakingServers()->RequestLANServerList(m_uLimitToAppID, this);
+		m_hRequest = SteamMatchmakingServers()->RequestLANServerList(m_uLimitToAppID, this);
 		break;
 	default:
 		Assert(!"Unknown server type");
@@ -1284,8 +1284,8 @@ void CBaseTab::StopRefresh()
 	m_iServerRefreshCount = 0;
 
 	// Stop the server list refreshing
-	if (GetSteamAPI()->SteamMatchmakingServers())
-		GetSteamAPI()->SteamMatchmakingServers()->CancelQuery(m_hRequest);
+	if (SteamMatchmakingServers())
+		SteamMatchmakingServers()->CancelQuery(m_hRequest);
 	// update UI
 	RefreshComplete(m_hRequest, eServerResponded);
 }
@@ -1295,7 +1295,7 @@ void CBaseTab::StopRefresh()
 //-----------------------------------------------------------------------------
 bool CBaseTab::IsRefreshing()
 {
-	return GetSteamAPI()->SteamMatchmakingServers() && GetSteamAPI()->SteamMatchmakingServers()->IsRefreshing(m_hRequest);
+	return SteamMatchmakingServers() && SteamMatchmakingServers()->IsRefreshing(m_hRequest);
 }
 
 //-----------------------------------------------------------------------------
@@ -1398,8 +1398,8 @@ void CBaseTab::OnFavoritesMsg(FavoritesListChanged_t* pFavListChanged, bool bIOF
 		{
 			if (pFavListChanged->m_bAdd)
 			{
-				if (GetSteamAPI()->SteamMatchmakingServers())
-					GetSteamAPI()->SteamMatchmakingServers()->PingServer(pFavListChanged->m_nIP, pFavListChanged->m_nQueryPort, this);
+				if (SteamMatchmakingServers())
+					SteamMatchmakingServers()->PingServer(pFavListChanged->m_nIP, pFavListChanged->m_nQueryPort, this);
 			}
 			// ignore deletes of fav's we didn't have
 		}

@@ -4,9 +4,9 @@
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
 #include "tier1/KeyValues.h"
-#include "gameui/serverbrowser/CServerContextMenu.h"
-#include "gameui/serverbrowser/CServerBrowser.h"
-#include "gameui/gameui_viewport.h"
+#include "../CServerContextMenu.h"
+#include "../CServerBrowser.h"
+#include "../../gameui_viewport.h"
 #include "CTabInternet.h"
 
 
@@ -24,7 +24,7 @@ CTabInternet::CTabInternet(vgui2::Panel* parent, const char* panelName, EPageTyp
 	m_fLastSort = 0.0f;
 	m_bDirty = false;
 	m_bRequireUpdate = true;
-	m_bOfflineMode = !GetSteamAPI();
+	m_bOfflineMode = !SteamAPI_IsSteamRunning();
 
 	m_bAnyServersRetrievedFromMaster = false;
 	m_bNoServersListedOnMaster = false;
@@ -138,7 +138,7 @@ void CTabInternet::ServerResponded(HServerListRequest hReq, int iServer)
 void CTabInternet::ServerFailedToRespond(HServerListRequest hReq, int iServer)
 {
 	m_bDirty = true;
-	gameserveritem_t* pServer = GetSteamAPI()->SteamMatchmakingServers()->GetServerDetails(hReq, iServer);
+	gameserveritem_t* pServer = SteamMatchmakingServers()->GetServerDetails(hReq, iServer);
 	Assert(pServer);
 
 	if (pServer->m_bHadSuccessfulResponse)

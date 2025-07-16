@@ -3,7 +3,7 @@
 #ifndef SERVER_BROWSER_TAB_FAVORITES_H
 #define SERVER_BROWSER_TAB_FAVORITES_H
 
-#include "gameui/serverbrowser/CBaseTab.h"
+#include "../CBaseTab.h"
 
 class CTabFavorites : public CBaseTab
 {

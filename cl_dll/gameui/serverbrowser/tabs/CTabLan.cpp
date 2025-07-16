@@ -4,9 +4,9 @@
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
 #include "tier1/KeyValues.h"
-#include "gameui/serverbrowser/CServerContextMenu.h"
-#include "gameui/serverbrowser/CServerBrowser.h"
-#include "gameui/gameui_viewport.h"
+#include "../CServerContextMenu.h"
+#include "../CServerBrowser.h"
+#include "../../gameui_viewport.h"
 #include "CTabLan.h"
 
 

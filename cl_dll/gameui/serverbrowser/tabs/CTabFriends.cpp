@@ -4,10 +4,10 @@
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/ToggleButton.h>
 #include "tier1/KeyValues.h"
-#include "gameui/serverbrowser/ServerListSorter.h"
-#include "gameui/serverbrowser/CServerContextMenu.h"
-#include "gameui/serverbrowser/CServerBrowser.h"
-#include "gameui/gameui_viewport.h"
+#include "../ServerListSorter.h"
+#include "../CServerContextMenu.h"
+#include "../CServerBrowser.h"
+#include "../../gameui_viewport.h"
 #include "CTabFriends.h"
 
 
@@ -19,15 +19,15 @@ CTabFriends::CTabFriends(vgui2::Panel* parent) :
 {
 	m_iServerRefreshCount = 0;
 
-	if (!GetSteamAPI())
-	{
+	// Offline Mode
+#ifndef _STEAMWORKS
 		m_pServerList->SetEmptyListText("#ServerBrowser_OfflineMode");
 		m_pConnect->SetEnabled(false);
 		m_pRefreshAll->SetEnabled(false);
 		m_pRefreshQuick->SetEnabled(false);
 		m_pAddServer->SetEnabled(false);
 		m_pFilter->SetEnabled(false);
-	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -64,11 +64,8 @@ void CTabFriends::RefreshComplete(HServerListRequest hReq, EMatchMakingServerRes
 	m_pServerList->SortList();
 	m_iServerRefreshCount = 0;
 
-	if (GetSteamAPI())
-	{
-		// set empty message
-		m_pServerList->SetEmptyListText("#ServerBrowser_NoFriendsServers");
-	}
+	// set empty message
+	m_pServerList->SetEmptyListText("#ServerBrowser_NoFriendsServers");
 }
 
 //-----------------------------------------------------------------------------

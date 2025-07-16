@@ -35,11 +35,11 @@
 #include <vgui_controls/ToggleButton.h>
 #include <vgui_controls/ImageList.h>
 #include "tier1/KeyValues.h"
-#include "gameui/serverbrowser/CServerContextMenu.h"
-#include "gameui/serverbrowser/CServerBrowser.h"
-#include "gameui/serverbrowser/CBaseTab.h"
-#include "gameui/serverbrowser/ServerListSorter.h"
-#include "gameui/gameui_viewport.h"
+#include "../CServerContextMenu.h"
+#include "../CServerBrowser.h"
+#include "../CBaseTab.h"
+#include "../ServerListSorter.h"
+#include "../../gameui_viewport.h"
 #include "CDialogAddServer.h"
 
 //-----------------------------------------------------------------------------
@@ -122,8 +122,8 @@ CDialogAddServer::~CDialogAddServer()
 {
 	FOR_EACH_VEC(m_Queries, i)
 	{
-		if (GetSteamAPI()->SteamMatchmakingServers())
-			GetSteamAPI()->SteamMatchmakingServers()->CancelServerQuery(m_Queries[i]);
+		if (SteamMatchmakingServers())
+			SteamMatchmakingServers()->CancelServerQuery(m_Queries[i]);
 	}
 }
 
@@ -253,7 +253,7 @@ void CDialogAddServer::OnOK()
 //-----------------------------------------------------------------------------
 void CDialogAddServer::TestServers()
 {
-	if (!GetSteamAPI()->SteamMatchmakingServers())
+	if (!SteamMatchmakingServers())
 		return;
 
 	m_pDiscoveredGames->SetEmptyListText("");
@@ -310,7 +310,7 @@ void CDialogAddServer::TestServers()
 
 	FOR_EACH_VEC(vecAdress, iAddress)
 	{
-		m_Queries.AddToTail(GetSteamAPI()->SteamMatchmakingServers()->PingServer(vecAdress[iAddress].GetIP(), vecAdress[iAddress].GetConnectionPort(), this));
+		m_Queries.AddToTail(SteamMatchmakingServers()->PingServer(vecAdress[iAddress].GetIP(), vecAdress[iAddress].GetConnectionPort(), this));
 	}
 }
 
@@ -333,7 +333,7 @@ void CDialogAddServer::ServerResponded(gameserveritem_t& server)
 	if (server.m_bSecure)
 	{
 		// show the denied icon if banned from secure servers, the secure icon otherwise
-		kv->SetInt("secure", CGameUIViewport::Get()->IsVACBanned() ? 4 : 3);
+		// kv->SetInt("secure", CGameUIViewport::Get()->IsVACBanned() ? 4 : 3);
 	}
 	else
 	{

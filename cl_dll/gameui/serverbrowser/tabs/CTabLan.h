@@ -3,7 +3,7 @@
 #ifndef SERVER_BROWSER_TAB_LAN_H
 #define SERVER_BROWSER_TAB_LAN_H
 
-#include "gameui/serverbrowser/CBaseTab.h"
+#include "../CBaseTab.h"
 
 class CTabLan : public CBaseTab
 {

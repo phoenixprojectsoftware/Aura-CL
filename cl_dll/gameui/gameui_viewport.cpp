@@ -5,6 +5,7 @@
 #include "../client_vgui.h"
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
+#include "serverbrowser/CServerBrowser.h"
 #include <convar.h>
 
 CON_COMMAND(gameui_opentest, "Opens test")
@@ -59,4 +60,7 @@ CServerBrowser* CGameUIViewport::GetServerBrowser()
 	return GetDialog(m_hServerBrowser);
 }
 
-// TODO: VAC BANNED FUNC
+bool CGameUIViewport::IsVACBanned() const
+{
+	return SteamApps()->BIsVACBanned(); // have you been a naughty boy?
+}

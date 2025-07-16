@@ -3,7 +3,7 @@
 #ifndef SERVER_BROWSER_TAB_HISTORY_H
 #define SERVER_BROWSER_TAB_HISTORY_H
 
-#include "gameui/serverbrowser/CBaseTab.h"
+#include "../CBaseTab.h"
 
 class CTabHistory : public CBaseTab
 {

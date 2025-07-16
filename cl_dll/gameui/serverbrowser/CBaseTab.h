@@ -4,7 +4,7 @@
 #define SERVER_BROWSER_BASE_TAB_H
 #include <vgui_controls/ListPanel.h>
 #include <vgui_controls/PropertyPage.h>
-#include "steam/steam_api.h"
+#include <steamworks/steam_api.h>
 #include "tier1/utlmap.h"
 
 class CBaseTab;
