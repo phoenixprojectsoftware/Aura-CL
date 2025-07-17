@@ -13,6 +13,12 @@ static const char* s_Messages[] = {
 	u8"This is a dream... Wake up",
 	u8"Or is it? Hey, vsause, Michael here!",
 
+	u8"Hello. Have you eaten any GRAINGERS today?",
+
+	u8"I like ginger nuts and fig rolls",
+
+	u8"Play the damn game nobhead",
+
 	u8"Never gonna give you up\n"
 	u8"Never gonna let you down\n"
 	u8"Never gonna run around and desert you\n"
