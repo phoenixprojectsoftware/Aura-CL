@@ -313,7 +313,7 @@ void CServerBrowser::OpenBrowser()
 
 void CServerBrowser::OnActiveGameName(KeyValues* pKV)
 {
-	m_uLimitToAppID = pKV->GetUint64("appid", 3825360);
+	m_uLimitToAppID = pKV->GetUint64("appid", AURA_APPID);
 	ReloadFilterSettings();
 }
 
