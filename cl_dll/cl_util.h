@@ -16,12 +16,6 @@
 // cl_util.h
 //
 
-#ifdef _WIN32
-#include "../common/winsani_in.h"
-#include <Windows.h>
-#include "../common/winsani_out.h"
-#endif
-
 #include "cvardef.h"
 #include <convar.h>
 #include "net_api.h"
@@ -104,9 +98,6 @@ static inline float YRES(float y)
 #define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
 #define ServerCmd (*gEngfuncs.pfnServerCmd)
 #define EngineClientCmd (*gEngfuncs.pfnClientCmd)
-
-void CLCommand(const char* cmd);
-
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
 #define AngleVectors (*gEngfuncs.pfnAngleVectors)
 
