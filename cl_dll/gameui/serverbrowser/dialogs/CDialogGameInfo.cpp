@@ -11,6 +11,8 @@
 #include "CDialogServerPassword.h"
 #endif
 
+extern void CLCommand(const char* cmd);
+
 static const long RETRY_TIME = 10000;		// refresh server every 10 seconds
 static const long CHALLENGE_ENTRIES = 1024;
 
@@ -509,7 +511,7 @@ void CDialogGameInfo::ApplyConnectCommand(const gameserveritem_t& server)
 #endif
 	// send engine command to change servers
 	Q_snprintf(command, Q_ARRAYSIZE(command), "\nwait 25\nconnect %s\n", server.m_NetAdr.GetConnectionAddressString());
-	// EngineClientCmd(command);
+	CLCommand(command);
 	Close();
 	CGameUIViewport::Get()->GetServerBrowser()->Close();
 }

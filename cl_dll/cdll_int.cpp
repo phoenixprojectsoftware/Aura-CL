@@ -70,6 +70,11 @@ void InitInput (void);
 void EV_HookEvents( void );
 void IN_Commands( void );
 
+void CLCommand(const char* cmd)
+{
+	gEngfuncs.pfnClientCmd(cmd);
+}
+
 /*
 ================================
 HUD_GetHullBounds
