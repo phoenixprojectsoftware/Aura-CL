@@ -8,6 +8,7 @@
 #ifndef _WIN32
 #include "enums.h"
 #endif
+#include "../cl_dll/wrect.h"
 
 #define	MAX_ALIAS_NAME	32
 
