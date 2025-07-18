@@ -468,7 +468,7 @@ void CBaseTab::ServerResponded(int iServer, gameserveritem_t* pServerItem)
 	if (pServerItem->m_bSecure)
 	{
 		// show the denied icon if banned from secure servers, the secure icon otherwise
-		// kv->SetInt("secure", CGameUIViewport::Get()->IsVACBanned() ? 4 : 3);
+		kv->SetInt("secure", CGameUIViewport::Get()->IsVACBanned() ? 4 : 3);
 	}
 	else
 	{
