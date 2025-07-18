@@ -225,7 +225,7 @@ CGrappleTip::TargetClass CGrappleTip::ClassifyTarget(CBaseEntity* pTarget)
 		return TargetClass::MEDIUM;
 	}
 
-	const Vector vecEnd = pev->origin + pev->velocity * 1024.0;
+	const Legacy_Vector vecEnd = pev->origin + pev->velocity * 1024.0;
 
 	TraceResult tr;
 
@@ -300,7 +300,7 @@ CGrappleTip::TargetClass CGrappleTip::ClassifyTarget(CBaseEntity* pTarget)
 	return TargetClass::NOT_A_TARGET;
 }
 
-void CGrappleTip::SetPosition(const Vector& vecOrigin, const Vector& vecAngles, CBaseEntity* pOwner)
+void CGrappleTip::SetPosition(const Legacy_Vector& vecOrigin, const Legacy_Vector& vecAngles, CBaseEntity* pOwner)
 {
 	UTIL_SetOrigin(pev, vecOrigin);
 	pev->angles = vecAngles;

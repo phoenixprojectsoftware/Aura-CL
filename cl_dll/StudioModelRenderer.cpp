@@ -41,10 +41,10 @@
 
 extern cvar_t *tfc_newmodels;
 extern float g_flRenderFOV;
-Vector g_vViewOrigin;
-Vector g_vViewForward;
-Vector g_vViewRight;
-Vector g_vViewUp;
+Legacy_Vector g_vViewOrigin;
+Legacy_Vector g_vViewForward;
+Legacy_Vector g_vViewRight;
+Legacy_Vector g_vViewUp;
 
 extern extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];
 
@@ -2017,7 +2017,7 @@ bool CStudioModelRenderer::NeedAdjustViewmodelAdjustments()
 		g_flRenderFOV == gHUD.default_fov->value; // weapon is not zoomed in
 }
 
-void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Vector &vOrigin)
+void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Legacy_Vector &vOrigin)
 {
 	float worldx = tan(g_flRenderFOV * M_PI / 360.0);
 	float viewx = tan(m_pCvarViewmodelFov->value * M_PI / 360.0);
@@ -2028,15 +2028,15 @@ void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Vector &vOrigin)
 	float factor = worldx / viewx;
 
 	// Get the coordinates in the viewer's space.
-	Vector tmp = vOrigin - g_vViewOrigin;
-	Vector vTransformed(DotProduct(g_vViewRight, tmp), DotProduct(g_vViewUp, tmp), DotProduct(g_vViewForward, tmp));
+	Legacy_Vector tmp = vOrigin - g_vViewOrigin;
+	Legacy_Vector vTransformed(DotProduct(g_vViewRight, tmp), DotProduct(g_vViewUp, tmp), DotProduct(g_vViewForward, tmp));
 
 	// Now squash X and Y.
 	vTransformed.x *= factor;
 	vTransformed.y *= factor;
 
 	// Transform back to world space.
-	Vector vOut = (g_vViewRight * vTransformed.x) + (g_vViewUp * vTransformed.y) + (g_vViewForward * vTransformed.z);
+	Legacy_Vector vOut = (g_vViewRight * vTransformed.x) + (g_vViewUp * vTransformed.y) + (g_vViewForward * vTransformed.z);
 	vOrigin = g_vViewOrigin + vOut;
 }
 

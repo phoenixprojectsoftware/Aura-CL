@@ -472,7 +472,7 @@ void CL_DLLEXPORT HUD_TempEntUpdate (
 	TEMPENTITY	*pTemp, *pnext, *pprev;
 	float		freq, gravity, gravitySlow, life, fastFreq;
 
-	Vector		vAngles;
+	Legacy_Vector		vAngles;
 
 	gEngfuncs.GetViewAngles( (float*)vAngles );
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "interface.h"
+#include <tier1/interface.h>
 
 #define GAMEUI_INTERFACE "GameUI007"
 

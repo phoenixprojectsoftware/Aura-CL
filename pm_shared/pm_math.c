@@ -30,7 +30,7 @@
 #endif
 
 #ifndef DISABLE_VEC_ORIGIN
-vec3_t vec3_origin = {0,0,0};
+vec3_t legacy_vec3_origin = {0,0,0};
 #endif
 int nanmask = 255<<23;
 

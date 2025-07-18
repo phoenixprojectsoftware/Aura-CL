@@ -375,7 +375,7 @@ void CTripmine::Spawn( )
 	if ( !g_pGameRules->IsDeathmatch() )
 #endif
 	{
-		UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 28) ); 
+		UTIL_SetSize(pev, Legacy_Vector(-16, -16, 0), Legacy_Vector(16, 16, 28) ); 
 	}
 }
 
@@ -434,8 +434,8 @@ void CTripmine::PrimaryAttack( void )
 		return;
 
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
-	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
-	Vector vecAiming = gpGlobals->v_forward;
+	Legacy_Vector vecSrc	 = m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecAiming = gpGlobals->v_forward;
 
 	TraceResult tr;
 
@@ -455,7 +455,7 @@ void CTripmine::PrimaryAttack( void )
 		CBaseEntity *pEntity = CBaseEntity::Instance( tr.pHit );
 		if ( pEntity && !(pEntity->pev->flags & FL_CONVEYOR) )
 		{
-			Vector angles = UTIL_VecToAngles( tr.vecPlaneNormal );
+			Legacy_Vector angles = UTIL_VecToAngles( tr.vecPlaneNormal );
 
 			CBaseEntity *pEnt = CBaseEntity::Create( "monster_tripmine", tr.vecEndPos + tr.vecPlaneNormal * 8, angles, m_pPlayer->edict() );
 

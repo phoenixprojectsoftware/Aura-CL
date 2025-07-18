@@ -90,8 +90,8 @@ bool CKnife::Swing(const bool bFirst)
 	TraceResult tr;
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle);
-	Vector vecSrc = m_pPlayer->GetGunPosition();
-	Vector vecEnd = vecSrc + gpGlobals->v_forward * 32;
+	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition();
+	Legacy_Vector vecEnd = vecSrc + gpGlobals->v_forward * 32;
 
 	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
 

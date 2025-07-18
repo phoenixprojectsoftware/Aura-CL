@@ -104,7 +104,7 @@ int CHudNameTags::Draw(float flTime)
 	cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
 	VectorCopy( localPlayer->origin, origin_pl );
 	
-	VectorClear(view_ofs); 
+	Legacy_VectorClear(view_ofs); 
 
 	if (localPlayer->curstate.usehull == 1) // if we're ducking
 		view_ofs[2] = VEC_DUCK_VIEW;

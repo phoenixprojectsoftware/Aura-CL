@@ -20,7 +20,7 @@ class CHudCrosshairs : public CHudBase
 	cvar_t* cl_cross_right_line;
 
 	float old_circle_radius;
-	std::vector<Vector2D> circle_points;
+	std::vector<Legacy_Vector2D> circle_points;
 
 public:
 	virtual int Init();

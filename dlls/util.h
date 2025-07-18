@@ -207,17 +207,17 @@ inline BOOL FClassnameIs(entvars_t* pev, const char* szClassname)
 class CBaseEntity;
 
 // Misc. Prototypes
-extern void			UTIL_SetSize			(entvars_t* pev, const Vector &vecMin, const Vector &vecMax);
-extern float		UTIL_VecToYaw			(const Vector &vec);
-extern Vector		UTIL_VecToAngles		(const Vector &vec);
+extern void			UTIL_SetSize			(entvars_t* pev, const Legacy_Vector &vecMin, const Legacy_Vector &vecMax);
+extern float		UTIL_VecToYaw			(const Legacy_Vector &vec);
+extern Legacy_Vector		UTIL_VecToAngles		(const Legacy_Vector &vec);
 extern float		UTIL_AngleMod			(float a);
 extern float		UTIL_AngleDiff			( float destAngle, float srcAngle );
 
-extern CBaseEntity	*UTIL_FindEntityInSphere(CBaseEntity *pStartEntity, const Vector &vecCenter, float flRadius);
+extern CBaseEntity	*UTIL_FindEntityInSphere(CBaseEntity *pStartEntity, const Legacy_Vector &vecCenter, float flRadius);
 extern CBaseEntity	*UTIL_FindEntityByString(CBaseEntity *pStartEntity, const char *szKeyword, const char *szValue );
 extern CBaseEntity	*UTIL_FindEntityByClassname(CBaseEntity *pStartEntity, const char *szName );
 extern CBaseEntity	*UTIL_FindEntityByTargetname(CBaseEntity *pStartEntity, const char *szName );
-extern CBaseEntity	*UTIL_FindEntityGeneric(const char *szName, Vector &vecSrc, float flRadius );
+extern CBaseEntity	*UTIL_FindEntityGeneric(const char *szName, Legacy_Vector &vecSrc, float flRadius );
 
 // returns a CBaseEntity pointer to a player by index.  Only returns if the player is spawned and connected
 // otherwise returns NULL
@@ -225,55 +225,55 @@ extern CBaseEntity	*UTIL_FindEntityGeneric(const char *szName, Vector &vecSrc, f
 extern CBaseEntity	*UTIL_PlayerByIndex( int playerIndex );
 
 #define UTIL_EntitiesInPVS(pent)			(*g_engfuncs.pfnEntitiesInPVS)(pent)
-extern void			UTIL_MakeVectors		(const Vector &vecAngles);
+extern void			UTIL_MakeVectors		(const Legacy_Vector &vecAngles);
 
 // Pass in an array of pointers and an array size, it fills the array and returns the number inserted
-extern int			UTIL_MonstersInSphere( CBaseEntity **pList, int listMax, const Vector &center, float radius );
-extern int			UTIL_EntitiesInBox( CBaseEntity **pList, int listMax, const Vector &mins, const Vector &maxs, int flagMask );
+extern int			UTIL_MonstersInSphere( CBaseEntity **pList, int listMax, const Legacy_Vector &center, float radius );
+extern int			UTIL_EntitiesInBox( CBaseEntity **pList, int listMax, const Legacy_Vector &mins, const Legacy_Vector &maxs, int flagMask );
 
-inline void UTIL_MakeVectorsPrivate( const Vector &vecAngles, float *p_vForward, float *p_vRight, float *p_vUp )
+inline void UTIL_MakeVectorsPrivate( const Legacy_Vector &vecAngles, float *p_vForward, float *p_vRight, float *p_vUp )
 {
 	g_engfuncs.pfnAngleVectors( vecAngles, p_vForward, p_vRight, p_vUp );
 }
 
-extern void			UTIL_MakeAimVectors		( const Vector &vecAngles ); // like MakeVectors, but assumes pitch isn't inverted
-extern void			UTIL_MakeInvVectors		( const Vector &vec, globalvars_t *pgv );
+extern void			UTIL_MakeAimVectors		( const Legacy_Vector &vecAngles ); // like MakeVectors, but assumes pitch isn't inverted
+extern void			UTIL_MakeInvVectors		( const Legacy_Vector &vec, globalvars_t *pgv );
 
-extern void			UTIL_SetOrigin			( entvars_t* pev, const Vector &vecOrigin );
-extern void			UTIL_EmitAmbientSound	( edict_t *entity, const Vector &vecOrigin, const char *samp, float vol, float attenuation, int fFlags, int pitch );
-extern void			UTIL_ParticleEffect		( const Vector &vecOrigin, const Vector &vecDirection, ULONG ulColor, ULONG ulCount );
-extern void			UTIL_ScreenShake		( const Vector &center, float amplitude, float frequency, float duration, float radius );
-extern void			UTIL_ScreenShakeAll		( const Vector &center, float amplitude, float frequency, float duration );
+extern void			UTIL_SetOrigin			( entvars_t* pev, const Legacy_Vector &vecOrigin );
+extern void			UTIL_EmitAmbientSound	( edict_t *entity, const Legacy_Vector &vecOrigin, const char *samp, float vol, float attenuation, int fFlags, int pitch );
+extern void			UTIL_ParticleEffect		( const Legacy_Vector &vecOrigin, const Legacy_Vector &vecDirection, ULONG ulColor, ULONG ulCount );
+extern void			UTIL_ScreenShake		( const Legacy_Vector &center, float amplitude, float frequency, float duration, float radius );
+extern void			UTIL_ScreenShakeAll		( const Legacy_Vector &center, float amplitude, float frequency, float duration );
 extern void			UTIL_ShowMessage		( const char *pString, CBaseEntity *pPlayer );
 extern void			UTIL_ShowMessageAll		( const char *pString );
-extern void			UTIL_ScreenFadeAll		( const Vector &color, float fadeTime, float holdTime, int alpha, int flags );
-extern void			UTIL_ScreenFade			( CBaseEntity *pEntity, const Vector &color, float fadeTime, float fadeHold, int alpha, int flags );
+extern void			UTIL_ScreenFadeAll		( const Legacy_Vector &color, float fadeTime, float holdTime, int alpha, int flags );
+extern void			UTIL_ScreenFade			( CBaseEntity *pEntity, const Legacy_Vector &color, float fadeTime, float fadeHold, int alpha, int flags );
 
 typedef enum { ignore_monsters=1, dont_ignore_monsters=0, missile=2 } IGNORE_MONSTERS;
 typedef enum { ignore_glass=1, dont_ignore_glass=0 } IGNORE_GLASS;
-extern void			UTIL_TraceLine			(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr);
-extern void			UTIL_TraceLine			(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, IGNORE_GLASS ignoreGlass, edict_t *pentIgnore, TraceResult *ptr);
+extern void			UTIL_TraceLine			(const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr);
+extern void			UTIL_TraceLine			(const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, IGNORE_MONSTERS igmon, IGNORE_GLASS ignoreGlass, edict_t *pentIgnore, TraceResult *ptr);
 enum { point_hull=0, human_hull=1, large_hull=2, head_hull=3 };
-extern void			UTIL_TraceHull			(const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, int hullNumber, edict_t *pentIgnore, TraceResult *ptr);
+extern void			UTIL_TraceHull			(const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, IGNORE_MONSTERS igmon, int hullNumber, edict_t *pentIgnore, TraceResult *ptr);
 extern TraceResult	UTIL_GetGlobalTrace		(void);
-extern void			UTIL_TraceModel			(const Vector &vecStart, const Vector &vecEnd, int hullNumber, edict_t *pentModel, TraceResult *ptr);
-extern Vector		UTIL_GetAimVector		(edict_t* pent, float flSpeed);
-extern int			UTIL_PointContents		(const Vector &vec);
+extern void			UTIL_TraceModel			(const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, int hullNumber, edict_t *pentModel, TraceResult *ptr);
+extern Legacy_Vector		UTIL_GetAimVector		(edict_t* pent, float flSpeed);
+extern int			UTIL_PointContents		(const Legacy_Vector &vec);
 
 extern int			UTIL_IsMasterTriggered	(string_t sMaster, CBaseEntity *pActivator);
-extern void			UTIL_BloodStream( const Vector &origin, const Vector &direction, int color, int amount );
-extern void			UTIL_BloodDrips( const Vector &origin, const Vector &direction, int color, int amount );
-extern Vector		UTIL_RandomBloodVector( void );
+extern void			UTIL_BloodStream( const Legacy_Vector &origin, const Legacy_Vector &direction, int color, int amount );
+extern void			UTIL_BloodDrips( const Legacy_Vector &origin, const Legacy_Vector &direction, int color, int amount );
+extern Legacy_Vector		UTIL_RandomBloodVector( void );
 extern BOOL			UTIL_ShouldShowBlood( int bloodColor );
 extern void			UTIL_BloodDecalTrace( TraceResult *pTrace, int bloodColor );
 extern void			UTIL_DecalTrace( TraceResult *pTrace, int decalNumber );
 extern void			UTIL_PlayerDecalTrace( TraceResult *pTrace, int playernum, int decalNumber, BOOL bIsCustom );
 extern void			UTIL_GunshotDecalTrace( TraceResult *pTrace, int decalNumber );
-extern void			UTIL_Sparks( const Vector &position );
-extern void			UTIL_Ricochet( const Vector &position, float scale );
+extern void			UTIL_Sparks( const Legacy_Vector &position );
+extern void			UTIL_Ricochet( const Legacy_Vector &position, float scale );
 extern void			UTIL_StringToVector( float *pVector, const char *pString );
 extern void			UTIL_StringToIntArray( int *pVector, int count, const char *pString );
-extern Vector		UTIL_ClampVectorToBox( const Vector &input, const Vector &clampSize );
+extern Legacy_Vector		UTIL_ClampVectorToBox( const Legacy_Vector &input, const Legacy_Vector &clampSize );
 extern float		UTIL_Approach( float target, float value, float speed );
 extern float		UTIL_ApproachAngle( float target, float value, float speed );
 extern float		UTIL_AngleDistance( float next, float cur );
@@ -287,9 +287,9 @@ extern BOOL			UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 );
 extern float		UTIL_SplineFraction( float value, float scale );
 
 // Search for water transition along a vertical line
-extern float		UTIL_WaterLevel( const Vector &position, float minz, float maxz );
-extern void			UTIL_Bubbles( Vector mins, Vector maxs, int count );
-extern void			UTIL_BubbleTrail( Vector from, Vector to, int count );
+extern float		UTIL_WaterLevel( const Legacy_Vector &position, float minz, float maxz );
+extern void			UTIL_Bubbles( Legacy_Vector mins, Legacy_Vector maxs, int count );
+extern void			UTIL_BubbleTrail( Legacy_Vector from, Legacy_Vector to, int count );
 
 // allows precacheing of other entities
 extern void			UTIL_PrecacheOther( const char *szClassname );
@@ -307,7 +307,7 @@ extern BOOL UTIL_GetNextBestWeapon( CBasePlayer *pPlayer, CBasePlayerItem *pCurr
 
 bool UTIL_IsMultiplayer();
 
-inline void WRITE_COORD_VECTOR(const Vector& vec)
+inline void WRITE_COORD_VECTOR(const Legacy_Vector& vec)
 {
 	WRITE_COORD(vec.x);
 	WRITE_COORD(vec.y);
@@ -350,13 +350,13 @@ extern char *UTIL_dtos4( int d );
 extern void			UTIL_LogPrintf( char *fmt, ... );
 
 // Sorta like FInViewCone, but for nonmonsters. 
-extern float UTIL_DotPoints ( const Vector &vecSrc, const Vector &vecCheck, const Vector &vecDir );
+extern float UTIL_DotPoints ( const Legacy_Vector &vecSrc, const Legacy_Vector &vecCheck, const Legacy_Vector &vecDir );
 
 extern void UTIL_StripToken( const char *pKey, char *pDest );// for redundant keynames
 
 // Misc functions
 extern void SetMovedir(entvars_t* pev);
-extern Vector VecBModelOrigin( entvars_t* pevBModel );
+extern Legacy_Vector VecBModelOrigin( entvars_t* pevBModel );
 extern int BuildChangeList( LEVELLIST *pLevelList, int maxList );
 
 //
@@ -372,7 +372,7 @@ void DBG_AssertFunction(BOOL fExpr, const char* szExpr, const char* szFile, int 
 #endif	// !DEBUG
 
 
-extern DLL_GLOBAL const Vector g_vecZero;
+extern DLL_GLOBAL const Legacy_Vector g_vecZero;
 
 //
 // Constants that were used only by QC (maybe not used at all now)
@@ -422,17 +422,17 @@ extern DLL_GLOBAL int			g_Language;
 #define PUSH_BLOCK_ONLY_X	1
 #define PUSH_BLOCK_ONLY_Y	2
 
-#define VEC_HULL_MIN		Vector(-16, -16, -36)
-#define VEC_HULL_MAX		Vector( 16,  16,  36)
-#define VEC_HUMAN_HULL_MIN	Vector( -16, -16, 0 )
-#define VEC_HUMAN_HULL_MAX	Vector( 16, 16, 72 )
-#define VEC_HUMAN_HULL_DUCK	Vector( 16, 16, 36 )
+#define VEC_HULL_MIN		Legacy_Vector(-16, -16, -36)
+#define VEC_HULL_MAX		Legacy_Vector( 16,  16,  36)
+#define VEC_HUMAN_HULL_MIN	Legacy_Vector( -16, -16, 0 )
+#define VEC_HUMAN_HULL_MAX	Legacy_Vector( 16, 16, 72 )
+#define VEC_HUMAN_HULL_DUCK	Legacy_Vector( 16, 16, 36 )
 
-#define VEC_VIEW			Vector( 0, 0, 28 )
+#define VEC_VIEW			Legacy_Vector( 0, 0, 28 )
 
-#define VEC_DUCK_HULL_MIN	Vector(-16, -16, -18 )
-#define VEC_DUCK_HULL_MAX	Vector( 16,  16,  18)
-#define VEC_DUCK_VIEW		Vector( 0, 0, 12 )
+#define VEC_DUCK_HULL_MIN	Legacy_Vector(-16, -16, -18 )
+#define VEC_DUCK_HULL_MAX	Legacy_Vector( 16,  16,  18)
+#define VEC_DUCK_VIEW		Legacy_Vector( 0, 0, 12 )
 
 #define SVC_TEMPENTITY		23
 #define SVC_INTERMISSION	30
@@ -495,7 +495,7 @@ int SENTENCEG_Lookup(const char *sample, char *sentencenum);
 
 void TEXTURETYPE_Init();
 char TEXTURETYPE_Find(char *name);
-float TEXTURETYPE_PlaySound(TraceResult *ptr,  Vector vecSrc, Vector vecEnd, int iBulletType);
+float TEXTURETYPE_PlaySound(TraceResult *ptr,  Legacy_Vector vecSrc, Legacy_Vector vecEnd, int iBulletType);
 
 // NOTE: use EMIT_SOUND_DYN to set the pitch of a sound. Pitch of 100
 // is no pitch shift.  Pitch > 100 up to 255 is a higher pitch, pitch < 100

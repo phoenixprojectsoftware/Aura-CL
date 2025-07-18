@@ -42,7 +42,7 @@ public:
 
 	TargetClass ClassifyTarget(CBaseEntity* pTarget);
 
-	void SetPosition(const Vector& vecOrigin, const Vector& vecAngles, CBaseEntity* pOwner);
+	void SetPosition(const Legacy_Vector& vecOrigin, const Legacy_Vector& vecAngles, CBaseEntity* pOwner);
 
 	TargetClass GetGrappleType() const { return m_GrappleType; }
 
@@ -63,7 +63,7 @@ private:
 	bool m_bMissed;
 
 	EHANDLE m_hGrappleTarget;
-	Vector m_vecOriginOffset;
+	Legacy_Vector m_vecOriginOffset;
 };
 
 #endif

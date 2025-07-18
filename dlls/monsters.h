@@ -70,19 +70,19 @@
 #define		MOVE_STRAFE				1// moves in direction specified, no matter which way monster is facing
 
 // spawn flags 256 and above are already taken by the engine
-extern void UTIL_MoveToOrigin( edict_t* pent, const Vector &vecGoal, float flDist, int iMoveType ); 
+extern void UTIL_MoveToOrigin( edict_t* pent, const Legacy_Vector &vecGoal, float flDist, int iMoveType ); 
 
-Vector VecCheckToss ( entvars_t *pev, const Vector &vecSpot1, Vector vecSpot2, float flGravityAdj = 1.0 );
-Vector VecCheckThrow ( entvars_t *pev, const Vector &vecSpot1, Vector vecSpot2, float flSpeed, float flGravityAdj = 1.0 );
-extern DLL_GLOBAL Vector		g_vecAttackDir;
+Legacy_Vector VecCheckToss ( entvars_t *pev, const Legacy_Vector &vecSpot1, Legacy_Vector vecSpot2, float flGravityAdj = 1.0 );
+Legacy_Vector VecCheckThrow ( entvars_t *pev, const Legacy_Vector &vecSpot1, Legacy_Vector vecSpot2, float flSpeed, float flGravityAdj = 1.0 );
+extern DLL_GLOBAL Legacy_Vector		g_vecAttackDir;
 extern DLL_GLOBAL CONSTANT float g_flMeleeRange;
 extern DLL_GLOBAL CONSTANT float g_flMediumRange;
 extern DLL_GLOBAL CONSTANT float g_flLongRange;
-extern void EjectBrass (const Vector &vecOrigin, const Vector &vecVelocity, float rotation, int model, int soundtype );
-extern void ExplodeModel( const Vector &vecOrigin, float speed, int model, int count );
+extern void EjectBrass (const Legacy_Vector &vecOrigin, const Legacy_Vector &vecVelocity, float rotation, int model, int soundtype );
+extern void ExplodeModel( const Legacy_Vector &vecOrigin, float speed, int model, int count );
 
 BOOL FBoxVisible ( entvars_t *pevLooker, entvars_t *pevTarget );
-BOOL FBoxVisible ( entvars_t *pevLooker, entvars_t *pevTarget, Vector &vecTargetOrigin, float flSize = 0.0 );
+BOOL FBoxVisible ( entvars_t *pevLooker, entvars_t *pevTarget, Legacy_Vector &vecTargetOrigin, float flSize = 0.0 );
 
 // monster to monster relationship types
 #define R_AL	-2 // (ALLY) pals. Good alternative to R_NO when applicable.
@@ -153,7 +153,7 @@ public:
 	virtual int	ObjectCaps( void ) { return (CBaseEntity :: ObjectCaps() & ~FCAP_ACROSS_TRANSITION) | FCAP_DONT_SAVE; }
 	static	void SpawnHeadGib( entvars_t *pevVictim );
 	static	void SpawnRandomGibs( entvars_t *pevVictim, int cGibs, int human );
-	static  void SpawnStickyGibs( entvars_t *pevVictim, Vector vecOrigin, int cGibs );
+	static  void SpawnStickyGibs( entvars_t *pevVictim, Legacy_Vector vecOrigin, int cGibs );
 
 	int		m_bloodColor;
 	int		m_cBloodDecals;

@@ -34,8 +34,8 @@
 class CNode
 {
 public:
-	Vector	m_vecOrigin;// location of this node in space
-	Vector  m_vecOriginPeek; // location of this node (LAND nodes are NODE_HEIGHT higher).
+	Legacy_Vector	m_vecOrigin;// location of this node in space
+	Legacy_Vector  m_vecOriginPeek; // location of this node (LAND nodes are NODE_HEIGHT higher).
 	BYTE    m_Region[3]; // Which of 256 regions do each of the coordinate belong?
 	int		m_afNodeInfo;// bits that tell us more about this location
 	
@@ -97,7 +97,7 @@ typedef struct
 
 typedef struct
 {
-	Vector v;
+	Legacy_Vector v;
 	short n;		// Nearest node or -1 if no node found.
 } CACHE_ENTRY;
 
@@ -162,9 +162,9 @@ public:
 	int		LinkVisibleNodes ( CLink *pLinkPool, FILE *file, int *piBadNode );
 	int		RejectInlineLinks ( CLink *pLinkPool, FILE *file );
 	int		FindShortestPath ( int *piPath, int iStart, int iDest, int iHull, int afCapMask);
-	int		FindNearestNode ( const Vector &vecOrigin, CBaseEntity *pEntity );
-	int		FindNearestNode ( const Vector &vecOrigin, int afNodeTypes );
-	//int		FindNearestLink ( const Vector &vecTestPoint, int *piNearestLink, BOOL *pfAlongLine );
+	int		FindNearestNode ( const Legacy_Vector &vecOrigin, CBaseEntity *pEntity );
+	int		FindNearestNode ( const Legacy_Vector &vecOrigin, int afNodeTypes );
+	//int		FindNearestLink ( const Legacy_Vector &vecTestPoint, int *piNearestLink, BOOL *pfAlongLine );
 	float	PathLength( int iStart, int iDest, int iHull, int afCapMask );
 	int		NextNodeInRoute( int iCurrentNode, int iDest, int iHull, int iCap );
 
@@ -181,7 +181,7 @@ public:
 	int		FLoadGraph(char *szMapName);
 	int		FSaveGraph(char *szMapName);
 	int		FSetGraphPointers(void);
-	void	CheckNode(Vector vecOrigin, int iNode);
+	void	CheckNode(Legacy_Vector vecOrigin, int iNode);
 
 	void    BuildRegionTables(void);
 	void    ComputeStaticRoutingTables(void);

@@ -36,34 +36,34 @@
 void *Sys_GetProcAddress( void *pModuleHandle, const char *pName );
 
 // All interfaces derive from this.
-class IBaseInterface
+class IBaseInterface1
 {
 public:
 
-	virtual			~IBaseInterface() {}
+	virtual			~IBaseInterface1() {}
 };
 
 
 #define CREATEINTERFACE_PROCNAME	"CreateInterface"
-typedef IBaseInterface* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
+typedef IBaseInterface1* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
 
 
-typedef IBaseInterface* (*InstantiateInterfaceFn)();
+typedef IBaseInterface1* (*InstantiateInterfaceFn)();
 
 
 // Used internally to register classes.
-class InterfaceReg
+class InterfaceReg1
 {
 public:
-				InterfaceReg(InstantiateInterfaceFn fn, const char *pName);
+				InterfaceReg1(InstantiateInterfaceFn fn, const char *pName);
 
 public:
 
 	InstantiateInterfaceFn	m_CreateFn;
 	const char				*m_pName;
 
-	InterfaceReg			*m_pNext; // For the global list.
-	static InterfaceReg		*s_pInterfaceRegs;
+	InterfaceReg1			*m_pNext; // For the global list.
+	static InterfaceReg1		*s_pInterfaceReg1s;
 };
 
 
@@ -80,19 +80,19 @@ public:
 //
 // Use this if you want to write the factory function.
 #define EXPOSE_INTERFACE_FN(functionName, interfaceName, versionName) \
-	static InterfaceReg __g_Create##className##_reg(functionName, versionName);
+	static InterfaceReg1 __g_Create##className##_reg(functionName, versionName);
 
 #define EXPOSE_INTERFACE(className, interfaceName, versionName) \
-	static IBaseInterface* __Create##className##_interface() {return (interfaceName *)new className;}\
-	static InterfaceReg __g_Create##className##_reg(__Create##className##_interface, versionName );
+	static IBaseInterface1* __Create##className##_interface() {return (interfaceName *)new className;}\
+	static InterfaceReg1 __g_Create##className##_reg(__Create##className##_interface, versionName );
 
 // Use this to expose a singleton interface with a global variable you've created.
 #define EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, globalVarName) \
-	static IBaseInterface* __Create##className##interfaceName##_interface() {return (IBaseInterface *)&globalVarName;}\
-	static InterfaceReg __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName);
+	static IBaseInterface1* __Create##className##interfaceName##_interface() {return (IBaseInterface1 *)&globalVarName;}\
+	static InterfaceReg1 __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName);
 
 // Use this to expose a singleton interface. This creates the global variable for you automatically.
-#define EXPOSE_SINGLE_INTERFACE(className, interfaceName, versionName) \
+#define V1_EXPOSE_SINGLE_INTERFACE(className, interfaceName, versionName) \
 	static className __g_##className##_singleton;\
 	EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, __g_##className##_singleton)
 
@@ -116,7 +116,7 @@ enum
 
 extern "C"
 {
-	EXPORT_FUNCTION IBaseInterface* CreateInterface(const char *pName, int *pReturnCode);
+	EXPORT_FUNCTION IBaseInterface1* CreateInterface1(const char *pName, int *pReturnCode);
 };
 
 
@@ -140,7 +140,7 @@ class CSysModule;
 extern CSysModule			*Sys_LoadModule( const char *pModuleName );
 extern void					Sys_UnloadModule( CSysModule *pModule );
 
-extern CreateInterfaceFn	Sys_GetFactory( CSysModule *pModule );
+extern CreateInterfaceFn	Sys_GetFactory1( CSysModule *pModule );
 
 
 #endif

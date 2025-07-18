@@ -55,7 +55,7 @@ public:
 	virtual bool NeedAdjustViewmodelAdjustments();
 
 	// Reprojects attachments of the viewmodel if FOV is changed
-	virtual void StudioAdjustViewmodelAttachments(Vector &vOrigin);
+	virtual void StudioAdjustViewmodelAttachments(Legacy_Vector &vOrigin);
 	
 	// Save bone matrices and names
 	virtual void StudioSaveBones( void );

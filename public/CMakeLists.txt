@@ -1,2 +1,1 @@
-add_sources(
-	interface.cpp)
+add_sources()

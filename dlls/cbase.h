@@ -168,12 +168,12 @@ public:
 
 	static	TYPEDESCRIPTION m_SaveData[];
 
-	virtual void	TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
+	virtual void	TraceAttack( entvars_t *pevAttacker, float flDamage, Legacy_Vector vecDir, TraceResult *ptr, int bitsDamageType);
 	virtual int		TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType );
 	virtual int		TakeHealth( float flHealth, int bitsDamageType );
 	virtual void	Killed( entvars_t *pevAttacker, int iGib );
 	virtual int		BloodColor( void ) { return DONT_BLEED; }
-	virtual void	TraceBleed( float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType );
+	virtual void	TraceBleed( float flDamage, Legacy_Vector vecDir, TraceResult *ptr, int bitsDamageType );
 	virtual BOOL    IsTriggered( CBaseEntity *pActivator ) {return TRUE;}
 	virtual CBaseMonster *MyMonsterPointer( void ) { return NULL;}
 	virtual CSquadMonster *MySquadMonsterPointer( void ) { return NULL;}
@@ -244,8 +244,8 @@ public:
 	void EXPORT SUB_FadeOut ( void );
 	void EXPORT SUB_CallUseToggle( void ) { this->Use( this, this, USE_TOGGLE, 0 ); }
 	int			ShouldToggle( USE_TYPE useType, BOOL currentState );
-	void		FireBullets( ULONG	cShots, Vector  vecSrc, Vector	vecDirShooting,	Vector	vecSpread, float flDistance, int iBulletType, int iTracerFreq = 4, int iDamage = 0, entvars_t *pevAttacker = NULL  );
-	Vector		FireBulletsPlayer( ULONG	cShots, Vector  vecSrc, Vector	vecDirShooting,	Vector	vecSpread, float flDistance, int iBulletType, int iTracerFreq = 4, int iDamage = 0, entvars_t *pevAttacker = NULL, int shared_rand = 0 );
+	void		FireBullets( ULONG	cShots, Legacy_Vector  vecSrc, Legacy_Vector	vecDirShooting,	Legacy_Vector	vecSpread, float flDistance, int iBulletType, int iTracerFreq = 4, int iDamage = 0, entvars_t *pevAttacker = NULL  );
+	Legacy_Vector		FireBulletsPlayer( ULONG	cShots, Legacy_Vector  vecSrc, Legacy_Vector	vecDirShooting,	Legacy_Vector	vecSpread, float flDistance, int iBulletType, int iTracerFreq = 4, int iDamage = 0, entvars_t *pevAttacker = NULL, int shared_rand = 0 );
 
 	virtual CBaseEntity *Respawn( void ) { return NULL; }
 
@@ -326,22 +326,22 @@ public:
 
 
 	//
-	static CBaseEntity *Create( const char *szName, const Vector &vecOrigin, const Vector &vecAngles, edict_t *pentOwner = NULL );
+	static CBaseEntity *Create( const char *szName, const Legacy_Vector &vecOrigin, const Legacy_Vector &vecAngles, edict_t *pentOwner = NULL );
 
 	virtual BOOL FBecomeProne( void ) {return FALSE;};
 	edict_t *edict() { return ENT( pev ); };
 	EOFFSET eoffset( ) { return OFFSET( pev ); };
 	int	  entindex( ) { return ENTINDEX( edict() ); };
 
-	virtual Vector Center( ) { return (pev->absmax + pev->absmin) * 0.5; }; // center point of entity
-	virtual Vector EyePosition( ) { return pev->origin + pev->view_ofs; };			// position of eyes
-	virtual Vector EarPosition( ) { return pev->origin + pev->view_ofs; };			// position of ears
-	virtual Vector BodyTarget( const Vector &posSrc ) { return Center( ); };		// position to shoot at
+	virtual Legacy_Vector Center( ) { return (pev->absmax + pev->absmin) * 0.5; }; // center point of entity
+	virtual Legacy_Vector EyePosition( ) { return pev->origin + pev->view_ofs; };			// position of eyes
+	virtual Legacy_Vector EarPosition( ) { return pev->origin + pev->view_ofs; };			// position of ears
+	virtual Legacy_Vector BodyTarget( const Legacy_Vector &posSrc ) { return Center( ); };		// position to shoot at
 
 	virtual int Illumination( ) { return GETENTITYILLUM( ENT( pev ) ); };
 
 	virtual	BOOL FVisible ( CBaseEntity *pEntity );
-	virtual	BOOL FVisible ( const Vector &vecOrigin );
+	virtual	BOOL FVisible ( const Legacy_Vector &vecOrigin );
 
 	//We use this variables to store each ammo count.
 	int ammo_9mm;
@@ -363,7 +363,7 @@ public:
 	int m_fireState;
 public:
 	// BlueNightHawk : Server Side HL2 Punch
-	Vector m_vecPunchangle;
+	Legacy_Vector m_vecPunchangle;
 	void SetPunchAngle(int axis, float punch)
 	{
 		m_vecPunchangle[axis] = punch * 20;
@@ -489,10 +489,10 @@ public:
 	float SetBoneController ( int iController, float flValue );
 	void InitBoneControllers ( void );
 	float SetBlending ( int iBlender, float flValue );
-	void GetBonePosition ( int iBone, Vector &origin, Vector &angles );
-	void GetAutomovement( Vector &origin, Vector &angles, float flInterval = 0.1 );
+	void GetBonePosition ( int iBone, Legacy_Vector &origin, Legacy_Vector &angles );
+	void GetAutomovement( Legacy_Vector &origin, Legacy_Vector &angles, float flInterval = 0.1 );
 	int  FindTransition( int iEndingSequence, int iGoalSequence, int *piDir );
-	void GetAttachment ( int iAttachment, Vector &origin, Vector &angles );
+	void GetAttachment ( int iAttachment, Legacy_Vector &origin, Legacy_Vector &angles );
 	void SetBodygroup( int iGroup, int iValue );
 	int GetBodygroup( int iGroup );
 	int ExtractBbox( int sequence, float *mins, float *maxs );
@@ -525,17 +525,17 @@ public:
 	float				m_flTWidth;// for plats
 	float				m_flTLength;// for plats
 
-	Vector				m_vecPosition1;
-	Vector				m_vecPosition2;
-	Vector				m_vecAngle1;
-	Vector				m_vecAngle2;
+	Legacy_Vector				m_vecPosition1;
+	Legacy_Vector				m_vecPosition2;
+	Legacy_Vector				m_vecAngle1;
+	Legacy_Vector				m_vecAngle2;
 
 	int					m_cTriggersLeft;		// trigger_counter only, # of activations remaining
 	float				m_flHeight;
 	EHANDLE				m_hActivator;
 	void (CBaseToggle::*m_pfnCallWhenMoveDone)(void);
-	Vector				m_vecFinalDest;
-	Vector				m_vecFinalAngle;
+	Legacy_Vector				m_vecFinalDest;
+	Legacy_Vector				m_vecFinalAngle;
 
 	int					m_bitsDamageInflict;	// DMG_ damage type that the door or tigger does
 
@@ -548,15 +548,15 @@ public:
 	virtual float	GetDelay( void ) { return m_flWait; }
 
 	// common member functions
-	void LinearMove( Vector	vecDest, float flSpeed );
+	void LinearMove( Legacy_Vector	vecDest, float flSpeed );
 	void EXPORT LinearMoveDone( void );
-	void AngularMove( Vector vecDestAngle, float flSpeed );
+	void AngularMove( Legacy_Vector vecDestAngle, float flSpeed );
 	void EXPORT AngularMoveDone( void );
 	BOOL IsLockedByMaster( void );
 
-	static float		AxisValue( int flags, const Vector &angles );
+	static float		AxisValue( int flags, const Legacy_Vector &angles );
 	static void			AxisDir( entvars_t *pev );
-	static float		AxisDelta( int flags, const Vector &angle1, const Vector &angle2 );
+	static float		AxisDelta( int flags, const Legacy_Vector &angle1, const Legacy_Vector &angle2 );
 
 	string_t m_sMaster;		// If this button has a master switch, this is the targetname.
 							// A master switch must be of the multisource type. If all 

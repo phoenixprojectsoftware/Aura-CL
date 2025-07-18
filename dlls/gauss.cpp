@@ -310,8 +310,8 @@ void CGauss::StartFire( void )
 	float flDamage;
 	
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
-	Vector vecAiming = gpGlobals->v_forward;
-	Vector vecSrc = m_pPlayer->GetGunPosition( ); // + gpGlobals->v_up * -8 + gpGlobals->v_right * 8;
+	Legacy_Vector vecAiming = gpGlobals->v_forward;
+	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition( ); // + gpGlobals->v_up * -8 + gpGlobals->v_right * 8;
 	
 	if ( gpGlobals->time - m_pPlayer->m_flStartCharge > GetFullChargeTime() )
 	{
@@ -361,12 +361,12 @@ void CGauss::StartFire( void )
 	Fire( vecSrc, vecAiming, flDamage );
 }
 
-void CGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
+void CGauss::Fire( Legacy_Vector vecOrigSrc, Legacy_Vector vecDir, float flDamage )
 {
 	m_pPlayer->m_iWeaponVolume = GAUSS_PRIMARY_FIRE_VOLUME;
 
-	Vector vecSrc = vecOrigSrc;
-	Vector vecDest = vecSrc + vecDir * 8192;
+	Legacy_Vector vecSrc = vecOrigSrc;
+	Legacy_Vector vecDest = vecSrc + vecDir * 8192;
 	edict_t		*pentIgnore;
 	TraceResult tr, beam_tr;
 	float flMaxFrac = 1.0;

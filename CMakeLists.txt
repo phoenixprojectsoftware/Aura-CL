@@ -1,3 +1,4 @@
+# this needs to be updated soon because it's causing annoying errors with cmake4.
 cmake_minimum_required(VERSION 3.3)
 
 # Custom build types support
@@ -141,7 +142,6 @@ set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
 
 target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES})
-target_link_libraries(client ${SOURCE_SDK_LIBS})
 
 
 target_include_directories(client PRIVATE
@@ -214,7 +214,8 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/lib/public/game_controls.lib
         ${CMAKE_SOURCE_DIR}/lib/public/libcurl_a.lib
         ${CMAKE_SOURCE_DIR}/lib/steam_api.lib
-        ${CMAKE_SOURCE_DIR}/utils/vgui/lib/win32_vc6/vgui.lib)
+        ${CMAKE_SOURCE_DIR}/utils/vgui/lib/win32_vc6/vgui.lib
+		${SOURCE_SDK_LIBS})
 elseif(UNIX)
     target_compile_definitions(client PRIVATE -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_ORIGIN)
 
@@ -231,6 +232,8 @@ elseif(UNIX)
         set(VGUI_LINK_FLAGS "-Wl,--no-as-needed -L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so")
         set(SDL2_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux -lSDL2")
         set_property(TARGET client PROPERTY LINK_FLAGS "${VGUI_LINK_FLAGS} ${SDL2_LINK_FLAGS}")
+		target_link_libraries(client
+		${SOURCE_SDK_LIBS})
     endif()
 endif()
 

@@ -22,7 +22,7 @@
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
-#include "../public/interface.h"
+#include <tier1/interface.h>
 //#include "vgui_schememanager.h"
 
 extern "C"
@@ -33,7 +33,6 @@ extern "C"
 #include <string.h>
 #include "hud_servers.h"
 #include "vgui_int.h"
-#include "interface.h"
 
 #ifdef _WIN32
 #include "winsani_in.h"
@@ -44,9 +43,9 @@ extern "C"
 #include "tri.h"
 
 #include "vgui_TeamFortressViewport.h"
-#include "../public/interface.h"
+#include "console.h"
 
-cl_enginefunc_t gEngfuncs;
+cldll_enginefunc_t gEngfuncs;
 CHud gHUD;
 TeamFortressViewport *gViewPort = NULL;
 
@@ -57,7 +56,7 @@ IParticleMan *g_pParticleMan = NULL;
 
 #include "gameui.h"
 CSysModule *g_hGameUIModule = nullptr;
-IGameUI *g_pGameUI = nullptr;
+IGameUI *g_pGameUI1 = nullptr;
 
 #include "discord_integration.h"
 #include "update_checker.h"
@@ -87,18 +86,18 @@ int CL_DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs )
 	switch ( hullnumber )
 	{
 	case 0:				// Normal player
-		mins = Vector(-16, -16, -36);
-		maxs = Vector(16, 16, 36);
+		mins = Legacy_Vector(-16, -16, -36);
+		maxs = Legacy_Vector(16, 16, 36);
 		iret = 1;
 		break;
 	case 1:				// Crouched player
-		mins = Vector(-16, -16, -18 );
-		maxs = Vector(16, 16, 18 );
+		mins = Legacy_Vector(-16, -16, -18 );
+		maxs = Legacy_Vector(16, 16, 18 );
 		iret = 1;
 		break;
 	case 2:				// Point based hull
-		mins = Vector( 0, 0, 0 );
-		maxs = Vector( 0, 0, 0 );
+		mins = Legacy_Vector( 0, 0, 0 );
+		maxs = Legacy_Vector( 0, 0, 0 );
 		iret = 1;
 		break;
 	}
@@ -151,7 +150,7 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
-int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
+int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
 
@@ -160,11 +159,12 @@ int CL_DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	if (iVersion != CLDLL_INTERFACE_VERSION)
 		return 0;
 
-	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t));
+	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cldll_enginefunc_t));
 
 	update_checker::check_for_updates();
 	discord_integration::initialize();
 
+	CvarSystem::RegisterCvars();
 	EV_HookEvents();
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
@@ -206,7 +206,7 @@ the hud variables.
 
 void CL_DLLEXPORT HUD_Init( void )
 {
-//	RecClHudInit();
+	console::HudInit();
 	InitInput();
 	gHUD.Init();
 	Scheme_Init();
@@ -282,7 +282,6 @@ Called by engine every frame that client .dll is loaded
 void CL_DLLEXPORT HUD_Frame( double time )
 {
 //	RecClHudFrame(time);
-
 	ServersThink( time );
 
 	GetClientVoiceMgr()->Frame(time);
@@ -365,7 +364,7 @@ void CL_UnloadGameUI(void)
 {
 	Sys_UnloadModule(g_hGameUIModule);
 
-	g_pGameUI = nullptr;
+	g_pGameUI1 = nullptr;
 	g_hGameUIModule = nullptr;
 }
 
@@ -375,7 +374,7 @@ void CL_LoadGameUI(void)
 
 	if (gEngfuncs.COM_ExpandFilename(GAMEUI_DLLNAME, dir, ARRAYSIZE(dir)) == FALSE)
 	{
-		g_pGameUI = nullptr;
+		g_pGameUI1 = nullptr;
 		g_hGameUIModule = nullptr;
 		return;
 	}
@@ -385,13 +384,18 @@ void CL_LoadGameUI(void)
 
 	if (gameUIFactory == nullptr)
 	{
-		g_pGameUI = nullptr;
+		g_pGameUI1 = nullptr;
 		g_hGameUIModule = nullptr;
 		return;
 	}
 
-	g_pGameUI = static_cast<IGameUI*>(gameUIFactory(GAMEUI_INTERFACE, nullptr));
-	// printf("g_pGameUI: %p\n", g_pGameUI);
+	g_pGameUI1 = static_cast<IGameUI*>(gameUIFactory(GAMEUI_INTERFACE, nullptr));
+	// printf("g_pGameUI1: %p\n", g_pGameUI1);
+}
+
+extern "C" CL_DLLEXPORT void* ClientFactory()
+{
+	return (void *)(Sys_GetFactoryThis());
 }
 
 cldll_func_dst_t *g_pcldstAddrs;
@@ -446,6 +450,8 @@ extern "C" void CL_DLLEXPORT F(void *pv)
 	HUD_DirectorMessage,
 	HUD_GetStudioModelInterface,
 	HUD_ChatInputPosition,
+	nullptr,
+	ClientFactory
 	};
 
 	*pcldll_func = cldll_func;

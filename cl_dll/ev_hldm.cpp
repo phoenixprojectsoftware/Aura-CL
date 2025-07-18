@@ -123,18 +123,18 @@ void EV_PenguinFire(event_args_t* args);
 void EV_TrainPitchAdjust( struct event_args_s *args );
 }
 
-#define VECTOR_CONE_1DEGREES Vector( 0.00873, 0.00873, 0.00873 )
-#define VECTOR_CONE_2DEGREES Vector( 0.01745, 0.01745, 0.01745 )
-#define VECTOR_CONE_3DEGREES Vector( 0.02618, 0.02618, 0.02618 )
-#define VECTOR_CONE_4DEGREES Vector( 0.03490, 0.03490, 0.03490 )
-#define VECTOR_CONE_5DEGREES Vector( 0.04362, 0.04362, 0.04362 )
-#define VECTOR_CONE_6DEGREES Vector( 0.05234, 0.05234, 0.05234 )
-#define VECTOR_CONE_7DEGREES Vector( 0.06105, 0.06105, 0.06105 )	
-#define VECTOR_CONE_8DEGREES Vector( 0.06976, 0.06976, 0.06976 )
-#define VECTOR_CONE_9DEGREES Vector( 0.07846, 0.07846, 0.07846 )
-#define VECTOR_CONE_10DEGREES Vector( 0.08716, 0.08716, 0.08716 )
-#define VECTOR_CONE_15DEGREES Vector( 0.13053, 0.13053, 0.13053 )
-#define VECTOR_CONE_20DEGREES Vector( 0.17365, 0.17365, 0.17365 )
+#define VECTOR_CONE_1DEGREES Legacy_Vector( 0.00873, 0.00873, 0.00873 )
+#define VECTOR_CONE_2DEGREES Legacy_Vector( 0.01745, 0.01745, 0.01745 )
+#define VECTOR_CONE_3DEGREES Legacy_Vector( 0.02618, 0.02618, 0.02618 )
+#define VECTOR_CONE_4DEGREES Legacy_Vector( 0.03490, 0.03490, 0.03490 )
+#define VECTOR_CONE_5DEGREES Legacy_Vector( 0.04362, 0.04362, 0.04362 )
+#define VECTOR_CONE_6DEGREES Legacy_Vector( 0.05234, 0.05234, 0.05234 )
+#define VECTOR_CONE_7DEGREES Legacy_Vector( 0.06105, 0.06105, 0.06105 )	
+#define VECTOR_CONE_8DEGREES Legacy_Vector( 0.06976, 0.06976, 0.06976 )
+#define VECTOR_CONE_9DEGREES Legacy_Vector( 0.07846, 0.07846, 0.07846 )
+#define VECTOR_CONE_10DEGREES Legacy_Vector( 0.08716, 0.08716, 0.08716 )
+#define VECTOR_CONE_15DEGREES Legacy_Vector( 0.13053, 0.13053, 0.13053 )
+#define VECTOR_CONE_20DEGREES Legacy_Vector( 0.17365, 0.17365, 0.17365 )
 
 void MuzzleFlash(int index, float r, float g, float b, float a, float radius, float life, float decay, vec3_t vecOrigin)
 {
@@ -1193,7 +1193,7 @@ void EV_FireGauss( event_args_t *args )
 				VectorMA( tr.endpos, 8.0, forward, vecSrc );
 				VectorMA( vecSrc, 8192.0, forward, vecDest );
 
-				gEngfuncs.pEfxAPI->R_TempSprite( tr.endpos, vec3_origin, 0.2, m_iGlow, kRenderGlow, kRenderFxNoDissipation, flDamage * n / 255.0, flDamage * n * 0.5 * 0.1, FTENT_FADEOUT );
+				gEngfuncs.pEfxAPI->R_TempSprite( tr.endpos, legacy_vec3_origin, 0.2, m_iGlow, kRenderGlow, kRenderFxNoDissipation, flDamage * n / 255.0, flDamage * n * 0.5 * 0.1, FTENT_FADEOUT );
 
 				vec3_t fwd;
 				VectorAdd( tr.endpos, tr.plane.normal, fwd );
@@ -1215,7 +1215,7 @@ void EV_FireGauss( event_args_t *args )
 				// tunnel
 				EV_HLDM_DecalGunshot( &tr, BULLET_MONSTER_12MM );
 
-				gEngfuncs.pEfxAPI->R_TempSprite( tr.endpos, vec3_origin, 1.0, m_iGlow, kRenderGlow, kRenderFxNoDissipation, flDamage / 255.0, 6.0, FTENT_FADEOUT );
+				gEngfuncs.pEfxAPI->R_TempSprite( tr.endpos, legacy_vec3_origin, 1.0, m_iGlow, kRenderGlow, kRenderFxNoDissipation, flDamage / 255.0, 6.0, FTENT_FADEOUT );
 
 				// limit it to one hole punch
 				if (fHasPunched)
@@ -1272,7 +1272,7 @@ void EV_FireGauss( event_args_t *args )
 
 							EV_HLDM_DecalGunshot( &beam_tr, BULLET_MONSTER_12MM );
 							
-							gEngfuncs.pEfxAPI->R_TempSprite( beam_tr.endpos, vec3_origin, 0.1, m_iGlow, kRenderGlow, kRenderFxNoDissipation, flDamage / 255.0, 6.0, FTENT_FADEOUT );
+							gEngfuncs.pEfxAPI->R_TempSprite( beam_tr.endpos, legacy_vec3_origin, 0.1, m_iGlow, kRenderGlow, kRenderFxNoDissipation, flDamage / 255.0, 6.0, FTENT_FADEOUT );
 			
 							// balls
 							{
@@ -1298,7 +1298,7 @@ void EV_FireGauss( event_args_t *args )
 					{
 						// slug doesn't punch through ever with primary 
 						// fire, so leave a little glowy bit and make some balls
-						gEngfuncs.pEfxAPI->R_TempSprite( tr.endpos, vec3_origin, 0.2, m_iGlow, kRenderGlow, kRenderFxNoDissipation, 200.0 / 255.0, 0.3, FTENT_FADEOUT );
+						gEngfuncs.pEfxAPI->R_TempSprite( tr.endpos, legacy_vec3_origin, 0.2, m_iGlow, kRenderGlow, kRenderFxNoDissipation, 200.0 / 255.0, 0.3, FTENT_FADEOUT );
 			
 						{
 							vec3_t fwd;
@@ -1505,7 +1505,7 @@ void EV_FireCrossbow2( event_args_t *args )
 
 			VectorAngles( forward, vBoltAngles );
 
-			TEMPENTITY *bolt = gEngfuncs.pEfxAPI->R_TempModel( tr.endpos - forward * 10, Vector( 0, 0, 0), vBoltAngles , 5, iModelIndex, TE_BOUNCE_NULL );
+			TEMPENTITY *bolt = gEngfuncs.pEfxAPI->R_TempModel( tr.endpos - forward * 10, Legacy_Vector( 0, 0, 0), vBoltAngles , 5, iModelIndex, TE_BOUNCE_NULL );
 			
 			if ( bolt )
 			{
@@ -1727,7 +1727,7 @@ void EV_EgonFire( event_args_t *args )
 			pBeam2 = gEngfuncs.pEfxAPI->R_BeamEntPoint ( idx | 0x1000, tr.endpos, iBeamModelIndex, 99999, 5.0, 0.08, 0.7, 25, 0, 0, r, g, b );
 
 			// Vit_amiN: egon beam flare
-			pFlare = gEngfuncs.pEfxAPI->R_TempSprite(tr.endpos, vec3_origin, 1.0,
+			pFlare = gEngfuncs.pEfxAPI->R_TempSprite(tr.endpos, legacy_vec3_origin, 1.0,
 				gEngfuncs.pEventAPI->EV_FindModelIndex(EGON_FLARE_SPRITE),
 				kRenderGlow, kRenderFxNoDissipation, 1.0, 99999, FTENT_SPRCYCLE | FTENT_PERSIST);
 
@@ -1930,8 +1930,8 @@ enum squeak_e {
 	SQUEAK_THROW
 };
 
-#define VEC_HULL_MIN		Vector(-16, -16, -36)
-#define VEC_DUCK_HULL_MIN	Vector(-16, -16, -18 )
+#define VEC_HULL_MIN		Legacy_Vector(-16, -16, -36)
+#define VEC_DUCK_HULL_MIN	Legacy_Vector(-16, -16, -18 )
 
 void EV_SnarkFire( event_args_t *args )
 {
@@ -1976,7 +1976,7 @@ void EV_FireEagle(event_args_t* args)
 {
 	const bool bEmpty = args->bparam1 != 0;
 
-	Vector up, right, forward;
+	Legacy_Vector up, right, forward;
 
 	AngleVectors(args->angles, forward, right, up);
 
@@ -1993,8 +1993,8 @@ void EV_FireEagle(event_args_t* args)
 		Punch(4, 0, 0);
 	}
 
-	Vector ShellVelocity;
-	Vector ShellOrigin;
+	Legacy_Vector ShellVelocity;
+	Legacy_Vector ShellOrigin;
 
 	EV_GetDefaultShellInfo(
 		args,
@@ -2011,11 +2011,11 @@ void EV_FireEagle(event_args_t* args)
 		args->origin, CHAN_AUTO, "weapons/desert_eagle_fire.wav",
 		gEngfuncs.pfnRandomFloat(0.92, 1), ATTN_NORM, 0, 98 + gEngfuncs.pfnRandomLong(0, 3));
 
-	Vector vecSrc;
+	Legacy_Vector vecSrc;
 
 	EV_GetGunPosition(args, vecSrc, args->origin);
 
-	Vector vecAiming = forward;
+	Legacy_Vector vecAiming = forward;
 
 	EV_HLDM_FireBullets(
 		args->entindex,
@@ -2037,12 +2037,12 @@ void EV_FireEagle(event_args_t* args)
 void EV_SniperRifle(event_args_t* args)
 {
 	const int idx = args->entindex;
-	Vector vecOrigin = args->origin;
-	Vector vecAngles = args->angles;
+	Legacy_Vector vecOrigin = args->origin;
+	Legacy_Vector vecAngles = args->angles;
 
 	const int iClip = args->iparam1;
 
-	Vector up, right, forward;
+	Legacy_Vector up, right, forward;
 
 	AngleVectors(vecAngles, forward, right, up);
 
@@ -2057,8 +2057,8 @@ void EV_SniperRifle(event_args_t* args)
 		CHAN_WEAPON, "weapons/sniper_fire.wav",
 		gEngfuncs.pfnRandomFloat(0.9f, 1.0f), ATTN_NORM, 0, 98 + gEngfuncs.pfnRandomLong(0, 3));
 
-	Vector vecSrc;
-	Vector vecAiming = forward;
+	Legacy_Vector vecSrc;
+	Legacy_Vector vecAiming = forward;
 
 	EV_GetGunPosition(args, vecSrc, vecOrigin);
 
@@ -2089,7 +2089,7 @@ void EV_SniperRifle(event_args_t* args)
 void EV_Knife(event_args_t* args)
 {
 	const int idx = args->entindex;
-	Vector origin = args->origin;
+	Legacy_Vector origin = args->origin;
 
 	const char* pszSwingSound;
 
@@ -2134,7 +2134,7 @@ int g_iClub;
 void EV_Pipewrench(event_args_t* args)
 {
 	const int idx = args->entindex;
-	Vector origin = args->origin;
+	Legacy_Vector origin = args->origin;
 	const int iBigSwing = args->bparam1;
 	const int hitSomething = args->bparam2;
 
@@ -2276,9 +2276,9 @@ void EV_FireSpore(event_args_t* args)
 
 		if (cl_entity_t* pViewModel = gEngfuncs.GetViewModel())
 		{
-			Vector vecSrc = pViewModel->attachment[1];
+			Legacy_Vector vecSrc = pViewModel->attachment[1];
 
-			Vector forward;
+			Legacy_Vector forward;
 
 			AngleVectors(args->angles, forward, nullptr, nullptr);
 
@@ -2379,7 +2379,7 @@ void EV_FireM249(event_args_t* args)
 
 	const bool bAlternatingEject = args->bparam1 != 0;
 
-	Vector up, right, forward;
+	Legacy_Vector up, right, forward;
 
 	AngleVectors(args->angles, forward, right, up);
 
@@ -2400,8 +2400,8 @@ void EV_FireM249(event_args_t* args)
 		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 	}
 
-	Vector ShellVelocity;
-	Vector ShellOrigin;
+	Legacy_Vector ShellVelocity;
+	Legacy_Vector ShellOrigin;
 
 	EV_GetDefaultShellInfo(
 		args,
@@ -2434,11 +2434,11 @@ void EV_FireM249(event_args_t* args)
 		break;
 	}
 
-	Vector vecSrc;
+	Legacy_Vector vecSrc;
 
 	EV_GetGunPosition(args, vecSrc, args->origin);
 
-	Vector vecAiming = forward;
+	Legacy_Vector vecAiming = forward;
 
 	EV_HLDM_FireBullets(
 		args->entindex,
@@ -2460,9 +2460,9 @@ void EV_FireM249(event_args_t* args)
 //======================
 void EV_PenguinFire(event_args_t* args)
 {
-	Vector origin = args->origin;
-	Vector angles = args->angles;
-	Vector forward;
+	Legacy_Vector origin = args->origin;
+	Legacy_Vector angles = args->angles;
+	Legacy_Vector forward;
 	gEngfuncs.pfnAngleVectors(angles, forward, nullptr, nullptr);
 
 	if (EV_IsLocal(args->entindex))
@@ -2474,8 +2474,8 @@ void EV_PenguinFire(event_args_t* args)
 		gEngfuncs.pEventAPI->EV_SetSolidPlayers(args->entindex - 1);
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 
-		Vector start = origin + (forward * 20);
-		Vector end = origin + (forward * 64);
+		Legacy_Vector start = origin + (forward * 20);
+		Legacy_Vector end = origin + (forward * 64);
 
 		pmtrace_t tr;
 		gEngfuncs.pEventAPI->EV_PlayerTrace(start, end, PM_NORMAL, -1, &tr);
