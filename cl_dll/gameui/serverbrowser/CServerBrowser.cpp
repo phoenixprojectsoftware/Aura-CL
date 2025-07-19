@@ -422,6 +422,13 @@ void CServerBrowser::UpdateStatusText(const char* format, ...)
 
 	if (format && strlen(format) > 0)
 	{
+		// Localized string? use that instead.
+		if (format[0] == '#')
+		{
+			m_pStatusLabel->SetText(g_pVGuiLocalize->Find(format));
+			return;
+		}
+
 		char str[1024];
 		va_list argptr;
 		va_start(argptr, format);
