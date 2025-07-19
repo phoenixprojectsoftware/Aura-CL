@@ -102,6 +102,8 @@ void CheckSuspend();
 // Redraw
 // step through the local data,  placing the appropriate graphics & text as appropriate
 // returns 1 if they've changed, 0 otherwise
+extern cvar_t* r_pissfilter;
+
 int CHud :: Redraw( float flTime, int intermission )
 {
 	m_fOldTime = m_flTime;	// save time of previous redraw
@@ -248,7 +250,7 @@ int CHud :: Redraw( float flTime, int intermission )
 		SPR_DrawAdditive(i, x, y, NULL);
 	}
 
-	if (gHUD.m_Health.m_iHealth <= 0)
+	if (gHUD.m_Health.m_iHealth <= 0 && r_pissfilter->value < 1)
 	{
 		ApplyGreyscaleEffect();
 	}

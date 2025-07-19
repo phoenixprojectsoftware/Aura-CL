@@ -1133,17 +1133,17 @@ float CHud::GetSensitivity( void )
 	return m_flMouseSensitivity;
 }
 
+cvar_t* r_pissfilter;
+
 void CHud::ApplyGreyscaleEffect()
 {
-	if (!g_IsSpectator)
+	if (!g_IsSpectator && r_pissfilter->value < 1)
 	{
 		int grey = 128;
 		int alpha = 128;
 		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
 	}
 }
-
-cvar_t* r_pissfilter;
 
 void CHud::ApplyPissFilter()
 {
