@@ -18,6 +18,7 @@
 #include "../gameui_viewport.h"
 #include "../../client_vgui.h"
 #include "IBaseUI.h"
+#include "../../console.h"
 
 CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 {
@@ -59,8 +60,6 @@ CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 	m_pHistory = NULL;
 	m_pInternetGames = NULL;
 
-	LoadUserData();
-
 	SetMinimumSize(640, 384);
 
 	m_pGameList = m_pInternetGames;
@@ -78,14 +77,28 @@ CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 
 	m_pStatusLabel->SetText("");
 
+	LoadUserData();
+
 	vgui2::ivgui()->AddTickSignal(GetVPanel());
+}
+
+CServerBrowser::~CServerBrowser()
+{
+	delete m_pContextMenu;
+
+	SaveUserData();
+
+	// make sure everything gets deleted.
+	if (m_pSavedData)
+		m_pSavedData->deleteThis();
+	if (m_pFilterData)
+		m_pFilterData->deleteThis();
 }
 
 bool CServerBrowser::JoinGame(uint32 unGameIP, uint16 usGamePort)
 {
 	CDialogGameInfo* gameDialog = OpenGameInfoDialog(unGameIP, usGamePort, usGamePort);
 	gameDialog->Connect();
-	CloseAllGameInfoDialogs();
 	return false;
 }
 
@@ -152,11 +165,9 @@ void CServerBrowser::CloseAllGameInfoDialogs()
 {
 	for (int i = 0; i < m_GameInfoDialogs.Count(); i++)
 	{
-		vgui2::Panel* dlg = m_GameInfoDialogs[i];
-		if (dlg)
-		{
+		CDialogGameInfo* dlg = m_GameInfoDialogs[i];
+		if (dlg && !dlg->IsAlreadyClosing())
 			vgui2::ivgui()->PostMessage(dlg->GetVPanel(), new KeyValues("Close"), NULL);
-		}
 	}
 }
 
@@ -306,9 +317,21 @@ void CServerBrowser::OpenBrowser()
 		else
 			m_pTabPanel->SetActivePage(m_pInternetGames);
 	}
+	else
+	{
+		LoadUserData();
+		RefreshCurrentPage();
+	}
 
 	Activate();
 	m_pTabPanel->RequestFocus();
+}
+
+void CServerBrowser::Close()
+{
+	SaveUserData();
+	CloseAllGameInfoDialogs();
+	BaseClass::Close();
 }
 
 void CServerBrowser::OnActiveGameName(KeyValues* pKV)
@@ -381,6 +404,11 @@ void CServerBrowser::LoadUserData()
 		SetPos(10, 10);
 	}
 
+	// fix the tabs being "fucked in the ass"
+	// to quote jonnyboy, after loading filters.
+	GetSize(wide, tall);
+	m_pTabPanel->SetSize(wide - 15, tall - 78);
+
 	KeyValues* filters = m_pSavedData->FindKey("Filters", false);
 	if (filters)
 	{
@@ -413,6 +441,53 @@ void CServerBrowser::LoadUserData()
 
 	InvalidateLayout();
 	Repaint();
+}
+
+void CServerBrowser::SaveUserData()
+{
+	m_pSavedData->Clear();
+	m_pSavedData->LoadFromFile(g_pFullFileSystem, "ServerBrowser.vdf", "CONFIG");
+	// set the current tab
+	if (m_pGameList == m_pFavorites)
+		m_pSavedData->SetString("GameList", "favorites");
+	else if (m_pGameList == m_pLanGames)
+		m_pSavedData->SetString("GameList", "lan");
+	else if (m_pGameList == m_pFriendsGames)
+		m_pSavedData->SetString("GameList", "friends");
+	else if (m_pGameList == m_pHistory)
+		m_pSavedData->SetString("GameList", "history");
+#if defined( _HALO )
+	else if (m_pGameList == m_pPublicLobbies)
+		m_pSavedData->SetString("GameList", "lobbies"); // let's call these Lobbies in HaloGS instead.
+#endif
+	else
+		m_pSavedData->SetString("GameList", "internet");
+
+	int wide, tall;
+	GetSize(wide, tall);
+
+	int posx, posy;
+	GetPos(posx, posy);
+
+	m_pSavedData->SetInt("size_wide", wide);
+	m_pSavedData->SetInt("size_tall", tall);
+
+	m_pSavedData->SetInt("pos_x", posx);
+	m_pSavedData->SetInt("pos_y", posy);
+
+	m_pSavedData->RemoveSubKey(m_pSavedData->FindKey("Filters")); // remove the saved subkey and add our subkey
+	m_pSavedData->AddSubKey(m_pFilterData->MakeCopy());
+	if (!m_pSavedData->SaveToFile(g_pFullFileSystem, "ServerBrowser.vdf", "CONFIG"))
+		ConPrintf(Color(255, 22, 22, 255), "Failed to save ServerBrowser.vdf config file!");
+
+	// save per-page config
+	SaveUserConfig();
+}
+
+void CServerBrowser::RefreshCurrentPage()
+{
+	if (!m_pGameList) return;
+	m_pGameList->StartRefresh();
 }
 
 void CServerBrowser::UpdateStatusText(const char* format, ...)
@@ -466,5 +541,5 @@ void CServerBrowser::AddServerToFavorites(gameserveritem_t& server)
 
 gameserveritem_t* CServerBrowser::GetServer(unsigned int serverID)
 {
-	return nullptr;
+	return m_pGameList->GetServer(serverID); // Connect Button
 }

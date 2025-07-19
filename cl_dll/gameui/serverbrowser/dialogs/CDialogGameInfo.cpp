@@ -156,6 +156,11 @@ void CDialogGameInfo::RulesRefreshComplete()
 	m_bServerNotResponding = false;
 }
 
+void CDialogGameInfo::Close()
+{
+	m_bClosing = true;
+	BaseClass::Close();
+}
 
 void CDialogGameInfo::ShowModal(const char* szTitle)
 {

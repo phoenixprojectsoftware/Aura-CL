@@ -23,6 +23,7 @@ class CServerBrowser : public vgui2::Frame
 
 public:
 	CServerBrowser(vgui2::Panel* pParent);
+	~CServerBrowser();
 
 	// joins a specified game - game info dialog will only be opened if the server is fully or passworded
 	bool JoinGame(uint32 unGameIP, uint16 usGamePort);
@@ -44,11 +45,15 @@ public:
 
 	// methods
 	void OpenBrowser();
+	void Close();
 
 	KeyValues* GetFilterSaveData(const char* filterSet);
 
-	// Load or crap
+	// Load or save our crap
 	void LoadUserData();
+	void SaveUserData();
+
+	void RefreshCurrentPage();
 
 	// updates status text at bottom of window
 	void UpdateStatusText(const char* format, ...);

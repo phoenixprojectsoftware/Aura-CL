@@ -59,6 +59,9 @@ public:
 	virtual void RulesFailedToRespond();
 	virtual void RulesRefreshComplete();
 
+	bool IsAlreadyClosing() const { return m_bClosing;  }
+	void Close() override;
+
 protected:
 	// message handlers
 	MESSAGE_FUNC(OnConnect, "Connect");
@@ -118,6 +121,7 @@ private:
 	HServerQuery m_hPlayersQuery;
 	HServerQuery m_hRulesQuery;
 	bool m_bPlayerListUpdatePending;
+	bool m_bClosing;
 };
 
 #endif

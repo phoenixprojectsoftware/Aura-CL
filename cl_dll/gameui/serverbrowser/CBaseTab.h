@@ -74,9 +74,6 @@ public:
 
 	virtual void OnThink();
 
-	// Called by CGameList when the enter key is pressed.
-	// This is overridden in the add server dialog - since there is no Connect button, the message
-	// never gets handled, but we want to add a server when they dbl-click or press enter.
 	virtual bool OnGameListEnterPressed();
 
 	int GetSelectedItemsCount();
