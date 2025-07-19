@@ -175,7 +175,7 @@ public:
 #define EAGLE_MAX_CLIP			7
 #define SPORELAUNCHER_MAX_CLIP	5
 #define SHOCKRIFLE_MAX_CLIP		10
-#define M249_MAX_CLIP				60
+#define M249_MAX_CLIP				100
 #define PENGUIN_MAX_CLIP 3
 #define SNIPERRIFLE_MAX_CLIP 5
 
@@ -202,7 +202,7 @@ public:
 #define SHOCKRIFLE_DEFAULT_GIVE 10
 #define SNIPERRIFLE_DEFAULT_GIVE 5
 #define DISPLACER_DEFAULT_GIVE 40
-#define M249_DEFAULT_GIVE					60
+#define M249_DEFAULT_GIVE					100
 
 // The amount of ammo given to a player by an ammo item.
 #define AMMO_URANIUMBOX_GIVE	80
