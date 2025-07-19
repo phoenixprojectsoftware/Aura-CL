@@ -155,9 +155,9 @@ int CHudNameTags::Draw(float flTime)
 		char colorless_name[256];
 		color_tags::strip_color_tags(colorless_name, g_PlayerInfoList[i + 1].name, ARRAYSIZE(colorless_name));
 
-		/*if(!strcmp(g_PlayerExtraInfo[localPlayer->index].teamname, g_PlayerExtraInfo[i + 1].teamname) && gHUD.m_Teamplay)
-			sprintf(string, "%s", colorless_name, health, armor, teammate);
-		else */ // For playerid msg
+		if(IsTeamMate(localPlayer, player_id))
+			sprintf(string, "%s (%d HP, %d Shield, %d)", colorless_name, health, armor, teammate);
+		else // For playerid msg
 			sprintf(string, "%s", colorless_name);
 
 		lx = strlen(string)*4; // 3 is avg. character length :)
@@ -181,7 +181,10 @@ int CHudNameTags::Draw(float flTime)
 			// Or if the localplayer is spectating
 			// TODO: V_GetInEyePos( g_iUser2, origin, angles );
 
-			if (Distance(trace->endpos, localPlayer->origin) < 1000 ||
+			// Determine max draw distance based on team.
+			float flMaxDrawDistance = IsTeamMate(localPlayer, player_id) ? TEAMMATE_DRAW_DISTANCE : ENEMY_DRAW_DISTANCE;
+
+			if (Distance(trace->endpos, localPlayer->origin) < flMaxDrawDistance ||
 				gEngfuncs.pDemoAPI->IsPlayingback() ||
 				!strcmp(gamemode, "Kreedz") ||
 				g_iUser1)
