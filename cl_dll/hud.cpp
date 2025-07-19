@@ -724,7 +724,7 @@ void CHud :: Init( void )
 
 	MsgFunc_ResetHUD(0, 0, NULL );
 
-#ifdef STEAM_RICH_PRESENCE
+#ifdef _STEAMWORKS
 	gEngfuncs.pfnClientCmd("richpresence_gamemode\n"); // reset
 
 	gEngfuncs.pfnClientCmd("richpresence_update\n");

@@ -119,7 +119,7 @@ int CHud :: MsgFunc_GameMode(const char *pszName, int iSize, void *pbuf )
 	BEGIN_READ( pbuf, iSize );
 	m_Teamplay = READ_BYTE();
 
-#ifdef STEAM_RICH_PRESENCE
+#ifdef _STEAMWORKS
 	if (m_Teamplay)
 		gEngfuncs.pfnClientCmd("richpresence_gamemode Teamplay\n");
 	else
