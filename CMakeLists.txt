@@ -1,5 +1,5 @@
-# this needs to be updated soon because it's causing annoying errors with cmake4.
-cmake_minimum_required(VERSION 3.3)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
+cmake_minimum_required(VERSION 3.23)
 
 # Custom build types support
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)

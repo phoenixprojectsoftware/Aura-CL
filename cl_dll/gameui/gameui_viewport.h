@@ -4,9 +4,7 @@
 #include <vgui_controls/EditablePanel.h>
 #include <vgui_controls/MessageBox.h>
 
-#ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
-#endif
 
 #include "workshop/WorkshopItemList.h"
 #include "filedialog/IFileDialogManager.h"
