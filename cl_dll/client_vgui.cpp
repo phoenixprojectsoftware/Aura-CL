@@ -56,7 +56,8 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 	vgui2::VGui_SetProportionalBaseCallback(&GetProportionalBase);
 
 	// Add language files
-	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/bugfixedhl_%language%.txt");
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/vgui2_%language%.txt");
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/achievements_%language%.txt");
 
 	new CGameUIViewport;
 	new CClientViewport;

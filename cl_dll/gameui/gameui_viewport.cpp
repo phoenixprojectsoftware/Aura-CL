@@ -428,9 +428,9 @@ void CGameUIViewport::MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const 
 			if (WorkshopFile.bIsWorkshopDownload)
 				data->from = "../../workshop/content/3416640/" + strNewFilePath; // AURA_APPID
 			else
-				data->from = "zp_workshop/" + strNewFilePath;
+				data->from = "zamnhlmp_workshop/" + strNewFilePath;
 
-			data->to = "zp_addon/" + strNewFilePathDest;
+			data->to = "zamnhlmp_addon/" + strNewFilePathDest;
 			data->item = WorkshopFile.uWorkshopID;
 			if (!WorkshopFile.bMounted)
 				CreateSimpleThread(CopyFilesToNewDestination, data);

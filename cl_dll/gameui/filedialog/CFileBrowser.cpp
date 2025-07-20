@@ -348,12 +348,12 @@ std::string CFileBrowser::GetGamePath()
 	// Path ID for the folders
 	std::string pathid;
 	pathid.clear();
-	if (!Q_stricmp(szPathID, "WORKSHOP")) pathid = "zp_workshop/";
-	else if (!Q_stricmp(szPathID, "ADDON")) pathid = "zp_addon/";
+	if (!Q_stricmp(szPathID, "WORKSHOP")) pathid = "zamnhlmp_workshop/";
+	else if (!Q_stricmp(szPathID, "ADDON")) pathid = "zamnhlmp_addon/";
 	else if (!Q_stricmp(szPathID, "PLATFORM")) pathid = "platform/";
-	else if (!Q_stricmp(szPathID, "DOWNLOAD")) pathid = "zp_download/";
+	else if (!Q_stricmp(szPathID, "DOWNLOAD")) pathid = "zamnhlmp_download/";
 	else if (!Q_stricmp(szPathID, "ROOT")) pathid = "/";
-	else if (!Q_stricmp(szPathID, "GAME") || !Q_stricmp(szPathID, "MOD")) pathid = "zp/";
+	else if (!Q_stricmp(szPathID, "GAME") || !Q_stricmp(szPathID, "MOD")) pathid = "zamnhlmp/";
 	return pathid;
 }
 
