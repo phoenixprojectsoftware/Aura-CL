@@ -1,6 +1,8 @@
 set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
 cmake_minimum_required(VERSION 3.23)
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>>:Debug>DLL")
+
 # Custom build types support
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
@@ -127,9 +129,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
 add_subdirectory(cl_dll)
 add_subdirectory(common)
 add_subdirectory(dlls)
-if (IS_STEAM_BUILD)
-    add_subdirectory(external/steamworks)
-endif()
 add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
