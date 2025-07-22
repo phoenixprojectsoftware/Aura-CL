@@ -194,7 +194,7 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 {
 	// Load our data from zamnhlmp_workshop
 	FileFindHandle_t fh;
-	char const* fn = g_pFullFileSystem->FindFirst("*.*", &fh, bWorkshopFolder ? "WORKSHOPDL" : "WORKSHOP");
+	char const* fn = g_pFullFileSystem->FindFirst("*.*", &fh, bWorkshopFolder ? "WORKSTOPDL" : "WORKSHOP");
 	if (!fn) return;
 	do
 	{
@@ -237,7 +237,7 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 
 				// Check if the keyvalues exist
 				KeyValues* manifest = new KeyValues("AddonInfo");
-				if (manifest->LoadFromFile(g_pFullFileSystem, strAddonInfo.c_str(), bWorkshopFolder ? "WORKSHOPDL" : "WORKSHOP"))
+				if (manifest->LoadFromFile(g_pFullFileSystem, strAddonInfo.c_str(), bWorkshopFolder ? "WORKSTOPDL" : "WORKSHOP"))
 				{
 					// Go trough all keyvalues, and grab the ones we need
 					for (KeyValues* sub = manifest->GetFirstSubKey(); sub != NULL; sub = sub->GetNextKey())
@@ -371,7 +371,7 @@ void CGameUIViewport::MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const 
 
 	// Load our data from zamnhlmp_workshop
 	FileFindHandle_t fh;
-	char const* fn = g_pFullFileSystem->FindFirst(vgui2::VarArgs("%s*.*", path), &fh, WorkshopFile.bIsWorkshopDownload ? "WORKSHOPDL" : "WORKSHOP");
+	char const* fn = g_pFullFileSystem->FindFirst(vgui2::VarArgs("%s*.*", path), &fh, WorkshopFile.bIsWorkshopDownload ? "WORKSTOPDL" : "WORKSHOP");
 	if (!fn) return;
 	do
 	{

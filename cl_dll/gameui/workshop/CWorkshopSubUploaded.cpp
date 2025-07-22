@@ -140,53 +140,49 @@ void CWorkshopSubUploaded::OnSendQueryUGCRequest(SteamUGCQueryCompleted_t* pCall
 	if (bFailed)
 	{
 #if defined( SPDLOG )
-		SpdLog(
-			"workshop_client",
-			UTIL_CurrentMapLog(),
-			LOGTYPE_WARN,
-			"Failed to send query. ErrorID: %i",
-			pCallback->m_eResult
-		);
+		SpdLog("workshop_client", UTIL_CurrentMapLog(), LOGTYPE_WARN, "Failed to send query. ErrorID: %i", pCallback->m_eResult);
 #else
-		ConPrintf(Color(255, 22, 22, 255), "[Workshop] Failed to retrieve uploaded addon. ErrorID: %i\n", pCallback->m_eResult);
+		ConPrintf(Color(255, 22, 22, 255), "[Workshop] Failed to retrieve uploaded add-ons. ErrorID: %i\n", pCallback->m_eResult);
 #endif
-		SteamUGC()->ReleaseQueryUGCRequest(handle);
+		SteamUGC()->ReleaseQueryUGCRequest(pCallback->m_handle);
 		return;
 	}
 
-	// Create it
-	SteamUGCDetails_t* pDetails = new SteamUGCDetails_t;
-
-	// Get our info
-	if (SteamUGC()->GetQueryUGCResult(pCallback->m_handle, 0, pDetails))
+	// Loop through all returned results
+	for (uint32 i = 0; i < pCallback->m_unNumResultsReturned; ++i)
 	{
-		vgui2::WorkshopItem WorkshopAddon;
-		Q_snprintf(WorkshopAddon.szName, sizeof(WorkshopAddon.szName), "%s", pDetails->m_rgchTitle);
-		Q_snprintf(WorkshopAddon.szDesc, sizeof(WorkshopAddon.szDesc), "%s", pDetails->m_rgchDescription);
-		Q_snprintf(WorkshopAddon.szAuthor, sizeof(WorkshopAddon.szAuthor), "%s", SteamFriends()->GetPersonaName());
-		WorkshopAddon.iFilterFlag = 0;
-		WorkshopAddon.bMounted = false;
-		WorkshopAddon.bIsWorkshopDownload = false;
-		WorkshopAddon.bFoundConflictingFiles = false;
-		WorkshopAddon.uWorkshopID = pDetails->m_nPublishedFileId;
+		SteamUGCDetails_t details;
+		if (SteamUGC()->GetQueryUGCResult(pCallback->m_handle, i, &details))
+		{
+			// Display info
+			vgui2::WorkshopItem WorkshopAddon;
+			Q_strncpy(WorkshopAddon.szName, details.m_rgchTitle, sizeof(WorkshopAddon.szName));
+			Q_strncpy(WorkshopAddon.szDesc, details.m_rgchDescription, sizeof(WorkshopAddon.szDesc));
+			Q_strncpy(WorkshopAddon.szAuthor, SteamFriends()->GetPersonaName(), sizeof(WorkshopAddon.szAuthor));
+			WorkshopAddon.iFilterFlag = 0;
+			WorkshopAddon.bMounted = false;
+			WorkshopAddon.bIsWorkshopDownload = false;
+			WorkshopAddon.bFoundConflictingFiles = false;
+			WorkshopAddon.uWorkshopID = details.m_nPublishedFileId;
 
-		// Save our data, which we will use strictly for pUploadPage
-		WorkshopItem data;
-		Q_snprintf(data.Title, sizeof(data.Title), "%s", pDetails->m_rgchTitle);
-		Q_snprintf(data.Desc, sizeof(data.Desc), "%s", pDetails->m_rgchDescription);
-		Q_snprintf(data.Tags, sizeof(data.Tags), "%s", pDetails->m_rgchTags);
-		data.Visibility = pDetails->m_eVisibility;
-		data.PublishedFileID = pDetails->m_nPublishedFileId;
-		m_Items.push_back(data);
+			// Upload editing info
+			WorkshopItem data;
+			Q_strncpy(data.Title, details.m_rgchTitle, sizeof(data.Title));
+			Q_strncpy(data.Desc, details.m_rgchDescription, sizeof(data.Desc));
+			Q_strncpy(data.Tags, details.m_rgchTags, sizeof(data.Tags));
+			data.Visibility = details.m_eVisibility;
+			data.PublishedFileID = details.m_nPublishedFileId;
 
-		AddItem(WorkshopAddon);
+			m_Items.push_back(data);
+			AddItem(WorkshopAddon);
+		}
+		else
+		{
+			ConPrintf(Color(255, 22, 22, 255), "[Workshop] Failed to get UGC result at index %u\n", i);
+		}
 	}
 
-	// Delete it
-	if (pDetails)
-		delete pDetails;
-
-	SteamUGC()->ReleaseQueryUGCRequest(handle);
+	SteamUGC()->ReleaseQueryUGCRequest(pCallback->m_handle);
 }
 
 CWorkshopSubUploaded::WorkshopItem CWorkshopSubUploaded::GetWorkshopItem(PublishedFileId_t nWorkshopID)

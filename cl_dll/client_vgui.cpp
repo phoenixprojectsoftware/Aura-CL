@@ -48,7 +48,7 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 	}
 
 	// load workshop paths
-	g_pFullFileSystem->AddSearchPath("../../workshop/content/3416640", "WORKSHOPDL");
+	g_pFullFileSystem->AddSearchPath("../../workshop/content/3416640", "WORKSTOPDL");
 	g_pFullFileSystem->AddSearchPath("zamnhlmp_workshop", "WORKSHOP");
 	g_pFullFileSystem->AddSearchPath("zamnhlmp_addon", "ADDON");
 
