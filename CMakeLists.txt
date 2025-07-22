@@ -39,12 +39,6 @@ if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta")
     set(IS_STEAM_BUILD ON)
 endif()
 
-# Steamworks include path
-if(IS_STEAM_BUILD)
-    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-endif()
-
 # Add _STEAMWORKS define for IntelliSense and build config
 foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
     string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
@@ -155,6 +149,12 @@ target_include_directories(client PRIVATE
     public
     utils/vgui/include
 	${SOURCE_SDK_INCLUDE_PATHS})
+
+# Steamworks include path
+if(IS_STEAM_BUILD)
+    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
+    target_compile_definitions(client PRIVATE _STEAMWORKS)
+endif()
 
 if(APPLE)
     target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
