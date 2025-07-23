@@ -37,7 +37,7 @@ CWorkshopSubUploaded::CWorkshopSubUploaded(vgui2::Panel* parent)
 
 	vgui2::ivgui()->AddTickSignal(GetVPanel(), 25);
 
-	if (!SteamAPI_IsSteamRunning) return;
+	if (!SteamAPI_IsSteamRunning()) return;
 	if (SteamUGC() && SteamUser())
 	{
 		handle = SteamUGC()->CreateQueryUserUGCRequest(
@@ -80,8 +80,6 @@ void CWorkshopSubUploaded::OnWorkshopEdit(uint64 workshopID)
 
 void CWorkshopSubUploaded::AddItem(vgui2::WorkshopItem item)
 {
-	pList->DeleteAllItems();
-
 	// Fonts
 	vgui2::HFont hTextFont;
 	vgui2::IScheme* pScheme = vgui2::scheme()->GetIScheme(

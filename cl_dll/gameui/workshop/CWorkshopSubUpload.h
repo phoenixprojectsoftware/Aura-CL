@@ -38,7 +38,14 @@ protected:
 	void ThrowError(const char* szMsg);
 	bool ValidateTheEntries();
 
-	bool bUploading;
+	enum UploadState
+	{
+		Upload_None = 0,
+		Upload_New,
+		Upload_Update
+	};
+	UploadState eUploading;
+
 	PublishedFileId_t nWorkshopID;
 	std::string last_folder[2];
 	std::string preview_image;

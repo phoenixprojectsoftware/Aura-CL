@@ -86,8 +86,6 @@ CWorkshopSubUpload::CWorkshopSubUpload(vgui2::Panel* parent)
 	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_Private", kv);
 	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_FriendsOnly", kv);
 	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_Public", kv);
-	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_FriendsOnly", kv);
-	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_Private", kv);
 	// Auto select "Show All Achievements"
 	pVisibility->ActivateItem(2);
 
@@ -125,7 +123,7 @@ CWorkshopSubUpload::CWorkshopSubUpload(vgui2::Panel* parent)
 
 	pUploader = this;
 
-	bUploading = false;
+	eUploading = Upload_None;
 
 	// only show the changelog if addon is being updated
 	SetUpdating(k_PublishedFileIdInvalid);
@@ -158,7 +156,7 @@ void CWorkshopSubUpload::OnCommand(const char* pcCommand)
 		CGameUIViewport::Get()->OpenFileExplorer(
 			OpenFileDialog_e::FILE_PNG | OpenFileDialog_e::FILE_JPG,
 			last_folder[0].c_str(),
-			"WORKSHOP",
+			"ROOT",
 			OnFileSelected
 		);
 	}
@@ -166,7 +164,7 @@ void CWorkshopSubUpload::OnCommand(const char* pcCommand)
 	{
 		CGameUIViewport::Get()->OpenFileExplorer(
 			last_folder[1].c_str(),
-			"WORKSHOP",
+			"ROOT",
 			OnFileSelected
 		);
 	}
@@ -199,13 +197,19 @@ void CWorkshopSubUpload::OnTick()
 	if (!SteamAPI_IsSteamRunning()) return;
 	if (!SteamUGC()) return;
 
-	if (bUploading)
+	if (eUploading > Upload_None)
 	{
 		if (handle == k_UGCUpdateHandleInvalid)
 		{
 			SetUpdating(k_PublishedFileIdInvalid);
-			bUploading = false;
-			ThrowError("#ZP_Workshop_UploadComplete");
+			switch (eUploading)
+			{
+			case CWorkshopSubUpload::Upload_New:
+				ThrowError("#ZP_Workshop_UploadComplete"); break;
+			case CWorkshopSubUpload::Upload_Update:
+				ThrowError("#ZP_Workshop_UpdateComplete"); break;
+			}
+			eUploading = Upload_None;
 			return;
 		}
 
@@ -422,6 +426,7 @@ void CWorkshopSubUpload::BeginUpload()
 	{
 		handle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), nWorkshopID);
 		PrepareUGCHandle();
+		eUploading = Upload_Update;
 		return;
 	}
 
@@ -454,6 +459,9 @@ void CWorkshopSubUpload::PrepareUGCHandle()
 		vArray.push_back(szTags_Generic[i]);
 	}
 
+	tagarray.m_nNumStrings = vArray.size();
+	tagarray.m_ppStrings = vArray.data();
+
 	// Our main text buffer
 	char buffer[4028];
 
@@ -480,11 +488,9 @@ void CWorkshopSubUpload::PrepareUGCHandle()
 	SteamUGC()->SetItemVisibility(handle, (ERemoteStoragePublishedFileVisibility)pVisibility->GetActiveItem());
 
 	// Submit the changes
-	pChangeLogLabel->GetText(buffer, sizeof(buffer));
-	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(handle, pChangeLogLabel->IsVisible() ? buffer : "Initial Release");
-	m_SteamCallResultOnSubmitItemUpdateResult.Set(hSteamAPICall, this, &CWorkshopSubUpload::OnCallResultOnSubmitItemUpdateResult);
+	pChangeLogText->GetText(buffer, sizeof(buffer));
+	SteamAPICall_t hSteamAPICall = SteamUGC()->SubmitItemUpdate(handle, pChangeLogText->IsVisible() ? buffer : "Initial Release");
 
-	bUploading = true;
 	pAddonUpload->SetEnabled(false);
 }
 
@@ -592,4 +598,5 @@ void CWorkshopSubUpload::OnItemCreated(CreateItemResult_t* pCallback, bool bIOFa
 	// Start the update, and prepare our handle
 	handle = SteamUGC()->StartItemUpdate(SteamUtils()->GetAppID(), nWorkshopID);
 	PrepareUGCHandle();
+	eUploading = Upload_New;
 }
