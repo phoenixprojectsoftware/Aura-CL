@@ -1102,27 +1102,3 @@ void ShutdownInput (void)
 	IN_Shutdown();
 	KB_Shutdown();
 }
-
-#include <tier1/interface.h>
-void CL_UnloadParticleMan( void );
-void CL_UnloadGameUI();
-
-#if defined( _TFC )
-void ClearEventList( void );
-#endif
-
-void CL_DLLEXPORT HUD_Shutdown( void )
-{
-//	RecClShutdown();
-
-	ShutdownInput();
-
-#if defined( _TFC )
-	ClearEventList();
-#endif
-	
-	CL_UnloadParticleMan();
-	CL_UnloadGameUI();
-
-	discord_integration::shutdown();
-}

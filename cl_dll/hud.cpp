@@ -42,6 +42,7 @@
 #ifdef _STEAMWORKS
 #include "steamworks/steam_api.h"
 #endif
+#include <dbg.h>
 
 extern tempent_s* pLaserSpot;
 
@@ -898,6 +899,20 @@ void CHud :: VidInit( void )
 	GetClientVoiceMgr()->VidInit();
 }
 
+void CHud::Frame(double time)
+{
+	while (m_NextFrameQueue.size())
+	{
+		auto& i = m_NextFrameQueue.front();
+		i();
+		m_NextFrameQueue.pop();
+	}
+}
+
+void CHud::Shutdown()
+{
+}
+
 int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
 {
 	BEGIN_READ( pbuf, iSize );
@@ -1131,6 +1146,12 @@ void CHud::AddHudElem(CHudBase *phudelem)
 float CHud::GetSensitivity( void )
 {
 	return m_flMouseSensitivity;
+}
+
+void CHud::CallOnNextFrame(std::function<void()> f)
+{
+	Assert(f);
+	m_NextFrameQueue.push(f);
 }
 
 cvar_t* r_pissfilter;

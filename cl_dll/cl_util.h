@@ -16,7 +16,6 @@
 // cl_util.h
 //
 
-#include "cvardef.h"
 #include <convar.h>
 #include "net_api.h"
 #include "color_tags.h"
@@ -30,7 +29,6 @@
 #include <stdarg.h>  // "
 #include <string.h> // for strncpy()
 
-#include "console.h"
 #include "cvardef.h"
 
 // Macros to hook function calls into the HUD object

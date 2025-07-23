@@ -30,6 +30,9 @@
 #define _cdecl 
 #endif
 
+#include <functional>
+#include <vector>
+#include <queue>
 #include "wrect.h"
 #include "cl_dll.h"
 #include "ammo.h"
@@ -595,6 +598,8 @@ private:
 
 	int							m_iGameType;
 
+	std::queue<std::function<void()>> m_NextFrameQueue;
+
 public:
 
 	HSPRITE						m_hsprCursor;
@@ -738,6 +743,8 @@ public:
 
 	void Init( void );
 	void VidInit( void );
+	void Frame(double time);
+	void Shutdown();
 	void Think(void);
 	int Redraw( float flTime, int intermission );
 	int UpdateClientData( client_data_t *cdata, float time );
@@ -771,6 +778,8 @@ public:
 	void AddHudElem(CHudBase *p);
 
 	float GetSensitivity();
+
+	void CallOnNextFrame(std::function<void()> f);
 
 	int m_iLaserState;
 
