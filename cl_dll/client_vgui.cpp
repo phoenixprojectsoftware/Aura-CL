@@ -47,11 +47,17 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 		Assert(false);
 	}
 
+	// load workshop paths
+	g_pFullFileSystem->AddSearchPath("../../workshop/content/3416640", "WORKSTOPDL");
+	g_pFullFileSystem->AddSearchPath("zamnhlmp_workshop", "WORKSHOP");
+	g_pFullFileSystem->AddSearchPath("zamnhlmp_addon", "ADDON");
+
 	// HL25 == 640x480->1280x720
 	vgui2::VGui_SetProportionalBaseCallback(&GetProportionalBase);
 
 	// Add language files
-	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/bugfixedhl_%language%.txt");
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/vgui2_%language%.txt");
+	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/achievements_%language%.txt");
 
 	new CGameUIViewport;
 	new CClientViewport;

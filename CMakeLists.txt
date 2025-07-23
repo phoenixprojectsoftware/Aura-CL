@@ -1,5 +1,7 @@
-# this needs to be updated soon because it's causing annoying errors with cmake4.
-cmake_minimum_required(VERSION 3.3)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
+cmake_minimum_required(VERSION 3.23)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>>:Debug>DLL")
 
 # Custom build types support
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)
@@ -37,20 +39,24 @@ if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta")
     set(IS_STEAM_BUILD ON)
 endif()
 
-# Steamworks include path
-if(IS_STEAM_BUILD)
-    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-endif()
-
 # Add _STEAMWORKS define for IntelliSense and build config
 foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
     string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
-    set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-    set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-    if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
-		set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+    if(MSVC)
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
+            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+        endif()
+    else()
+        # For GCC/Clang
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
+        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
+            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
+            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
+        endif()
     endif()
 endforeach()
 
@@ -127,9 +133,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
 add_subdirectory(cl_dll)
 add_subdirectory(common)
 add_subdirectory(dlls)
-if (IS_STEAM_BUILD)
-    add_subdirectory(external/steamworks)
-endif()
 add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
@@ -141,7 +144,7 @@ set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
 
-target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES})
+target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES)
 
 
 target_include_directories(client PRIVATE
@@ -156,6 +159,12 @@ target_include_directories(client PRIVATE
     public
     utils/vgui/include
 	${SOURCE_SDK_INCLUDE_PATHS})
+
+# Steamworks include path
+if(IS_STEAM_BUILD)
+    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
+    target_compile_definitions(client PRIVATE _STEAMWORKS)
+endif()
 
 if(APPLE)
     target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
