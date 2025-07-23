@@ -165,6 +165,7 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	discord_integration::initialize();
 
 	CvarSystem::RegisterCvars();
+	console::Initialize();
 	EV_HookEvents();
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
@@ -210,6 +211,7 @@ void CL_DLLEXPORT HUD_Init( void )
 	InitInput();
 	gHUD.Init();
 	Scheme_Init();
+	console::HudPostInit();
 }
 
 
@@ -284,6 +286,7 @@ void CL_DLLEXPORT HUD_Frame( double time )
 //	RecClHudFrame(time);
 	ServersThink( time );
 
+	gHUD.Frame(time);
 	GetClientVoiceMgr()->Frame(time);
 
 	discord_integration::on_frame();
@@ -320,6 +323,26 @@ void CL_DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
 	gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
 }
 
+//---------------------------------------------------
+// Client shutdown
+//---------------------------------------------------
+void CL_UnloadParticleMan(void);
+void ShutdownInput();
+
+void CL_DLLEXPORT HUD_Shutdown(void)
+{
+	//	RecClShutdown();
+
+	gHUD.Shutdown();
+	ShutdownInput();
+	CL_UnloadParticleMan();
+	console::HudShutdown();
+	discord_integration::shutdown();
+}
+
+//---------------------------------------------------
+// Particle Manager
+//---------------------------------------------------
 void CL_UnloadParticleMan( void )
 {
 	Sys_UnloadModule( g_hParticleManModule );
