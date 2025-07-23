@@ -74,6 +74,8 @@ namespace console
 	static void DisableEarlyCon();
 	static void DumpEarlyCon();
 
+	static void ConsoleLambdaFix(const char* pszFormat, ...);
+
 	static void ConsolePrintRedirect(const char* pszFormat, ...);
   
 	//-----------------------------------------------------
@@ -287,28 +289,27 @@ static void console::ConsolePrintRedirect(const char* pszFormat, ...)
 		*s_ConDColor = s_DefaultDColor;
 }
 
+static void console::ConsoleLambdaFix(const char* pszFormat, ...)
+{
+	if (*s_ConColor == s_DefaultColor)
+		*s_ConDColor = s_DefaultColor;
+
+	va_list args;
+	va_start(args, pszFormat);
+
+	static char buf[1024];
+	vsnprintf(buf, sizeof(buf), pszFormat, args);
+	s_fnEngineDPrintf("%s", buf);
+
+	va_end(args);
+
+	if (*s_ConColor == s_DefaultColor)
+		*s_ConDColor = s_DefaultDColor;
+}
+
 void console::EnableRedirection()
 {
-	gEngfuncs.Con_Printf = [](const char* const pszFormat, ...) {
-		// Don't dereference unless the pointers are valid
-		bool safeColor = s_ConColor && s_ConDColor;
-
-		if (safeColor && *s_ConColor == s_DefaultColor)
-			*s_ConDColor = s_DefaultColor;
-
-		va_list args;
-		va_start(args, pszFormat);
-
-		static char buf[1024];
-		vsnprintf(buf, sizeof(buf), pszFormat, args);
-
-		s_fnEngineDPrintf("%s", buf);
-
-		va_end(args);
-
-		if (safeColor && *s_ConColor == s_DefaultColor)
-			*s_ConDColor = s_DefaultDColor;
-		};
+	gEngfuncs.Con_Printf = ConsoleLambdaFix;
 }
 
 void console::DisableRedirection()
