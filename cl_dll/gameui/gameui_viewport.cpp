@@ -194,7 +194,7 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 {
 	// Load our data from zamnhlmp_workshop
 	FileFindHandle_t fh;
-	char const* fn = g_pFullFileSystem->FindFirst("*.*", &fh, bWorkshopFolder ? "WORKSTOPDL" : "WORKSHOP");
+	char const* fn = g_pFullFileSystem->FindFirst("*.*", &fh, bWorkshopFolder ? "WORKSHOPDL" : "WORKSHOP");
 	if (!fn) return;
 	do
 	{
@@ -237,7 +237,7 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 
 				// Check if the keyvalues exist
 				KeyValues* manifest = new KeyValues("AddonInfo");
-				if (manifest->LoadFromFile(g_pFullFileSystem, strAddonInfo.c_str(), bWorkshopFolder ? "WORKSTOPDL" : "WORKSHOP"))
+				if (manifest->LoadFromFile(g_pFullFileSystem, strAddonInfo.c_str(), bWorkshopFolder ? "WORKSHOPDL" : "WORKSHOP"))
 				{
 					// Go trough all keyvalues, and grab the ones we need
 					for (KeyValues* sub = manifest->GetFirstSubKey(); sub != NULL; sub = sub->GetNextKey())
@@ -271,8 +271,7 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 				manifest->deleteThis();
 #if defined( _DEBUG )
 				// Only show on Debug mode
-				ConPrintf(
-					Color(255, 255, 0, 255),
+				gEngfuncs.Con_Printf(
 					"Workshop Addon [%llu] Added | Flags: %i\n",
 					MountAddon.uWorkshopID,
 					MountAddon.iFilterFlag
@@ -351,104 +350,94 @@ unsigned RemoveFilesFromAddons(void* Data)
 
 void CGameUIViewport::MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const char* szPath, const char* szRootPath)
 {
-	// Copies files to zp_addon,
-	// or remove them from zp_addon.
-	// Depends really, if we are mounting or not.
-
 	bool bIsRoot = szRootPath ? false : true;
 
-	char path[4028];
-	char pathRoot[4028];
-	if (!szPath)
-		Q_snprintf(path, sizeof(path), "%llu/", WorkshopFile.uWorkshopID);
-	else
-		Q_snprintf(path, sizeof(path), "%s", szPath);
+	gEngfuncs.Con_Printf("[MountWorkshopItem] Called for %llu | path = %s | root = %s | download = %s\n",
+		WorkshopFile.uWorkshopID,
+		szPath ? szPath : "<null>",
+		szRootPath ? szRootPath : "<null>",
+		WorkshopFile.bIsWorkshopDownload ? "true" : "false");
 
-	if (!szRootPath)
-		Q_snprintf(pathRoot, sizeof(pathRoot), "%s", path);
-	else
-		Q_snprintf(pathRoot, sizeof(pathRoot), "%s", szRootPath);
+	std::string path = szPath ? szPath : vgui2::VarArgs("%llu/", WorkshopFile.uWorkshopID);
+	std::string pathRoot = szRootPath ? szRootPath : path;
 
-	// Load our data from zamnhlmp_workshop
 	FileFindHandle_t fh;
-	char const* fn = g_pFullFileSystem->FindFirst(vgui2::VarArgs("%s*.*", path), &fh, WorkshopFile.bIsWorkshopDownload ? "WORKSTOPDL" : "WORKSHOP");
+	const char* fn = g_pFullFileSystem->FindFirst((path + "*.*").c_str(), &fh, WorkshopFile.bIsWorkshopDownload ? "WORKSHOPDL" : "WORKSHOP");
 	if (!fn) return;
+
 	do
 	{
-		// Setup the path string, and lowercase it, so we don't need to search for both uppercase, and lowercase files.
-		char strFile[4028];
+		std::string strFile = fn;
+		vgui2::STDReplaceString(strFile, "\\", "/");
+		Q_strlower(&strFile[0]); // Safe because std::string uses heap and is mutable
+
 		bool bIsValidFile = true;
-		strFile[0] = 0;
-		V_strcpy_safe(strFile, fn);
-		Q_strlower(strFile);
 
-		// Ignore the same folder
-		// And ignore content folder, unless we are loading workshop content trough it.
-		if (vgui2::FStrEq(strFile, ".") || vgui2::FStrEq(strFile, ".."))
+		if (strFile == "." || strFile == "..")
 			bIsValidFile = false;
 
-		// If we are a root dir, ignore.
-		// We do NOT want to override any CFG files and so on.
-		if (bIsRoot && !g_pFullFileSystem->FindIsDirectory(fh))
+		bool isDir = g_pFullFileSystem->FindIsDirectory(fh);
+
+		if (bIsRoot && !isDir)
 			bIsValidFile = false;
-		// If root, and is a dir, make sure we only allow certain folders.
-		else if (bIsRoot && g_pFullFileSystem->FindIsDirectory(fh))
+
+		if (bIsRoot && isDir)
 		{
-			bIsValidFile = false;
-			if (vgui2::FStrEq(strFile, "logos")
-				|| vgui2::FStrEq(strFile, "maps")
-				|| vgui2::FStrEq(strFile, "media")
-				|| vgui2::FStrEq(strFile, "models")
-				|| vgui2::FStrEq(strFile, "resource")
-				|| vgui2::FStrEq(strFile, "sound")
-				|| vgui2::FStrEq(strFile, "ui")
-				|| vgui2::FStrEq(strFile, "sprites"))
-				bIsValidFile = true;
+			bIsValidFile = (
+				strFile == "logos" ||
+				strFile == "maps" ||
+				strFile == "media" ||
+				strFile == "models" ||
+				strFile == "resource" ||
+				strFile == "sound" ||
+				strFile == "ui" ||
+				strFile == "sprites"
+				);
 		}
 
-		if (g_pFullFileSystem->FindIsDirectory(fh) && bIsValidFile)
+		if (isDir && bIsValidFile)
 		{
-			char strNewPath[4028];
-			Q_snprintf(strNewPath, sizeof(strNewPath), "%s%s/", path, strFile);
-
-			// Create our folders, so we can copy the files over!
-			std::string strNewPathDir(strNewPath);
+			std::string strNewPath = path + strFile + "/";
+			std::string strNewPathDir = strNewPath;
 			vgui2::STDReplaceString(strNewPathDir, pathRoot, "");
+
 			g_pFullFileSystem->CreateDirHierarchy(strNewPathDir.c_str(), "ADDON");
 
-			MountWorkshopItem(WorkshopFile, strNewPath, pathRoot);
+			// Recurse into subfolder safely (heap usage only)
+			MountWorkshopItem(WorkshopFile, strNewPath.c_str(), pathRoot.c_str());
 		}
-		else if (!g_pFullFileSystem->FindIsDirectory(fh) && bIsValidFile)
+		else if (!isDir && bIsValidFile)
 		{
-			std::string strNewFilePath(std::string(path) + std::string(strFile));
-			std::string strNewFilePathDest(strNewFilePath);
+			std::string strNewFilePath = path + strFile;
+			std::string strNewFilePathDest = strNewFilePath;
 			vgui2::STDReplaceString(strNewFilePathDest, pathRoot, "");
-			CopyPath* data = new CopyPath;
 
+			CopyPath* data = new CopyPath;
 			if (WorkshopFile.bIsWorkshopDownload)
-				data->from = "../../workshop/content/3416640/" + strNewFilePath; // AURA_APPID
+				data->from = "../../workshop/content/3416640/" + strNewFilePath;
 			else
 				data->from = "zamnhlmp_workshop/" + strNewFilePath;
 
 			data->to = "zamnhlmp_addon/" + strNewFilePathDest;
 			data->item = WorkshopFile.uWorkshopID;
+
 			if (!WorkshopFile.bMounted)
 				CreateSimpleThread(CopyFilesToNewDestination, data);
 			else
 			{
-				DeleteFile* data = new DeleteFile;
-				data->file = strNewFilePathDest;
-				CreateSimpleThread(RemoveFilesFromAddons, data);
+				DeleteFile* del = new DeleteFile;
+				del->file = strNewFilePathDest;
+				CreateSimpleThread(RemoveFilesFromAddons, del);
 			}
 		}
 
 		fn = g_pFullFileSystem->FindNext(fh);
 	} while (fn);
 
+	g_pFullFileSystem->FindClose(fh);
+
 	SetMountedState(WorkshopFile.uWorkshopID, !WorkshopFile.bMounted);
 	UpdateAddonList();
-
-	g_pFullFileSystem->FindClose(fh);
 }
 
 bool CGameUIViewport::HasConflictingFiles(vgui2::WorkshopItem WorkshopFile)
