@@ -22,11 +22,16 @@ namespace vgui2
 		FILTER_MAP = (1 << 0),
 		FILTER_WEAPONS = (1 << 1),
 		FILTER_SOUNDS = (1 << 2),
-		FILTER_SURVIVOR = (1 << 3),
-		FILTER_ZOMBIE = (1 << 4),
-		FILTER_BACKGROUND = (1 << 5),
+		FILTER_PLAYERMODEL = (1 << 3),
+		FILTER_HUD = (1 << 4),
+		FILTER_RESOURCES = (1 << 5),
 		FILTER_SPRAYS = (1 << 6),
 		FILTER_MUSIC = (1 << 7),
+		FILTER_MAPCYCLE = (1 << 8),
+		FILTER_TRACKERSCHEME = (1 << 9),
+		FILTER_LOC = (1 << 10),
+		FILTER_CTF = (1 << 11),
+		FILTER_DOM = (1 << 12),
 
 		MAX_CATEGORY_FILTER
 	};

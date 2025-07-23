@@ -43,6 +43,8 @@ public:
 	CServerBrowser* GetServerBrowser();
 	CWorkshopDialog* GetWorkshopDialog();
 
+	virtual void OnThink() override;
+
 	bool IsVACBanned() const;
 
 	void GetCurrentItems(std::vector<vgui2::WorkshopItem>& items);
@@ -90,7 +92,7 @@ protected:
 
 private:
 	bool m_bPreventEscape = false;
-	int m_iDelayedPreventEscapeFrame = 0;
+	int m_bDelayedPreventEscape = 0;
 	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
 	vgui2::DHANDLE<CServerBrowser> m_hServerBrowser;
 	vgui2::DHANDLE<CWorkshopDialog> m_hWorkshopDialog;

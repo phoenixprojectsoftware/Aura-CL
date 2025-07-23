@@ -29,23 +29,24 @@
 
 static CWorkshopSubUpload* pUploader = nullptr;
 
-static const char* szTags_Weapons[] = {
-	"Crowbar",
-	"Zombie Arms",
-	"Sig Sauer",
-	"Revolver",
-	"M4",
-	"MP5",
-	"Shotgun",
+static const char* szTags_Contains[] = {
+	"playermodels",
+	"sounds",
+	"resources",
+	"maps",
+	"mp3",
+	"HUD",
+	"gamemodes",
+	"locs",
+	"mapcycles",
+	"trackerscheme",
+	"viewmodels",
+	"sprays"
 };
 
-static const char* szTags_Items[] = {
-	"Medkit",
-	"Armor",
-	"Ammo Boxes",
-	"Backpack",
-	"TNT",
-	"Satchel Charge",
+static const char* szTags_WorksOn[] = {
+	"ctf",
+	"dom"
 };
 
 static const char* szTags_Generic[] = {
@@ -69,7 +70,7 @@ CWorkshopSubUpload::CWorkshopSubUpload(vgui2::Panel* parent)
 	pVisibility = new vgui2::ComboBox(this, "Visibility", 5, false);
 	pTags[0] = new vgui2::CheckButtonList(this, "Tags1");
 	pTags[1] = new vgui2::CheckButtonList(this, "Tags2");
-	pTags[2] = new vgui2::CheckButtonList(this, "Tags3");
+	// pTags[2] = new vgui2::CheckButtonList(this, "Tags3");
 	pChangeLogLabel = new vgui2::Label(this, "ChangeLogText", "#ZP_UI_Workshop_Upload_Changelog");
 	pChangeLogText = new vgui2::TextEntry(this, "ChangeLogTextBox");
 	pAddonUpload = new vgui2::Button(this, "AddonUpload", "#ZP_UI_Workshop_Upload_Addon", this, "AddonUpload");
@@ -112,14 +113,14 @@ CWorkshopSubUpload::CWorkshopSubUpload(vgui2::Panel* parent)
 	preview_image.clear();
 
 	// Populate the tags
-	for (int i = 0; i < ARRAYSIZE(szTags_Weapons); i++)
-		pTags[0]->AddItem(szTags_Weapons[i], false, new KeyValues("Item", szTags_Weapons[i], "1"));
+	for (int i = 0; i < ARRAYSIZE(szTags_Contains); i++)
+		pTags[0]->AddItem(szTags_Contains[i], false, new KeyValues("Item", szTags_Contains[i], "1"));
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Items); i++)
-		pTags[1]->AddItem(szTags_Items[i], false, new KeyValues("Item", szTags_Items[i], "1"));
+	for (int i = 0; i < ARRAYSIZE(szTags_WorksOn); i++)
+		pTags[1]->AddItem(szTags_WorksOn[i], false, new KeyValues("Item", szTags_WorksOn[i], "1"));
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Generic); i++)
-		pTags[2]->AddItem(szTags_Generic[i], false, new KeyValues("Item", szTags_Generic[i], "1"));
+	// for (int i = 0; i < ARRAYSIZE(szTags_Generic); i++)
+	//	pTags[2]->AddItem(szTags_Generic[i], false, new KeyValues("Item", szTags_Generic[i], "1"));
 
 	pUploader = this;
 
@@ -352,14 +353,11 @@ void CWorkshopSubUpload::SetUpdating(PublishedFileId_t nItem)
 	last_folder[1].clear();
 	preview_image.clear();
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Weapons); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_Contains); i++)
 		pTags[0]->SetItemSelected(i, false);
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Items); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_WorksOn); i++)
 		pTags[1]->SetItemSelected(i, false);
-
-	for (int i = 0; i < ARRAYSIZE(szTags_Generic); i++)
-		pTags[2]->SetItemSelected(i, false);
 
 	pAddonReset->SetVisible((nItem > 0) ? true : false);
 	pAddonReset->SetEnabled((nItem > 0) ? true : false);
@@ -390,22 +388,16 @@ void CWorkshopSubUpload::SetUploadData(const char* Title, const char* Desc, cons
 	while (std::getline(tagstream, segment, ','))
 		seglist.push_back(segment);
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Weapons); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_Contains); i++)
 	{
-		if (DoWeHaveTheTag(seglist, szTags_Weapons[i]))
+		if (DoWeHaveTheTag(seglist, szTags_Contains[i]))
 			pTags[0]->SetItemSelected(i, true);
 	}
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Items); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_WorksOn); i++)
 	{
-		if (DoWeHaveTheTag(seglist, szTags_Items[i]))
+		if (DoWeHaveTheTag(seglist, szTags_WorksOn[i]))
 			pTags[1]->SetItemSelected(i, true);
-	}
-
-	for (int i = 0; i < ARRAYSIZE(szTags_Generic); i++)
-	{
-		if (DoWeHaveTheTag(seglist, szTags_Generic[i]))
-			pTags[2]->SetItemSelected(i, true);
 	}
 }
 
@@ -438,25 +430,18 @@ void CWorkshopSubUpload::PrepareUGCHandle()
 {
 	SteamParamStringArray_t tagarray;
 	std::vector<const char*> vArray;
-	for (int i = 0; i < ARRAYSIZE(szTags_Weapons); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_Contains); i++)
 	{
 		bool bIsChecked = pTags[0]->IsItemChecked(i);
 		if (!bIsChecked) continue;
-		vArray.push_back(szTags_Weapons[i]);
+		vArray.push_back(szTags_Contains[i]);
 	}
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Items); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_WorksOn); i++)
 	{
 		bool bIsChecked = pTags[1]->IsItemChecked(i);
 		if (!bIsChecked) continue;
-		vArray.push_back(szTags_Items[i]);
-	}
-
-	for (int i = 0; i < ARRAYSIZE(szTags_Generic); i++)
-	{
-		bool bIsChecked = pTags[2]->IsItemChecked(i);
-		if (!bIsChecked) continue;
-		vArray.push_back(szTags_Generic[i]);
+		vArray.push_back(szTags_WorksOn[i]);
 	}
 
 	tagarray.m_nNumStrings = vArray.size();
@@ -551,23 +536,16 @@ bool CWorkshopSubUpload::ValidateTheEntries()
 	}
 
 	bool bHasAtleastOneAssignedTag = false;
-	for (int i = 0; i < ARRAYSIZE(szTags_Weapons); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_Contains); i++)
 	{
 		bool bIsChecked = pTags[0]->IsItemChecked(i);
 		if (!bIsChecked) continue;
 		bHasAtleastOneAssignedTag = true;
 	}
 
-	for (int i = 0; i < ARRAYSIZE(szTags_Items); i++)
+	for (int i = 0; i < ARRAYSIZE(szTags_WorksOn); i++)
 	{
 		bool bIsChecked = pTags[1]->IsItemChecked(i);
-		if (!bIsChecked) continue;
-		bHasAtleastOneAssignedTag = true;
-	}
-
-	for (int i = 0; i < ARRAYSIZE(szTags_Generic); i++)
-	{
-		bool bIsChecked = pTags[2]->IsItemChecked(i);
 		if (!bIsChecked) continue;
 		bHasAtleastOneAssignedTag = true;
 	}

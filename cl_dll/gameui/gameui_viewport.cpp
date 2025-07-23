@@ -1,5 +1,7 @@
 #include <tier1/interface.h>
+#include <IBaseUI.h>
 #include <IEngineVGui.h>
+#include <vgui/ISurface.h>
 #include <tier2/tier2.h>
 #include <vgui/ILocalize.h>
 #include "../hud.h"
@@ -55,7 +57,7 @@ void CGameUIViewport::PreventEscapeToShow(bool state)
 	if (state)
 	{
 		m_bPreventEscape = true;
-		m_iDelayedPreventEscapeFrame = 0;
+		m_bDelayedPreventEscape = false;
 	}
 	else
 	{
@@ -63,10 +65,33 @@ void CGameUIViewport::PreventEscapeToShow(bool state)
 		// and CGameUIViewport::OnThink wont hide gameui
 		// so the change is delayed by 1 frame
 		m_bPreventEscape = false;
-		m_iDelayedPreventEscapeFrame = 1;
+		m_bDelayedPreventEscape = true;
+	}
+}
+
+void CGameUIViewport::OpenTestPanel()
+{
+	GetDialog(m_hTestPanel)->Activate();
+}
+
+void CGameUIViewport::OnThink()
+{
+	BaseClass::OnThink();
+
+	if (m_bPreventEscape || m_bDelayedPreventEscape)
+	{
+		g_pBaseUI->HideGameUI();
+
+		// hiding gameui doesnt update the mouse cursor
+		g_pVGuiSurface->CalculateMouseVisible();
+
+		// PreventEscapeToShow(false) may be called the same frame that ESC was pressed
+		// and CGameUIViewport::OnThink won't hide GameUI
+		// So the change is delayed by one frame
+		if (m_bDelayedPreventEscape)
+			m_bDelayedPreventEscape = false;
 	}
 
-	//TODO: implement CGameUIViewport::OnThink()
 	if (m_bPrepareForQueryDownload)
 	{
 		// We are currently downloading, check for progress.
@@ -109,11 +134,7 @@ void CGameUIViewport::PreventEscapeToShow(bool state)
 		// Now check the client workshop content
 		LoadWorkshopItems(true);
 	}
-}
 
-void CGameUIViewport::OpenTestPanel()
-{
-	GetDialog(m_hTestPanel)->Activate();
 }
 
 CServerBrowser* CGameUIViewport::GetServerBrowser()
@@ -171,7 +192,7 @@ void CGameUIViewport::LoadWorkshop()
 			k_EUserUGCList_Subscribed,
 			k_EUGCMatchingUGCType_Items_ReadyToUse,
 			k_EUserUGCListSortOrder_LastUpdatedDesc,
-			(AppId_t)AURA_APPID, (AppId_t)AURA_APPID, 1
+			(AppId_t)3416640, (AppId_t)3416640, 1 // AURA_APPID
 		);
 		SteamUGC()->SetReturnChildren(handle, true);
 		SteamAPICall_t apiCall = SteamUGC()->SendQueryUGCRequest(handle);
@@ -258,18 +279,23 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 					KeyValues* pAddonFilterFlags = manifest->FindKey("Tags");
 					if (pAddonFilterFlags)
 					{
-						if (pAddonFilterFlags->GetBool("Map")) MountAddon.iFilterFlag |= vgui2::FILTER_MAP;
-						if (pAddonFilterFlags->GetBool("Weapons")) MountAddon.iFilterFlag |= vgui2::FILTER_WEAPONS;
-						if (pAddonFilterFlags->GetBool("Sounds")) MountAddon.iFilterFlag |= vgui2::FILTER_SOUNDS;
-						if (pAddonFilterFlags->GetBool("Survivor")) MountAddon.iFilterFlag |= vgui2::FILTER_SURVIVOR;
-						if (pAddonFilterFlags->GetBool("Zombie")) MountAddon.iFilterFlag |= vgui2::FILTER_ZOMBIE;
-						if (pAddonFilterFlags->GetBool("Background")) MountAddon.iFilterFlag |= vgui2::FILTER_BACKGROUND;
-						if (pAddonFilterFlags->GetBool("Sprays")) MountAddon.iFilterFlag |= vgui2::FILTER_SPRAYS;
-						if (pAddonFilterFlags->GetBool("Music")) MountAddon.iFilterFlag |= vgui2::FILTER_MUSIC;
+						if (pAddonFilterFlags->GetBool("maps")) MountAddon.iFilterFlag |= vgui2::FILTER_MAP;
+						if (pAddonFilterFlags->GetBool("viewmodels")) MountAddon.iFilterFlag |= vgui2::FILTER_WEAPONS;
+						if (pAddonFilterFlags->GetBool("sounds")) MountAddon.iFilterFlag |= vgui2::FILTER_SOUNDS;
+						if (pAddonFilterFlags->GetBool("playermodels")) MountAddon.iFilterFlag |= vgui2::FILTER_PLAYERMODEL;
+						if (pAddonFilterFlags->GetBool("HUD")) MountAddon.iFilterFlag |= vgui2::FILTER_HUD;
+						if (pAddonFilterFlags->GetBool("resources")) MountAddon.iFilterFlag |= vgui2::FILTER_RESOURCES;
+						if (pAddonFilterFlags->GetBool("sprays")) MountAddon.iFilterFlag |= vgui2::FILTER_SPRAYS;
+						if (pAddonFilterFlags->GetBool("mp3")) MountAddon.iFilterFlag |= vgui2::FILTER_MUSIC;
+						if (pAddonFilterFlags->GetBool("mapcycles")) MountAddon.iFilterFlag |= vgui2::FILTER_MAPCYCLE;
+						if (pAddonFilterFlags->GetBool("trackerscheme")) MountAddon.iFilterFlag |= vgui2::FILTER_TRACKERSCHEME;
+						if (pAddonFilterFlags->GetBool("locs")) MountAddon.iFilterFlag |= vgui2::FILTER_LOC;
+						if (pAddonFilterFlags->GetBool("ctf")) MountAddon.iFilterFlag |= vgui2::FILTER_CTF;
+						if (pAddonFilterFlags->GetBool("dom")) MountAddon.iFilterFlag |= vgui2::FILTER_DOM;
 					}
 				}
 				manifest->deleteThis();
-#if defined( _DEBUG )
+#if defined( _DEBUG ) || defined(CLOSED_BETA)
 				// Only show on Debug mode
 				ConPrintf(
 					Color(255, 255, 0, 255),

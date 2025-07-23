@@ -167,11 +167,18 @@ bool CWorkshopSubList::HasFilterFlag(int iFilters)
 	case 1: iFlag = vgui2::FILTER_MAP; break;
 	case 2: iFlag = vgui2::FILTER_WEAPONS; break;
 	case 3: iFlag = vgui2::FILTER_SOUNDS; break;
-	case 4: iFlag = vgui2::FILTER_SURVIVOR; break;
-	case 5: iFlag = vgui2::FILTER_ZOMBIE; break;
-	case 6: iFlag = vgui2::FILTER_BACKGROUND; break;
+	case 4: iFlag = vgui2::FILTER_PLAYERMODEL; break;
+	case 5: iFlag = vgui2::FILTER_HUD; break;
+	case 6: iFlag = vgui2::FILTER_RESOURCES; break;
 	case 7: iFlag = vgui2::FILTER_SPRAYS; break;
 	case 8: iFlag = vgui2::FILTER_MUSIC; break;
+	case 9: iFlag = vgui2::FILTER_MAPCYCLE; break;
+	case 10: iFlag = vgui2::FILTER_TRACKERSCHEME; break;
+	case 11: iFlag = vgui2::FILTER_LOC; break;
+	case 12: iFlag = vgui2::FILTER_CTF; break;
+	case 13: iFlag = vgui2::FILTER_DOM; break;
+
+
 	}
 	if (iFlag == 0) return true;
 	return (iFilters & iFlag) != 0;

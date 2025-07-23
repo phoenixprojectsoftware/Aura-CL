@@ -582,7 +582,7 @@ void vgui2::WorkshopItemList::OnCommand(const char* pcCommand)
 {
 	if (vgui2::STDContains(pcCommand, "WorkshopURL_"))
 	{
-		if (!SteamAPI_IsSteamRunning) return;
+		if (!SteamAPI_IsSteamRunning()) return;
 		if (!SteamFriends()) return;
 		std::string szCommand(pcCommand);
 		vgui2::STDReplaceString(szCommand, "WorkshopURL_", "");
@@ -595,7 +595,7 @@ void vgui2::WorkshopItemList::OnCommand(const char* pcCommand)
 	}
 	else if (vgui2::STDContains(pcCommand, "WorkshopEdit_"))
 	{
-		if (!SteamAPI_IsSteamRunning) return;
+		if (!SteamAPI_IsSteamRunning()) return;
 		if (!SteamFriends()) return;
 		std::string szCommand(pcCommand);
 		vgui2::STDReplaceString(szCommand, "WorkshopEdit_", "");

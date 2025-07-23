@@ -144,7 +144,7 @@ set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
 
-target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES})
+target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES)
 
 
 target_include_directories(client PRIVATE
