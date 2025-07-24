@@ -93,9 +93,10 @@ int CHudWatermark::Draw(float time)
 	int textWidth = strlen(steamIDString) * charWidth;
 #endif
 
-
+#if !defined(CLOSED_BETA)
 	if (hud_watermark->value == 1)
 	{
+#endif
 #if defined(_STEAMWORKS) && (CLOSED_BETA)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight, "STEAM CLOSED BETA", r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 2, displayString, r, g, b); // read from version.txt
@@ -109,10 +110,9 @@ int CHudWatermark::Draw(float time)
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
 #endif
-
-		if (update_is_available)
-			gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight / 2 * 7, " ", r, g, b);
+#if !defined(CLOSED_BETA)
 	}
+#endif
 
 	return 0;
 }
