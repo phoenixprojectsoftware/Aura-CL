@@ -2,6 +2,7 @@
 #include <array>
 
 #include "hud.h"
+#include "hud_settings.h"
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "vgui_TeamFortressViewport.h"
@@ -32,9 +33,8 @@ int CHudScores::Init()
 {
 	m_iFlags = HUD_ACTIVE;
 
-	cl_scores = CVAR_CREATE("cl_scores", "0", FCVAR_ARCHIVE);
-	cl_scores_pos = CVAR_CREATE("cl_scores_pos", "20 50", FCVAR_ARCHIVE);
-	cl_scores_alpha = CVAR_CREATE("cl_scores_alpha", "20", FCVAR_ARCHIVE);
+	cl_scores = CVAR_CREATE("cl_scores", "2", FCVAR_ARCHIVE);
+	cl_scores_pos = CVAR_CREATE("cl_scores_pos", "1650 900", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem(this);
 	return 0;
@@ -47,17 +47,12 @@ int CHudScores::VidInit()
 
 int CHudScores::Draw(float time)
 {
-	if (cl_scores->value < 1.0f)
-		return 0;
-
 	const size_t rows_to_draw = static_cast<size_t>(cl_scores->value);
-	const uint8_t alpha = static_cast<uint8_t>(std::min(255.0f, std::max(0.0f, cl_scores_alpha->value)));
 
+	// draw above ammo2
 	int x, y;
-	if (sscanf(cl_scores_pos->string, "%d %d", &x, &y) != 2) {
-		x = 0;
-		y = 0;
-	}
+	x = 1650;
+	y = 900;
 
 	std::array<ScoreRow, NUM_ROWS> rows;
 	size_t row_count = 0;
@@ -129,6 +124,7 @@ int CHudScores::Draw(float time)
 		    g = iTeamColors[row->color][1],
 		    b = iTeamColors[row->color][2];
 
+		int alpha = 0;
 		FillRGBA(x, y, PADDING + score_width + GAP + name_width + PADDING, gHUD.m_scrinfo.iCharHeight, r, g, b, alpha);
 
 		ScaleColors(r, g, b, 135);
@@ -145,6 +141,20 @@ int CHudScores::Draw(float time)
 		                                b);
 
 		y += gHUD.m_scrinfo.iCharHeight;
+	}
+
+	int r, g, b;
+	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
+
+	const int settingsX = x;
+	int settingsY = y + gHUD.m_scrinfo.iCharHeight;
+
+	const char* gamemode = gHUD.m_Settings.GetGamemode();
+
+	if (gamemode[0])
+	{
+		gHUD.DrawHudString(settingsX, settingsY, ScreenWidth, gamemode, r, g, b);
+		settingsY += gHUD.m_scrinfo.iCharHeight;
 	}
 
 	return 0;

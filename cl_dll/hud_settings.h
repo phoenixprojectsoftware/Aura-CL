@@ -25,7 +25,10 @@ public:
 	virtual int VidInit();
 	virtual int Draw(float time);
 
-	const char* GetGamemode() const;
+	const char* GetGamemode() const 
+	{
+		return gamemode;
+	}
 
 	int MsgFunc_Settings(const char* name, int size, void* buf);
 };
