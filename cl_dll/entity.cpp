@@ -14,7 +14,6 @@
 #include "pm_shared.h"
 #include "bench.h"
 #include "Exports.h"
-#include "weather.h"
 
 #include "discord_integration.h"
 
@@ -335,8 +334,6 @@ void CL_DLLEXPORT HUD_CreateEntities( void )
 
 	// Add in any game specific objects
 	Game_AddObjects();
-
-	gWeather.Think();
 
 	UpdateLaserSpot();
 

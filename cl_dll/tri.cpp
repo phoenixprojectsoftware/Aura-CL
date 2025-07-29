@@ -17,7 +17,6 @@
 #include "cl_entity.h"
 #include "triangleapi.h"
 #include "Exports.h"
-#include "weather.h"
 
 #include "particleman.h"
 #include "tri.h"
@@ -35,8 +34,6 @@ void CL_DLLEXPORT HUD_DrawNormalTriangles( void )
 //	RecClDrawNormalTriangles();
 
 	UpdateLaserSpot();
-
-	gWeather.DrawParticles();
 
 	gHUD.m_Spectator.DrawOverview();
 }

@@ -148,6 +148,4 @@ add_sources(
 	view.h
 	voice_status.cpp
 	weapons.h
-	weather.cpp
-	weather.h
 	wrect.h)
