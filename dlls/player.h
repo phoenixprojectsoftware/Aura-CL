@@ -227,6 +227,8 @@ public:
 															// Spectators should return TRUE for this
 	virtual const char *TeamID( void );
 
+	virtual void InitializeEntities(void);
+
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
 	void RenewItems(void);

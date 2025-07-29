@@ -40,6 +40,62 @@
 
 #define CACHE_SIZE	32		// used to align key data structures
 
+//==============================
+//        SPRITE MODEL DEFS
+//
+//==============================
+typedef enum { SPR_SINGLE = 0, SPR_GROUP } spriteframetype_t;
+
+#define SPR_VP_PARALLEL_UPRIGHT            0
+#define SPR_FACING_UPRIGHT                1
+#define SPR_VP_PARALLEL                    2
+#define SPR_ORIENTED                    3
+#define SPR_VP_PARALLEL_ORIENTED        4
+
+#define SPR_NORMAL                        0
+#define SPR_ADDITIVE                    1
+#define SPR_INDEXALPHA                    2
+#define SPR_ALPHTEST                    3
+
+//==============================
+//        SPRITE MODEL STRUCTS
+//
+//==============================
+
+typedef struct mspriteframe_s
+{
+	int        width;
+	int        height;
+	float    up, down, left, right;
+	int        gl_texturenum;
+} mspriteframe_t;
+
+typedef struct
+{
+	int                numframes;
+	float* intervals;
+	mspriteframe_t* frames[1];
+} mspritegroup_t;
+
+typedef struct
+{
+	spriteframetype_t    type;
+	mspriteframe_t* frameptr;
+} mspriteframedesc_t;
+
+typedef struct
+{
+	short                type;
+	short                texFormat;
+	int                    maxwidth;
+	int                    maxheight;
+	int                    numframes;
+	int                    radius;
+	int                    beamlength;
+	int                    synctype;
+	mspriteframedesc_t    frames[1];
+} msprite_t;
+
 typedef enum
 {
 	mod_brush, 

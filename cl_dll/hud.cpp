@@ -43,6 +43,7 @@
 #include "steamworks/steam_api.h"
 #endif
 #include <dbg.h>
+#include "weather.h"
 
 extern tempent_s* pLaserSpot;
 
@@ -722,6 +723,8 @@ void CHud :: Init( void )
 	
 	ServersInit();
 
+	gWeather.Init();
+
 	MsgFunc_ResetHUD(0, 0, NULL );
 
 #ifdef _STEAMWORKS
@@ -896,6 +899,7 @@ void CHud :: VidInit( void )
 	m_OldScoreBoard.VidInit();
 	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
+	gWeather.VidInit();
 }
 
 void CHud::Frame(double time)
