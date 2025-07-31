@@ -189,7 +189,12 @@ int CHudDeathNotice::Draw(float flTime)
 			strncpy(temp, str.c_str(), sizeof(temp));
 			temp[sizeof(temp) - 1] = '\0';
 
-			gHUD.DrawConsoleStringWithColorTags(ScreenWidth - 300, y, temp, true, r / 255.0f, g / 255.0f, b / 255.0f);
+			int textWidth = 0, textHeight = 0;
+			gEngfuncs.pfnDrawConsoleStringLen(temp, &textWidth, &textHeight);
+
+			int drawX = ScreenWidth - textWidth - 10; // Right aligned
+
+			gHUD.DrawConsoleStringWithColorTags(drawX, y, temp, true, r / 255.0f, g / 255.0f, b / 255.0f);
 		}
 	}
 
