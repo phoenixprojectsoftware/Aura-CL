@@ -1,0 +1,28 @@
+add_sources(
+	CServerBrowser.cpp
+	CServerBrowser.h
+	CServerContextMenu.cpp
+	CServerContextMenu.h
+	CBaseTab.cpp
+	CBaseTab.h
+	ServerListSorter.cpp
+	ServerListSorter.h
+	dialogs/CDialogAddServer.cpp
+	dialogs/CDialogAddServer.h
+	dialogs/CDialogGameInfo.cpp
+	dialogs/CDialogGameInfo.h
+	dialogs/CDialogServerPassword.cpp
+	dialogs/CDialogServerPassword.h
+	dialogs/CVACBannedDialog.cpp
+	dialogs/CVACBannedDialog.h
+	tabs/CTabFavorites.cpp
+	tabs/CTabFavorites.h
+	tabs/CTabFriends.cpp
+	tabs/CTabFriends.h
+	tabs/CTabLan.cpp
+	tabs/CTabLan.h
+	tabs/CTabInternet.cpp
+	tabs/CTabInternet.h
+	tabs/CTabHistory.cpp
+	tabs/CTabHistory.h
+)

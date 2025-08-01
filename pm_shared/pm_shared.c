@@ -866,7 +866,7 @@ int PM_FlyMove (void)
 		//  are blocked by floor and wall.
 		if (trace.allsolid)
 		{	// entity is trapped in another solid
-			VectorCopy (vec3_origin, pmove->velocity);
+			VectorCopy (legacy_vec3_origin, pmove->velocity);
 			//Con_DPrintf("Trapped 4\n");
 			return 4;
 		}
@@ -916,7 +916,7 @@ int PM_FlyMove (void)
 		if (numplanes >= MAX_CLIP_PLANES)
 		{	// this shouldn't really happen
 			//  Stop our movement if so.
-			VectorCopy (vec3_origin, pmove->velocity);
+			VectorCopy (legacy_vec3_origin, pmove->velocity);
 			//Con_DPrintf("Too many planes 4\n");
 
 			break;
@@ -977,7 +977,7 @@ int PM_FlyMove (void)
 				if (numplanes != 2)
 				{
 					//Con_Printf ("clip velocity, numplanes == %i\n",numplanes);
-					VectorCopy (vec3_origin, pmove->velocity);
+					VectorCopy (legacy_vec3_origin, pmove->velocity);
 					//Con_DPrintf("Trapped 4\n");
 
 					break;
@@ -994,7 +994,7 @@ int PM_FlyMove (void)
 			if (DotProduct (pmove->velocity, primal_velocity) <= 0)
 			{
 				//Con_DPrintf("Back\n");
-				VectorCopy (vec3_origin, pmove->velocity);
+				VectorCopy (legacy_vec3_origin, pmove->velocity);
 				break;
 			}
 		}
@@ -1002,7 +1002,7 @@ int PM_FlyMove (void)
 
 	if ( allFraction == 0 )
 	{
-		VectorCopy (vec3_origin, pmove->velocity);
+		VectorCopy (legacy_vec3_origin, pmove->velocity);
 		//Con_DPrintf( "Don't stick\n" );
 	}
 
@@ -1117,7 +1117,7 @@ void PM_WalkMove ()
 
 	if (spd < 1.0f)
 	{
-		VectorClear( pmove->velocity );
+		Legacy_VectorClear( pmove->velocity );
 		return;
 	}
 
@@ -1807,7 +1807,7 @@ void PM_SpectatorMove (void)
 		{
 			VectorCopy( vJumpOrigin, pmove->origin );
 			VectorCopy( vJumpAngles, pmove->angles );
-			VectorCopy( vec3_origin, pmove->velocity );
+			VectorCopy( legacy_vec3_origin, pmove->velocity );
 			iJumpSpectator	= 0;
 			return;
 		}
@@ -1817,7 +1817,7 @@ void PM_SpectatorMove (void)
 		speed = Length (pmove->velocity);
 		if (speed < 1)
 		{
-			VectorCopy (vec3_origin, pmove->velocity)
+			VectorCopy (legacy_vec3_origin, pmove->velocity)
 		}
 		else
 		{
@@ -1901,7 +1901,7 @@ void PM_SpectatorMove (void)
 		VectorCopy( pmove->physents[target].origin, pmove->origin );
 
 		// no velocity
-		VectorCopy( vec3_origin, pmove->velocity );
+		VectorCopy( legacy_vec3_origin, pmove->velocity );
 	}
 }
 
@@ -2174,15 +2174,15 @@ void PM_LadderMove( physent_t *pLadder )
 				//ALERT(at_console, "pev %.2f %.2f %.2f - ",
 				//	pev->velocity.x, pev->velocity.y, pev->velocity.z);
 				// Calculate player's intended velocity
-				//Vector velocity = (forward * gpGlobals->v_forward) + (right * gpGlobals->v_right);
+				//Legacy_Vector velocity = (forward * gpGlobals->v_forward) + (right * gpGlobals->v_right);
 				VectorScale( vpn, forward, velocity );
 				VectorMA( velocity, right, v_right, velocity );
 
 				
 				// Perpendicular in the ladder plane
-	//					Vector perp = CrossProduct( Vector(0,0,1), trace.vecPlaneNormal );
+	//					Legacy_Vector perp = CrossProduct( Legacy_Vector(0,0,1), trace.vecPlaneNormal );
 	//					perp = perp.Normalize();
-				VectorClear( tmp );
+				Legacy_VectorClear( tmp );
 				tmp[2] = 1;
 				CrossProduct( tmp, trace.plane.normal, perp );
 				VectorNormalize( perp );
@@ -2212,7 +2212,7 @@ void PM_LadderMove( physent_t *pLadder )
 			}
 			else
 			{
-				VectorClear( pmove->velocity );
+				Legacy_VectorClear( pmove->velocity );
 			}
 		}
 	}
@@ -2344,8 +2344,8 @@ void PM_Physics_Toss()
 	// If on ground and not moving, return.
 	if ( pmove->onground != -1 )
 	{
-		if (VectorCompare(pmove->basevelocity, vec3_origin) &&
-		    VectorCompare(pmove->velocity, vec3_origin))
+		if (VectorCompare(pmove->basevelocity, legacy_vec3_origin) &&
+		    VectorCompare(pmove->velocity, legacy_vec3_origin))
 			return;
 	}
 
@@ -2374,7 +2374,7 @@ void PM_Physics_Toss()
 	{	
 		// entity is trapped in another solid
 		pmove->onground = trace.ent;
-		VectorCopy (vec3_origin, pmove->velocity);
+		VectorCopy (legacy_vec3_origin, pmove->velocity);
 		return;
 	}
 	
@@ -2400,7 +2400,7 @@ void PM_Physics_Toss()
 		float vel;
 		vec3_t base;
 
-		VectorClear( base );
+		Legacy_VectorClear( base );
 		if (pmove->velocity[2] < pmove->movevars->gravity * pmove->frametime)
 		{
 			// we're rolling on the ground, add static friction.
@@ -2415,7 +2415,7 @@ void PM_Physics_Toss()
 		if (vel < (30 * 30) || (pmove->movetype != MOVETYPE_BOUNCE && pmove->movetype != MOVETYPE_BOUNCEMISSILE))
 		{
 			pmove->onground = trace.ent;
-			VectorCopy (vec3_origin, pmove->velocity);
+			VectorCopy (legacy_vec3_origin, pmove->velocity);
 		}
 		else
 		{
@@ -2459,7 +2459,7 @@ void PM_NoClip()
 	
 	// Zero out the velocity so that we don't accumulate a huge downward velocity from
 	//  gravity, etc.
-	VectorClear( pmove->velocity );
+	Legacy_VectorClear( pmove->velocity );
 
 }
 
@@ -2693,7 +2693,7 @@ void PM_CheckWaterJump (void)
 	{
 		vecStart[2] += pmove->player_maxs[ savehull ][2] - WJ_HEIGHT;
 		VectorMA( vecStart, 24, flatforward, vecEnd );
-		VectorMA( vec3_origin, -50, tr.plane.normal, pmove->movedir );
+		VectorMA( legacy_vec3_origin, -50, tr.plane.normal, pmove->movedir );
 
 		tr = pmove->PM_PlayerTrace( vecStart, vecEnd, PM_NORMAL, -1 );
 		if ( tr.fraction == 1.0 )

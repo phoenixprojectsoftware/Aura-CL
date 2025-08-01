@@ -138,15 +138,15 @@ void CPenguin::PrimaryAttack()
 	{
 		UTIL_MakeVectors(m_pPlayer->pev->v_angle);
 
-		Vector vecSrc = m_pPlayer->pev->origin;
+		Legacy_Vector vecSrc = m_pPlayer->pev->origin;
 
 		if (m_pPlayer->pev->flags & FL_DUCKING)
 		{
 			vecSrc.z += 18;
 		}
 
-		const Vector vecStart = vecSrc + (gpGlobals->v_forward * 20);
-		const Vector vecEnd = vecSrc + (gpGlobals->v_forward * 64);
+		const Legacy_Vector vecStart = vecSrc + (gpGlobals->v_forward * 20);
+		const Legacy_Vector vecEnd = vecSrc + (gpGlobals->v_forward * 64);
 
 		TraceResult tr;
 		UTIL_TraceLine(vecStart, vecEnd, dont_ignore_monsters, nullptr, &tr);

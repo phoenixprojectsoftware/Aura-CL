@@ -118,7 +118,7 @@ void EV_GetGunPosition( event_args_t *args, float *pos, float *origin )
 
 	idx = args->entindex;
 
-	VectorClear( view_ofs );
+	Legacy_VectorClear( view_ofs );
 	view_ofs[2] = DEFAULT_VIEWHEIGHT;
 
 	if ( EV_IsPlayer( idx ) )
@@ -154,7 +154,7 @@ Bullet shell casings
 void EV_EjectBrass( float *origin, float *velocity, float rotation, int model, int soundtype )
 {
 	vec3_t endpos;
-	VectorClear( endpos );
+	Legacy_VectorClear( endpos );
 	endpos[1] = rotation;
 	gEngfuncs.pEfxAPI->R_TempModel( origin, velocity, endpos, 2.5, model, soundtype );
 }
@@ -166,7 +166,7 @@ EV_GetDefaultShellInfo
 Determine where to eject shells from
 =================
 */
-void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity, float *ShellVelocity, Vector &ShellOrigin, float *forward, float *right, float *up, float forwardScale, float upScale, float rightScale )
+void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity, float *ShellVelocity, Legacy_Vector &ShellOrigin, float *forward, float *right, float *up, float forwardScale, float upScale, float rightScale )
 {
 	int i;
 	vec3_t view_ofs;
@@ -176,7 +176,7 @@ void EV_GetDefaultShellInfo( event_args_t *args, float *origin, float *velocity,
 
 	idx = args->entindex;
 
-	VectorClear( view_ofs );
+	Legacy_VectorClear( view_ofs );
 	view_ofs[2] = DEFAULT_VIEWHEIGHT;
 
 	if ( EV_IsPlayer( idx ) )

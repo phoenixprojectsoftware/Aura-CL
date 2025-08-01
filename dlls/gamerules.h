@@ -108,7 +108,7 @@ public:
 	virtual int WeaponShouldRespawn( CBasePlayerItem *pWeapon ) = 0;// should this weapon respawn?
 	virtual float FlWeaponRespawnTime( CBasePlayerItem *pWeapon ) = 0;// when may this weapon respawn?
 	virtual float FlWeaponTryRespawn( CBasePlayerItem *pWeapon ) = 0; // can i respawn now,  and if not, when should i try again?
-	virtual Vector VecWeaponRespawnSpot( CBasePlayerItem *pWeapon ) = 0;// where in the world should this weapon respawn?
+	virtual Legacy_Vector VecWeaponRespawnSpot( CBasePlayerItem *pWeapon ) = 0;// where in the world should this weapon respawn?
 
 // Item retrieval
 	virtual BOOL CanHaveItem( CBasePlayer *pPlayer, CItem *pItem ) = 0;// is this player allowed to take this item?
@@ -117,7 +117,7 @@ public:
 // Item spawn/respawn control
 	virtual int ItemShouldRespawn( CItem *pItem ) = 0;// Should this item respawn?
 	virtual float FlItemRespawnTime( CItem *pItem ) = 0;// when may this item respawn?
-	virtual Vector VecItemRespawnSpot( CItem *pItem ) = 0;// where in the world should this item respawn?
+	virtual Legacy_Vector VecItemRespawnSpot( CItem *pItem ) = 0;// where in the world should this item respawn?
 
 // Ammo retrieval
 	virtual BOOL CanHaveAmmo( CBasePlayer *pPlayer, const char *pszAmmoName, int iMaxCarry );// can this player take more of this ammo?
@@ -126,7 +126,7 @@ public:
 // Ammo spawn/respawn control
 	virtual int AmmoShouldRespawn( CBasePlayerAmmo *pAmmo ) = 0;// should this ammo item respawn?
 	virtual float FlAmmoRespawnTime( CBasePlayerAmmo *pAmmo ) = 0;// when should this ammo item respawn?
-	virtual Vector VecAmmoRespawnSpot( CBasePlayerAmmo *pAmmo ) = 0;// where in the world should this ammo item respawn?
+	virtual Legacy_Vector VecAmmoRespawnSpot( CBasePlayerAmmo *pAmmo ) = 0;// where in the world should this ammo item respawn?
 																			// by default, everything spawns
 
 // Healthcharger respawn control
@@ -212,7 +212,7 @@ public:
 	virtual int WeaponShouldRespawn( CBasePlayerItem *pWeapon );
 	virtual float FlWeaponRespawnTime( CBasePlayerItem *pWeapon );
 	virtual float FlWeaponTryRespawn( CBasePlayerItem *pWeapon );
-	virtual Vector VecWeaponRespawnSpot( CBasePlayerItem *pWeapon );
+	virtual Legacy_Vector VecWeaponRespawnSpot( CBasePlayerItem *pWeapon );
 
 // Item retrieval
 	virtual BOOL CanHaveItem( CBasePlayer *pPlayer, CItem *pItem );
@@ -221,7 +221,7 @@ public:
 // Item spawn/respawn control
 	virtual int ItemShouldRespawn( CItem *pItem );
 	virtual float FlItemRespawnTime( CItem *pItem );
-	virtual Vector VecItemRespawnSpot( CItem *pItem );
+	virtual Legacy_Vector VecItemRespawnSpot( CItem *pItem );
 
 // Ammo retrieval
 	virtual void PlayerGotAmmo( CBasePlayer *pPlayer, char *szName, int iCount );
@@ -229,7 +229,7 @@ public:
 // Ammo spawn/respawn control
 	virtual int AmmoShouldRespawn( CBasePlayerAmmo *pAmmo );
 	virtual float FlAmmoRespawnTime( CBasePlayerAmmo *pAmmo );
-	virtual Vector VecAmmoRespawnSpot( CBasePlayerAmmo *pAmmo );
+	virtual Legacy_Vector VecAmmoRespawnSpot( CBasePlayerAmmo *pAmmo );
 
 // Healthcharger respawn control
 	virtual float FlHealthChargerRechargeTime( void );
@@ -307,7 +307,7 @@ public:
 	virtual int WeaponShouldRespawn( CBasePlayerItem *pWeapon );
 	virtual float FlWeaponRespawnTime( CBasePlayerItem *pWeapon );
 	virtual float FlWeaponTryRespawn( CBasePlayerItem *pWeapon );
-	virtual Vector VecWeaponRespawnSpot( CBasePlayerItem *pWeapon );
+	virtual Legacy_Vector VecWeaponRespawnSpot( CBasePlayerItem *pWeapon );
 
 // Item retrieval
 	virtual BOOL CanHaveItem( CBasePlayer *pPlayer, CItem *pItem );
@@ -316,7 +316,7 @@ public:
 // Item spawn/respawn control
 	virtual int ItemShouldRespawn( CItem *pItem );
 	virtual float FlItemRespawnTime( CItem *pItem );
-	virtual Vector VecItemRespawnSpot( CItem *pItem );
+	virtual Legacy_Vector VecItemRespawnSpot( CItem *pItem );
 
 // Ammo retrieval
 	virtual void PlayerGotAmmo( CBasePlayer *pPlayer, char *szName, int iCount );
@@ -324,7 +324,7 @@ public:
 // Ammo spawn/respawn control
 	virtual int AmmoShouldRespawn( CBasePlayerAmmo *pAmmo );
 	virtual float FlAmmoRespawnTime( CBasePlayerAmmo *pAmmo );
-	virtual Vector VecAmmoRespawnSpot( CBasePlayerAmmo *pAmmo );
+	virtual Legacy_Vector VecAmmoRespawnSpot( CBasePlayerAmmo *pAmmo );
 
 // Healthcharger respawn control
 	virtual float FlHealthChargerRechargeTime( void );

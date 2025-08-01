@@ -381,8 +381,8 @@ void CHudSpectator::SetSpectatorStartPosition()
 	else
 	{
 		// jump to 0,0,0 if no better position was found
-		VectorCopy(vec3_origin, m_cameraOrigin);
-		VectorCopy(vec3_origin, m_cameraAngles);
+		VectorCopy(legacy_vec3_origin, m_cameraOrigin);
+		VectorCopy(legacy_vec3_origin, m_cameraAngles);
 	}
 	
 	VectorCopy(m_cameraOrigin, vJumpOrigin);
@@ -391,7 +391,7 @@ void CHudSpectator::SetSpectatorStartPosition()
 	iJumpSpectator = 1;	// jump anyway
 }
 
-void CHudSpectator::GetCameraView(Vector& pos, Vector& angle)
+void CHudSpectator::GetCameraView(Legacy_Vector& pos, Legacy_Vector& angle)
 {
 	if (m_pip->value == INSET_IN_EYE || g_iUser1 == OBS_IN_EYE)
 	{
@@ -1512,7 +1512,7 @@ void CHudSpectator::DrawOverviewLayer()
 	if (m_OverviewData.layers.empty())
 		return;
 
-	Vector camOrigin, camAngles;
+	Legacy_Vector camOrigin, camAngles;
 	GetCameraView(camOrigin, camAngles);
 
 	const auto currLayer = GetCurrentLayer(camOrigin);
@@ -2071,7 +2071,7 @@ void CHudSpectator::InitHUDData()
 	gHUD.m_iFOV =  CVAR_GET_FLOAT("default_fov");
 }
 
-CHudSpectator::OverviewLayer CHudSpectator::GetCurrentLayer(Vector playerPos)
+CHudSpectator::OverviewLayer CHudSpectator::GetCurrentLayer(Legacy_Vector playerPos)
 {
 	// Get the layer with highest Z, that will be the default layer,
 	// or it will be the dummy one if an overview file doesn't exist for this map

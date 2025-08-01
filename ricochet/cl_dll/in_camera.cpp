@@ -27,7 +27,7 @@
 
 float CL_KeyState (kbutton_t *key);
 
-extern cl_enginefunc_t gEngfuncs;
+extern cldll_enginefunc_t gEngfuncs;
 
 //-------------------------------------------------- Constants
 

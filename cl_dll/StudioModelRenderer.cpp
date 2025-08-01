@@ -12,6 +12,10 @@
 #include <GL/gl.h>
 #endif
 
+#ifndef GL_DEPTH_CLAMP
+#define GL_DEPTH_CLAMP 0x864F
+#endif
+
 #include "hud.h"
 #include "cl_util.h"
 #include "const.h"
@@ -37,10 +41,10 @@
 
 extern cvar_t *tfc_newmodels;
 extern float g_flRenderFOV;
-Vector g_vViewOrigin;
-Vector g_vViewForward;
-Vector g_vViewRight;
-Vector g_vViewUp;
+Legacy_Vector g_vViewOrigin;
+Legacy_Vector g_vViewForward;
+Legacy_Vector g_vViewRight;
+Legacy_Vector g_vViewUp;
 
 extern extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];
 
@@ -71,8 +75,6 @@ void CStudioModelRenderer::Init( void )
 	m_pCvarDeveloper		= IEngineStudio.GetCvar( "developer" );
 	m_pCvarDrawEntities		= IEngineStudio.GetCvar( "r_drawentities" );
 	m_pCvarViewmodelFov		= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_fov","0", FCVAR_ARCHIVE );
-	m_pCvarViewmodelNoIdle = gEngfuncs.pfnRegisterVariable("cl_viewmodel_disable_idle", "0", FCVAR_ARCHIVE);
-	m_pCvarViewmodelNoEquip = gEngfuncs.pfnRegisterVariable("cl_viewmodel_disable_equip", "0", FCVAR_ARCHIVE);
 
 	m_pChromeSprite			= IEngineStudio.GetChromeSprite();
 
@@ -2013,7 +2015,7 @@ bool CStudioModelRenderer::NeedAdjustViewmodelAdjustments()
 		g_flRenderFOV == gHUD.default_fov->value; // weapon is not zoomed in
 }
 
-void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Vector &vOrigin)
+void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Legacy_Vector &vOrigin)
 {
 	float worldx = tan(g_flRenderFOV * M_PI / 360.0);
 	float viewx = tan(m_pCvarViewmodelFov->value * M_PI / 360.0);
@@ -2024,15 +2026,15 @@ void CStudioModelRenderer::StudioAdjustViewmodelAttachments(Vector &vOrigin)
 	float factor = worldx / viewx;
 
 	// Get the coordinates in the viewer's space.
-	Vector tmp = vOrigin - g_vViewOrigin;
-	Vector vTransformed(DotProduct(g_vViewRight, tmp), DotProduct(g_vViewUp, tmp), DotProduct(g_vViewForward, tmp));
+	Legacy_Vector tmp = vOrigin - g_vViewOrigin;
+	Legacy_Vector vTransformed(DotProduct(g_vViewRight, tmp), DotProduct(g_vViewUp, tmp), DotProduct(g_vViewForward, tmp));
 
 	// Now squash X and Y.
 	vTransformed.x *= factor;
 	vTransformed.y *= factor;
 
 	// Transform back to world space.
-	Vector vOut = (g_vViewRight * vTransformed.x) + (g_vViewUp * vTransformed.y) + (g_vViewForward * vTransformed.z);
+	Legacy_Vector vOut = (g_vViewRight * vTransformed.x) + (g_vViewUp * vTransformed.y) + (g_vViewForward * vTransformed.z);
 	vOrigin = g_vViewOrigin + vOut;
 }
 
@@ -2046,6 +2048,20 @@ void CStudioModelRenderer::StudioRenderModel( void )
 {
 	IEngineStudio.SetChromeOrigin();
 	IEngineStudio.SetForceFaceFlags( 0 );
+
+	//++ NAPOLEON
+	// fix the model clamp
+	if (m_pCurrentEntity == gEngfuncs.GetViewModel())
+		glEnable(GL_DEPTH_CLAMP);
+
+	StudioRenderFinal();
+
+	if(m_pCurrentEntity == gEngfuncs.GetViewModel())
+	{
+		// restore the model clamp
+		glDisable(GL_DEPTH_CLAMP);
+	}
+	//-- NAPOLEON
 
 	if ( m_pCurrentEntity->curstate.renderfx == kRenderFxGlowShell )
 	{

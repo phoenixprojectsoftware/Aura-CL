@@ -23,8 +23,8 @@
 #include "gamerules.h"
 
 // special deathmatch shotgun spreads
-#define VECTOR_CONE_DM_SHOTGUN	Vector( 0.08716, 0.04362, 0.00  )// 10 degrees by 5 degrees
-#define VECTOR_CONE_DM_DOUBLESHOTGUN Vector( 0.17365, 0.04362, 0.00 ) // 20 degrees by 5 degrees
+#define VECTOR_CONE_DM_SHOTGUN	Legacy_Vector( 0.08716, 0.04362, 0.00  )// 10 degrees by 5 degrees
+#define VECTOR_CONE_DM_DOUBLESHOTGUN Legacy_Vector( 0.17365, 0.04362, 0.00 ) // 20 degrees by 5 degrees
 
 enum shotgun_e {
 	SHOTGUN_IDLE = 0,
@@ -149,10 +149,10 @@ void CShotgun::PrimaryAttack()
 
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
-	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
-	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
+	Legacy_Vector vecSrc	 = m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 
-	Vector vecDir;
+	Legacy_Vector vecDir;
 
 #ifdef CLIENT_DLL
 	if ( bIsMultiplayer() )
@@ -223,10 +223,10 @@ void CShotgun::SecondaryAttack( void )
 	// player "shoot" animation
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
-	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
+	Legacy_Vector vecSrc	 = m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 
-	Vector vecDir;
+	Legacy_Vector vecDir;
 	
 #ifdef CLIENT_DLL
 	if ( bIsMultiplayer() )

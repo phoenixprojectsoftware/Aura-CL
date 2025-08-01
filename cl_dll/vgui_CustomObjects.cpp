@@ -449,11 +449,11 @@ void CTFScrollButton::paint( void )
 	// draw armed button text in white
 	if ( isArmed() )
 	{
-		m_pTGA->setColor( Color(255,255,255, 0) );
+		m_pTGA->setColor(vgui::Color(255,255,255, 0) );
 	}
 	else
 	{
-		m_pTGA->setColor( Color(255,255,255, 128) );
+		m_pTGA->setColor(vgui::Color(255,255,255, 128) );
 	}
 
 	m_pTGA->doPaint(this);

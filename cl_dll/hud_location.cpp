@@ -63,7 +63,7 @@ void CHudLocation::parse_locations(const char* mapname)
 	}
 }
 
-void CHudLocation::update_player_location(size_t id, const Vector& pos)
+void CHudLocation::update_player_location(size_t id, const Legacy_Vector& pos)
 {
 	player_locations[id] = 0;
 
@@ -120,7 +120,7 @@ int CHudLocation::MsgFunc_Location(const char* name, int size, void* buf)
 	BEGIN_READ(buf, size);
 
 	int id = READ_BYTE();
-	Vector pos;
+	Legacy_Vector pos;
 	pos.x = READ_COORD();
 	pos.y = READ_COORD();
 	pos.z = READ_COORD();

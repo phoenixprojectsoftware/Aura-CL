@@ -30,6 +30,9 @@
 #define _cdecl 
 #endif
 
+#include <functional>
+#include <vector>
+#include <queue>
 #include "wrect.h"
 #include "cl_dll.h"
 #include "ammo.h"
@@ -363,6 +366,7 @@ public:
 	int VidInit( void );
 	int Draw(float flTime);
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
+	void RunShieldPrediction(float time); // NEW: run shield prediction for battery
 	bool Blinking;
 	
 private:
@@ -372,6 +376,11 @@ private:
 	wrect_t *m_prc2;
 	int	  m_iBat;	
 	int	  m_iBatMax;
+	float m_flLastShieldSoundTime = 0;
+	bool m_bShieldEmpty = false;
+	bool m_bShieldLow = false;
+	bool m_bShieldMaxxed = false;
+	bool m_bShieldRegenOn = false; // NEW: shield regen on/off
 	float m_fFade;
 	int	  m_iHeight;		// width of the battery innards
 };
@@ -589,19 +598,26 @@ private:
 
 	int							m_iGameType;
 
+	std::queue<std::function<void()>> m_NextFrameQueue;
+
 public:
 
 	HSPRITE						m_hsprCursor;
 	float m_flTime;	   // the current client time
 	float m_fOldTime;  // the time at which the HUD was last redrawn
 	double m_flTimeDelta; // the difference between flTime and fOldTime
-	Vector	m_vecOrigin;
-	Vector	m_vecAngles;
+	Legacy_Vector	m_vecOrigin;
+	Legacy_Vector	m_vecAngles;
 	int		m_iKeyBits;
 	int		m_iHideHUDDisplay;
 	// Smooth zooming
 	float	m_iFOV;
 	int		m_iTargetFOV;
+	
+	float m_flJumpViewmodelBob = 0.0f;
+	float m_flTargetJumpBob = 0.0f;
+	bool m_bWasJumping = true; // might need to change this back to false
+	float m_flAirborneStartZ = 0.0f; // NEW: z pos when we leave ground
 
 	int m_iCrosshairRed;
 	int m_iCrosshairGreen;
@@ -727,6 +743,8 @@ public:
 
 	void Init( void );
 	void VidInit( void );
+	void Frame(double time);
+	void Shutdown();
 	void Think(void);
 	int Redraw( float flTime, int intermission );
 	int UpdateClientData( client_data_t *cdata, float time );
@@ -760,6 +778,8 @@ public:
 	void AddHudElem(CHudBase *p);
 
 	float GetSensitivity();
+
+	void CallOnNextFrame(std::function<void()> f);
 
 	int m_iLaserState;
 

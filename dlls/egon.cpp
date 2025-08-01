@@ -179,8 +179,8 @@ void CEgon::Attack( void )
 	}
 
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
-	Vector vecAiming = gpGlobals->v_forward;
-	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecAiming = gpGlobals->v_forward;
+	Legacy_Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 
 	int flags;
 #if defined( CLIENT_WEAPONS )
@@ -244,14 +244,14 @@ void CEgon::PrimaryAttack( void )
 
 }
 
-void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
+void CEgon::Fire( const Legacy_Vector &vecOrigSrc, const Legacy_Vector &vecDir )
 {
-	Vector vecDest = vecOrigSrc + vecDir * 2048;
+	Legacy_Vector vecDest = vecOrigSrc + vecDir * 2048;
 	edict_t		*pentIgnore;
 	TraceResult tr;
 
 	pentIgnore = m_pPlayer->edict();
-	Vector tmpSrc = vecOrigSrc + gpGlobals->v_up * -8 + gpGlobals->v_right * 3;
+	Legacy_Vector tmpSrc = vecOrigSrc + gpGlobals->v_up * -8 + gpGlobals->v_right * 3;
 
 	// ALERT( at_console, "." );
 	
@@ -384,7 +384,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 }
 
 
-void CEgon::UpdateEffect( const Vector &startPoint, const Vector &endPoint, float timeBlend )
+void CEgon::UpdateEffect( const Legacy_Vector &startPoint, const Legacy_Vector &endPoint, float timeBlend )
 {
 #ifndef CLIENT_DLL
 	if ( !m_pBeam )

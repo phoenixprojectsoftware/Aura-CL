@@ -42,6 +42,7 @@
 #ifdef _STEAMWORKS
 #include "steamworks/steam_api.h"
 #endif
+#include <dbg.h>
 
 extern tempent_s* pLaserSpot;
 
@@ -563,6 +564,7 @@ void PrintVersion()
 	gEngfuncs.Con_Printf("\n  Aura SDK:");
 	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
 	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
+	gEngfuncs.Con_Printf("\n  Configuration - %s", buildCfg);
 }
 
 
@@ -643,7 +645,7 @@ void CHud :: Init( void )
 	m_iTargetFOV = 0;
 
 	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
-	default_fov = CVAR_CREATE( "default_fov", "110", FCVAR_ARCHIVE ); // I have set the hard-coded default to 110. Why would you want to use 90 on a widescreen display?
+	default_fov = CVAR_CREATE( "default_fov", "90", FCVAR_ARCHIVE );
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
@@ -656,7 +658,6 @@ void CHud :: Init( void )
 
 	m_pSpriteList = NULL;
 
-	CVAR_CREATE("cl_music_enabled", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_USERINFO );
 	hud_watermark = CVAR_CREATE("hud_watermark", "1", FCVAR_ARCHIVE);
 
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
@@ -723,7 +724,7 @@ void CHud :: Init( void )
 
 	MsgFunc_ResetHUD(0, 0, NULL );
 
-#ifdef STEAM_RICH_PRESENCE
+#ifdef _STEAMWORKS
 	gEngfuncs.pfnClientCmd("richpresence_gamemode\n"); // reset
 
 	gEngfuncs.pfnClientCmd("richpresence_update\n");
@@ -895,6 +896,20 @@ void CHud :: VidInit( void )
 	m_OldScoreBoard.VidInit();
 	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
+}
+
+void CHud::Frame(double time)
+{
+	while (m_NextFrameQueue.size())
+	{
+		auto& i = m_NextFrameQueue.front();
+		i();
+		m_NextFrameQueue.pop();
+	}
+}
+
+void CHud::Shutdown()
+{
 }
 
 int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
@@ -1132,14 +1147,23 @@ float CHud::GetSensitivity( void )
 	return m_flMouseSensitivity;
 }
 
-void CHud::ApplyGreyscaleEffect()
+void CHud::CallOnNextFrame(std::function<void()> f)
 {
-	int grey = 128;
-	int alpha = 128;
-	gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
+	Assert(f);
+	m_NextFrameQueue.push(f);
 }
 
 cvar_t* r_pissfilter;
+
+void CHud::ApplyGreyscaleEffect()
+{
+	if (!g_IsSpectator && r_pissfilter->value < 1)
+	{
+		int grey = 128;
+		int alpha = 128;
+		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
+	}
+}
 
 void CHud::ApplyPissFilter()
 {

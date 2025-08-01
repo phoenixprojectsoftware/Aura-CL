@@ -1,0 +1,11 @@
+add_sources(
+	CWorkshopDialog.cpp
+	CWorkshopDialog.h
+	CWorkshopSubList.cpp
+	CWorkshopSubList.h
+	CWorkshopSubUpload.cpp
+	CWorkshopSubUpload.h
+	CWorkshopSubUploaded.cpp
+	CWorkshopSubUploaded.h
+	WorkshopItemList.cpp
+	WorkshopItemList.h)

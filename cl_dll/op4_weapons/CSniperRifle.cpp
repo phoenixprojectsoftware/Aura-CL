@@ -141,15 +141,15 @@ void CSniperRifle::PrimaryAttack()
 
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	Vector vecAngles = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+	Legacy_Vector vecAngles = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
 
 	UTIL_MakeVectors(vecAngles);
 
-	Vector vecSrc = m_pPlayer->GetGunPosition();
-	Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_2DEGREES);
+	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition();
+	Legacy_Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_2DEGREES);
 
 	//TODO: 8192 constant should be defined somewhere - Solokiller
-	Vector vecShot = m_pPlayer->FireBulletsPlayer(1,
+	Legacy_Vector vecShot = m_pPlayer->FireBulletsPlayer(1,
 		vecSrc, vecAiming, g_vecZero,
 		8192, BULLET_PLAYER_762, 0, 0,
 		m_pPlayer->pev, m_pPlayer->random_seed);

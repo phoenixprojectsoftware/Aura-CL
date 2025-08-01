@@ -81,7 +81,7 @@ public:
 	}
 
 private:
-	void Fire(const Vector& vecOrigin, const Vector& vecDir);
+	void Fire(const Legacy_Vector& vecOrigin, const Legacy_Vector& vecDir);
 	void EndAttack();
 
 	void CreateEffect();

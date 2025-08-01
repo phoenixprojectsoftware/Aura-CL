@@ -153,9 +153,9 @@ void CMP5::PrimaryAttack()
 	// player "shoot" animation
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
-	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
-	Vector vecDir;
+	Legacy_Vector vecSrc	 = m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
+	Legacy_Vector vecDir;
 
 #ifdef CLIENT_DLL
 	if ( !bIsMultiplayer() )

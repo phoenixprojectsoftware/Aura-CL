@@ -31,6 +31,7 @@ extern "C" {
 #include "ref_params.h"
 #include "r_efx.h"
 #include "studio_event.h"
+#include "../cl_dll/wrect.h"
 
 // this file is included by both the engine and the client-dll,
 // so make sure engine declarations aren't done twice
@@ -164,7 +165,7 @@ extern void ClientDLL_ChatInputPosition( int *x, int *y );
 #include "APIProxy.h"
 
 extern cldll_func_t	cl_funcs;
-extern cl_enginefunc_t cl_engsrcProxies;
+extern cldll_enginefunc_t cl_engsrcProxies;
 extern cl_enginefunc_dst_t g_engdstAddrs;
 
 // Module exports

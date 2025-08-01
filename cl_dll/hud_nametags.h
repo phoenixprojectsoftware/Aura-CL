@@ -12,6 +12,9 @@
 #define	DEFAULT_VIEWHEIGHT	28
 #define VEC_DUCK_VIEW 12
 
+#define TEAMMATE_DRAW_DISTANCE 1000
+#define ENEMY_DRAW_DISTANCE 450
+
 #include <string>
 #include <vector>
 

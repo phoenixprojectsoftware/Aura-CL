@@ -1,7 +1,10 @@
-cmake_minimum_required(VERSION 3.3)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
+cmake_minimum_required(VERSION 3.23)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>>:Debug>DLL")
 
 # Custom build types support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
 
 # Set custom flags for SteamDebug and SteamRelease
@@ -15,6 +18,11 @@ set(CMAKE_CXX_FLAGS_STEAMRELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_EXE_LINKER_FLAGS_STEAMRELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(CMAKE_SHARED_LINKER_FLAGS_STEAMRELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 
+set(CMAKE_C_FLAGS_STEAMCLOSEDBETA "${CMAKE_C_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_STEAMCLOSEDBETA "${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_EXE_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+set(CMAKE_SHARED_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+
 # Project metadata
 project(Aura-Client)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -27,21 +35,29 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Detect if we're building a Steam-enabled configuration
 set(IS_STEAM_BUILD OFF)
-if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease")
+if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta")
     set(IS_STEAM_BUILD ON)
 endif()
 
-# Steamworks include path
-if(IS_STEAM_BUILD)
-    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-endif()
-
 # Add _STEAMWORKS define for IntelliSense and build config
-foreach(STEAM_CONFIG SteamDebug SteamRelease)
+foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
     string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
-    set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-    set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+    if(MSVC)
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
+        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
+            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
+        endif()
+    else()
+        # For GCC/Clang
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
+        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
+            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
+            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
+        endif()
+    endif()
 endforeach()
 
 # Add _DEBUG define only for SteamDebug
@@ -109,22 +125,27 @@ else()
     endif()
 endif()
 
+# Enable SSE globally for all targets (needed for mathlib.h intrinsics)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+
 # Source layout
 add_subdirectory(cl_dll)
 add_subdirectory(common)
 add_subdirectory(dlls)
-if (IS_STEAM_BUILD)
-    add_subdirectory(external/steamworks)
-endif()
 add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
+add_subdirectory(source_sdk)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
+
+target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES)
+
 
 target_include_directories(client PRIVATE
     ${CMAKE_BINARY_DIR}
@@ -136,7 +157,14 @@ target_include_directories(client PRIVATE
     game_shared
     pm_shared
     public
-    utils/vgui/include)
+    utils/vgui/include
+	${SOURCE_SDK_INCLUDE_PATHS})
+
+# Steamworks include path
+if(IS_STEAM_BUILD)
+    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
+    target_compile_definitions(client PRIVATE _STEAMWORKS)
+endif()
 
 if(APPLE)
     target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
@@ -153,8 +181,8 @@ else()
         -Wno-unused-function
         -Wno-unused-variable
         -march=pentium-m
-        -mfpmath=387
-        -mno-sse
+		-msse
+		-msse2
         -fno-strict-aliasing
         -fno-exceptions)
 
@@ -195,7 +223,8 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/lib/public/game_controls.lib
         ${CMAKE_SOURCE_DIR}/lib/public/libcurl_a.lib
         ${CMAKE_SOURCE_DIR}/lib/steam_api.lib
-        ${CMAKE_SOURCE_DIR}/utils/vgui/lib/win32_vc6/vgui.lib)
+        ${CMAKE_SOURCE_DIR}/utils/vgui/lib/win32_vc6/vgui.lib
+		${SOURCE_SDK_LIBS})
 elseif(UNIX)
     target_compile_definitions(client PRIVATE -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_ORIGIN)
 
@@ -212,6 +241,8 @@ elseif(UNIX)
         set(VGUI_LINK_FLAGS "-Wl,--no-as-needed -L${CMAKE_SOURCE_DIR}/linux/release -l:vgui.so")
         set(SDL2_LINK_FLAGS "-L${CMAKE_SOURCE_DIR}/linux -lSDL2")
         set_property(TARGET client PROPERTY LINK_FLAGS "${VGUI_LINK_FLAGS} ${SDL2_LINK_FLAGS}")
+		target_link_libraries(client
+		${SOURCE_SDK_LIBS})
     endif()
 endif()
 
