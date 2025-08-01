@@ -9,14 +9,18 @@
 #define auraSE "https://github.com/phoenixprojectsoftware/Aura-SE"
 #define zamnhlmpRepo "https://github.com/phoenixprojectsoftware/zamnhlmp"
 
-#if defined(_DEBUG) && !defined(_STEAMWORKS)
+#if defined(_DEBUG) && !defined(_STEAMWORKS) && !defined(_HALO)
 #define buildCfg "Debug"
-#elif defined(_DEBUG) && defined(_STEAMWORKS)
+#elif defined(_DEBUG) && defined(_STEAMWORKS) && !defined(_HALO)
 #define buildCfg "SteamDebug"
-#elif !defined(_DEBUG) && !defined(_STEAMWORKS)
+#elif !defined(_DEBUG) && !defined(_STEAMWORKS) && !defined(_HALO)
 #define buildCfg "Release"
-#elif !defined(_DEBUG) && defined(_STEAMWORKS) && !defined(CLOSED_BETA)
+#elif !defined(_DEBUG) && defined(_STEAMWORKS) && !defined(CLOSED_BETA) && !defined(_HALO)
 #define buildCfg "SteamRelease"
-#elif !defined(_DEBUG) && defined(_STEAMWORKS) && defined(CLOSED_BETA)
+#elif !defined(_DEBUG) && defined(_STEAMWORKS) && defined(CLOSED_BETA) && !defined(_HALO)
 #define buildCfg "SteamClosedBeta"
+#elif defined(_HALO) && !defined(_DEBUG)
+#define buildCfg "HaloRelease"
+#elif defined(_HALO) && defined(_DEBUG)
+#define buildCfg "HaloDebug"
 #endif

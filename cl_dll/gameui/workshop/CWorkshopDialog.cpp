@@ -12,11 +12,13 @@
 #include "CWorkshopSubUploaded.h"
 #include "CWorkshopSubUpload.h"
 
+#ifndef _HALO
 CON_COMMAND(gameui_workshop, "Opens Workshop dialog")
 {
 	CGameUIViewport::Get()->GetWorkshopDialog()->Activate();
 	g_pBaseUI->ActivateGameUI();
 }
+#endif
 
 CWorkshopDialog::CWorkshopDialog(vgui2::Panel* pParent)
 	: BaseClass(pParent, "WorkshopDialog")

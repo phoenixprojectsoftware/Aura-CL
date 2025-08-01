@@ -20,6 +20,7 @@
 #include "IBaseUI.h"
 #include "../../console.h"
 
+#ifndef _HALO
 CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 {
 	// Since this command is called from game menu using "engine gameui_serverbrowser"
@@ -29,6 +30,7 @@ CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 	CGameUIViewport::Get()->GetServerBrowser()->OpenBrowser();
 	g_pBaseUI->ActivateGameUI();
 }
+#endif
 
 /*
 	This is a replica of Source Engine's Server Browser

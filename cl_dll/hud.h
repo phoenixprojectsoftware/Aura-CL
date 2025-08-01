@@ -20,8 +20,22 @@
 // CHud handles the message, calculation, and drawing the HUD
 //
 
+/*
+OLD HUD COLOURS FROM ZAMNHLMP
+* 1.0-2.5: 54, 146, 248
+* Season 5, Patch I: 0, 98, 255
+* Season 6: 30, 255, 0
+* Season 7: 255, 0, 0
+* Season 8: 5, 147, 255
+* Season 9: 255, 160, 0
+*/
 
-#define RGB_DEFAULT 0x00FFA000 //OLD 2.5 AND BEFORE: 54, 146, 248; NEW 2.5.1+ 0, 98, 255; SEASON 6 HECU: 30, 255, 0; SEASON 7 BLACK OPS: 255, 0, 0; SEASON 8 BLACK MESA INBOUND: 5, 147, 255; SEASON 9 WHITE SANDS: 255, 160, 0; 
+#ifndef _HALO
+#define RGB_DEFAULT 0x00FFA000 // Electric Purple
+#else
+#define RGB_DEFAULT 0x00037DFF // 3, 125, 255
+#endif
+
 #define RGB_GREY 0x008e8f91 //255,160,0
 #define RGB_GREENISH 0x0000A000 //0,160,0
 #define RGB_REDISH 0x00FF0000

@@ -70,7 +70,11 @@ int CHudWatermark::Draw(float time)
 			gEngfuncs.Con_Printf("version.txt not found");
 		}
 
+#ifndef _HALO
 	sprintf(displayString, "Half-Life: Cross Product Multiplayer %s", zamnhlmpVersion);
+#else
+	sprintf(displayString, "Halo: GoldSource %s", zamnhlmpVersion);
+#endif
 
 	extern cvar_t* hud_watermark;
 
@@ -108,7 +112,9 @@ int CHudWatermark::Draw(float time)
 #else
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
+#ifndef _HALO
 		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+#endif
 #endif
 #if !defined(CLOSED_BETA)
 	}

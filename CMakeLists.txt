@@ -1,10 +1,10 @@
 set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
 cmake_minimum_required(VERSION 3.23)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>>:Debug>DLL")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>,$<CONFIG:HaloDebug>>:Debug>DLL")
 
 # Custom build types support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta;HaloDebug;HaloRelease" CACHE STRING "" FORCE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
 
 # Set custom flags for SteamDebug and SteamRelease
@@ -23,6 +23,18 @@ set(CMAKE_CXX_FLAGS_STEAMCLOSEDBETA "${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_EXE_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(CMAKE_SHARED_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 
+# Set custom flags for HaloDebug and HaloRelease (clone of SteamDebug/SteamRelease + _HALO)
+set(CMAKE_C_FLAGS_HALODEBUG "${CMAKE_C_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS_HALODEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_EXE_LINKER_FLAGS_HALODEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
+set(CMAKE_SHARED_LINKER_FLAGS_HALODEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+
+set(CMAKE_C_FLAGS_HALORELEASE "${CMAKE_C_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_HALORELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_EXE_LINKER_FLAGS_HALORELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+set(CMAKE_SHARED_LINKER_FLAGS_HALORELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+
+
 # Project metadata
 project(Aura-Client)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -35,12 +47,12 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Detect if we're building a Steam-enabled configuration
 set(IS_STEAM_BUILD OFF)
-if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta")
+if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta|HaloDebug|HaloRelease")
     set(IS_STEAM_BUILD ON)
 endif()
 
 # Add _STEAMWORKS define for IntelliSense and build config
-foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
+foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta HaloDebug HaloRelease)
     string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
     if(MSVC)
         set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
@@ -60,9 +72,24 @@ foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
     endif()
 endforeach()
 
-# Add _DEBUG define only for SteamDebug
+# Add _HALO define for HaloDebug and HaloRelease
+foreach(HALO_CONFIG HaloDebug HaloRelease)
+    string(TOUPPER "${HALO_CONFIG}" UPPER_CONFIG)
+    if(MSVC)
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_HALO")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_HALO")
+    else()
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -D_HALO")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -D_HALO")
+    endif()
+endforeach()
+
+# Add _DEBUG define only for SteamDebug and HaloDebug
 set(CMAKE_C_FLAGS_STEAMDEBUG "${CMAKE_C_FLAGS_STEAMDEBUG} /D_DEBUG")
 set(CMAKE_CXX_FLAGS_STEAMDEBUG "${CMAKE_CXX_FLAGS_STEAMDEBUG} /D_DEBUG")
+
+set(CMAKE_C_FLAGS_HALODEBUG "${CMAKE_C_FLAGS_HALODEBUG} /D_DEBUG")
+set(CMAKE_CXX_FLAGS_HALODEBUG "${CMAKE_CXX_FLAGS_HALODEBUG} /D_DEBUG")
 
 # Set up some compiler-related things
 if(MSVC)
