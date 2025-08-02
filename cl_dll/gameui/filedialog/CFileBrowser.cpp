@@ -99,7 +99,7 @@ int __cdecl FileTypes(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1, 
 CFileBrowser::CFileBrowser(vgui2::Panel* pParent)
 	: BaseClass(pParent, "FileBrowser")
 {
-	SetTitle("#ZP_UI_FileBrowser", false);
+	SetTitle("#Phoenix_FileBrowser", false);
 	SetSizeable(false);
 	SetSize(100, 80);
 	SetPos(0, 0);
@@ -122,10 +122,10 @@ CFileBrowser::CFileBrowser(vgui2::Panel* pParent)
 	pList->SetAllowUserModificationOfColumns(true);
 
 	pList->AddColumnHeader(0, "Icon", "", 24, vgui2::ListPanel::COLUMN_FIXEDSIZE | vgui2::ListPanel::COLUMN_IMAGE);
-	pList->AddColumnHeader(1, "Name", "#ZP_UI_FileBrowser_Name", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW | vgui2::ListPanel::COLUMN_UNHIDABLE);
-	pList->AddColumnHeader(2, "Size", "#ZP_UI_FileBrowser_Size", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW);
-	pList->AddColumnHeader(3, "Type", "#ZP_UI_FileBrowser_Type", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW);
-	pList->AddColumnHeader(4, "Date", "#ZP_UI_FileBrowser_DateModified", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW);
+	pList->AddColumnHeader(1, "Name", "#Phoenix_FileBrowser_Name", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW | vgui2::ListPanel::COLUMN_UNHIDABLE);
+	pList->AddColumnHeader(2, "Size", "#Phoenix_FileBrowser_Size", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW);
+	pList->AddColumnHeader(3, "Type", "#Phoenix_FileBrowser_Type", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW);
+	pList->AddColumnHeader(4, "Date", "#Phoenix_FileBrowser_DateModified", 100, vgui2::ListPanel::COLUMN_RESIZEWITHWINDOW);
 
 	pList->SetSortFunc(1, FileNames);
 	pList->SetSortFunc(2, FileSizes);

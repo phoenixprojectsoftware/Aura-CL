@@ -37,15 +37,15 @@ CWorkshopSubList::CWorkshopSubList(vgui2::Panel* parent)
 	pComboList = new vgui2::ComboBox(this, "category", vgui2::MAX_CATEGORY_FILTER, false);
 	pComboList->SetPos(25, 410);
 	pComboList->SetSize(235, 24);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_None", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Map", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Weapons", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Sounds", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Survivor", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Zombie", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Background", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Sprays", kv);
-	pComboList->AddItem("#ZP_UI_Workshop_CategoryFilter_Music", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_None", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Map", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Weapons", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Sounds", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Survivor", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Zombie", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Background", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Sprays", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Music", kv);
 	// Auto select "Show All Achievements"
 	pComboList->ActivateItem(0);
 
@@ -127,7 +127,7 @@ void CWorkshopSubList::UpdateItems()
 			pDesc->SetFont(hTextFont);
 		pDesc->SetColorCodedText(item.szDesc);
 
-		vgui2::CheckButton* pActivated = new vgui2::CheckButton(this, "CheckButton", "#ZP_UI_Workshop_ActivateAddon");
+		vgui2::CheckButton* pActivated = new vgui2::CheckButton(this, "CheckButton", "#Phoenix_Workshop_ActivateAddon");
 		pActivated->SetSize(400, 20);
 		pActivated->SetPos(70, 50);
 		pActivated->SetPaintBackgroundEnabled(false);
