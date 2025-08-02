@@ -41,7 +41,7 @@ CWorkshopDialog::CWorkshopDialog(vgui2::Panel* pParent)
 	* in the future. For now, Workshop Man will take its place
 	* (for heck knows how long).
 	*/
-	// AddPage(pUploadPage, "#Phoenix_Workshop_Tab_Upload");
+	AddPage(pUploadPage, "#Phoenix_Workshop_Tab_Upload");
 
 	SetOKButtonVisible(false);
 	SetApplyButtonVisible(false);
