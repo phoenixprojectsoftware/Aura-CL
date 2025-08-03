@@ -31,7 +31,7 @@ OLD HUD COLOURS FROM ZAMNHLMP
 */
 
 #ifndef _HALO
-#define RGB_DEFAULT 0x00FFA000 // Electric Purple
+#define RGB_DEFAULT 0x00BF00FF // Electric Purple
 #else
 #define RGB_DEFAULT 0x00037DFF // 3, 125, 255
 #endif
