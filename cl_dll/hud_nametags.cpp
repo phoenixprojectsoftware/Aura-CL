@@ -156,7 +156,7 @@ int CHudNameTags::Draw(float flTime)
 		color_tags::strip_color_tags(colorless_name, g_PlayerInfoList[i + 1].name, ARRAYSIZE(colorless_name));
 
 		if(IsTeamMate(localPlayer, player_id))
-			sprintf(string, "%s (%d HP, %d Shield, %d)", colorless_name, health, armor, teammate);
+			sprintf(string, "%s", colorless_name);
 		else // For playerid msg
 			sprintf(string, "%s", colorless_name);
 

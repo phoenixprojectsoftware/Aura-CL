@@ -202,7 +202,7 @@ int WorkshopItemList::AddItem(vgui2::Panel* Texture, vgui2::Panel* Author, vgui2
 	vgui2::Button* pWorkshopButton = new vgui2::Button(
 		m_pPanelEmbedded,
 		"WorkshopButton",
-		"#ZP_UI_Workshop_Link",
+		"#Phoenix_Workshop_Link",
 		this,
 		VarArgs(
 			"WorkshopURL_%llu",
@@ -220,7 +220,7 @@ int WorkshopItemList::AddItem(vgui2::Panel* Texture, vgui2::Panel* Author, vgui2
 		vgui2::Button* pEditButton = new vgui2::Button(
 			m_pPanelEmbedded,
 			"EditButton",
-			"#ZP_UI_Workshop_Edit",
+			"#Phoenix_Workshop_Edit",
 			this,
 			VarArgs(
 				"WorkshopEdit_%llu",

@@ -27,16 +27,23 @@ CWorkshopDialog::CWorkshopDialog(vgui2::Panel* pParent)
 	SetSizeable(false);
 	SetDeleteSelfOnClose(true);
 
-	SetTitle("#ZP_Workshop", true);
+	SetTitle("#Phoenix_Workshop", true);
 
 	CWorkshopSubUpload* pUploadPage = new CWorkshopSubUpload(this);
 	CWorkshopSubUploaded* pUploaded = new CWorkshopSubUploaded(this);
 	pUploaded->SetPropertyDialog(this);
 	pUploaded->SetUploadPage(pUploadPage);
 
-	AddPage(new CWorkshopSubList(this), "#ZP_Workshop_Tab_Subscribed");
-	AddPage(pUploaded, "#ZP_Workshop_Tab_Uploaded");
-	AddPage(pUploadPage, "#ZP_Workshop_Tab_Upload");
+	AddPage(new CWorkshopSubList(this), "#Phoenix_Workshop_Tab_Subscribed");
+	AddPage(pUploaded, "#Phoenix_Workshop_Tab_Uploaded");
+	/*
+	* Sabian: I've commented out the "Your Uploaded Addons"
+	* page, because the File Browser is not working for some
+	* reason. No clue what's causing it, but it will be diagnosed
+	* in the future. For now, Workshop Man will take its place
+	* (for heck knows how long).
+	*/
+	AddPage(pUploadPage, "#Phoenix_Workshop_Tab_Upload");
 
 	SetOKButtonVisible(false);
 	SetApplyButtonVisible(false);

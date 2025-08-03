@@ -71,12 +71,12 @@ CWorkshopSubUpload::CWorkshopSubUpload(vgui2::Panel* parent)
 	pTags[0] = new vgui2::CheckButtonList(this, "Tags1");
 	pTags[1] = new vgui2::CheckButtonList(this, "Tags2");
 	// pTags[2] = new vgui2::CheckButtonList(this, "Tags3");
-	pChangeLogLabel = new vgui2::Label(this, "ChangeLogText", "#ZP_UI_Workshop_Upload_Changelog");
+	pChangeLogLabel = new vgui2::Label(this, "ChangeLogText", "#Phoenix_Workshop_Upload_Changelog");
 	pChangeLogText = new vgui2::TextEntry(this, "ChangeLogTextBox");
-	pAddonUpload = new vgui2::Button(this, "AddonUpload", "#ZP_UI_Workshop_Upload_Addon", this, "AddonUpload");
-	pAddonReset = new vgui2::Button(this, "AddonReset", "#ZP_UI_Workshop_Upload_Reset", this, "Reset");
+	pAddonUpload = new vgui2::Button(this, "AddonUpload", "#Phoenix_Workshop_Upload_Addon", this, "AddonUpload");
+	pAddonReset = new vgui2::Button(this, "AddonReset", "#Phoenix_Workshop_Upload_Reset", this, "Reset");
 	pProgress = new vgui2::ProgressBar(this, "ProgressBar");
-	pProgressLabel = new vgui2::Label(this, "ProgressBarText", "#ZP_UI_Workshop_UpdateStatus_PreparingConfig");
+	pProgressLabel = new vgui2::Label(this, "ProgressBarText", "#Phoenix_Workshop_UpdateStatus_PreparingConfig");
 
 	// Load this after we created our objects
 	LoadControlSettings(VGUI2_ROOT_DIR "resource/workshop/upload.res");
@@ -84,9 +84,9 @@ CWorkshopSubUpload::CWorkshopSubUpload(vgui2::Panel* parent)
 	// KeyValues
 	KeyValues* kv = new KeyValues("Categories", "Key", "Value");
 
-	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_Private", kv);
-	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_FriendsOnly", kv);
-	pVisibility->AddItem("#ZP_UI_Workshop_Upload_Tags_Public", kv);
+	pVisibility->AddItem("#Phoenix_Workshop_Upload_Tags_Private", kv);
+	pVisibility->AddItem("#Phoenix_Workshop_Upload_Tags_FriendsOnly", kv);
+	pVisibility->AddItem("#Phoenix_Workshop_Upload_Tags_Public", kv);
 	// Auto select "Show All Achievements"
 	pVisibility->ActivateItem(2);
 
@@ -179,7 +179,7 @@ void CWorkshopSubUpload::OnCommand(const char* pcCommand)
 	}
 	else if (!Q_stricmp(pcCommand, "Reset"))
 	{
-		vgui2::MessageBox* pMessageBox = new vgui2::MessageBox("#ZP_Workshop_Reset", "#ZP_Workshop_Reset_Warning", this);
+		vgui2::MessageBox* pMessageBox = new vgui2::MessageBox("#Phoenix_Workshop_Reset", "#Phoenix_Workshop_Reset_Warning", this);
 		pMessageBox->SetOKButtonVisible(true);
 		pMessageBox->SetCancelButtonVisible(true);
 		pMessageBox->SetCommand("OnResetOK");
@@ -206,9 +206,9 @@ void CWorkshopSubUpload::OnTick()
 			switch (eUploading)
 			{
 			case CWorkshopSubUpload::Upload_New:
-				ThrowError("#ZP_Workshop_UploadComplete"); break;
+				ThrowError("#Phoenix_Workshop_UploadComplete"); break;
 			case CWorkshopSubUpload::Upload_Update:
-				ThrowError("#ZP_Workshop_UpdateComplete"); break;
+				ThrowError("#Phoenix_Workshop_UpdateComplete"); break;
 			}
 			eUploading = Upload_None;
 			return;
@@ -223,19 +223,19 @@ void CWorkshopSubUpload::OnTick()
 			switch (update_progress)
 			{
 			case k_EItemUpdateStatusPreparingConfig:
-				pProgressLabel->SetText("#ZP_UI_Workshop_UpdateStatus_PreparingConfig");
+				pProgressLabel->SetText("#Phoenix_Workshop_UpdateStatus_PreparingConfig");
 				break;
 			case k_EItemUpdateStatusPreparingContent:
-				pProgressLabel->SetText("#ZP_UI_Workshop_UpdateStatus_PreparingContent");
+				pProgressLabel->SetText("#Phoenix_Workshop_UpdateStatus_PreparingContent");
 				break;
 			case k_EItemUpdateStatusUploadingContent:
-				pProgressLabel->SetText("#ZP_UI_Workshop_UpdateStatus_UploadingContent");
+				pProgressLabel->SetText("#Phoenix_Workshop_UpdateStatus_UploadingContent");
 				break;
 			case k_EItemUpdateStatusUploadingPreviewFile:
-				pProgressLabel->SetText("#ZP_UI_Workshop_UpdateStatus_UploadingPreviewFile");
+				pProgressLabel->SetText("#Phoenix_Workshop_UpdateStatus_UploadingPreviewFile");
 				break;
 			case k_EItemUpdateStatusCommittingChanges:
-				pProgressLabel->SetText("#ZP_UI_Workshop_UpdateStatus_CommittingChanges");
+				pProgressLabel->SetText("#Phoenix_Workshop_UpdateStatus_CommittingChanges");
 				break;
 			}
 
@@ -274,7 +274,7 @@ void CWorkshopSubUpload::UpdateContentPath(DialogData* pData)
 		vgui2::WizardPanel* pWizard = new vgui2::WizardPanel(CGameUIViewport::Get(), "CreateAddonInfo");
 		pWizard->DoModal();
 #endif
-		ThrowError("#ZP_Workshop_AddonInfoMissing");
+		ThrowError("#Phoenix_Workshop_AddonInfoMissing");
 		return;
 	}
 
@@ -298,7 +298,7 @@ void CWorkshopSubUpload::UpdatePreviewImage(DialogData* pData)
 		if (error)
 		{
 			CGameUIViewport::Get()->ShowMessageDialog(
-				"#ZP_Workshop",
+				"#Phoenix_Workshop",
 				vgui2::VarArgs(
 					"Failed to decode the image!\nError %i: %s\n",
 					error,
@@ -314,7 +314,7 @@ void CWorkshopSubUpload::UpdatePreviewImage(DialogData* pData)
 			if (width > 640) errstr = "The image width is larger than 640 pixels!";
 			else if (height > 360) errstr = "The image height is larger than 360 pixels!";
 			CGameUIViewport::Get()->ShowMessageDialog(
-				"#ZP_Workshop",
+				"#Phoenix_Workshop",
 				vgui2::VarArgs(
 					"Can't import image. Make sure its 640x360 maximum!\nError: %s\n",
 					errstr.c_str()
@@ -344,7 +344,7 @@ void CWorkshopSubUpload::SetUpdating(PublishedFileId_t nItem)
 	pChangeLogLabel->SetVisible((nItem > 0) ? true : false);
 	nWorkshopID = nItem;
 
-	pAddonUpload->SetText((nItem > 0) ? "#ZP_UI_Workshop_Upload_Addon_Modify" : "#ZP_UI_Workshop_Upload_Addon");
+	pAddonUpload->SetText((nItem > 0) ? "#Phoenix_Workshop_Upload_Addon_Modify" : "#Phoenix_Workshop_Upload_Addon");
 	pTitleBox->SetText("");
 	pDescBox->SetText("");
 	pContentText->SetText("");
@@ -498,7 +498,7 @@ bool CWorkshopSubUpload::HasAddonInfo(DialogData* pData)
 void CWorkshopSubUpload::ThrowError(const char* szMsg)
 {
 	CGameUIViewport::Get()->ShowMessageDialog(
-		"#ZP_Workshop",
+		"#Phoenix_Workshop",
 		szMsg
 	);
 }
