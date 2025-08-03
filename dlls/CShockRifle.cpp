@@ -115,7 +115,7 @@ BOOL CShockRifle::Deploy()
 {
 	if (UTIL_IsMultiplayer())
 	{
-		m_flRechargeTime = gpGlobals->time + 0.25;
+		m_flRechargeTime = gpGlobals->time + 0.1;
 	}
 	else
 	{
@@ -303,7 +303,7 @@ void CShockRifle::RechargeAmmo(bool bLoud)
 
 		if (UTIL_IsMultiplayer())
 		{
-			m_flRechargeTime += 0.25;
+			m_flRechargeTime += 0.1;
 		}
 		else
 		{
