@@ -29,6 +29,11 @@
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
+#ifndef M_PI_2
+#define M_PI_2 1.57079632679f
+#endif
+
+
 int CL_IsThirdPerson(void);
 void CL_CameraOffset(float* ofs);
 
@@ -221,6 +226,59 @@ struct BobValues
 	float laterialBob = 0;
 };
 
+#ifdef _HALO // Halo Viewbob
+static float bobCycleTime = 0.0f;
+
+BobValues V_CalculateBob(vec3_t velocity, float currentTime)
+{
+	BobValues bob;
+
+	const float maxSpeed = 320.0f;
+	float speed = Length(velocity);
+	speed = clamp(speed, 0.0f, maxSpeed);
+
+	static float lastTime = 0.0f;
+	float deltaTime = currentTime - lastTime;
+	lastTime = currentTime;
+
+	bobCycleTime += deltaTime * (speed / maxSpeed);
+	if (bobCycleTime > 2.0f * M_PI)
+		bobCycleTime -= 2.0f * M_PI;
+
+	float swayAmount = RemapVal(speed, 0.0f, maxSpeed, 0.0f, 1.0f);
+
+	float lateralFreq = 9.0f;
+	float verticalFreq = 4.5f;
+
+	bob.laterialBob = sin(bobCycleTime * lateralFreq) * 1.0f * swayAmount;
+	bob.verticalBob = cos(bobCycleTime * verticalFreq) * 0.7f * swayAmount;
+
+	return bob;
+}
+
+void V_ApplyBob(struct ref_params_s* pparams, cl_entity_t* view)
+{
+	if (!pparams || !view)
+		return;
+
+	BobValues bob = V_CalculateBob(pparams->simvel, pparams->time);
+
+#ifdef _DEBUG
+	gEngfuncs.Con_Printf("Right: %.3f %.3f %.3f\n", pparams->right[0], pparams->right[1], pparams->right[2]);
+	gEngfuncs.Con_Printf("Up: %.3f %.3f %.3f\n", pparams->up[0], pparams->up[1], pparams->up[2]);
+#endif
+
+	VectorMA(view->origin, bob.laterialBob * 0.05f, pparams->forward, view->origin);
+	VectorMA(view->origin, bob.laterialBob * 0.05f, pparams->right, view->origin);
+	VectorMA(view->origin, bob.verticalBob * 0.025f, pparams->up, view->origin);
+
+	view->angles[ROLL] += bob.laterialBob * 1.8f;
+	view->angles[PITCH] += bob.verticalBob * 0.5f;
+
+	gHUD.m_flHudLagOfs[0] = bob.laterialBob;
+	gHUD.m_flHudLagOfs[1] = bob.verticalBob;
+}
+#else // Cross Product Viewbob
 BobValues V_CalculateBob(vec3_t velocity, float currentTime)
 {
 	BobValues bob;
@@ -302,6 +360,7 @@ void V_ApplyBob(struct ref_params_s* pparams, cl_entity_t* view)
 	gHUD.m_flHudLagOfs[0] = bob.laterialBob;
 	gHUD.m_flHudLagOfs[1] = bob.verticalBob;
 }
+#endif // _HALO
 
 /*
 ===============
