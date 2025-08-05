@@ -12,6 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#ifndef _HALO
+
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -332,3 +334,5 @@ int CShockRifle::GetItemInfo(ItemInfo* p)
 	p->iWeight = SHOCKRIFLE_WEIGHT;
 	return 1;
 }
+
+#endif // _HALO

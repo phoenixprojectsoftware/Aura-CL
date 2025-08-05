@@ -41,10 +41,17 @@ void CSniperRifle::Precache()
 
 	m_iId = WEAPON_SNIPERRIFLE;
 
+#ifndef _HALO
+	// Cross Product
 	PRECACHE_MODEL("models/w_m40a1.mdl");
 	PRECACHE_MODEL("models/v_m40a1.mdl");
 	PRECACHE_MODEL("models/p_m40a1.mdl");
-
+#else
+	// Halo: GoldSource
+	PRECACHE_MODEL("models/w_sniper.mdl");
+	PRECACHE_MODEL("models/v_sniper.mdl");
+	PRECACHE_MODEL("models/p_sniper.mdl");
+#endif
 	PRECACHE_SOUND("weapons/sniper_fire.wav");
 	PRECACHE_SOUND("weapons/sniper_zoom.wav");
 	PRECACHE_SOUND("weapons/sniper_reload_first_seq.wav");
@@ -60,9 +67,13 @@ void CSniperRifle::Spawn()
 {
 	Precache();
 
+#ifdef _HALO
+	SET_MODEL(edict(), "models/w_sniper.mdl");
+	m_iDefaultAmmo = CROSSBOW_DEFAULT_GIVE;
+#else
 	SET_MODEL(edict(), "models/w_m40a1.mdl");
-
 	m_iDefaultAmmo = SNIPERRIFLE_DEFAULT_GIVE;
+#endif
 
 	FallInit(); // get ready to fall down.
 }
@@ -81,7 +92,11 @@ BOOL CSniperRifle::AddToPlayer(CBasePlayer* pPlayer)
 
 BOOL CSniperRifle::Deploy()
 {
+#ifndef _HALO
 	return BaseClass::DefaultDeploy("models/v_m40a1.mdl", "models/p_m40a1.mdl", SNIPERRIFLE_DRAW, "bow");
+#else
+	return BaseClass::DefaultDeploy("models/v_sniper.mdl", "models/p_sniper.mdl", SNIPERRIFLE_DRAW, "bow");
+#endif
 }
 
 void CSniperRifle::Holster(int skiplocal)
@@ -219,11 +234,19 @@ int CSniperRifle::iItemSlot()
 int CSniperRifle::GetItemInfo(ItemInfo* p)
 {
 	p->pszAmmo1 = "762";
+#ifdef _HALO
+	p->iMaxAmmo1 = BOLT_MAX_CARRY;
+#else
 	p->iMaxAmmo1 = SNIPERRIFLE_MAX_CARRY;
+#endif
 	p->pszName = STRING(pev->classname);
 	p->pszAmmo2 = 0;
 	p->iMaxAmmo2 = WEAPON_NOCLIP;
+#ifdef _HALO
+	p->iMaxClip = BOLT_MAX_CARRY;
+#else
 	p->iMaxClip = SNIPERRIFLE_MAX_CLIP;
+#endif
 	p->iSlot = 5;
 	p->iPosition = 2;
 	p->iFlags = 0;
@@ -270,7 +293,11 @@ public:
 
 	BOOL AddAmmo(CBaseEntity* pOther) override
 	{
+#ifdef _HALO
+		if (pOther->GiveAmmo(AMMO_CROSSBOWCLIP_GIVE, "762", BOLT_MAX_CARRY) != -1)
+#else
 		if (pOther->GiveAmmo(AMMO_SNIPERRIFLE_GIVE, "762", SNIPERRIFLE_MAX_CARRY) != -1)
+#endif
 		{
 			EMIT_SOUND(edict(), CHAN_ITEM, "items/9mmclip1.wav", VOL_NORM, ATTN_NORM);
 

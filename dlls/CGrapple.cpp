@@ -12,6 +12,7 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -562,3 +563,5 @@ int CGrapple::GetItemInfo(ItemInfo* p)
 
 	return true;
 }
+
+#endif // _HALO

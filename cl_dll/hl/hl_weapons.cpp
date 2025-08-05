@@ -85,9 +85,10 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
+CSniperRifle g_SniperRifle;
+#ifndef _HALO
 CGrapple g_Grapple;
 CEagle g_Eagle;
-CSniperRifle g_SniperRifle;
 CKnife g_Knife;
 CPipewrench g_Pipewrench;
 CDisplacer g_Displacer;
@@ -95,6 +96,7 @@ CShockRifle g_ShockRifle;
 CSporeLauncher g_SporeLauncher;
 CM249 g_M249;
 CPenguin g_Penguin;
+#endif
 
 /*
 ======================
@@ -668,9 +670,10 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
+	HUD_PrepEntity(&g_SniperRifle, &player);
+#ifndef _HALO
 	HUD_PrepEntity(&g_Grapple, &player);
 	HUD_PrepEntity(&g_Eagle, &player);
-	HUD_PrepEntity(&g_SniperRifle, &player);
 	HUD_PrepEntity(&g_Knife, &player);
 	HUD_PrepEntity(&g_Pipewrench, &player);
 	HUD_PrepEntity(&g_ShockRifle, &player);
@@ -678,6 +681,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity(&g_Displacer, &player);
 	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
+#endif
 }
 
 /*
@@ -735,16 +739,18 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SATCHEL: return &g_Satchel;
 	case WEAPON_TRIPMINE: return &g_Tripmine;
 	case WEAPON_SNARK: return &g_Snark;
+	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
+#ifndef _HALO
 	case WEAPON_GRAPPLE: return &g_Grapple;
 	case WEAPON_M249: return &g_M249;
 	case WEAPON_PENGUIN: return &g_Penguin;
-	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
 	case WEAPON_KNIFE: return &g_Knife;
 	case WEAPON_EAGLE: return &g_Eagle;
 	case WEAPON_PIPEWRENCH: return &g_Pipewrench;
 	case WEAPON_SHOCKRIFLE: return &g_ShockRifle;
 	case WEAPON_SPORELAUNCHER: return &g_SporeLauncher;
 	case WEAPON_DISPLACER: return &g_Displacer;
+#endif
 
 	default: return nullptr;
 	}
