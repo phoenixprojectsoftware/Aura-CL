@@ -87,16 +87,16 @@ public:
 #define WEAPON_TRIPMINE			13
 #define	WEAPON_SATCHEL			14
 #define	WEAPON_SNARK			15
-#define WEAPON_GRAPPLE			16
+#define WEAPON_GRAPPLE   16
 #define WEAPON_EAGLE			17
-#define WEAPON_PIPEWRENCH		18
+#define WEAPON_PIPEWRENCH 18
 #define WEAPON_M249				19
 #define WEAPON_DISPLACER		20
-#define WEAPON_SHOCKRIFLE		22
-#define WEAPON_SPORELAUNCHER	23
-#define WEAPON_SNIPERRIFLE		24
-#define WEAPON_KNIFE			25
-#define WEAPON_PENGUIN			26
+#define WEAPON_SHOCKRIFLE 22
+#define WEAPON_SPORELAUNCHER 23
+#define WEAPON_SNIPERRIFLE 24
+#define WEAPON_KNIFE 25
+#define WEAPON_PENGUIN   26
 #define WEAPON_ONE 27
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
@@ -110,31 +110,52 @@ public:
 
 
 // weapon weight factors (for auto-switching)   (-1 = noswitch)
-#define CROWBAR_WEIGHT				0
-#define GLOCK_WEIGHT				10
-#define PYTHON_WEIGHT				15
-#define MP5_WEIGHT					15
-#define SHOTGUN_WEIGHT				15
-#define CROSSBOW_WEIGHT				10
-#define RPG_WEIGHT					20
-#define GAUSS_WEIGHT				20
-#define EGON_WEIGHT					20
-#define HORNETGUN_WEIGHT			10
-#define HANDGRENADE_WEIGHT			5
-#define SNARK_WEIGHT				5
-#define SATCHEL_WEIGHT				-10
-#define TRIPMINE_WEIGHT				-10
+#define CROWBAR_WEIGHT		0
+#define GLOCK_WEIGHT		10
+#define PYTHON_WEIGHT		15
+#define MP5_WEIGHT			25
+#define SHOTGUN_WEIGHT		15
+#define CROSSBOW_WEIGHT		10
+#define RPG_WEIGHT			20
+#define GAUSS_WEIGHT		20
+#define EGON_WEIGHT			20
+#define HORNETGUN_WEIGHT	10
+#define HANDGRENADE_WEIGHT	5
+#define SNARK_WEIGHT		5
+#define SATCHEL_WEIGHT		-10
+#define TRIPMINE_WEIGHT		-10
+#define GRAPPLE_WEIGHT		-10
 #define EAGLE_WEIGHT				15
-#define SHOCKRIFLE_WEIGHT			15
-#define PIPEWRENCH_WEIGHT			2
-#define SPORELAUNCHER_WEIGHT		20
-#define DISPLACER_WEIGHT			10
-#define SNIPERRIFLE_WEIGHT			10
+#define SPORELAUNCHER_WEIGHT 20
+#define SHOCKRIFLE_WEIGHT 15
+#define PIPEWRENCH_WEIGHT 2
+#define SNIPERRIFLE_WEIGHT 10
 #define M249_WEIGHT					20
-#define PENGUIN_WEIGHT				5
+#define DISPLACER_WEIGHT	10
+#define PENGUIN_WEIGHT		5
+
+#ifdef _HALO
+#define M7_WEIGHT 7
+#define OLR_WEIGHT 20
+#define CARBINE_WEIGHT 20
+#endif
 
 
 // weapon clip/carry ammo capacities
+#ifdef _HALO
+#define URANIUM_MAX_CARRY 50
+#define _9MM_MAX_CARRY 600 // AR
+#define _357_MAX_CARRY 200 // magnum?
+#define BUCKSHOT_MAX_CARRY 60 // shotgun
+#define BOLT_MAX_CARRY 24 // to become sniper
+#define ROCKET_MAX_CARRY 2 // spanker
+#define HANDGRENADE_MAX_CARRY 4
+#define SATCHEL_MAX_CARRY 4
+#define TRIPMINE_MAX_CARRY 3
+#define HORNET_MAX_CARRY 100 // needler
+#define M203_GRENADE_MAX_CARRY 10 // AR grenades... might get rid of these
+#define CARBINE_MAX_CARRY 120 // covenant carbine
+#else
 #define URANIUM_MAX_CARRY		200
 #define	_9MM_MAX_CARRY			240
 #define _357_MAX_CARRY			36
@@ -144,27 +165,47 @@ public:
 #define HANDGRENADE_MAX_CARRY	10
 #define SATCHEL_MAX_CARRY		5
 #define TRIPMINE_MAX_CARRY		5
-#define SNARK_MAX_CARRY			15
 #define HORNET_MAX_CARRY		8
 #define M203_GRENADE_MAX_CARRY	20
-#define SPORELAUNCHER_MAX_CARRY	20
+#define SPORELAUNCHER_MAX_CARRY 20
 #define M249_MAX_CARRY			200
 #define PENGUIN_MAX_CARRY 9
 #define SNIPERRIFLE_MAX_CARRY 15
 #define ONE_MAX_CARRY 1
+#endif
+#define SNARK_MAX_CARRY			15
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
 
-//#define CROWBAR_MAX_CLIP		WEAPON_NOCLIP
+#ifdef _HALO
+#define GLOCK_MAX_CLIP 12 // magnum?
+#define PYTHON_MAX_CLIP 12
+#define MP5_MAX_CLIP 60
+#define MP5_DEFAULT_AMMO 60
+#define SHOTGUN_MAX_CLIP 12
+#define CROSSBOW_MAX_CLIP 4
+#define RPG_MAX_CLIP 2
+#define M7_MAX_CLIP 46
+#define OLR_MAX_CLIP 30
+#define NEEDLER_MAX_CLIP 20
+#define CARBINE_MAX_CLIP 18
+#else
 #define GLOCK_MAX_CLIP			18
-#define ONE_MAX_CLIP 			WEAPON_NOCLIP
+#define ONE_MAX_CLIP			WEAPON_NOCLIP
 #define PYTHON_MAX_CLIP			6
 #define MP5_MAX_CLIP			60
 #define MP5_DEFAULT_AMMO		60
 #define SHOTGUN_MAX_CLIP		8
 #define CROSSBOW_MAX_CLIP		5
 #define RPG_MAX_CLIP			1
+#define EAGLE_MAX_CLIP			7
+#define SPORELAUNCHER_MAX_CLIP 5
+#define SHOCKRIFLE_MAX_CLIP 30
+#define M249_MAX_CLIP				100
+#define PENGUIN_MAX_CLIP 3
+#define SNIPERRIFLE_MAX_CLIP 5
+#endif
 #define GAUSS_MAX_CLIP			WEAPON_NOCLIP
 #define EGON_MAX_CLIP			WEAPON_NOCLIP
 #define HORNETGUN_MAX_CLIP		WEAPON_NOCLIP
@@ -172,17 +213,31 @@ public:
 #define SATCHEL_MAX_CLIP		WEAPON_NOCLIP
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
-#define EAGLE_MAX_CLIP			7
-#define SPORELAUNCHER_MAX_CLIP	5
-#define SHOCKRIFLE_MAX_CLIP		10
-#define M249_MAX_CLIP				60
-#define PENGUIN_MAX_CLIP 3
-#define SNIPERRIFLE_MAX_CLIP 5
 
 
 // the default amount of ammo that comes with each gun when it spawns
-#define GLOCK_DEFAULT_GIVE			18
-#define ONE_DEFAULT_GIVE 			1
+#ifdef _HALO
+#define GLOCK_DEFAULT_GIVE 12
+#define PYTHON_DEFAULT_GIVE 12
+#define MP5_DEFAULT_GIVE 60
+#define MP5_DEFAULT_AMMO 60
+#define MP5_M203_DEFAULT_GIVE 0
+#define SHOTGUN_DEFAULT_GIVE 12
+#define CROSSBOW_DEFAULT_GIVE 4
+#define RPG_DEFAULT_GIVE 1
+#define GAUSS_DEFAULT_GIVE 20
+#define EGON_DEFAULT_GIVE 20
+#define HANDGRENADE_DEFAULT_GIVE 2
+#define SATCHEL_DEFAULT_GIVE 1
+#define TRIPMINE_DEFAULT_GIVE 1
+#define SNARK_DEFAULT_GIVE 5
+#define HIVEHAND_DEFAULT_GIVE 60
+#define M7_DEFAULT_GIVE 46
+#define OLR_DEFAULT_GIVE 150
+#define CARBINE_DEFAULT_GIVE 54
+#else
+#define GLOCK_DEFAULT_GIVE			17
+#define ONE_DEFAULT_GIVE			1
 #define PYTHON_DEFAULT_GIVE			6
 #define MP5_DEFAULT_GIVE			60
 #define MP5_DEFAULT_AMMO			60
@@ -197,14 +252,29 @@ public:
 #define TRIPMINE_DEFAULT_GIVE		1
 #define SNARK_DEFAULT_GIVE			5
 #define HIVEHAND_DEFAULT_GIVE		8
-#define EAGLE_DEFAULT_GIVE			7
 #define SPORELAUNCHER_DEFAULT_GIVE 5
-#define SHOCKRIFLE_DEFAULT_GIVE 10
+#define SHOCKRIFLE_DEFAULT_GIVE 30
+#define EAGLE_DEFAULT_GIVE				7
 #define SNIPERRIFLE_DEFAULT_GIVE 5
-#define DISPLACER_DEFAULT_GIVE 40
-#define M249_DEFAULT_GIVE					60
+#define M249_DEFAULT_GIVE					100
+#define DISPLACER_DEFAULT_GIVE		40
+#endif
 
 // The amount of ammo given to a player by an ammo item.
+#ifdef _HALO
+#define AMMO_URANIUMBOX_GIVE 20
+#define AMMO_GLOCKCLIP_GIVE GLOCK_MAX_CLIP
+#define AMMO_357BOX_GIVE PYTHON_MAX_CLIP
+#define AMMO_MP5CLIP_GIVE MP5_MAX_CLIP
+#define AMMO_CHAINBOX_GIVE 200
+#define AMMO_M203BOX_GIVE 2
+#define AMMO_BUCKSHOTBOX_GIVE 12
+#define AMMO_CROSSBOWCLIP_GIVE CROSSBOW_MAX_CLIP
+#define AMMO_RPGCLIP_GIVE RPG_MAX_CLIP
+#define AMMO_URANIUMBOX_GIVE 20
+#define AMMO_SNARKBOX_GIVE 5
+#define AMMO_CARBINECLIP_GIVE CARBINE_MAX_CLIP
+#else
 #define AMMO_URANIUMBOX_GIVE	80
 #define AMMO_GLOCKCLIP_GIVE		GLOCK_MAX_CLIP
 #define AMMO_357BOX_GIVE		PYTHON_MAX_CLIP
@@ -219,7 +289,8 @@ public:
 #define AMMO_EAGLE_GIVE					7
 #define AMMO_SPORE_GIVE 1
 #define AMMO_SNIPERRIFLE_GIVE 5
-#define AMMO_M249_GIVE					60
+#define AMMO_M249_GIVE					100
+#endif
 
 // bullet types
 typedef	enum
@@ -230,6 +301,9 @@ typedef	enum
 	BULLET_PLAYER_357, // python
 	BULLET_PLAYER_BUCKSHOT, // shotgun
 	BULLET_PLAYER_CROWBAR, // crowbar swipe
+#ifdef _HALO
+	BULLET_PLAYER_CARBINE,
+#endif
 
 	BULLET_MONSTER_9MM,
 	BULLET_MONSTER_MP5,
@@ -371,7 +445,7 @@ public:
 
 	int m_iPlayEmptySound;
 	int m_fFireOnEmpty;		// True when the gun is empty and the player is still holding down the
-							// attack key(s)
+	// attack key(s)
 	virtual BOOL PlayEmptySound(void);
 	virtual void ResetEmptySound(void);
 
