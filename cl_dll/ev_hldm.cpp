@@ -119,6 +119,10 @@ void EV_SniperRifle(struct event_args_s* args);
 void EV_Knife(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
 
+#ifdef _HALO
+void EV_FireSMG(event_args_t* args);
+#endif
+
 
 void EV_TrainPitchAdjust( struct event_args_s *args );
 }
@@ -2486,6 +2490,69 @@ void EV_PenguinFire(event_args_t* args)
 		gEngfuncs.pEventAPI->EV_PopPMStates();
 	}
 }
+//======================
+//		PENGUIN END
+//======================
+
+#ifdef _HALO
+//======================
+//		HALO SMG START
+//======================
+void EV_FireSMG(event_args_t* args)
+{
+	int idx;
+	Legacy_Vector origin;
+	Legacy_Vector angles;
+	Legacy_Vector velocity;
+
+	Legacy_Vector ShellVelocity;
+	Legacy_Vector ShellOrigin;
+	int shell;
+	Legacy_Vector vecSrc, vecAiming;
+	Legacy_Vector up, right, forward;
+
+	idx = args->entindex;
+	VectorCopy(args->origin, origin);
+	VectorCopy(args->angles, angles);
+	VectorCopy(args->velocity, velocity);
+
+	AngleVectors(angles, forward, right, up);
+
+	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shell.mdl"); // brass shell
+
+	if (EV_IsLocal(idx))
+	{
+		// Add muzzle flash to current weapon model
+		EV_MuzzleFlash();
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(M7_FIRE1 + gEngfuncs.pfnRandomLong(0, 3), 0);
+
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
+	}
+
+	EV_GetDefaultShellInfo(args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4);
+
+	EV_EjectBrass(ShellOrigin, ShellVelocity, angles[YAW], shell, TE_BOUNCE_SHELL);
+
+	switch (gEngfuncs.pfnRandomLong(0, 1))
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/m7_1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/m7_2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	}
+
+	EV_GetGunPosition(args, vecSrc, origin);
+	VectorCopy(forward, vecAiming);
+
+	EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_9MM, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+}
+//======================
+//		HALO SMG END
+//======================
+
+#endif
 
 void EV_TrainPitchAdjust( event_args_t *args )
 {

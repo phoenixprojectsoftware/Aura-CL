@@ -99,6 +99,11 @@ public:
 #define WEAPON_PENGUIN   26
 #define WEAPON_ONE 27
 
+#ifdef _HALO
+#define WEAPON_SMG 28
+#define WEAPON_SWORD 29
+#endif
+
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
 #define WEAPON_SUIT				31	// ?????
@@ -232,7 +237,7 @@ public:
 #define TRIPMINE_DEFAULT_GIVE 1
 #define SNARK_DEFAULT_GIVE 5
 #define HIVEHAND_DEFAULT_GIVE 60
-#define M7_DEFAULT_GIVE 46
+#define SMG_DEFAULT_GIVE 46
 #define OLR_DEFAULT_GIVE 150
 #define CARBINE_DEFAULT_GIVE 54
 #else
@@ -762,6 +767,47 @@ public:
 private:
 	unsigned short m_usMP5;
 	unsigned short m_usMP52;
+};
+
+enum m7_e
+{
+	M7_LONGIDLE = 0,
+	M7_IDLE1,
+	M7_LAUNCH,
+	M7_RELOAD,
+	M7_DEPLOY,
+	M7_FIRE1,
+	M7_FIRE2,
+	M7_FIRE3,
+};
+
+class CSMG : public CBasePlayerWeapon
+{
+public:
+	void Spawn() override;
+	void Precache() override;
+	int iItemSlot() { return 3; }
+	int GetItemInfo(ItemInfo* p) override;
+
+	void PrimaryAttack() override;
+	void SecondaryAttack() override;
+	BOOL Deploy() override;
+	void Reload() override;
+	void WeaponIdle() override;
+	float m_flNextAnimTime;
+	int m_iShell;
+
+	BOOL UseDecrement() override
+	{
+#if defined(CLIENT_WEAPONS)
+		return true;
+#else
+		return false;
+#endif
+	}
+
+private:
+	unsigned short m_usM7;
 };
 
 class CCrossbow : public CBasePlayerWeapon
