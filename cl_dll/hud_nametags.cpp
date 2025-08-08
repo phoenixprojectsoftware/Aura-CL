@@ -222,7 +222,7 @@ int CHudNameTags::Draw(float flTime)
 
 		// raise text above the CP model
 		VectorCopy(ent->origin, origin_above_target_head);
-		origin_above_target_head[2] += 48.0f;
+		origin_above_target_head[2] += 100.0f;
 
 		if (gEngfuncs.pTriAPI->WorldToScreen(origin_above_target_head, screen))
 			continue; // behind viewer
