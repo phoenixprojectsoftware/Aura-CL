@@ -6,11 +6,27 @@ DECLARE_MESSAGE(m_CTF, CTF);
 DECLARE_MESSAGE(m_CTF, CTFSound);
 DECLARE_MESSAGE(m_CTF, CTFFlag);
 
+int __MsgFunc_DOMCPInfo(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+
+	ControlPointInfo info;
+	info.entIndex = READ_SHORT();
+	strncpy(info.name, READ_STRING(), sizeof(info.name));
+
+	g_ControlPoints.push_back(info);
+
+	gEngfuncs.Con_Printf("Got DOMCPInfo: %s (entindex: %d\n", info.name, info.entIndex);
+
+	return 1;
+}
+
 int CHudCTF::Init()
 {
 	HOOK_MESSAGE(CTF);
 	HOOK_MESSAGE(CTFSound);
 	HOOK_MESSAGE(CTFFlag);
+	HOOK_MESSAGE(DOMCPInfo);
 
 	m_iFlags = 0;
 
