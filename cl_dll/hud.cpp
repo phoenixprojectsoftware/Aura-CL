@@ -172,6 +172,21 @@ int __MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
 	return gHUD.MsgFunc_Gametype( pszName, iSize, pbuf );
 }
 
+int __MsgFunc_DOMCPInfo(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+
+	ControlPointInfo info;
+	info.entIndex = READ_SHORT();
+	strncpy(info.name, READ_STRING(), sizeof(info.name));
+
+	g_ControlPoints.push_back(info);
+
+	gEngfuncs.Con_Printf("Got DOMCPInfo: %s (entindex: %d\n", info.name, info.entIndex);
+
+	return 1;
+}
+
 int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
 {
 	if (gViewPort)
@@ -580,6 +595,8 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( Concuss );
 
 	HOOK_MESSAGE( Gametype );
+
+	HOOK_MESSAGE(DOMCPInfo);
 
 	// TFFree CommandMenu
 	HOOK_COMMAND( "+commandmenu", OpenCommandMenu );

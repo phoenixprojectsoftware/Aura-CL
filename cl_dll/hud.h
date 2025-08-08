@@ -56,6 +56,13 @@ typedef struct {
 
 typedef struct cvar_s cvar_t;
 
+struct ControlPointInfo
+{
+	int entIndex;
+	char name[32];
+};
+extern std::vector<ControlPointInfo> g_ControlPoints;
+
 
 #define HUD_ACTIVE	1
 #define HUD_INTERMISSION 2
