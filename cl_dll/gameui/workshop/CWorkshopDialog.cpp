@@ -27,14 +27,7 @@ CWorkshopDialog::CWorkshopDialog(vgui2::Panel* pParent)
 
 	SetTitle("#Phoenix_Workshop", true);
 
-	CWorkshopSubUpload* pUploadPage = new CWorkshopSubUpload(this);
-	CWorkshopSubUploaded* pUploaded = new CWorkshopSubUploaded(this);
-	pUploaded->SetPropertyDialog(this);
-	pUploaded->SetUploadPage(pUploadPage);
-
 	AddPage(new CWorkshopSubList(this), "#Phoenix_Workshop_Tab_Subscribed");
-	AddPage(pUploaded, "#Phoenix_Workshop_Tab_Uploaded");
-	AddPage(pUploadPage, "#Phoenix_Workshop_Tab_Upload");
 
 	SetOKButtonVisible(false);
 	SetApplyButtonVisible(false);
