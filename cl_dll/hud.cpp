@@ -1158,7 +1158,7 @@ cvar_t* r_pissfilter;
 
 void CHud::ApplyGreyscaleEffect()
 {
-	if (!g_IsSpectator && r_pissfilter->value < 1)
+	if (r_pissfilter->value < 1)
 	{
 		int grey = 128;
 		int alpha = 128;
