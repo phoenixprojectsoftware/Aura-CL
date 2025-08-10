@@ -89,7 +89,7 @@ int CHudNameTags::Draw(float flTime)
 	vec3_t vecSrc;
 	vec3_t vecTargetPlayer;
 	vec3_t view_ofs;
-	float			x,y,z;
+	float			x,y;
 	int 			r,g,b;
 
 	// make sure we have player info
