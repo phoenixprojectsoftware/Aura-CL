@@ -673,7 +673,7 @@ void CHudAmmo::Warning()
 	else if (!ammoWarningPlayed && ammoCount <= lowAmmoThreshold)
 	{
 		PlaySound("common/warning.wav", 1.0);
-		gEngfuncs.Con_Printf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", m_iCurrentWeapon, ammoCount, lowAmmoThreshold);
+		gEngfuncs.Con_DPrintf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", m_iCurrentWeapon, ammoCount, lowAmmoThreshold);
 		ammoWarningPlayed = true;
 	}
 }
@@ -1040,7 +1040,9 @@ int CHudAmmo::Draw(float flTime)
 			SPR_DrawAdditive(0, x, y - iOffset, &m_pWeapon->rcAmmo2);
 		}
 	}
+#ifdef _DEBUG
 	gEngfuncs.Con_Printf("Draw called: CurrentWeapon=%d\n", m_iCurrentWeapon);
+#endif
 
 	Warning();
 	return 1;
