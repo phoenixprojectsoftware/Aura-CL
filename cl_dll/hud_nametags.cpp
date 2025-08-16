@@ -209,6 +209,7 @@ int CHudNameTags::Draw(float flTime)
 		}
 	}
 
+#ifdef _DEBUG
 	// Draw Domination Control Point nametags
 	for (auto& cp : g_ControlPoints)
 	{
@@ -248,6 +249,7 @@ int CHudNameTags::Draw(float flTime)
 			gHUD.DrawHudStringCentered(x, y, cp.name, r, g, b);
 		}
 	}
+#endif // _DEBUG - Draw Domination Control Point nametags
 
 	return 1;
 }
