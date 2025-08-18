@@ -819,6 +819,45 @@ int CBasePlayerWeapon::AddToPlayer( CBasePlayer *pPlayer )
 	return FALSE;
 }
 
+void CBasePlayerWeapon::MeleeAttack()
+{
+	if (!m_pPlayer)
+		return;
+
+	// anim
+	SendWeaponAnim(PLAYER_ATTACK1); //stub anim 4 now
+	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
+
+	// cooldown
+	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.7f;
+	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.7f;
+
+	// trace a short distance
+	TraceResult tr;
+	UTIL_MakeVectors(m_pPlayer->pev->v_angle);
+	Vector vecSrc = m_pPlayer->GetGunPosition();
+	Vector vecEnd = vecSrc + gpGlobals->v_forward * 64; // melee reach is 64 units
+
+	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+
+	if (tr.flFraction < 1.0f)
+	{
+		CBaseEntity* pEntity = CBaseEntity::Instance(tr.pHit);
+		if (pEntity)
+		{
+			// deal dmg
+			ClearMultiDamage();
+			pEntity->TraceAttack(m_pPlayer->pev, 25, gpGlobals->v_forward, &tr, DMG_CLUB);
+			ApplyMultiDamage(m_pPlayer->pev, m_pPlayer->pev);
+		}
+		// play hit snd
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/melee_hit.wav", 1, ATTN_NORM);
+	}
+	else
+		// miss snd
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/melee_miss.wav", 1, ATTN_NORM);
+}
+
 int CBasePlayerWeapon::UpdateClientData( CBasePlayer *pPlayer )
 {
 	BOOL bSend = FALSE;
