@@ -386,6 +386,7 @@ public:
 	// called by CBasePlayerWeapons ItemPostFrame()
 	virtual void PrimaryAttack(void) { return; }				// do "+ATTACK"
 	virtual void SecondaryAttack(void) { return; }			// do "+ATTACK2"
+	virtual void MeleeAttack(void); // do "+MELEE"
 	virtual void Reload(void) { return; }						// do "+RELOAD"
 	virtual void WeaponIdle(void) { return; }					// called when no buttons pressed
 	virtual int UpdateClientData(CBasePlayer* pPlayer);		// sends hud info to client dll, if things have changed

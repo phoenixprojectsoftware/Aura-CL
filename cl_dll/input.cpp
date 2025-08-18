@@ -940,6 +940,11 @@ int CL_ButtonBits( int bResetState )
 		bits |= IN_ATTACK2;
 	}
 
+	if (in_melee.state & 3)
+	{
+		bits |= IN_MELEE;
+	}
+
 	if (in_reload.state & 3)
 	{
 		bits |= IN_RELOAD;
