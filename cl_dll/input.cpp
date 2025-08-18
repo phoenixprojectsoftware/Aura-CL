@@ -574,11 +574,13 @@ void IN_AttackUp(void)
 
 void IN_MeleeDown()
 {
+	gEngfuncs.Con_Printf("+melee pressed\n");
 	KeyDown(&in_melee);
 }
 
 void IN_MeleeUp()
 {
+	gEngfuncs.Con_Printf("-melee pressed\n");
 	KeyUp(&in_melee);
 	in_cancel = 0;
 }
