@@ -163,8 +163,7 @@ kbutton_t	in_use;
 kbutton_t	in_jump;
 kbutton_t	in_attack;
 kbutton_t	in_attack2;
-kbutton_t in_meleedown;
-kbutton_t in_meleeup;
+kbutton_t in_melee;
 kbutton_t	in_up;
 kbutton_t	in_down;
 kbutton_t	in_duck;
@@ -575,12 +574,13 @@ void IN_AttackUp(void)
 
 void IN_MeleeDown()
 {
-	gEngfuncs.pfnClientCmd("+melee\n");
+	KeyDown(&in_melee);
 }
 
 void IN_MeleeUp()
 {
-	gEngfuncs.pfnClientCmd("-melee\n");
+	KeyUp(&in_melee);
+	in_cancel = 0;
 }
 
 // Special handling
