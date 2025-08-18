@@ -1040,9 +1040,6 @@ int CHudAmmo::Draw(float flTime)
 			SPR_DrawAdditive(0, x, y - iOffset, &m_pWeapon->rcAmmo2);
 		}
 	}
-#ifdef _DEBUG
-	gEngfuncs.Con_Printf("Draw called: CurrentWeapon=%d\n", m_iCurrentWeapon);
-#endif
 
 	Warning();
 	return 1;
