@@ -103,7 +103,7 @@ int CHudDeathNotice :: VidInit( void )
 int CHudDeathNotice::Draw(float flTime)
 {
 	int y, r, g, b;
-	int gap = 20;
+	int gap = 35;
 
 	for (int i = 0; i < MAX_DEATHNOTICES; i++)
 	{

@@ -36,9 +36,8 @@ extern void V_GetInEyePos(int entity, float * origin, float * angles );
 
 //DECLARE_MESSAGE(m_NameTags, PlayerId);
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
+std::vector<ControlPointInfo> g_ControlPoints;
+
 int CHudNameTags::Init()
 {
 	//HOOK_MESSAGE(PlayerId);
@@ -90,7 +89,7 @@ int CHudNameTags::Draw(float flTime)
 	vec3_t vecSrc;
 	vec3_t vecTargetPlayer;
 	vec3_t view_ofs;
-	float			x,y,z;
+	float			x,y;
 	int 			r,g,b;
 
 	// make sure we have player info
@@ -115,6 +114,7 @@ int CHudNameTags::Draw(float flTime)
 
 	//AngleVectors( angles_pl, forward, NULL, NULL ); // For get user aim
 	
+	// Draw player nametags
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		cl_entity_s *ent = gEngfuncs.GetEntityByIndex(i+1);
@@ -208,6 +208,48 @@ int CHudNameTags::Draw(float flTime)
 			}
 		}
 	}
+
+#ifdef _DEBUG
+	// Draw Domination Control Point nametags
+	for (auto& cp : g_ControlPoints)
+	{
+		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(cp.entIndex);
+		if (!ent || ent->curstate.messagenum < localPlayer->curstate.messagenum)
+			continue;
+
+		// skip if entity is invisible
+		if (ent->curstate.effects & EF_NODRAW)
+			continue;
+
+		// raise text above the CP model
+		VectorCopy(ent->origin, origin_above_target_head);
+		origin_above_target_head[2] += 100.0f;
+
+		if (gEngfuncs.pTriAPI->WorldToScreen(origin_above_target_head, screen))
+			continue; // behind viewer
+
+		x = XPROJECT(screen[0]);
+		y = YPROJECT(screen[1]);
+
+		// CPs use default HUD colour (will be changed later)
+		if (m_hud_nametags_type->value == 1)
+		{
+			gHUD.DrawConsoleStringWithColorTags(
+				x - (strlen(cp.name) * 4),
+				y,
+				cp.name,
+				true,
+				r,
+				g,
+				b
+			);
+		}
+		else
+		{
+			gHUD.DrawHudStringCentered(x, y, cp.name, r, g, b);
+		}
+	}
+#endif // _DEBUG - Draw Domination Control Point nametags
 
 	return 1;
 }

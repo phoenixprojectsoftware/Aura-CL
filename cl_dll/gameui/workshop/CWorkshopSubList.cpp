@@ -41,11 +41,17 @@ CWorkshopSubList::CWorkshopSubList(vgui2::Panel* parent)
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Map", kv);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Weapons", kv);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Sounds", kv);
-	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Survivor", kv);
-	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Zombie", kv);
-	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Background", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Playermodel", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_HUD", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Resources", kv);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Sprays", kv);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Music", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Mapcycles", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Trackerscheme", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_LOC", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_CTF", kv);
+	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_DOM", kv);
+
 	// Auto select "Show All Achievements"
 	pComboList->ActivateItem(0);
 
@@ -141,11 +147,11 @@ void CWorkshopSubList::UpdateItems()
 		pError->SetPos(4, 65);
 		pError->SetPaintBackgroundEnabled(false);
 
-		wchar_t* pStr = g_pVGuiLocalize->Find("ZP_UI_Workshop_AddonError");
+		wchar_t* pStr = g_pVGuiLocalize->Find("Phoenix_Workshop_AddonError");
 		if (pStr)
 			g_pVGuiLocalize->ConvertUnicodeToANSI(pStr, buffer, sizeof(buffer));
 		else
-			Q_snprintf(buffer, sizeof(buffer), "^1This addon have conflicting files.");
+			Q_snprintf(buffer, sizeof(buffer), "^1This addon has conflicting files.");
 		pError->SetColorCodedText(buffer);
 		pError->SetVisible(CGameUIViewport::Get()->HasConflictingFiles(item));
 
@@ -156,6 +162,10 @@ void CWorkshopSubList::UpdateItems()
 			item.uWorkshopID
 		);
 	}
+
+	// Redraw the layout so >4 items are visible + scrollbar
+	pList->InvalidateLayout(true);
+	pList->Repaint();
 }
 
 bool CWorkshopSubList::HasFilterFlag(int iFilters)

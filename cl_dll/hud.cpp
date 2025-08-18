@@ -573,6 +573,7 @@ void CHud :: Init( void )
 {
 	HOOK_MESSAGE( Logo );
 	HOOK_MESSAGE( ResetHUD );
+	// HOOK_MESSAGE(DOMCPInfo);
 	HOOK_MESSAGE( GameMode );
 	HOOK_MESSAGE( InitHUD );
 	HOOK_MESSAGE( ViewMode );
@@ -1157,7 +1158,7 @@ cvar_t* r_pissfilter;
 
 void CHud::ApplyGreyscaleEffect()
 {
-	if (!g_IsSpectator && r_pissfilter->value < 1)
+	if (r_pissfilter->value < 1)
 	{
 		int grey = 128;
 		int alpha = 128;
