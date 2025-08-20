@@ -387,7 +387,12 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fInReload = FALSE;
 	}
 
-	if ((m_pPlayer->pev->button & IN_ATTACK2) && (m_flNextSecondaryAttack <= 0.0))
+	// attack timers sometimes decrement to nearly FLT_MIN which doesn't pass the x= 0.0 check
+	// when that happens client-side attack events don't play but DO on the server
+	// a very small value fixes this without speeding up weapon attacks noticeably
+	// or creating the inverse problem of playing events twice. -wootguy
+	const float epsilon = 0.00001f;
+	if ((m_pPlayer->pev->button & IN_ATTACK2) && (m_flNextSecondaryAttack <= epsilon))
 	{
 		if ( pszAmmo2() && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
 		{
@@ -397,7 +402,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		SecondaryAttack();
 		m_pPlayer->pev->button &= ~IN_ATTACK2;
 	}
-	else if ((m_pPlayer->pev->button & IN_ATTACK) && (m_flNextPrimaryAttack <= 0.0))
+	else if ((m_pPlayer->pev->button & IN_ATTACK) && (m_flNextPrimaryAttack < epsilon))
 	{
 		if ( (m_iClip == 0 && pszAmmo1()) || (iMaxClip() == -1 && !m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] ) )
 		{
@@ -418,7 +423,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fFireOnEmpty = FALSE;
 
 		// weapon is useable. Reload if empty and weapon has waited as long as it has to after firing
-		if ( m_iClip == 0 && !(iFlags() & ITEM_FLAG_NOAUTORELOAD) && m_flNextPrimaryAttack < 0.0 )
+		if ( m_iClip == 0 && !(iFlags() & ITEM_FLAG_NOAUTORELOAD) && m_flNextPrimaryAttack < epsilon )
 		{
 			Reload();
 			return;
