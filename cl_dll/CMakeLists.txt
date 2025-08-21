@@ -148,5 +148,4 @@ add_sources(
 	view.cpp
 	view.h
 	voice_status.cpp
-	weapons.h
 	wrect.h)

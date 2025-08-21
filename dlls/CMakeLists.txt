@@ -1,6 +1,7 @@
 add_subdirectory(wpn_shared)
 
 add_sources(
+	br.cpp
     CDisplacer.cpp
     CDisplacer.h
     CEagle.h

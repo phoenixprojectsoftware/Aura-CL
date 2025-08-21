@@ -76,6 +76,7 @@ CCrowbar g_Crowbar;
 CPython g_Python;
 CMP5 g_Mp5;
 CCrossbow g_Crossbow;
+CBattleRifle g_BattleRifle;
 CShotgun g_Shotgun;
 CRpg g_Rpg;
 CGauss g_Gauss;
@@ -902,6 +903,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	//Stores all our ammo info, so the client side weapons can use them.
 	player.ammo_9mm			= (int)from->client.vuser1[0];
+	player.ammo_br = (int)from->client.vuser1[0];
 	player.ammo_357			= (int)from->client.vuser1[1];
 	player.ammo_argrens		= (int)from->client.vuser1[2];
 	player.ammo_762			= (int)from->client.vuser2[2];

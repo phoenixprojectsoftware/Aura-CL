@@ -14,6 +14,7 @@ typedef	enum
 	BULLET_NONE = 0,
 	BULLET_PLAYER_9MM, // glock
 	BULLET_PLAYER_MP5, // mp5
+	BULLET_PLAYER_OLR, // battlerifle
 	BULLET_PLAYER_357, // python
 	BULLET_PLAYER_BUCKSHOT, // shotgun
 	BULLET_PLAYER_CROWBAR, // crowbar swipe
@@ -63,6 +64,18 @@ enum mp5_e
 	MP5_FIRE1,
 	MP5_FIRE2,
 	MP5_FIRE3,
+};
+
+enum olr_e
+{
+	OLR_LONGIDLE = 0,
+	OLR_IDLE1,
+	OLR_LAUNCH,
+	OLR_RELOAD,
+	OLR_DEPLOY,
+	OLR_FIRE1,
+	OLR_FIRE2,
+	OLR_FIRE3,
 };
 
 enum python_e {

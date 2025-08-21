@@ -18,8 +18,9 @@
 // Slot 3 - automatic & pump
 #define WPN_AUTO_SLOT 2
 #define WPN_AR_POS 1
-#define WPN_SHOTGUN_POS 2
-#define WPN_CROSSBOW_POS 3
+#define WPN_BR_POS 2
+#define WPN_SHOTGUN_POS 3
+#define WPN_CROSSBOW_POS 4
 
 // Slot 4 - foreign & explosive
 #define WPN_FOREIGN_SLOT 3

@@ -97,6 +97,7 @@ void EV_FireShotGunSingle( struct event_args_s *args  );
 void EV_FireShotGunDouble( struct event_args_s *args  );
 void EV_FireMP5( struct event_args_s *args  );
 void EV_FireMP52( struct event_args_s *args  );
+void EV_FireBattleRifle(struct event_args_s* args);
 void EV_FirePython( struct event_args_s *args  );
 void EV_FireGauss( struct event_args_s *args  );
 void EV_SpinGauss( struct event_args_s *args  );
@@ -387,6 +388,7 @@ void EV_HLDM_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 		case BULLET_PLAYER_9MM:
 		case BULLET_MONSTER_9MM:
 		case BULLET_PLAYER_MP5:
+		case BULLET_PLAYER_OLR:
 		case BULLET_MONSTER_MP5:
 		case BULLET_PLAYER_BUCKSHOT:
 		case BULLET_PLAYER_357:
@@ -432,6 +434,7 @@ int EV_HLDM_CheckTracer( int idx, float *vecSrc, float *end, float *forward, flo
 		switch( iBulletType )
 		{
 		case BULLET_PLAYER_MP5:
+		case BULLET_PLAYER_OLR:
 		case BULLET_MONSTER_MP5:
 		case BULLET_MONSTER_9MM:
 		case BULLET_MONSTER_12MM:
@@ -518,6 +521,7 @@ void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int 
 			
 					break;
 			case BULLET_PLAYER_MP5:		
+			case BULLET_PLAYER_OLR:
 				
 				if ( !tracer )
 				{
@@ -928,6 +932,76 @@ void EV_FireMP52( event_args_t *args )
 }
 //======================
 //		 MP5 END
+//======================
+
+//======================
+//	    BATTLERIFLE START
+//======================
+void EV_FireBattleRifle(event_args_t* args)
+{
+	int idx;
+	vec3_t origin;
+	vec3_t angles;
+	vec3_t velocity;
+
+	vec3_t ShellVelocity;
+	vec3_t ShellOrigin;
+	int shell;
+	vec3_t vecSrc, vecAiming;
+	vec3_t up, right, forward;
+	float flSpread = 0.01;
+
+	idx = args->entindex;
+	VectorCopy(args->origin, origin);
+	VectorCopy(args->angles, angles);
+	VectorCopy(args->velocity, velocity);
+
+	AngleVectors(angles, forward, right, up);
+
+	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shell.mdl");// brass shell
+
+	if (EV_IsLocal(idx))
+	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(30000, 40000, 15000, 20000, 0.2f);
+
+		// Add muzzle flash to current weapon model
+		EV_MuzzleFlash();
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(OLR_FIRE1 + gEngfuncs.pfnRandomLong(0, 2), 2);
+
+		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
+		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
+		V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
+	}
+
+	EV_GetDefaultShellInfo(args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4);
+
+	EV_EjectBrass(ShellOrigin, ShellVelocity, angles[YAW], shell, TE_BOUNCE_SHELL);
+
+	switch (gEngfuncs.pfnRandomLong(0, 1))
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP1, "weapons/olr1.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP2, "weapons/olr2.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+		break;
+	}
+
+	EV_GetGunPosition(args, vecSrc, origin);
+	VectorCopy(forward, vecAiming);
+
+	if (gEngfuncs.GetMaxClients() > 1)
+	{
+		EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_OLR, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+	}
+	else
+	{
+		EV_HLDM_FireBullets(idx, forward, right, up, 1, vecSrc, vecAiming, 8192, BULLET_PLAYER_OLR, 2, &tracerCount[idx - 1], args->fparam1, args->fparam2);
+	}
+}
+//======================
+//	    BATTLERIFLE END
 //======================
 
 //======================
