@@ -38,12 +38,12 @@ public:
 
 	typedef enum { SATCHEL_DETONATE = 0, SATCHEL_RELEASE } SATCHELCODE;
 
-	static CGrenade* ShootTimed(entvars_t* pevOwner, Vector vecStart, Vector vecVelocity, float time);
-	static CGrenade* ShootContact(entvars_t* pevOwner, Vector vecStart, Vector vecVelocity);
-	static CGrenade* ShootSatchelCharge(entvars_t* pevOwner, Vector vecStart, Vector vecVelocity);
+	static CGrenade* ShootTimed(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity, float time);
+	static CGrenade* ShootContact(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity);
+	static CGrenade* ShootSatchelCharge(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity);
 	static void UseSatchelCharges(entvars_t* pevOwner, SATCHELCODE code);
 
-	void Explode(Vector vecSrc, Vector vecAim);
+	void Explode(Legacy_Vector vecSrc, Legacy_Vector vecAim);
 	void Explode(TraceResult* pTrace, int bitsDamageType);
 	void EXPORT Smoke(void);
 
@@ -175,7 +175,7 @@ public:
 #define EAGLE_MAX_CLIP			7
 #define SPORELAUNCHER_MAX_CLIP	5
 #define SHOCKRIFLE_MAX_CLIP		10
-#define M249_MAX_CLIP				60
+#define M249_MAX_CLIP				100
 #define PENGUIN_MAX_CLIP 3
 #define SNIPERRIFLE_MAX_CLIP 5
 
@@ -202,7 +202,7 @@ public:
 #define SHOCKRIFLE_DEFAULT_GIVE 10
 #define SNIPERRIFLE_DEFAULT_GIVE 5
 #define DISPLACER_DEFAULT_GIVE 40
-#define M249_DEFAULT_GIVE					60
+#define M249_DEFAULT_GIVE					100
 
 // The amount of ammo given to a player by an ammo item.
 #define AMMO_URANIUMBOX_GIVE	80
@@ -453,9 +453,9 @@ extern void ApplyMultiDamage(entvars_t* pevInflictor, entvars_t* pevAttacker);
 extern void AddMultiDamage(entvars_t* pevInflictor, CBaseEntity* pEntity, float flDamage, int bitsDamageType);
 
 extern void DecalGunshot(TraceResult* pTrace, int iBulletType);
-extern void SpawnBlood(Vector vecSpot, int bloodColor, float flDamage);
+extern void SpawnBlood(Legacy_Vector vecSpot, int bloodColor, float flDamage);
 extern int DamageDecal(CBaseEntity* pEntity, int bitsDamageType);
-extern void RadiusDamage(Vector vecSrc, entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, float flRadius, int iClassIgnore, int bitsDamageType);
+extern void RadiusDamage(Legacy_Vector vecSrc, entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, float flRadius, int iClassIgnore, int bitsDamageType);
 
 typedef struct
 {
@@ -466,7 +466,7 @@ typedef struct
 
 extern MULTIDAMAGE gMultiDamage;
 
-void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, const Vector& mins, const Vector& maxs, edict_t* pEntity);
+void FindHullIntersection(const Legacy_Vector& vecSrc, TraceResult& tr, const Legacy_Vector& mins, const Legacy_Vector& maxs, edict_t* pEntity);
 
 
 #define LOUD_GUN_VOLUME			1000
@@ -483,18 +483,18 @@ void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, const Vector& m
 
 #define	WEAPON_ACTIVITY_VOLUME	64
 
-#define VECTOR_CONE_1DEGREES	Vector( 0.00873, 0.00873, 0.00873 )
-#define VECTOR_CONE_2DEGREES	Vector( 0.01745, 0.01745, 0.01745 )
-#define VECTOR_CONE_3DEGREES	Vector( 0.02618, 0.02618, 0.02618 )
-#define VECTOR_CONE_4DEGREES	Vector( 0.03490, 0.03490, 0.03490 )
-#define VECTOR_CONE_5DEGREES	Vector( 0.04362, 0.04362, 0.04362 )
-#define VECTOR_CONE_6DEGREES	Vector( 0.05234, 0.05234, 0.05234 )
-#define VECTOR_CONE_7DEGREES	Vector( 0.06105, 0.06105, 0.06105 )
-#define VECTOR_CONE_8DEGREES	Vector( 0.06976, 0.06976, 0.06976 )
-#define VECTOR_CONE_9DEGREES	Vector( 0.07846, 0.07846, 0.07846 )
-#define VECTOR_CONE_10DEGREES	Vector( 0.08716, 0.08716, 0.08716 )
-#define VECTOR_CONE_15DEGREES	Vector( 0.13053, 0.13053, 0.13053 )
-#define VECTOR_CONE_20DEGREES	Vector( 0.17365, 0.17365, 0.17365 )
+#define VECTOR_CONE_1DEGREES	Legacy_Vector( 0.00873, 0.00873, 0.00873 )
+#define VECTOR_CONE_2DEGREES	Legacy_Vector( 0.01745, 0.01745, 0.01745 )
+#define VECTOR_CONE_3DEGREES	Legacy_Vector( 0.02618, 0.02618, 0.02618 )
+#define VECTOR_CONE_4DEGREES	Legacy_Vector( 0.03490, 0.03490, 0.03490 )
+#define VECTOR_CONE_5DEGREES	Legacy_Vector( 0.04362, 0.04362, 0.04362 )
+#define VECTOR_CONE_6DEGREES	Legacy_Vector( 0.05234, 0.05234, 0.05234 )
+#define VECTOR_CONE_7DEGREES	Legacy_Vector( 0.06105, 0.06105, 0.06105 )
+#define VECTOR_CONE_8DEGREES	Legacy_Vector( 0.06976, 0.06976, 0.06976 )
+#define VECTOR_CONE_9DEGREES	Legacy_Vector( 0.07846, 0.07846, 0.07846 )
+#define VECTOR_CONE_10DEGREES	Legacy_Vector( 0.08716, 0.08716, 0.08716 )
+#define VECTOR_CONE_15DEGREES	Legacy_Vector( 0.13053, 0.13053, 0.13053 )
+#define VECTOR_CONE_20DEGREES	Legacy_Vector( 0.17365, 0.17365, 0.17365 )
 
 //=========================================================
 // CWeaponBox - a single entity that can store weapons
@@ -836,7 +836,7 @@ public:
 	void EXPORT FollowThink(void);
 	void EXPORT IgniteThink(void);
 	void EXPORT RocketTouch(CBaseEntity* pOther);
-	static CRpgRocket* CreateRpgRocket(Vector vecOrigin, Vector vecAngles, CBaseEntity* pOwner, CRpg* pLauncher);
+	static CRpgRocket* CreateRpgRocket(Legacy_Vector vecOrigin, Legacy_Vector vecAngles, CBaseEntity* pOwner, CRpg* pLauncher);
 
 	int m_iTrail;
 	float m_flIgniteTime;
@@ -867,7 +867,7 @@ public:
 	void WeaponIdle(void);
 
 	void StartFire(void);
-	void Fire(Vector vecOrigSrc, Vector vecDirShooting, float flDamage);
+	void Fire(Legacy_Vector vecOrigSrc, Legacy_Vector vecDirShooting, float flDamage);
 	float GetFullChargeTime(void);
 	int m_iBalls;
 	int m_iGlow;
@@ -910,7 +910,7 @@ public:
 	BOOL Deploy(void);
 	void Holster(int skiplocal = 0);
 
-	void UpdateEffect(const Vector& startPoint, const Vector& endPoint, float timeBlend);
+	void UpdateEffect(const Legacy_Vector& startPoint, const Legacy_Vector& endPoint, float timeBlend);
 
 	void CreateEffect(void);
 	void DestroyEffect(void);
@@ -925,7 +925,7 @@ public:
 	float GetPulseInterval(void);
 	float GetDischargeInterval(void);
 
-	void Fire(const Vector& vecOrigSrc, const Vector& vecDir);
+	void Fire(const Legacy_Vector& vecOrigSrc, const Legacy_Vector& vecDir);
 
 	BOOL HasAmmo(void);
 
@@ -1064,8 +1064,8 @@ public:
 	void SetObjectCollisionBox(void)
 	{
 		//!!!BUGBUG - fix the model!
-		pev->absmin = pev->origin + Vector(-16, -16, -5);
-		pev->absmax = pev->origin + Vector(16, 16, 28);
+		pev->absmin = pev->origin + Legacy_Vector(-16, -16, -5);
+		pev->absmax = pev->origin + Legacy_Vector(16, 16, 28);
 	}
 
 	void PrimaryAttack(void);

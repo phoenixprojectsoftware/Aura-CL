@@ -166,6 +166,12 @@ void CHudHealth::GetPainColor( int &r, int &g, int &b )
 		b = 0;
 	}
 #endif 
+#ifdef _STEAMWORKS
+	if (m_iHealth <= 0)
+	{
+		SetControllerLEDColor(255, 0, 0, 1); // Red LED for dead player
+	}
+#endif
 }
 
 int CHudHealth::Draw(float flTime)
@@ -388,6 +394,10 @@ int CHudHealth::DrawPain(float flTime)
 		m_fAttackLeft = max( 0.0f, m_fAttackLeft - fFade );
 	} else
 		m_fAttackLeft = 0;
+
+#ifdef _STEAMWORKS
+	SetControllerLEDColor(255, 0, 0, 1); // Red LED for pain (or damage taken, in general)
+#endif
 
 	return 1;
 }

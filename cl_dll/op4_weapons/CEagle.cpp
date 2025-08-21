@@ -212,15 +212,15 @@ void CEagle::PrimaryAttack()
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
 
-	Vector vecSrc = m_pPlayer->GetGunPosition();
+	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition();
 
-	Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_10DEGREES);
+	Legacy_Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_10DEGREES);
 
 	const float flSpread = m_bLaserActive ? 0.001 : 0.1;
 
-	const Vector vecSpread = m_pPlayer->FireBulletsPlayer(
+	const Legacy_Vector vecSpread = m_pPlayer->FireBulletsPlayer(
 		1,
-		vecSrc, vecAiming, Vector(flSpread, flSpread, flSpread),
+		vecSrc, vecAiming, Legacy_Vector(flSpread, flSpread, flSpread),
 		8192.0, BULLET_PLAYER_EAGLE, 0, 0,
 		m_pPlayer->pev, m_pPlayer->random_seed);
 

@@ -30,7 +30,7 @@ extern "C"
 extern int g_iAlive;
 
 extern int g_weaponselect;
-extern cl_enginefunc_t gEngfuncs;
+extern cldll_enginefunc_t gEngfuncs;
 
 // Defined in pm_math.c
 extern "C" float anglemod( float a );
@@ -530,13 +530,13 @@ void IN_UseDown (void)
 	gHUD.m_Spectator.HandleButtonsDown( IN_USE );
 }
 void IN_UseUp (void) {KeyUp(&in_use);}
-extern Vector cl_jumppunch;
+extern Legacy_Vector cl_jumppunch;
 extern bool g_bJumpState;
 void IN_JumpDown (void)
 {
 	if (!g_bJumpState)
 	{
-		cl_jumppunch = Vector(-2.5, 2.5, 0) * 20;
+		cl_jumppunch = Legacy_Vector(-2.5, 2.5, 0) * 20;
 
 		g_bJumpState = true;
 	}
@@ -1101,28 +1101,4 @@ void ShutdownInput (void)
 {
 	IN_Shutdown();
 	KB_Shutdown();
-}
-
-#include "interface.h"
-void CL_UnloadParticleMan( void );
-void CL_UnloadGameUI();
-
-#if defined( _TFC )
-void ClearEventList( void );
-#endif
-
-void CL_DLLEXPORT HUD_Shutdown( void )
-{
-//	RecClShutdown();
-
-	ShutdownInput();
-
-#if defined( _TFC )
-	ClearEventList();
-#endif
-	
-	CL_UnloadParticleMan();
-	CL_UnloadGameUI();
-
-	discord_integration::shutdown();
 }

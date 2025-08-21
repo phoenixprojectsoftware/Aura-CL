@@ -651,31 +651,29 @@ void CHudAmmo::Warning()
 	int ammoCount = m_iCurrentClipAmmo;
 	lowAmmoThreshold = WEAPON_NOCLIP;
 
-	if (m_iCurrentWeapon == WEAPON_GLOCK)
-		lowAmmoThreshold = 3;
-	else if (m_iCurrentWeapon == WEAPON_EAGLE)
-		lowAmmoThreshold = 2;
-	else if (m_iCurrentWeapon == WEAPON_PYTHON)
-		lowAmmoThreshold = 1;
-	else if (m_iCurrentWeapon == WEAPON_MP5)
-		lowAmmoThreshold = 10;
-	else if (m_iCurrentWeapon == WEAPON_SHOTGUN)
-		lowAmmoThreshold = 2; // give space for a double shot on warning.
-	else if (m_iCurrentWeapon == WEAPON_CROSSBOW)
-		lowAmmoThreshold = 1;
-	else if (m_iCurrentWeapon == WEAPON_M249)
-		lowAmmoThreshold = 15;
-	else if (m_iCurrentWeapon == WEAPON_SNIPERRIFLE)
-		lowAmmoThreshold = 1;
+	if (ammoCount < 0)
+		return; //weapon_noclip or invalid ammo count.
 
-	if (lowAmmoThreshold == WEAPON_NOCLIP)
-		return;
+	switch (m_iCurrentWeapon)
+	{
+	case WEAPON_GLOCK: lowAmmoThreshold = 3; break;
+	case WEAPON_EAGLE: lowAmmoThreshold = 2; break;
+	case WEAPON_PYTHON: lowAmmoThreshold = 1; break;
+	case WEAPON_MP5: lowAmmoThreshold = 10; break;
+	case WEAPON_SHOTGUN: lowAmmoThreshold = 2; break;
+	case WEAPON_CROSSBOW: lowAmmoThreshold = 1; break;
+	case WEAPON_M249: lowAmmoThreshold = 15; break;
+	case WEAPON_SNIPERRIFLE: lowAmmoThreshold = 1; break;
+	default:
+		return; // skip the warning for weapons without logic above.
+	}
 
 	if (ammoCount > lowAmmoThreshold)
 		ammoWarningPlayed = false;
 	else if (!ammoWarningPlayed && ammoCount <= lowAmmoThreshold)
 	{
 		PlaySound("common/warning.wav", 1.0);
+		gEngfuncs.Con_DPrintf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", m_iCurrentWeapon, ammoCount, lowAmmoThreshold);
 		ammoWarningPlayed = true;
 	}
 }

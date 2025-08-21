@@ -30,6 +30,9 @@
 #define _cdecl 
 #endif
 
+#include <functional>
+#include <vector>
+#include <queue>
 #include "wrect.h"
 #include "cl_dll.h"
 #include "ammo.h"
@@ -53,6 +56,13 @@ typedef struct {
 
 typedef struct cvar_s cvar_t;
 
+struct ControlPointInfo
+{
+	int entIndex;
+	char name[32];
+};
+extern std::vector<ControlPointInfo> g_ControlPoints;
+
 
 #define HUD_ACTIVE	1
 #define HUD_INTERMISSION 2
@@ -60,6 +70,10 @@ typedef struct cvar_s cvar_t;
 #define MAX_PLAYER_NAME_LENGTH		32
 
 #define	MAX_MOTD_LENGTH				1536
+
+#ifdef _STEAMWORKS
+void SetControllerLEDColor(int r, int g, int b, float a);
+#endif
 
 //
 //-----------------------------------------------------
@@ -359,6 +373,7 @@ public:
 	int VidInit( void );
 	int Draw(float flTime);
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
+	void RunShieldPrediction(float time); // NEW: run shield prediction for battery
 	bool Blinking;
 	
 private:
@@ -368,6 +383,11 @@ private:
 	wrect_t *m_prc2;
 	int	  m_iBat;	
 	int	  m_iBatMax;
+	float m_flLastShieldSoundTime = 0;
+	bool m_bShieldEmpty = false;
+	bool m_bShieldLow = false;
+	bool m_bShieldMaxxed = false;
+	bool m_bShieldRegenOn = false; // NEW: shield regen on/off
 	float m_fFade;
 	int	  m_iHeight;		// width of the battery innards
 };
@@ -585,19 +605,26 @@ private:
 
 	int							m_iGameType;
 
+	std::queue<std::function<void()>> m_NextFrameQueue;
+
 public:
 
 	HSPRITE						m_hsprCursor;
 	float m_flTime;	   // the current client time
 	float m_fOldTime;  // the time at which the HUD was last redrawn
 	double m_flTimeDelta; // the difference between flTime and fOldTime
-	Vector	m_vecOrigin;
-	Vector	m_vecAngles;
+	Legacy_Vector	m_vecOrigin;
+	Legacy_Vector	m_vecAngles;
 	int		m_iKeyBits;
 	int		m_iHideHUDDisplay;
 	// Smooth zooming
 	float	m_iFOV;
 	int		m_iTargetFOV;
+	
+	float m_flJumpViewmodelBob = 0.0f;
+	float m_flTargetJumpBob = 0.0f;
+	bool m_bWasJumping = true; // might need to change this back to false
+	float m_flAirborneStartZ = 0.0f; // NEW: z pos when we leave ground
 
 	int m_iCrosshairRed;
 	int m_iCrosshairGreen;
@@ -645,6 +672,13 @@ public:
 		float default_b = 0.0f
 	);
 	void GetConsoleStringSizeWithColorTags(char* string, int& width, int& height);
+
+	float m_flVibrationStopTime = 0.0f;
+	bool m_bVibrationActive = false;
+
+	void StartControllerVibration(uint16_t left, uint16_t right, uint16_t lt, uint16_t rt, float duration); // Left motor. Right motor. Left trigger. Right trigger. Duration in ms.
+	void StopControllerVibration();
+	void UpdateControllerVibration();
 
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
@@ -716,6 +750,8 @@ public:
 
 	void Init( void );
 	void VidInit( void );
+	void Frame(double time);
+	void Shutdown();
 	void Think(void);
 	int Redraw( float flTime, int intermission );
 	int UpdateClientData( client_data_t *cdata, float time );
@@ -750,13 +786,16 @@ public:
 
 	float GetSensitivity();
 
+	void CallOnNextFrame(std::function<void()> f);
+
 	int m_iLaserState;
 
 	float m_iLaserSuspendTime;
 
 	float m_flHudLagOfs[2];
 	void ApplyGreyscaleEffect();
-};
+	void ApplyPissFilter();
+ };
 
 extern CHud gHUD;
 

@@ -48,7 +48,7 @@ public:
 	void	Clear ( void );
 	void	Reset ( void );
 
-	Vector	m_vecOrigin;	// sound's location in space
+	Legacy_Vector	m_vecOrigin;	// sound's location in space
 	int		m_iType;		// what type of sound this is
 	int		m_iVolume;		// how loud the sound is
 	float	m_flExpireTime;	// when the sound should be purged from the list
@@ -73,7 +73,7 @@ public:
 	void Think( void );
 	void Initialize ( void );
 	
-	static void		InsertSound ( int iType, const Vector &vecOrigin, int iVolume, float flDuration );
+	static void		InsertSound ( int iType, const Legacy_Vector &vecOrigin, int iVolume, float flDuration );
 	static void		FreeSound ( int iSound, int iPrevious );
 	static int		ActiveList( void );// return the head of the active list
 	static int		FreeList( void );// return the head of the free list

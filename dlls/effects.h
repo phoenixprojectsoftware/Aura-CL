@@ -48,7 +48,7 @@ public:
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	void Animate( float frames );
 	void Expand( float scaleSpeed, float fadeSpeed );
-	void SpriteInit( const char *pSpriteName, const Vector &origin );
+	void SpriteInit( const char *pSpriteName, const Legacy_Vector &origin );
 
 	inline void SetAttachment( edict_t *pEntity, int attachment )
 	{
@@ -90,7 +90,7 @@ public:
 	virtual int		Save( CSave &save );
 	virtual int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
-	static CSprite *SpriteCreate( const char *pSpriteName, const Vector &origin, BOOL animate );
+	static CSprite *SpriteCreate( const char *pSpriteName, const Legacy_Vector &origin, BOOL animate );
 
 private:
 
@@ -118,8 +118,8 @@ public:
 	// Encoding beams as entities simplifies their management in the client/server architecture
 	inline void	SetType( int type ) { pev->rendermode = (pev->rendermode & 0xF0) | (type&0x0F); }
 	inline void	SetFlags( int flags ) { pev->rendermode = (pev->rendermode & 0x0F) | (flags&0xF0); }
-	inline void SetStartPos( const Vector& pos ) { pev->origin = pos; }
-	inline void SetEndPos( const Vector& pos ) { pev->angles = pos; }
+	inline void SetStartPos( const Legacy_Vector& pos ) { pev->origin = pos; }
+	inline void SetEndPos( const Legacy_Vector& pos ) { pev->angles = pos; }
 	void SetStartEntity( int entityIndex );
 	void SetEndEntity( int entityIndex );
 
@@ -139,10 +139,10 @@ public:
 	inline int	GetStartEntity( void ) { return pev->sequence & 0xFFF; }
 	inline int	GetEndEntity( void ) { return pev->skin & 0xFFF; }
 
-	const Vector &GetStartPos( void );
-	const Vector &GetEndPos( void );
+	const Legacy_Vector &GetStartPos( void );
+	const Legacy_Vector &GetEndPos( void );
 
-	Vector Center( void ) { return (GetStartPos() + GetEndPos()) * 0.5; }; // center point of beam
+	Legacy_Vector Center( void ) { return (GetStartPos() + GetEndPos()) * 0.5; }; // center point of beam
 
 	inline int  GetTexture( void ) { return pev->modelindex; }
 	inline int  GetWidth( void ) { return pev->scale; }
@@ -156,15 +156,15 @@ public:
 	void		RelinkBeam( void );
 //	void		SetObjectCollisionBox( void );
 
-	void		DoSparks( const Vector &start, const Vector &end );
+	void		DoSparks( const Legacy_Vector &start, const Legacy_Vector &end );
 	CBaseEntity *RandomTargetname( const char *szName );
 	void		BeamDamage( TraceResult *ptr );
 	// Init after BeamCreate()
 	void		BeamInit( const char *pSpriteName, int width );
-	void		PointsInit( const Vector &start, const Vector &end );
-	void		PointEntInit( const Vector &start, int endIndex );
+	void		PointsInit( const Legacy_Vector &start, const Legacy_Vector &end );
+	void		PointEntInit( const Legacy_Vector &start, int endIndex );
 	void		EntsInit( int startIndex, int endIndex );
-	void		HoseInit( const Vector &start, const Vector &direction );
+	void		HoseInit( const Legacy_Vector &start, const Legacy_Vector &direction );
 
 	static CBeam *BeamCreate( const char *pSpriteName, int width );
 
@@ -203,7 +203,7 @@ public:
 
 	CSprite	*m_pSprite;
 	int		m_iszSpriteName;
-	Vector  m_firePosition;
+	Legacy_Vector  m_firePosition;
 };
 
 #endif		//EFFECTS_H

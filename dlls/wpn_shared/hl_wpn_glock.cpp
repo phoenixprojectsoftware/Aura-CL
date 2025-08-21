@@ -144,8 +144,8 @@ void CGlock::GlockFire( float flSpread , float flCycleTime, BOOL fUseAutoAim )
 		m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
 	}
 
-	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
-	Vector vecAiming;
+	Legacy_Vector vecSrc	 = m_pPlayer->GetGunPosition( );
+	Legacy_Vector vecAiming;
 	
 	if ( fUseAutoAim )
 	{
@@ -156,8 +156,8 @@ void CGlock::GlockFire( float flSpread , float flCycleTime, BOOL fUseAutoAim )
 		vecAiming = gpGlobals->v_forward;
 	}
 
-	Vector vecDir;
-	vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, Vector( flSpread, flSpread, flSpread ), 8192, BULLET_PLAYER_9MM, 0, 0, m_pPlayer->pev, m_pPlayer->random_seed );
+	Legacy_Vector vecDir;
+	vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, Legacy_Vector( flSpread, flSpread, flSpread ), 8192, BULLET_PLAYER_9MM, 0, 0, m_pPlayer->pev, m_pPlayer->random_seed );
 
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), fUseAutoAim ? m_usFireGlock1 : m_usFireGlock2, 0.0, (float *)&g_vecZero, (float *)&g_vecZero, vecDir.x, vecDir.y, 0, 0, ( m_iClip == 0 ) ? 1 : 0, 0 );
 
@@ -181,7 +181,7 @@ void CGlock::Reload( void )
 	if (m_iClip == 0)
 		iResult = DefaultReload( 17, GLOCK_RELOAD, 1.5 );
 	else
-		iResult = DefaultReload( 17, GLOCK_RELOAD_NOT_EMPTY, 1.5 );
+		iResult = DefaultReload( 18, GLOCK_RELOAD_NOT_EMPTY, 1.5 );
 
 	if (iResult)
 	{

@@ -72,6 +72,7 @@ extern cvar_t* cl_forwardspeed;
 extern cvar_t* chase_active;
 extern cvar_t* scr_ofsx, * scr_ofsy, * scr_ofsz;
 extern cvar_t* cl_vsmoothing;
+extern cvar_t* r_pissfilter;
 
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
@@ -101,7 +102,7 @@ cvar_t* cl_viewmodel_ofs_right;
 cvar_t* cl_viewmodel_ofs_forward;
 cvar_t* cl_viewmodel_ofs_up;
 
-cvar_t* cl_vibration;
+cvar_t* steam_vibrate_enabled;
 cvar_t* cl_crowbar_punch_enabled;
 cvar_t* cl_displacer_punch_enabled;
 cvar_t* cl_displacer_big_punch_enabled;
@@ -308,8 +309,8 @@ V_CalcRoll
 Used by view and sv_user
 ===============
 */
-Vector cl_jumpangle;
-Vector cl_jumppunch;
+Legacy_Vector cl_jumpangle;
+Legacy_Vector cl_jumppunch;
 
 bool g_bJumpState = false;
 
@@ -855,15 +856,15 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 	const float m_flWeaponLag = 1.5f;
 	float flSpeed = 5;
 	float flScale = 2;
-	static Vector m_vecLastFacing;
-	Vector vOriginalOrigin = view->origin;
-	Vector vOriginalAngles = view->angles;
+	static Legacy_Vector m_vecLastFacing;
+	Legacy_Vector vOriginalOrigin = view->origin;
+	Legacy_Vector vOriginalAngles = view->angles;
 	// Calculate our drift
-	Vector forward, right, up;
+	Legacy_Vector forward, right, up;
 	AngleVectors(InvPitch(view->angles), forward, right, up);
 	if (pparams->frametime != 0.0f) // not in paused
 	{
-		Vector vDifference;
+		Legacy_Vector vDifference;
 		vDifference = forward - m_vecLastFacing;
 		// If we start to lag too far behind, we'll increase the "catch up" speed.
 		// Solves the problem with fast cl_yawspeed, m_yaw or joysticks rotating quickly.
@@ -879,7 +880,7 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 		// Make sure it doesn't grow out of control!!!
 		m_vecLastFacing = m_vecLastFacing.Normalize();
 
-		Vector origin;
+		Legacy_Vector origin;
 		origin = origin + (vDifference * -1.0f) * flScale;
 
 		if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
@@ -928,10 +929,10 @@ void V_RetractWeapon(ref_params_t* pparams, cl_entity_s* view)
 {
 	static float l_Fraction = 0.0f;
 	pmtrace_t tr;
-	Vector forward;
+	Legacy_Vector forward;
 	AngleVectors(InvPitch(view->angles), forward, nullptr, nullptr);
-	Vector vecSrc = pparams->vieworg;
-	Vector vecEnd = vecSrc + forward * 32;
+	Legacy_Vector vecSrc = pparams->vieworg;
+	Legacy_Vector vecEnd = vecSrc + forward * 32;
 	gEngfuncs.pEventAPI->EV_PushPMStates();
 	gEngfuncs.pEventAPI->EV_SetSolidPlayers(pparams->viewentity - 1);
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
@@ -941,7 +942,7 @@ void V_RetractWeapon(ref_params_t* pparams, cl_entity_s* view)
 		tr.fraction = 1;
 
 	l_Fraction = lerp(l_Fraction, (1 - tr.fraction), pparams->frametime * 10.0f);
-	view->origin = view->origin - (Vector(pparams->forward) * (l_Fraction * 10.0f));
+	view->origin = view->origin - (Legacy_Vector(pparams->forward) * (l_Fraction * 10.0f));
 	view->angles[0] += (l_Fraction * 10.0f);
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 }
@@ -958,7 +959,7 @@ void V_Jump(ref_params_s* pparams, cl_entity_t* view)
 		l_FallVel = lerp(l_FallVel, 0, pparams->frametime * 25.0f);
 	if (g_bJumpState && pparams->onground != 0)
 	{
-		cl_jumppunch = Vector(flFallVel * -0.01f, flFallVel * 0.01f, 0) * 20.0f;
+		cl_jumppunch = Legacy_Vector(flFallVel * -0.01f, flFallVel * 0.01f, 0) * 20.0f;
 		flFallVel = 0;
 		g_bJumpState = false;
 	}
@@ -1139,7 +1140,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
 	view->angles = view->angles + ev_punchangle + sv_punchangle;
-	// view->curstate.angles = view->curstate.angles + ev_punchangle + Vector(pparams->punchangle);
+	// view->curstate.angles = view->curstate.angles + ev_punchangle + Legacy_Vector(pparams->punchangle);
 
 	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view);
 	V_RetractWeapon(pparams, view);
@@ -2037,6 +2038,68 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 		}
 	#endif
 	*/
+	
+	//++ Sabian Roberts
+	// Jumpbob
+	bool bOnGround = (pparams->onground != 0);
+	bool bJustJumped = (!bOnGround && gHUD.m_bWasJumping);
+	bool bJustLanded = (bOnGround && !gHUD.m_bWasJumping);
+	
+	// on jump, store starting Z position
+	if (bJustJumped)
+	{
+#ifdef _DEBUG
+		gEngfuncs.Con_Printf("Jump initiated.\n");
+#endif
+		gHUD.m_flTargetJumpBob = 2.0f;
+		gHUD.m_flAirborneStartZ = pparams->simorg[2]; // store z for fall tracking
+	}
+
+	// on land compare fall height
+	if (bJustLanded)
+	{
+		float flFallDistance = gHUD.m_flAirborneStartZ - pparams->simorg[2];
+
+		if (flFallDistance > 50.0f)
+		{
+#ifdef _DEBUG
+			gEngfuncs.Con_Printf("Landing bob triggered\n");
+#endif
+			gHUD.m_flTargetJumpBob = -2.5f; // thump upward
+		}
+	}
+	
+	// update state for next frame
+	gHUD.m_bWasJumping = bOnGround;
+
+	// smooth approach
+	float approachSpeed = 10.0f;
+
+	if (gHUD.m_flJumpViewmodelBob != gHUD.m_flTargetJumpBob)
+	{
+		float delta = gHUD.m_flTargetJumpBob - gHUD.m_flJumpViewmodelBob;
+		float step = pparams->frametime * approachSpeed;
+
+		// clamp step so we don't overshoot
+		if (fabs(delta) < step)
+		{
+			gHUD.m_flJumpViewmodelBob = gHUD.m_flTargetJumpBob;
+		}
+		else
+		{
+			gHUD.m_flJumpViewmodelBob += (delta > 0.0f ? step : -step);
+		}
+	}
+	
+	// smooth comeback
+	if (gHUD.m_flJumpViewmodelBob == gHUD.m_flTargetJumpBob && gHUD.m_flJumpViewmodelBob != 0.0f)
+	{
+		gHUD.m_flTargetJumpBob = 0.0f;
+	}
+	// apply to vieworigin
+	pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
+
+	//-- Sabian Roberts
 }
 
 /*
@@ -2099,7 +2162,7 @@ void V_Init(void)
 	cl_hud_lag_enabled = gEngfuncs.pfnRegisterVariable("cl_hud_lag_enabled", "1", FCVAR_ARCHIVE);
 	cl_hud_lag_sensitivity = gEngfuncs.pfnRegisterVariable("cl_hud_lag_sensitivity", "5", FCVAR_ARCHIVE);
 
-	cl_vibration = gEngfuncs.pfnRegisterVariable("cl_vibration", "0", FCVAR_ARCHIVE);
+	steam_vibrate_enabled = gEngfuncs.pfnRegisterVariable("steam_vibrate_enabled", "1", FCVAR_ARCHIVE); // enable/disable steam controller vibration
 	cl_crowbar_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_crowbar_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_displacer_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_displacer_punch_enabled", "1", FCVAR_ARCHIVE);
 	cl_displacer_big_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_displacer_big_punch_enabled", "1", FCVAR_ARCHIVE);
@@ -2111,6 +2174,8 @@ void V_Init(void)
 	cl_shockrifle_punch_enabled = gEngfuncs.pfnRegisterVariable("cl_shockrifle_punch_enabled", "1", FCVAR_ARCHIVE);
 
 	crosshair_low = gEngfuncs.pfnRegisterVariable("crosshair_low", "0", FCVAR_ARCHIVE);
+
+	r_pissfilter = gEngfuncs.pfnRegisterVariable("r_pissfilter", "0", FCVAR_ARCHIVE);
 }
 
 

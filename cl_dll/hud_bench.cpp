@@ -679,7 +679,7 @@ int HUD_SetupBenchObjects( cl_entity_t *bench, int plindex, vec3_t origin )
 	vec3_t centerspot;
 	pmtrace_t tr;
 	
-	ang = vec3_origin;
+	ang = legacy_vec3_origin;
 	//ang[1] = 90.0;
 	
 	// Determine forward vector
@@ -749,7 +749,7 @@ int HUD_SetupBenchObjects( cl_entity_t *bench, int plindex, vec3_t origin )
 		//	bench[ i ].curstate.velocity[ j ] = gEngfuncs.pfnRandomLong( -300, 300 );
 		}
 		//bench[ i ].curstate.velocity[ 2 ] = gEngfuncs.pfnRandomLong( 0, 50 );
-		bench[ i ].curstate.velocity = vec3_origin;
+		bench[ i ].curstate.velocity = legacy_vec3_origin;
 
 		bench[ i ].curstate.angles[ 2 ] = 0.0;
 		bench[ i ].curstate.angles[ 0 ] = 0.0;
@@ -850,7 +850,7 @@ void HUD_CreateBenchObjects( vec3_t origin )
 	}
 
 	// Determine forward vector
-	AngleVectors ( vec3_origin, forward, right, up );
+	AngleVectors ( legacy_vec3_origin, forward, right, up );
 
 	centerspot = origin;
 	centerspot[2] -= 512;
@@ -1016,7 +1016,7 @@ void Bench_SetViewAngles( int recalc_wander, float *viewangles, float frametime,
 	// Clear stochastic offset between runs
 	if ( Bench_InStage( FIRST_STAGE ) )
 	{
-		VectorCopy( vec3_origin, v_stochastic );
+		VectorCopy( legacy_vec3_origin, v_stochastic );
 	}
 
 	if ( Bench_InStage( SECOND_STAGE ) || Bench_InStage( THIRD_STAGE ) )
@@ -1059,7 +1059,7 @@ void Bench_SetViewAngles( int recalc_wander, float *viewangles, float frametime,
 	}
 	else
 	{
-		VectorCopy( vec3_origin, viewangles )
+		VectorCopy( legacy_vec3_origin, viewangles )
 
 		if ( Bench_InStage( FIRST_STAGE ) )
 		{
@@ -1101,7 +1101,7 @@ void Bench_SetViewOrigin( float *vieworigin, float frametime )
 
 	drift = sin( frac ) * offset_amt;
 	
-	ang = vec3_origin;
+	ang = legacy_vec3_origin;
 
 	AngleVectors( ang, NULL, right, NULL );
 

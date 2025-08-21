@@ -184,11 +184,11 @@ void CM249::PrimaryAttack()
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
 
-	Vector vecSrc = m_pPlayer->GetGunPosition();
+	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition();
 
-	Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_5DEGREES);
+	Legacy_Vector vecAiming = m_pPlayer->GetAutoaimVector(AUTOAIM_5DEGREES);
 
-	Vector vecSpread;
+	Legacy_Vector vecSpread;
 
 	if (UTIL_IsMultiplayer())
 	{
@@ -227,7 +227,7 @@ void CM249::PrimaryAttack()
 		}
 	}
 
-	Vector vecDir = m_pPlayer->FireBulletsPlayer(
+	Legacy_Vector vecDir = m_pPlayer->FireBulletsPlayer(
 		1,
 		vecSrc, vecAiming, vecSpread,
 		8192.0, BULLET_PLAYER_556, 2, 0,

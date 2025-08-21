@@ -144,7 +144,7 @@ ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
 		m_TitleLabel.setImage(m_pTitleImage);
 	}
 
-	LineBorder *border = new LineBorder(Color(60, 60, 60, 128));
+	LineBorder *border = new LineBorder(vgui::Color(60, 60, 60, 128));
 	setBorder(border);
 	setPaintBorderEnabled(true);
 
@@ -1102,7 +1102,7 @@ void ScorePanel::MouseOverCell(int row, int col)
 //-----------------------------------------------------------------------------
 void CLabelHeader::paintBackground()
 {
-	Color oldBg;
+	vgui::Color oldBg;
 	getBgColor(oldBg);
 
 	if (gViewPort->GetScoreBoard()->m_iHighlightRow == _row)
@@ -1121,7 +1121,7 @@ void CLabelHeader::paintBackground()
 //-----------------------------------------------------------------------------
 void CLabelHeader::paint()
 {
-	Color oldFg;
+	vgui::Color oldFg;
 	getFgColor(oldFg);
 
 	if (gViewPort->GetScoreBoard()->m_iHighlightRow == _row)
@@ -1144,7 +1144,7 @@ void CLabelHeader::paint()
 	// get size of the panel and the image
 	if (_image)
 	{
-		Color imgColor;
+		vgui::Color imgColor;
 		getFgColor( imgColor );
 		if( _useFgColorAsImageColor )
 		{

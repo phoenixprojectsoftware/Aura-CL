@@ -1,4 +1,4 @@
-//========= Copyright Â© 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose: 
 //
@@ -35,7 +35,7 @@
 // use IN_SetVisibleMouse to set:
 int	iVisibleMouse = 0;
 
-extern cl_enginefunc_t gEngfuncs;
+extern cldll_enginefunc_t gEngfuncs;
 
 extern int iMouseInUse;
 
@@ -1261,7 +1261,10 @@ void IN_Init (void)
 	joy_wwhack1				= gEngfuncs.pfnRegisterVariable ( "joywwhack1", "0.0", 0 );
 	joy_wwhack2				= gEngfuncs.pfnRegisterVariable ( "joywwhack2", "0.0", 0 );
 
-	gEngfuncs.pfnRegisterVariable("joysupported", "1", 0); // HL25 CHECKS FOR THIS CMD ,, IF 0 IT LOCKS GAMEPAD USAGE
+	// HL25 checks this cvar and if it doesn't exist or set to zero
+	// it will lock any usage of gamepads
+	// see: https://github.com/ValveSoftware/halflife/issues/3621
+	gEngfuncs.pfnRegisterVariable("joysupported", "1", 0);
 
 	m_customaccel			= gEngfuncs.pfnRegisterVariable ( "m_customaccel", "0", FCVAR_ARCHIVE );
 	m_customaccel_scale		= gEngfuncs.pfnRegisterVariable ( "m_customaccel_scale", "0.04", FCVAR_ARCHIVE );

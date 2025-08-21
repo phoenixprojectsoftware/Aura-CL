@@ -69,7 +69,7 @@ class CHudSpectator : public CHudBase
 	struct Overview
 	{
 		std::string					map;		// cl.levelname or empty
-		Vector						origin;		// center of map
+		Legacy_Vector						origin;		// center of map
 		float						zoom;		// zoom of map images
 		std::vector<OverviewLayer>	layers;
 		qboolean					rotated;	// are map images rotated (90 degrees) ?
@@ -80,7 +80,7 @@ class CHudSpectator : public CHudBase
 
 		Overview(const std::string& map)
 			: map(map)
-			, origin(Vector(0, 0, 0))
+			, origin(Legacy_Vector(0, 0, 0))
 			, zoom(1.0f)
 			, rotated(false)
 			, insetWindowX(4)
@@ -129,9 +129,9 @@ public:
 	float	GetFOV();
 	bool	GetDirectorCamera(vec3_t &position, vec3_t &angle);
 	void	SetWayInterpolation(cameraWayPoint_t * prev, cameraWayPoint_t * start, cameraWayPoint_t * end, cameraWayPoint_t * next);
-	void	GetCameraView(Vector& pos, Vector& angle);
+	void	GetCameraView(Legacy_Vector& pos, Legacy_Vector& angle);
 
-	OverviewLayer GetCurrentLayer(Vector playerPos);
+	OverviewLayer GetCurrentLayer(Legacy_Vector playerPos);
 	OverviewLayer GetHighestLayer();
 
 

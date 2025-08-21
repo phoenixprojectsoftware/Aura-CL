@@ -41,7 +41,7 @@ IFileSystem *g_pFileSystem = NULL;
 
 CSysModule *g_hTrackerModule = NULL;
 
-cl_enginefunc_t gEngfuncs;
+cldll_enginefunc_t gEngfuncs;
 CHud gHUD;
 TeamFortressViewport *gViewPort = NULL;
 
@@ -65,7 +65,7 @@ Called when the DLL is first loaded.
 */
 extern "C" 
 {
-int EXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion );
+int EXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion );
 int EXPORT HUD_VidInit( void );
 int EXPORT HUD_Init( void );
 int EXPORT HUD_Redraw( float flTime, int intermission );
@@ -152,7 +152,7 @@ void EXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
-int EXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
+int EXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
 
@@ -163,7 +163,7 @@ int EXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	if (iVersion != CLDLL_INTERFACE_VERSION)
 		return 0;
 
-	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t));
+	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cldll_enginefunc_t));
 
 	EV_HookEvents();
 	

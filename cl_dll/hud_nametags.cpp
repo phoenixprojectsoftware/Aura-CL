@@ -36,9 +36,8 @@ extern void V_GetInEyePos(int entity, float * origin, float * angles );
 
 //DECLARE_MESSAGE(m_NameTags, PlayerId);
 
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
+std::vector<ControlPointInfo> g_ControlPoints;
+
 int CHudNameTags::Init()
 {
 	//HOOK_MESSAGE(PlayerId);
@@ -90,7 +89,7 @@ int CHudNameTags::Draw(float flTime)
 	vec3_t vecSrc;
 	vec3_t vecTargetPlayer;
 	vec3_t view_ofs;
-	float			x,y,z;
+	float			x,y;
 	int 			r,g,b;
 
 	// make sure we have player info
@@ -104,7 +103,7 @@ int CHudNameTags::Draw(float flTime)
 	cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
 	VectorCopy( localPlayer->origin, origin_pl );
 	
-	VectorClear(view_ofs); 
+	Legacy_VectorClear(view_ofs); 
 
 	if (localPlayer->curstate.usehull == 1) // if we're ducking
 		view_ofs[2] = VEC_DUCK_VIEW;
@@ -115,6 +114,7 @@ int CHudNameTags::Draw(float flTime)
 
 	//AngleVectors( angles_pl, forward, NULL, NULL ); // For get user aim
 	
+	// Draw player nametags
 	for (int i = 0; i < MAX_PLAYERS; i++)
 	{
 		cl_entity_s *ent = gEngfuncs.GetEntityByIndex(i+1);
@@ -155,9 +155,9 @@ int CHudNameTags::Draw(float flTime)
 		char colorless_name[256];
 		color_tags::strip_color_tags(colorless_name, g_PlayerInfoList[i + 1].name, ARRAYSIZE(colorless_name));
 
-		/*if(!strcmp(g_PlayerExtraInfo[localPlayer->index].teamname, g_PlayerExtraInfo[i + 1].teamname) && gHUD.m_Teamplay)
-			sprintf(string, "%s", colorless_name, health, armor, teammate);
-		else */ // For playerid msg
+		if(IsTeamMate(localPlayer, player_id))
+			sprintf(string, "%s", colorless_name);
+		else // For playerid msg
 			sprintf(string, "%s", colorless_name);
 
 		lx = strlen(string)*4; // 3 is avg. character length :)
@@ -181,7 +181,10 @@ int CHudNameTags::Draw(float flTime)
 			// Or if the localplayer is spectating
 			// TODO: V_GetInEyePos( g_iUser2, origin, angles );
 
-			if (Distance(trace->endpos, localPlayer->origin) < 1000 ||
+			// Determine max draw distance based on team.
+			float flMaxDrawDistance = IsTeamMate(localPlayer, player_id) ? TEAMMATE_DRAW_DISTANCE : ENEMY_DRAW_DISTANCE;
+
+			if (Distance(trace->endpos, localPlayer->origin) < flMaxDrawDistance ||
 				gEngfuncs.pDemoAPI->IsPlayingback() ||
 				!strcmp(gamemode, "Kreedz") ||
 				g_iUser1)
@@ -205,6 +208,48 @@ int CHudNameTags::Draw(float flTime)
 			}
 		}
 	}
+
+#ifdef _DEBUG
+	// Draw Domination Control Point nametags
+	for (auto& cp : g_ControlPoints)
+	{
+		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(cp.entIndex);
+		if (!ent || ent->curstate.messagenum < localPlayer->curstate.messagenum)
+			continue;
+
+		// skip if entity is invisible
+		if (ent->curstate.effects & EF_NODRAW)
+			continue;
+
+		// raise text above the CP model
+		VectorCopy(ent->origin, origin_above_target_head);
+		origin_above_target_head[2] += 100.0f;
+
+		if (gEngfuncs.pTriAPI->WorldToScreen(origin_above_target_head, screen))
+			continue; // behind viewer
+
+		x = XPROJECT(screen[0]);
+		y = YPROJECT(screen[1]);
+
+		// CPs use default HUD colour (will be changed later)
+		if (m_hud_nametags_type->value == 1)
+		{
+			gHUD.DrawConsoleStringWithColorTags(
+				x - (strlen(cp.name) * 4),
+				y,
+				cp.name,
+				true,
+				r,
+				g,
+				b
+			);
+		}
+		else
+		{
+			gHUD.DrawHudStringCentered(x, y, cp.name, r, g, b);
+		}
+	}
+#endif // _DEBUG - Draw Domination Control Point nametags
 
 	return 1;
 }

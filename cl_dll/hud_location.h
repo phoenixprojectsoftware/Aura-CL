@@ -8,15 +8,15 @@ class CHudLocation : public CHudBase
 	struct Location
 	{
 		std::string name;
-		Vector center;
+		Legacy_Vector center;
 
 		Location()
 			: name("")
-			, center(Vector(0, 0, 0))
+			, center(Legacy_Vector(0, 0, 0))
 		{
 		}
 
-		Location(std::string name, Vector center)
+		Location(std::string name, Legacy_Vector center)
 			: name(name)
 			, center(center)
 		{
@@ -27,7 +27,7 @@ class CHudLocation : public CHudBase
 	size_t player_locations[MAX_PLAYERS + 1];
 
 	void parse_locations(const char* mapname);
-	void update_player_location(size_t id, const Vector& pos);
+	void update_player_location(size_t id, const Legacy_Vector& pos);
 
 public:
 	virtual int Init();

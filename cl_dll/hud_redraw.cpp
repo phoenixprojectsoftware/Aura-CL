@@ -19,6 +19,9 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "bench.h"
+#ifdef _STEAMWORKS
+#include "steamworks/steam_api.h"
+#endif
 
 #include "vgui_TeamFortressViewport.h"
 
@@ -99,6 +102,8 @@ void CheckSuspend();
 // Redraw
 // step through the local data,  placing the appropriate graphics & text as appropriate
 // returns 1 if they've changed, 0 otherwise
+extern cvar_t* r_pissfilter;
+
 int CHud :: Redraw( float flTime, int intermission )
 {
 	m_fOldTime = m_flTime;	// save time of previous redraw
@@ -245,10 +250,12 @@ int CHud :: Redraw( float flTime, int intermission )
 		SPR_DrawAdditive(i, x, y, NULL);
 	}
 
-	if (gHUD.m_Health.m_iHealth <= 0)
+	if (gHUD.m_Health.m_iHealth <= 0 && r_pissfilter->value < 1)
 	{
 		ApplyGreyscaleEffect();
 	}
+	else
+		ApplyPissFilter();
 
 	/*
 	if ( g_iVisibleMouse )
@@ -272,6 +279,23 @@ int CHud :: Redraw( float flTime, int intermission )
 	}
 	*/
 
+#ifdef _STEAMWORKS
+	static bool wasControllerConnected = false;
+	InputHandle_t handles[STEAM_INPUT_MAX_COUNT];
+	int connected = SteamInput()->GetConnectedControllers(handles);
+
+	if (wasControllerConnected && connected == 0)
+	{
+		// Controller was disconnected
+		gEngfuncs.pfnClientCmd("toggleconsole\n");
+		gEngfuncs.Con_DPrintf("Controller disconnected, pausing game.\n");
+	}
+
+	wasControllerConnected = (connected > 0);
+
+	SteamInput()->RunFrame();
+	UpdateControllerVibration();
+#endif
 	return 1;
 }
 
@@ -297,8 +321,14 @@ void CHud::UpdateDefaultHUDColor()
 		b = min(b, 255);
 
 		m_iDefaultHUDColor = (r << 16) | (g << 8) | b;
+#ifdef _STEAMWORKS
+		SetControllerLEDColor(r, g, b, 0.7);
+#endif
 	} else {
 		m_iDefaultHUDColor = RGB_DEFAULT;
+#ifdef _STEAMWORKS
+		SetControllerLEDColor(255, 160, 0, 0.7);
+#endif
 	}
 }
 

@@ -197,7 +197,7 @@ void SpectatorPanel::Initialize()
 	m_BottomMainButton->setPaintBackgroundEnabled(false);
 	m_BottomMainButton->setFgColor( Scheme::sc_primary1 );
 	m_BottomMainButton->setContentAlignment( vgui::Label::a_center );
-	m_BottomMainButton->setBorder( new LineBorder( Color( 59, 58, 34, 48 ) ) );
+	m_BottomMainButton->setBorder( new LineBorder(vgui::Color( 59, 58, 34, 48 ) ) );
 	m_BottomMainButton->setBoundKey( (char)255 );	// special no bound to avoid leading spaces in name 
 	m_BottomMainButton->addActionSignal( new CSpectatorHandler_Command(this,SPECTATOR_PANEL_CMD_PLAYERS) );
 	m_BottomMainButton->setUnArmedBorderColor ( 59, 58, 34, 48 );

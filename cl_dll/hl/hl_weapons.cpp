@@ -334,7 +334,7 @@ CBaseEntity::FireBulletsPlayer
 Only produces random numbers to match the server ones.
 =====================
 */
-Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecDirShooting, Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker, int shared_rand )
+Legacy_Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Legacy_Vector vecSrc, Legacy_Vector vecDirShooting, Legacy_Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker, int shared_rand )
 {
 	float x = 0.0f, y = 0.0f, z;
 
@@ -360,7 +360,7 @@ Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecD
 			
 	}
 
-    return Vector ( x * vecSpread.x, y * vecSpread.y, 0.0 );
+    return Legacy_Vector ( x * vecSpread.x, y * vecSpread.y, 0.0 );
 }
 
 /*
@@ -387,7 +387,12 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fInReload = FALSE;
 	}
 
-	if ((m_pPlayer->pev->button & IN_ATTACK2) && (m_flNextSecondaryAttack <= 0.0))
+	// attack timers sometimes decrement to nearly FLT_MIN which doesn't pass the x= 0.0 check
+	// when that happens client-side attack events don't play but DO on the server
+	// a very small value fixes this without speeding up weapon attacks noticeably
+	// or creating the inverse problem of playing events twice. -wootguy
+	const float epsilon = 0.00001f;
+	if ((m_pPlayer->pev->button & IN_ATTACK2) && (m_flNextSecondaryAttack <= epsilon))
 	{
 		if ( pszAmmo2() && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
 		{
@@ -397,7 +402,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		SecondaryAttack();
 		m_pPlayer->pev->button &= ~IN_ATTACK2;
 	}
-	else if ((m_pPlayer->pev->button & IN_ATTACK) && (m_flNextPrimaryAttack <= 0.0))
+	else if ((m_pPlayer->pev->button & IN_ATTACK) && (m_flNextPrimaryAttack < epsilon))
 	{
 		if ( (m_iClip == 0 && pszAmmo1()) || (iMaxClip() == -1 && !m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] ) )
 		{
@@ -418,7 +423,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fFireOnEmpty = FALSE;
 
 		// weapon is useable. Reload if empty and weapon has waited as long as it has to after firing
-		if ( m_iClip == 0 && !(iFlags() & ITEM_FLAG_NOAUTORELOAD) && m_flNextPrimaryAttack < 0.0 )
+		if ( m_iClip == 0 && !(iFlags() & ITEM_FLAG_NOAUTORELOAD) && m_flNextPrimaryAttack < epsilon )
 		{
 			Reload();
 			return;
@@ -531,7 +536,7 @@ UTIL_TraceLine
 Don't actually trace, but act like the trace didn't hit anything.
 =====================
 */
-void UTIL_TraceLine( const Vector &vecStart, const Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr )
+void UTIL_TraceLine( const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, IGNORE_MONSTERS igmon, edict_t *pentIgnore, TraceResult *ptr )
 {
 	memset( ptr, 0, sizeof( *ptr ) );
 	ptr->flFraction = 1.0;
@@ -1176,7 +1181,7 @@ void CL_DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state
 
 	if ( g_irunninggausspred == 1 )
 	{
-		Vector forward;
+		Legacy_Vector forward;
 		gEngfuncs.pfnAngleVectors( v_angles, forward, NULL, NULL );
 		to->client.velocity = to->client.velocity - forward * g_flApplyVel * 5; 
 		g_irunninggausspred = false;

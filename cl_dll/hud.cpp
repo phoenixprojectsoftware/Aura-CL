@@ -39,10 +39,39 @@
 
 #include "event_api.h"
 
+#ifdef _STEAMWORKS
+#include "steamworks/steam_api.h"
+#endif
+#include <dbg.h>
+
 extern tempent_s* pLaserSpot;
 
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
 extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
+
+#ifdef _STEAMWORKS
+void SetControllerLEDColor(int r, int g, int b, float a)
+{
+	a = fmax(0.0f, fmin(1.0f, a));
+
+	int newR = static_cast<int>(r * a);
+	int newG = static_cast<int>(g * a);
+	int newB = static_cast<int>(b * a);
+	ISteamInput* steamInput = SteamInput();
+	if (steamInput)
+	{
+		InputHandle_t* inputHandles = new InputHandle_t[STEAM_INPUT_MAX_COUNT];
+		int inputCount = steamInput->GetConnectedControllers(inputHandles);
+
+		for (int i = 0; i < inputCount; ++i)
+		{
+			steamInput->SetLEDColor(inputHandles[i], newR, newG, newB, 0);
+		}
+
+		delete[] inputHandles;
+	}
+}
+#endif
 
 class CHLVoiceStatusHelper : public IVoiceStatusHelper
 {
@@ -530,12 +559,12 @@ void PrintVersion()
 {
 	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
 	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
-	gEngfuncs.Con_Printf("\n  Half-Life: Zombies Ate My Neighbours Multiplayer");
+	gEngfuncs.Con_Printf("\n  Half-Life: Cross Product Multiplayer");
 	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
 	gEngfuncs.Con_Printf("\n  Aura SDK:");
 	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
 	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
-	gEngfuncs.Con_Printf("\n  ZAMNHLMP Developer Repository - hosts public playtest builds - %s", zamnhlmpRepo "\n");
+	gEngfuncs.Con_Printf("\n  Configuration - %s", buildCfg);
 }
 
 
@@ -544,6 +573,7 @@ void CHud :: Init( void )
 {
 	HOOK_MESSAGE( Logo );
 	HOOK_MESSAGE( ResetHUD );
+	// HOOK_MESSAGE(DOMCPInfo);
 	HOOK_MESSAGE( GameMode );
 	HOOK_MESSAGE( InitHUD );
 	HOOK_MESSAGE( ViewMode );
@@ -616,7 +646,7 @@ void CHud :: Init( void )
 	m_iTargetFOV = 0;
 
 	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
-	default_fov = CVAR_CREATE( "default_fov", "110", FCVAR_ARCHIVE ); // I have set the hard-coded default to 110. Why would you want to use 90 on a widescreen display?
+	default_fov = CVAR_CREATE( "default_fov", "90", FCVAR_ARCHIVE );
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
@@ -629,7 +659,6 @@ void CHud :: Init( void )
 
 	m_pSpriteList = NULL;
 
-	CVAR_CREATE("cl_music_enabled", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_USERINFO );
 	hud_watermark = CVAR_CREATE("hud_watermark", "1", FCVAR_ARCHIVE);
 
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
@@ -696,7 +725,7 @@ void CHud :: Init( void )
 
 	MsgFunc_ResetHUD(0, 0, NULL );
 
-#ifdef STEAM_RICH_PRESENCE
+#ifdef _STEAMWORKS
 	gEngfuncs.pfnClientCmd("richpresence_gamemode\n"); // reset
 
 	gEngfuncs.pfnClientCmd("richpresence_update\n");
@@ -870,6 +899,20 @@ void CHud :: VidInit( void )
 	GetClientVoiceMgr()->VidInit();
 }
 
+void CHud::Frame(double time)
+{
+	while (m_NextFrameQueue.size())
+	{
+		auto& i = m_NextFrameQueue.front();
+		i();
+		m_NextFrameQueue.pop();
+	}
+}
+
+void CHud::Shutdown()
+{
+}
+
 int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
 {
 	BEGIN_READ( pbuf, iSize );
@@ -881,6 +924,62 @@ int CHud::MsgFunc_Logo(const char *pszName, int iSize, void *pbuf)
 }
 
 float g_lastFOV = 0.0;
+
+void CHud::StartControllerVibration(uint16_t left, uint16_t right, uint16 lt, uint16 rt, float duration)
+{
+#ifdef _STEAMWORKS
+	ISteamInput* steamInput = SteamInput();
+	if (!steamInput)
+		return;
+
+	InputHandle_t inputHandles[STEAM_INPUT_MAX_COUNT];
+	int inputCount = steamInput->GetConnectedControllers(inputHandles);
+
+	for (int i = 0; i < inputCount; ++i)
+	{
+		steamInput->TriggerVibrationExtended(inputHandles[i], left, right, lt, rt);
+	}
+
+	m_flVibrationStopTime = gHUD.m_flTime + duration;
+	m_bVibrationActive = true;
+#else
+	return;
+#endif
+}
+
+void CHud::StopControllerVibration()
+{
+#ifdef _STEAMWORKS
+	ISteamInput* steamInput = SteamInput();
+	if (!steamInput)
+		return;
+
+	InputHandle_t inputHandles[STEAM_INPUT_MAX_COUNT];
+	int inputCount = steamInput->GetConnectedControllers(inputHandles);
+
+	for (int i = 0; i < inputCount; ++i)
+	{
+		steamInput->TriggerVibrationExtended(inputHandles[i], 0, 0, 0, 0);
+	}
+
+	m_bVibrationActive = false;
+#else
+	return;
+#endif
+}
+
+void CHud::UpdateControllerVibration()
+{
+#ifdef _STEAMWORKS
+	if (m_bVibrationActive && gHUD.m_flTime >= m_flVibrationStopTime)
+	{
+		StopControllerVibration();
+	}
+#else
+	return;
+#endif
+}
+
 
 /*
 ============
@@ -1049,9 +1148,46 @@ float CHud::GetSensitivity( void )
 	return m_flMouseSensitivity;
 }
 
+void CHud::CallOnNextFrame(std::function<void()> f)
+{
+	Assert(f);
+	m_NextFrameQueue.push(f);
+}
+
+cvar_t* r_pissfilter;
+
 void CHud::ApplyGreyscaleEffect()
 {
-	int grey = 128;
-	int alpha = 128;
-	gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
+	if (r_pissfilter->value < 1)
+	{
+		int grey = 128;
+		int alpha = 128;
+		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, 255, 0, 0, 128);
+	}
+}
+
+void CHud::ApplyPissFilter()
+{
+	int r = 182;
+	int g = 137;
+	int b = 38;
+
+	static bool PissPrint = false;
+
+#if defined(_DEBUG) || defined(_STEAMWORKS)
+	if (r_pissfilter->value != 0)
+	{
+		gEngfuncs.pfnFillRGBA(0, 0, ScreenWidth, ScreenHeight, r, g, b, 60);
+		if (!PissPrint)
+		{
+			gEngfuncs.Con_Printf("PISSFILTER ENGAGED!!\n");
+			gEngfuncs.pfnPlaySoundByName("sound/gah.wav", 1);
+			PissPrint = true;
+		}
+	}
+	else
+	{
+		PissPrint = false;
+	}
+#endif
 }

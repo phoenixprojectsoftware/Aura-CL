@@ -40,7 +40,7 @@ public:
 		EHANDLE				m_hEnemy;		 // the entity that the monster is fighting.
 		EHANDLE				m_hTargetEnt;	 // the entity that the monster is trying to reach
 		EHANDLE				m_hOldEnemy[ MAX_OLD_ENEMIES ];
-		Vector				m_vecOldEnemy[ MAX_OLD_ENEMIES ];
+		Legacy_Vector				m_vecOldEnemy[ MAX_OLD_ENEMIES ];
 
 		float				m_flFieldOfView;// width of monster's field of view ( dot product )
 		float				m_flWaitFinished;// if we're told to wait, this is the time that the wait will be over.
@@ -63,13 +63,13 @@ public:
 		int					m_iRouteIndex;			// index into m_Route[]
 		float				m_moveWaitTime;			// How long I should wait for something to move
 
-		Vector				m_vecMoveGoal; // kept around for node graph moves, so we know our ultimate goal
+		Legacy_Vector				m_vecMoveGoal; // kept around for node graph moves, so we know our ultimate goal
 		Activity			m_movementActivity;	// When moving, set this activity
 
 		int					m_iAudibleList; // first index of a linked list of sounds that the monster can hear.
 		int					m_afSoundTypes;
 
-		Vector				m_vecLastPosition;// monster sometimes wants to return to where it started after an operation.
+		Legacy_Vector				m_vecLastPosition;// monster sometimes wants to return to where it started after an operation.
 
 		int					m_iHintNode; // this is the hint node that the monster is moving towards or performing active idle on.
 
@@ -77,7 +77,7 @@ public:
 
 		int					m_iMaxHealth;// keeps track of monster's maximum health value (for re-healing, etc)
 
-	Vector				m_vecEnemyLKP;// last known position of enemy. (enemy's origin)
+	Legacy_Vector				m_vecEnemyLKP;// last known position of enemy. (enemy's origin)
 
 	int					m_cAmmoLoaded;		// how much ammo is in the weapon (used to trigger reload anim sequences)
 
@@ -102,7 +102,7 @@ public:
 	int					m_iTriggerCondition;// for scripted AI, this is the condition that will cause the activation of the monster's TriggerTarget
 	string_t			m_iszTriggerTarget;// name of target that should be fired. 
 
-	Vector				m_HackedGunPos;	// HACK until we can query end of gun
+	Legacy_Vector				m_HackedGunPos;	// HACK until we can query end of gun
 
 // Scripted sequence Info
 	SCRIPTSTATE			m_scriptState;		// internal cinematic state
@@ -133,7 +133,7 @@ public:
 
 // Basic Monster AI functions
 	virtual float ChangeYaw ( int speed );
-	float VecToYaw( Vector vecDir );
+	float VecToYaw( Legacy_Vector vecDir );
 	float FlYawDiff ( void ); 
 
 	float DamageForce( float damage );
@@ -151,12 +151,12 @@ public:
 		virtual void StartMonster ( void );
 		virtual CBaseEntity* BestVisibleEnemy ( void );// finds best visible enemy for attack
 		virtual BOOL FInViewCone ( CBaseEntity *pEntity );// see if pEntity is in monster's view cone
-		virtual BOOL FInViewCone ( Vector *pOrigin );// see if given location is in monster's view cone
+		virtual BOOL FInViewCone ( Legacy_Vector *pOrigin );// see if given location is in monster's view cone
 		virtual void HandleAnimEvent( MonsterEvent_t *pEvent );
 
-		virtual int CheckLocalMove ( const Vector &vecStart, const Vector &vecEnd, CBaseEntity *pTarget, float *pflDist );// check validity of a straight move through space
+		virtual int CheckLocalMove ( const Legacy_Vector &vecStart, const Legacy_Vector &vecEnd, CBaseEntity *pTarget, float *pflDist );// check validity of a straight move through space
 		virtual void Move( float flInterval = 0.1 );
-		virtual void MoveExecute( CBaseEntity *pTargetEnt, const Vector &vecDir, float flInterval );
+		virtual void MoveExecute( CBaseEntity *pTargetEnt, const Legacy_Vector &vecDir, float flInterval );
 		virtual BOOL ShouldAdvanceRoute( float flWaypointDist );
 
 		virtual Activity GetStoppedActivity( void ) { return ACT_IDLE; }
@@ -205,10 +205,10 @@ public:
 
 		void CheckAttacks ( CBaseEntity *pTarget, float flDist );
 		virtual int CheckEnemy ( CBaseEntity *pEnemy );
-		void PushEnemy( CBaseEntity *pEnemy, Vector &vecLastKnownPos );
+		void PushEnemy( CBaseEntity *pEnemy, Legacy_Vector &vecLastKnownPos );
 		BOOL PopEnemy( void );
 
-		BOOL FGetNodeRoute ( Vector vecDest );
+		BOOL FGetNodeRoute ( Legacy_Vector vecDest );
 		
 		inline void TaskComplete( void ) { if ( !HasConditions(bits_COND_TASK_FAILED) ) m_iTaskStatus = TASKSTATUS_COMPLETE; }
 		void MovementComplete( void );
@@ -223,17 +223,17 @@ public:
 		BOOL FRouteClear ( void );
 		void RouteSimplify( CBaseEntity *pTargetEnt );
 		void AdvanceRoute ( float distance );
-		virtual BOOL FTriangulate ( const Vector &vecStart , const Vector &vecEnd, float flDist, CBaseEntity *pTargetEnt, Vector *pApex );
-		void MakeIdealYaw( Vector vecTarget );
+		virtual BOOL FTriangulate ( const Legacy_Vector &vecStart , const Legacy_Vector &vecEnd, float flDist, CBaseEntity *pTargetEnt, Legacy_Vector *pApex );
+		void MakeIdealYaw( Legacy_Vector vecTarget );
 		virtual void SetYawSpeed ( void ) { return; };// allows different yaw_speeds for each activity
-		BOOL BuildRoute ( const Vector &vecGoal, int iMoveFlag, CBaseEntity *pTarget );
-		virtual BOOL BuildNearestRoute ( Vector vecThreat, Vector vecViewOffset, float flMinDist, float flMaxDist );
+		BOOL BuildRoute ( const Legacy_Vector &vecGoal, int iMoveFlag, CBaseEntity *pTarget );
+		virtual BOOL BuildNearestRoute ( Legacy_Vector vecThreat, Legacy_Vector vecViewOffset, float flMinDist, float flMaxDist );
 		int RouteClassify( int iMoveFlag );
-		void InsertWaypoint ( Vector vecLocation, int afMoveFlags );
+		void InsertWaypoint ( Legacy_Vector vecLocation, int afMoveFlags );
 		
-		BOOL FindLateralCover ( const Vector &vecThreat, const Vector &vecViewOffset );
-		virtual BOOL FindCover ( Vector vecThreat, Vector vecViewOffset, float flMinDist, float flMaxDist );
-		virtual BOOL FValidateCover ( const Vector &vecCoverLocation ) { return TRUE; };
+		BOOL FindLateralCover ( const Legacy_Vector &vecThreat, const Legacy_Vector &vecViewOffset );
+		virtual BOOL FindCover ( Legacy_Vector vecThreat, Legacy_Vector vecViewOffset, float flMinDist, float flMaxDist );
+		virtual BOOL FValidateCover ( const Legacy_Vector &vecCoverLocation ) { return TRUE; };
 		virtual float CoverRadius( void ) { return 784; } // Default cover radius
 
 		virtual BOOL FCanCheckAttacks ( void );
@@ -251,9 +251,9 @@ public:
 		void SetTurnActivity ( void );
 		float FLSoundVolume ( CSound *pSound );
 
-		BOOL MoveToNode( Activity movementAct, float waitTime, const Vector &goal );
+		BOOL MoveToNode( Activity movementAct, float waitTime, const Legacy_Vector &goal );
 		BOOL MoveToTarget( Activity movementAct, float waitTime );
-		BOOL MoveToLocation( Activity movementAct, float waitTime, const Vector &goal );
+		BOOL MoveToLocation( Activity movementAct, float waitTime, const Legacy_Vector &goal );
 		BOOL MoveToEnemy( Activity movementAct, float waitTime );
 
 		// Returns the time when the door will be open
@@ -285,8 +285,8 @@ public:
 		virtual void PrescheduleThink( void ) { return; };
 
 		BOOL GetEnemy ( void );
-		void MakeDamageBloodDecal ( int cCount, float flNoise, TraceResult *ptr, const Vector &vecDir );
-		void TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType);
+		void MakeDamageBloodDecal ( int cCount, float flNoise, TraceResult *ptr, const Legacy_Vector &vecDir );
+		void TraceAttack( entvars_t *pevAttacker, float flDamage, Legacy_Vector vecDir, TraceResult *ptr, int bitsDamageType);
 
 	// combat functions
 	float UpdateTarget ( entvars_t *pevTarget );
@@ -300,17 +300,17 @@ public:
 	virtual BOOL	HasAlienGibs( void );
 	virtual void	FadeMonster( void );	// Called instead of GibMonster() when gibs are disabled
 
-	Vector ShootAtEnemy( const Vector &shootOrigin );
-	virtual Vector BodyTarget( const Vector &posSrc ) { return Center( ) * 0.75 + EyePosition() * 0.25; };		// position to shoot at
+	Legacy_Vector ShootAtEnemy( const Legacy_Vector &shootOrigin );
+	virtual Legacy_Vector BodyTarget( const Legacy_Vector &posSrc ) { return Center( ) * 0.75 + EyePosition() * 0.25; };		// position to shoot at
 
-	virtual	Vector  GetGunPosition( void );
+	virtual	Legacy_Vector  GetGunPosition( void );
 
 	virtual int TakeHealth( float flHealth, int bitsDamageType );
 	virtual int TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	int			DeadTakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType );
 
 	void RadiusDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
-	void RadiusDamage(Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
+	void RadiusDamage(Legacy_Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
 	virtual int		IsMoving( void ) { return m_movementGoal != MOVEGOAL_NONE; }
 
 	void RouteClear( void );
@@ -331,7 +331,7 @@ public:
 	BOOL ExitScriptedSequence( );
 	BOOL CineCleanup( );
 
-	CBaseEntity* DropItem ( char *pszItemName, const Vector &vecPos, const Vector &vecAng );// drop an item.
+	CBaseEntity* DropItem ( char *pszItemName, const Legacy_Vector &vecPos, const Legacy_Vector &vecAng );// drop an item.
 };
 
 

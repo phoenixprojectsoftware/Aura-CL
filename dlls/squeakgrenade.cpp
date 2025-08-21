@@ -499,7 +499,7 @@ void CSqueak::PrimaryAttack()
 	{
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		TraceResult tr;
-		Vector trace_origin;
+		Legacy_Vector trace_origin;
 
 		// HACK HACK:  Ugly hacks to handle change in origin based on new physics code for players
 		// Move origin up if crouched and start trace a bit outside of body ( 20 units instead of 16 )
