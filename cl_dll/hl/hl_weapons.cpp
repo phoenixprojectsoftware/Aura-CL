@@ -374,6 +374,12 @@ Handles weapon firing, reloading, etc.
 */
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
+	// attack timers sometimes decrement to nearly FLT_MIN which doesn't pass the x= 0.0 check
+	// when that happens client-side attack events don't play but DO on the server
+	// a very small value fixes this without speeding up weapon attacks noticeably
+	// or creating the inverse problem of playing events twice. -wootguy
+	const float epsilon = 0.00001f;
+
 	if ((m_fInReload) && (m_pPlayer->m_flNextAttack <= 0.0))
 	{
 #if 0 // FIXME, need ammo on client to make this work right
