@@ -7,6 +7,7 @@
 #include <steamworks/steam_api.h>
 #endif
 
+#define DRAW_STRING gEngfuncs.pfnDrawString
 int CHudWatermark::Init()
 {
 	m_iFlags = 0;
@@ -98,17 +99,17 @@ int CHudWatermark::Draw(float time)
 	{
 #endif
 #if defined(_STEAMWORKS) && (CLOSED_BETA)
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight, "STEAM CLOSED BETA", r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 2, displayString, r, g, b); // read from version.txt
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 3, "cl build " __DATE__, r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, CharHeight, "STEAM CLOSED BETA", r, g, b);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 2, displayString, r, g, b); // read from version.txt
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 3, "cl build " __DATE__, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 
-		gEngfuncs.pfnDrawString((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
+		DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
 #else
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
 #endif
 #if !defined(CLOSED_BETA)
 	}
