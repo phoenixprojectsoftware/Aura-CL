@@ -110,6 +110,7 @@ int CHudWatermark::Draw(float time)
 		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
 		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, "Press / to open the COMMAND MENU.", 0, 255, 0);
 #endif
 #if !defined(CLOSED_BETA)
 	}
