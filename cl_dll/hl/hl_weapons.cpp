@@ -905,7 +905,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	//Stores all our ammo info, so the client side weapons can use them.
 	player.ammo_9mm			= (int)from->client.vuser1[0];
-	player.ammo_br = (int)from->client.vuser1[0];
+	player.ammo_br = (int)from->client.vuser3[0];
 	player.ammo_357			= (int)from->client.vuser1[1];
 	player.ammo_argrens		= (int)from->client.vuser1[2];
 	player.ammo_762			= (int)from->client.vuser2[2];
@@ -982,6 +982,8 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	//HL Weapons
 	to->client.vuser1[0]				= player.ammo_9mm;
+
+	to->client.vuser3[0] = player.ammo_br;
 	to->client.vuser1[1]				= player.ammo_357;
 	to->client.vuser1[2]				= player.ammo_argrens;
 	to->client.vuser2.z					= player.ammo_762;
