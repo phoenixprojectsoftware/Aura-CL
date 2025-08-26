@@ -648,32 +648,33 @@ int CHudAmmo::MsgFunc_CurWeapon(const char *pszName, int iSize, void *pbuf )
 void CHudAmmo::Warning()
 {
 	static bool ammoWarningPlayed = false;
+
+	if (!m_pWeapon)
+		return;
+
 	int ammoCount = m_iCurrentClipAmmo;
 	lowAmmoThreshold = WEAPON_NOCLIP;
 
 	if (ammoCount < 0)
 		return; //weapon_noclip or invalid ammo count.
 
-	switch (m_iCurrentWeapon)
-	{
-	case WEAPON_GLOCK: lowAmmoThreshold = 3; break;
-	case WEAPON_EAGLE: lowAmmoThreshold = 2; break;
-	case WEAPON_PYTHON: lowAmmoThreshold = 1; break;
-	case WEAPON_MP5: lowAmmoThreshold = 10; break;
-	case WEAPON_SHOTGUN: lowAmmoThreshold = 2; break;
-	case WEAPON_CROSSBOW: lowAmmoThreshold = 1; break;
-	case WEAPON_M249: lowAmmoThreshold = 15; break;
-	case WEAPON_SNIPERRIFLE: lowAmmoThreshold = 1; break;
-	default:
-		return; // skip the warning for weapons without logic above.
-	}
+	const char* pszWeaponName = m_pWeapon->szName; // classname of weapon
+
+	if (!strcmp(pszWeaponName, "weapon_9mmhandgun")) lowAmmoThreshold = 3;
+	else if (!strcmp(pszWeaponName, "weapon_eagle")) lowAmmoThreshold = 2;
+	else if (!strcmp(pszWeaponName, "weapon_357")) lowAmmoThreshold = 1;
+	else if (!strcmp(pszWeaponName, "weapon_9mmAR")) lowAmmoThreshold = 10;
+	else if (!strcmp(pszWeaponName, "weapon_shotgun")) lowAmmoThreshold = 2;
+	else if (!strcmp(pszWeaponName, "weapon_crossbow")) lowAmmoThreshold = 1;
+	else if (!strcmp(pszWeaponName, "weapon_m249")) lowAmmoThreshold = 15;
+	else if (!strcmp(pszWeaponName, "weapon_sniperrifle")) lowAmmoThreshold = 1;
 
 	if (ammoCount > lowAmmoThreshold)
 		ammoWarningPlayed = false;
 	else if (!ammoWarningPlayed && ammoCount <= lowAmmoThreshold)
 	{
 		PlaySound("common/warning.wav", 1.0);
-		gEngfuncs.Con_DPrintf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", m_iCurrentWeapon, ammoCount, lowAmmoThreshold);
+		gEngfuncs.Con_DPrintf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", pszWeaponName, ammoCount, lowAmmoThreshold);
 		ammoWarningPlayed = true;
 	}
 }
@@ -962,6 +963,7 @@ int CHudAmmo::Draw(float flTime)
 		{
 			UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 			ScaleColors(r, g, b, 192);
+			// gEngfuncs.Con_Printf("Weapon ID - %s", m_pWeapon);
 		}
 		else
 		{
