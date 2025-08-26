@@ -40,7 +40,7 @@ void CBattleRifle::Precache(void)
 	PRECACHE_MODEL("models/weapons/br/p_br.mdl");
 
 	PRECACHE_SOUND("weapons/olr1.wav");
-	PRECACHE_SOUND("weapons/ol2.wav");
+	PRECACHE_SOUND("weapons/olr2.wav");
 
 	m_usOLR = PRECACHE_EVENT(1, "events/olr.sc");
 }
@@ -73,7 +73,7 @@ void CBattleRifle::PrimaryAttack(void)
 	SetThink(&CBattleRifle::BurstThink);
 	pev->nextthink = gpGlobals->time + 0.06f;
 
-	m_flNextPrimaryAttack = gpGlobals->time + 0.32f;
+	m_flNextPrimaryAttack = gpGlobals->time + 0.5f;
 }
 
 void CBattleRifle::FireBurstShot(void)
@@ -127,10 +127,17 @@ BOOL CBattleRifle::Deploy(void)
 
 void CBattleRifle::Reload(void)
 {
-	if (m_pPlayer->ammo_br <= 0)
+	if (m_iClip >= BR_MAX_CLIP)
 		return;
 
-	DefaultReload(BR_MAX_CLIP, OLR_RELOAD, 1.5);
+	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
+		return;
+
+	if (DefaultReload(BR_MAX_CLIP, OLR_RELOAD, 1.5f))
+	{
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/olr2.wav", 1, ATTN_NORM);
+		m_pPlayer->m_flNextAttack = gpGlobals->time + 1.5f;
+	}
 }
 
 void CBattleRifle::WeaponIdle(void)
