@@ -40,6 +40,7 @@ public:
 	void PreventEscapeToShow(bool state);
 
 	void OpenTestPanel();
+	void OpenComposer();
 	CServerBrowser* GetServerBrowser();
 	CWorkshopDialog* GetWorkshopDialog();
 
@@ -94,6 +95,7 @@ private:
 	bool m_bPreventEscape = false;
 	int m_bDelayedPreventEscape = 0;
 	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
+	// vgui2::DHANDLE<CCustomGameComposer> m_hCustomGameComposer;
 	vgui2::DHANDLE<CServerBrowser> m_hServerBrowser;
 	vgui2::DHANDLE<CWorkshopDialog> m_hWorkshopDialog;
 	vgui2::DHANDLE<CCreateWorkshopInfoBox> m_hWorkshopInfoBox;

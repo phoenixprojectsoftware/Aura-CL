@@ -8,6 +8,7 @@
 #include "../client_vgui.h"
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
+#include "composer/CustomGameComposer.h"
 #include "serverbrowser/CServerBrowser.h"
 // TODO: ADVANCED OPTIONS
 // TODO: ACHIEVEMENT MENU
@@ -23,6 +24,11 @@
 CON_COMMAND(gameui_opentest, "Opens test")
 {
 	CGameUIViewport::Get()->OpenTestPanel();
+}
+
+CON_COMMAND(gameui_composer, "Composer")
+{
+	CGameUIViewport::Get()->OpenComposer();
 }
 
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
@@ -72,6 +78,14 @@ void CGameUIViewport::PreventEscapeToShow(bool state)
 void CGameUIViewport::OpenTestPanel()
 {
 	GetDialog(m_hTestPanel)->Activate();
+}
+
+void CGameUIViewport::OpenComposer()
+{
+	CCustomGameComposer* pComposer = new CCustomGameComposer(this);
+	pComposer->MakePopup();
+	pComposer->SetVisible(true);
+	pComposer->MoveToFront();
 }
 
 void CGameUIViewport::OnThink()

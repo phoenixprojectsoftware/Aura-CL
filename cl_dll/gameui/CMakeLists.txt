@@ -6,6 +6,7 @@ add_sources(
 	gameui_viewport.cpp
 	gameui_viewport.h)
 	
+add_subdirectory(composer)
 add_subdirectory(filedialog)
 add_subdirectory(serverbrowser)
 add_subdirectory(workshop)
