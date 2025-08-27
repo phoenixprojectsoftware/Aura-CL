@@ -103,7 +103,7 @@ void CBattleRifle::FireBurstShot(void)
 		m_iClip, 0, pev->body, 0);
 }
 
-void CBattleRifle::BurstThink(void)
+EXPORT void CBattleRifle::BurstThink(void)
 {
 	m_iBurstShotsFired++;
 

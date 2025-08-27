@@ -803,7 +803,7 @@ public:
 private:
 	unsigned short m_usOLR;
 	void FireBurstShot(void);
-	void BurstThink(void);
+	EXPORT void BurstThink(void);
 
 	int m_iBurstShotsFired;
 };
