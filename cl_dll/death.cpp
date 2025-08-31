@@ -306,10 +306,17 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 				SteamUserStats()->StoreStats();
 				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", statValue + 1);
 			}
+			else
+			{
+				gEngfuncs.Con_Printf("The STAT INCREMENT failed because the API key hasn't been published or something. Idk I just work here.\nSay hiya to Midge for me, Homer.\n");
+			}
 		}
 
 		if (!isAchievementUnlocked(1))
+		{
 			UnlockAchievement(1);
+			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
+		}
 #endif
 
 		if (m_pCvarKillSnd->value > 0.0f)
