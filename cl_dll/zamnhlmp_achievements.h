@@ -22,6 +22,11 @@ static const char* g_PhoenixSteamIDs[] = {
 };
 static const int g_NumPhoenixIDs = sizeof(g_PhoenixSteamIDs) / sizeof(g_PhoenixSteamIDs[0]);
 
+static const char* g_LANSteamID[] = {
+	"ID_LAN", // LAN
+};
+static const int g_NumLANIDs = sizeof(g_LANSteamID) / sizeof(g_LANSteamID[0]);
+
 inline const char* GetAchievementAPIName(int achievementID)
 {
 	switch (achievementID)
@@ -30,6 +35,8 @@ inline const char* GetAchievementAPIName(int achievementID)
 		return "ACH_PHOENIX_PARTY"; // Phoenix Party. be in a game with a tpps member.
 	case 1:
 		return "ACH_FIRST_BLOOD";
+	case 2:
+		return "ACH_LAN";
 	default:
 		return nullptr;
 	}
