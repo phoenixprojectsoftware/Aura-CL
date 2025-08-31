@@ -598,6 +598,16 @@ bool IsPhoenixProjectID(const char* steamID)
 	}
 	return false;
 }
+
+bool IsLANOnlyID(const char* steamID)
+{
+	for (int i = 0; i < g_NumLANIDs; ++i)
+	{
+		if (strcmp(steamID, g_LANSteamID[i]) == 0)
+			return true;
+	}
+}
+
 #endif
 
 void ScorePanel::FillGrid()
@@ -980,8 +990,10 @@ void ScorePanel::FillGrid()
 
 #if defined(_STEAMWORKS) && !defined(_HALO)
 	static bool PhoenixPartyUnlockTried = false;
+	static bool LANUnlockTried = false;
 
 		bool foundPhoenix = false;
+		bool foundLan = false;
 
 		for (int row = 0; row < m_iRows; row++)
 		{
@@ -998,6 +1010,12 @@ void ScorePanel::FillGrid()
 				foundPhoenix = true;
 				break;
 			}
+
+			if (IsLANOnlyID(steamID.c_str()))
+			{
+				foundLan = true;
+				break;
+			}
 		}
 
 		if (foundPhoenix)
@@ -1008,6 +1026,14 @@ void ScorePanel::FillGrid()
 				UnlockAchievement(0);
 
 			PhoenixPartyUnlockTried = true;
+		}
+
+		if (foundLan)
+		{
+			gEngfuncs.Con_DPrintf("LAN STEAM ID FOUND!! UNLOCKING ACHIEVEMENT!!\n");
+			if (!isAchievementUnlocked(2))
+				UnlockAchievement(2);
+			LANUnlockTried = true;
 		}
 #endif
 }
