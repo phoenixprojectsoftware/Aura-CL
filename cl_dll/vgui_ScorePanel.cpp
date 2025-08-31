@@ -588,6 +588,7 @@ void ScorePanel::RebuildTeams()
 	Update();
 }
 
+#if defined(_STEAMWORKS) && !defined(_HALO)
 bool IsPhoenixProjectID(const char* steamID)
 {
 	for (int i = 0; i < g_NumPhoenixIDs; ++i)
@@ -597,6 +598,7 @@ bool IsPhoenixProjectID(const char* steamID)
 	}
 	return false;
 }
+#endif
 
 void ScorePanel::FillGrid()
 {
