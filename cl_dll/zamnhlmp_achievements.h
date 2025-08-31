@@ -28,7 +28,17 @@ inline const char* GetAchievementAPIName(int achievementID)
 	{
 	case 0:
 		return "ACH_PHOENIX_PARTY"; // Phoenix Party. be in a game with a tpps member.
+	case 1:
+		return "ACH_FIRST_BLOOD";
 	default:
 		return nullptr;
 	}
 }
+
+// =====================
+// STATISTICS START
+// =====================
+#define PLR_KILL_STATS "plr_kill"
+// =====================
+// STATISTICS END
+// =====================

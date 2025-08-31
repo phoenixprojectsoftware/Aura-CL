@@ -25,6 +25,8 @@
 
 #include "vgui_TeamFortressViewport.h"
 
+#include "achievement_manager.h"
+
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );
 
 struct DeathNoticeItem {
@@ -287,13 +289,31 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 	DEATHNOTICE_DISPLAY_TIME = CVAR_GET_FLOAT("hud_deathnotice_time");
 	rgDeathNoticeList[i].flDisplayTime = gHUD.m_flTime + DEATHNOTICE_DISPLAY_TIME;
 
-	// Play local kill sound
+	// Kill increment + sound logic.
 	if ((g_PlayerInfoList[killer].thisplayer || g_iUser2 == killer) &&
 		!rgDeathNoticeList[i].iNonPlayerKill &&
-		!rgDeathNoticeList[i].iSuicide &&
-		m_pCvarKillSnd->value > 0.0f)
+		!rgDeathNoticeList[i].iSuicide)
 	{
-		PlaySound(m_pCvarKillSndPath->string, m_pCvarKillSnd->value);
+#if defined(_STEAMWORKS) && !defined(_HALO)
+		if (!SteamUserStats())
+			gEngfuncs.Con_Printf("Failed to update Steam Stats because it's NULL.\n");
+		if (SteamUserStats())
+		{
+			int32 statValue = 0;
+			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &statValue))
+			{
+				SteamUserStats()->SetStat(PLR_KILL_STATS, statValue + 1);
+				SteamUserStats()->StoreStats();
+				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", statValue + 1);
+			}
+		}
+
+		if (!isAchievementUnlocked(1))
+			UnlockAchievement(1);
+#endif
+
+		if (m_pCvarKillSnd->value > 0.0f)
+			PlaySound(m_pCvarKillSndPath->string, m_pCvarKillSnd->value);
 	}
 
 	// Console output
