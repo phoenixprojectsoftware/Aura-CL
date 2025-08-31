@@ -5,6 +5,8 @@ add_subdirectory(op4_weapons)
 add_subdirectory(vgui)
 
 add_sources(
+	achievement_manager.cpp
+	achievement_manager.h
 	ammo.cpp
 	ammo.h
 	ammo_secondary.cpp
@@ -148,4 +150,4 @@ add_sources(
 	view.cpp
 	view.h
 	voice_status.cpp
-	wrect.h)
+	zamnhlmp_achievements.h)
