@@ -16,7 +16,7 @@
 // One In the Chamber Weapon
 // the easiest way to make this gamemode with no need for a separate gametype.
 // Sabian, Phoenix 2024-08-29
-
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -267,18 +267,4 @@ class COneAmmo : public CBasePlayerAmmo
 		return FALSE;
 	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif

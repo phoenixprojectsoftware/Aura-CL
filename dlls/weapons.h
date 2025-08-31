@@ -213,8 +213,8 @@ public:
 #define SHOCKRIFLE_MAX_CLIP 30
 #define M249_MAX_CLIP				100
 #define PENGUIN_MAX_CLIP 3
-#define SNIPERRIFLE_MAX_CLIP 5
 #endif
+#define SNIPERRIFLE_MAX_CLIP 5
 #define BR_MAX_CLIP 36
 #define GAUSS_MAX_CLIP			WEAPON_NOCLIP
 #define EGON_MAX_CLIP			WEAPON_NOCLIP
@@ -774,6 +774,8 @@ private:
 	unsigned short m_usMP52;
 };
 
+
+
 enum olr_e
 {
 	OLR_LONGIDLE = 0,
@@ -806,6 +808,47 @@ private:
 	EXPORT void BurstThink(void);
 
 	int m_iBurstShotsFired;
+};
+
+enum m7_e
+{
+	M7_LONGIDLE = 0,
+	M7_IDLE1,
+	M7_LAUNCH,
+	M7_RELOAD,
+	M7_DEPLOY,
+	M7_FIRE1,
+	M7_FIRE2,
+	M7_FIRE3,
+};
+
+class CSMG : public CBasePlayerWeapon
+{
+public:
+	void Spawn() override;
+	void Precache() override;
+	int iItemSlot() { return 3; }
+	int GetItemInfo(ItemInfo* p) override;
+
+	void PrimaryAttack() override;
+	void SecondaryAttack() override;
+	BOOL Deploy() override;
+	void Reload() override;
+	void WeaponIdle() override;
+	float m_flNextAnimTime;
+	int m_iShell;
+
+	BOOL UseDecrement() override
+	{
+#if defined(CLIENT_WEAPONS)
+		return true;
+#else
+		return false;
+#endif
+	}
+
+private:
+	unsigned short m_usM7;
 };
 
 class CCrossbow : public CBasePlayerWeapon
