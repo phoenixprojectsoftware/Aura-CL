@@ -645,6 +645,8 @@ public:
 	cvar_t* m_pCvarColor;
 	unsigned long m_iDefaultHUDColor;
 
+	void CheckPhoenixParty();
+
 	void UpdateDefaultHUDColor();
 
 	int DrawHudNumber(int x, int y, int iFlags, int iNumber, int r, int g, int b);
