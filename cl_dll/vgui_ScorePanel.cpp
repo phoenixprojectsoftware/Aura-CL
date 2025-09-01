@@ -35,6 +35,8 @@
 #include "forcemodel.h"
 #include "steam_id.h"
 
+#include "achievement_manager.h"
+
 extern hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
 extern extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
 team_info_t			 g_TeamInfo[MAX_TEAMS+1];
@@ -586,6 +588,27 @@ void ScorePanel::RebuildTeams()
 	Update();
 }
 
+#if defined(_STEAMWORKS) && !defined(_HALO)
+bool IsPhoenixProjectID(const char* steamID)
+{
+	for (int i = 0; i < g_NumPhoenixIDs; ++i)
+	{
+		if (strcmp(steamID, g_PhoenixSteamIDs[i]) == 0)
+			return true;
+	}
+	return false;
+}
+
+bool IsLANOnlyID(const char* steamID)
+{
+	for (int i = 0; i < g_NumLANIDs; ++i)
+	{
+		if (strcmp(steamID, g_LANSteamID[i]) == 0)
+			return true;
+	}
+}
+
+#endif
 
 void ScorePanel::FillGrid()
 {
@@ -964,6 +987,55 @@ void ScorePanel::FillGrid()
 	// hack, for the thing to resize
 	m_PlayerList.getSize(x, y);
 	m_PlayerList.setSize(x, y);
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	static bool PhoenixPartyUnlockTried = false;
+	static bool LANUnlockTried = false;
+
+		bool foundPhoenix = false;
+		bool foundLan = false;
+
+		for (int row = 0; row < m_iRows; row++)
+		{
+			int playerSlot = m_iSortedRows[row]; // actual player slot
+			if (!g_PlayerInfoList[playerSlot].name || g_PlayerInfoList[playerSlot].name[0] == '\0')
+				continue;
+
+			const std::string& steamID = steam_id::get_steam_id(playerSlot - 1); // matches FillGrid index
+
+			gEngfuncs.Con_DPrintf("[SCOREBOARD] Checking slot %d -> SteamID: %s\n", playerSlot, steamID.c_str());
+
+			if (IsPhoenixProjectID(steamID.c_str()))
+			{
+				foundPhoenix = true;
+				break;
+			}
+
+			if (IsLANOnlyID(steamID.c_str()))
+			{
+				foundLan = true;
+				break;
+			}
+		}
+
+		if (foundPhoenix)
+		{
+			gEngfuncs.Con_DPrintf("PHOENIX STEAM ID FOUND!! UNLOCKING ACHIEVEMENT!!\n");
+
+			if (!isAchievementUnlocked(0))
+				UnlockAchievement(0);
+
+			PhoenixPartyUnlockTried = true;
+		}
+
+		if (foundLan)
+		{
+			gEngfuncs.Con_DPrintf("LAN STEAM ID FOUND!! UNLOCKING ACHIEVEMENT!!\n");
+			if (!isAchievementUnlocked(2))
+				UnlockAchievement(2);
+			LANUnlockTried = true;
+		}
+#endif
 }
 
 
