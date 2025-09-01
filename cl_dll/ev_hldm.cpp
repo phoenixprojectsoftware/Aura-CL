@@ -965,7 +965,7 @@ void EV_FireBattleRifle(event_args_t* args)
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(OLR_FIRE1 + gEngfuncs.pfnRandomLong(0, 3), 0);
 
-		Punch(2, 0, 0);
+		V_PunchAxis(0, -2);
 
 		// TODO: add Steam Controller Vibration
 	}

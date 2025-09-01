@@ -798,9 +798,15 @@ public:
 	int GetItemInfo(ItemInfo* p);
 
 	BOOL Deploy(void);
+	void Holster(int skiplocal = 0) override;
 	void PrimaryAttack(void);
+	void ItemPostFrame();
+	void SecondaryAttack(void);
+	void ToggleZoom();
 	void Reload(void);
 	void WeaponIdle(void);
+
+	bool m_bInZoom;
 
 private:
 	unsigned short m_usOLR;

@@ -41,6 +41,7 @@ void CBattleRifle::Precache(void)
 
 	PRECACHE_SOUND("weapons/olr1.wav");
 	PRECACHE_SOUND("weapons/olr2.wav");
+	PRECACHE_SOUND("weapons/olr_zoom.wav");
 
 	m_usOLR = PRECACHE_EVENT(1, "events/olr.sc");
 }
@@ -67,21 +68,38 @@ void CBattleRifle::PrimaryAttack(void)
 		return;
 	}
 
-	m_iBurstShotsFired = 0;
-	FireBurstShot();
+	if (m_iBurstShotsFired == 0)
+	{
+		m_iBurstShotsFired = 1;
+		FireBurstShot();
+	}
+}
 
-	SetThink(&CBattleRifle::BurstThink);
-	pev->nextthink = gpGlobals->time + 0.06f;
+void CBattleRifle::ItemPostFrame()
+{
+	// handle burst continuation
+	if (m_iBurstShotsFired > 0 && gpGlobals->time >= m_flNextPrimaryAttack)
+	{
+		if (m_iBurstShotsFired < 3 && m_iClip > 0)
+		{
+			m_iBurstShotsFired++;
+			FireBurstShot();
+		}
+		else
+		{
+			// reset burst after 3 shots
+			m_iBurstShotsFired = 0;
+			m_flNextPrimaryAttack = gpGlobals->time + 0.32f; // post burst delay
+		}
+	}
 
-	m_flNextPrimaryAttack = gpGlobals->time + 0.5f;
+	CBasePlayerWeapon::ItemPostFrame();
 }
 
 void CBattleRifle::FireBurstShot(void)
 {
-	if (m_iClip <= 0)
-		return;
-
 	CBasePlayer* pPlayer = (CBasePlayer*)m_pPlayer;
+
 	m_iClip--;
 
 #ifndef CLIENT_DLL
@@ -94,16 +112,25 @@ void CBattleRifle::FireBurstShot(void)
 	Legacy_Vector vecSpread = VECTOR_CONE_2DEGREES;
 #endif
 
-	pPlayer->FireBullets(1, vecSrc, vecAiming, vecSpread,
-		8192, BULLET_PLAYER_OLR, 0, 26);
+	pPlayer->FireBullets(1, vecSrc, vecAiming, vecSpread, 8192, BULLET_PLAYER_OLR, 0, 26);
 
-	PLAYBACK_EVENT_FULL(FEV_NOTHOST, pPlayer->edict(), m_usOLR,
-		0.0, (float*)&g_vecZero, (float*)&g_vecZero,
-		vecSpread.x, vecSpread.y,
-		m_iClip, 0, pev->body, 0);
+	int flags;
+#if defined(CLIENT_WEAPONS)
+	flags = FEV_NOTHOST;
+#else
+	flags = 0;
+#endif
+
+	PLAYBACK_EVENT_FULL(0, pPlayer->edict(), m_usOLR, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, vecSpread.x, vecSpread.y, m_iClip, 0, pev->body, 0);
+
+	SendWeaponAnim(OLR_FIRE1);
+
+	// short delay between burst shots
+	m_flNextPrimaryAttack = gpGlobals->time + 0.06f;
+	m_flTimeWeaponIdle = gpGlobals->time + 1.0f;
 }
 
-EXPORT void CBattleRifle::BurstThink(void)
+void CBattleRifle::BurstThink(void)
 {
 	m_iBurstShotsFired++;
 
@@ -120,9 +147,52 @@ EXPORT void CBattleRifle::BurstThink(void)
 	}
 }
 
+void CBattleRifle::SecondaryAttack(void)
+{
+	EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/olr_zoom.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
+
+	m_bInZoom = !m_bInZoom;
+
+	ToggleZoom();
+
+	pev->nextthink = 0.0 + 0.1;
+
+	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.1 + 0.5;
+}
+
+void CBattleRifle::ToggleZoom()
+{
+	if (m_pPlayer->pev->fov == 0)
+	{
+		m_pPlayer->pev->fov = 45;
+		m_pPlayer->m_iFOV = 45;
+
+		m_bInZoom = true;
+	}
+	else
+	{
+		m_pPlayer->pev->fov = 0;
+		m_pPlayer->m_iFOV = 0;
+
+		m_bInZoom = false;
+	}
+}
+
 BOOL CBattleRifle::Deploy(void)
 {
 	return DefaultDeploy("models/weapons/br/v_br.mdl", "models/weapons/br/p_br.mdl", OLR_DEPLOY, "olr");
+}
+
+void CBattleRifle::Holster(int skiplocal)
+{
+	// m_fInReload = false;
+
+	if (m_bInZoom)
+		SecondaryAttack();
+
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.25;
+
+	// SendWeaponAnim(OLR_HOLSTER);
 }
 
 void CBattleRifle::Reload(void)
@@ -133,11 +203,7 @@ void CBattleRifle::Reload(void)
 	if (m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		return;
 
-	if (DefaultReload(BR_MAX_CLIP, OLR_RELOAD, 1.5f))
-	{
-		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/olr2.wav", 1, ATTN_NORM);
-		m_pPlayer->m_flNextAttack = gpGlobals->time + 1.5f;
-	}
+	DefaultReload(MP5_MAX_CLIP, OLR_RELOAD, 2.0f);
 }
 
 void CBattleRifle::WeaponIdle(void)
