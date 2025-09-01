@@ -253,11 +253,13 @@ void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 	char line[256];
 
 	m_pServerName->GetText(tmp, sizeof(tmp));
-	Q_snprintf(line, sizeof(line), "hostname \"%s\"\n", tmp);
+	Q_snprintf(line, sizeof(line), "deathmatch 1 \nhostname \"%s\"\n", tmp);
 	Q_strncat(buffer, line, bufSize);
 
 	if (m_pLAN->IsSelected())
 		Q_strncat(buffer, "sv_lan 1\n", bufSize);
+	else
+		Q_strncat(buffer, "sv_lan 0; sv_use_steam_networking 1\n", bufSize);
 
 	if (m_pRealisticFall->IsSelected())
 		Q_strncat(buffer, "mp_falldamage 2\n", bufSize);
