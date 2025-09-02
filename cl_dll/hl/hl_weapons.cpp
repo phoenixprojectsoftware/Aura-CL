@@ -74,6 +74,7 @@ CGlock g_Glock;
 CCrowbar g_Crowbar;
 CPython g_Python;
 CMP5 g_Mp5;
+CHLDMAR g_HLDMAR;
 CCrossbow g_Crossbow;
 CBattleRifle g_BattleRifle;
 CShotgun g_Shotgun;
@@ -680,6 +681,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Crowbar	, &player );
 	HUD_PrepEntity( &g_Python	, &player );
 	HUD_PrepEntity( &g_Mp5	, &player );
+	HUD_PrepEntity(&g_HLDMAR, &player);
 	HUD_PrepEntity(&g_BattleRifle, &player);
 	HUD_PrepEntity( &g_Crossbow	, &player );
 	HUD_PrepEntity( &g_Shotgun	, &player );
@@ -750,6 +752,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_GLOCK: return &g_Glock;
 	case WEAPON_PYTHON: return &g_Python;
 	case WEAPON_MP5: return &g_Mp5;
+	case WEAPON_HLDMAR: return &g_HLDMAR;
 	case WEAPON_BATTLERIFLE: return &g_BattleRifle;
 	case WEAPON_CROSSBOW: return &g_Crossbow;
 	case WEAPON_SHOTGUN: return &g_Shotgun;

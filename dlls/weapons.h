@@ -105,12 +105,13 @@ public:
 #endif
 
 #define WEAPON_BATTLERIFLE 30
+#define WEAPON_HLDMAR 32
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
 #define WEAPON_SUIT				31	// ?????
 
-#define MAX_WEAPONS			32
+#define MAX_WEAPONS			40
 
 
 #define MAX_NORMAL_BATTERY	100
@@ -121,6 +122,7 @@ public:
 #define GLOCK_WEIGHT		10
 #define PYTHON_WEIGHT		15
 #define MP5_WEIGHT			25
+#define HLDMAR_WEIGHT MP5_WEIGHT
 #define BR_WEIGHT 30
 #define SHOTGUN_WEIGHT		15
 #define CROSSBOW_WEIGHT		10
@@ -174,7 +176,7 @@ public:
 #define SATCHEL_MAX_CARRY		5
 #define TRIPMINE_MAX_CARRY		5
 #define HORNET_MAX_CARRY		8
-#define M203_GRENADE_MAX_CARRY	20
+#define M203_GRENADE_MAX_CARRY	10
 #define SPORELAUNCHER_MAX_CARRY 20
 #define M249_MAX_CARRY			200
 #define PENGUIN_MAX_CARRY 9
@@ -205,6 +207,8 @@ public:
 #define PYTHON_MAX_CLIP			6
 #define MP5_MAX_CLIP			60
 #define MP5_DEFAULT_AMMO		60
+#define HLDMAR_MAX_CLIP 50
+#define HLDMAR_DEFAULT_AMMO HLDMAR_MAX_CLIP
 #define SHOTGUN_MAX_CLIP		8
 #define CROSSBOW_MAX_CLIP		5
 #define RPG_MAX_CLIP			1
@@ -251,6 +255,7 @@ public:
 #define MP5_DEFAULT_GIVE			60
 #define MP5_DEFAULT_AMMO			60
 #define MP5_M203_DEFAULT_GIVE		0
+#define HLDMAR_DEFAULT_GIVE HLDMAR_MAX_CLIP
 #define SHOTGUN_DEFAULT_GIVE		12
 #define CROSSBOW_DEFAULT_GIVE		5
 #define RPG_DEFAULT_GIVE			1
@@ -740,6 +745,38 @@ public:
 
 private:
 	unsigned short m_usFirePython;
+};
+
+class CHLDMAR : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int iItemSlot(void) { return 3; }
+	int GetItemInfo(ItemInfo* p);
+	int AddToPlayer(CBasePlayer* pPlayer);
+
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	int SecondaryAmmoIndex(void);
+	BOOL Deploy(void);
+	void Reload(void);
+	void WeaponIdle(void);
+	float m_flNextAnimTime;
+	int m_iShell;
+
+	virtual BOOL UseDecrement(void)
+	{
+#if defined( CLIENT_WEAPONS )
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+
+private:
+	unsigned short m_usMP5;
+	unsigned short m_usMP52;
 };
 
 class CMP5 : public CBasePlayerWeapon

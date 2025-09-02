@@ -26,6 +26,7 @@ add_sources(
 	egon.cpp
 	gauss.cpp
 	handgrenade.cpp
+	hldmar.cpp
 	hornetgun.cpp
 	mp5.cpp
 	python.cpp
