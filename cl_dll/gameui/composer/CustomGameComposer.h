@@ -87,7 +87,12 @@ public:
 	void GetConfig(char* buffer, size_t bufSize);
 
 private:
+	Label* m_lServerName;
 	TextEntry* m_pServerName;
+
+	Label* m_lMaxplayers;
+	TextEntry* m_pMaxplayers;
+
 	CheckButton* m_pUseSteamNetwork;
 	CheckButton* m_pLAN;
 	CheckButton* m_pRealisticFall;
@@ -97,10 +102,18 @@ private:
 	CheckButton* m_pForceRespawn;
 	CheckButton* m_pAllowCheats;
 
+	Label* m_lSpawnSystem;
 	ComboBox* m_pSpawnSystem;
+
+	Label* m_lInfiniteAmmo;
 	ComboBox* m_pInfiniteAmmo;
+	
+	Label* m_lMapcycle;
 	ComboBox* m_pMapcycle;
 
+	Label* m_lFragLimit;
 	TextEntry* m_pFragLimit;
+
+	Label* m_lTimeLimit;
 	TextEntry* m_pTimeLimit;
 };

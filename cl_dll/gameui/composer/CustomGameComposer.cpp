@@ -25,7 +25,7 @@ using namespace vgui2;
 CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "CustomGameComposer")
 {
 	SetTitle("#Phoenix_CustomGameTitle", true);
-	SetSize(800, 600);
+	SetSize(800, 800);
 	SetMoveable(true);
 	SetSizeable(false);
 	SetDeleteSelfOnClose(true);
@@ -37,13 +37,13 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 	m_pGamemodeList->SetBounds(270, 40, 200, 500);
 
 	m_pOptionsPanel = new CComposerOptionsPanel(this);
-	m_pOptionsPanel->SetBounds(480, 40, 300, 500);
+	m_pOptionsPanel->SetBounds(480, 40, 300, 700);
 
 	m_pStartButton = new Button(this, "StartButton", "Start Game", this, "startgame");
-	m_pStartButton->SetBounds(480, 550, 140, 30);
+	m_pStartButton->SetBounds(480, 750, 140, 30);
 
 	m_pCancelButton = new Button(this, "CancelButton", "Cancel", this, "cancel");
-	m_pCancelButton->SetBounds(640, 550, 140, 30);
+	m_pCancelButton->SetBounds(640, 750, 140, 30);
 
 	LoadMaps();
 }
@@ -187,6 +187,7 @@ const char* CGamemodeListPanel::GetSelectedGamemode()
 	return kv->GetString("name", "arcade");
 }
 
+#define R_BOUNDARY SetBounds(10, y, 200, 20) // sick of fucking repeatin myself man
 //
 // CComposeOptionsPanel
 //
@@ -194,54 +195,98 @@ CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "C
 {
 	int y = 0;
 
+	// HOSTNAME
+	m_lServerName = new Label(this, "ServerLabel", "Hostname");
+	m_lServerName->SetBounds(10, y, 200, 20);
+	y += 30;
+
 	m_pServerName = new TextEntry(this, "ServerName");
-	m_pServerName->SetBounds(10, y, 200, 20);
+	m_pServerName->R_BOUNDARY;
 	m_pServerName->SetText("Cross Product Server");
 	y += 30;
 
+	// MAXPLAYERS
+	m_lMaxplayers = new Label(this, "PlayersLabel", "Max Players");
+	m_lMaxplayers->R_BOUNDARY;
+	y += 30;
+
+	m_pMaxplayers = new TextEntry(this, "MaxPeepee");
+	m_pMaxplayers->SetBounds(10, y, 200, 20);
+	m_pMaxplayers->SetText("12");
+	y += 30;
+
+	// CHECK BUTTONS
 	m_pLAN = new CheckButton(this, "LAN", "Local server");
-	m_pLAN->SetBounds(10, y, 200, 20); y += 25;
+	m_pLAN->SetBounds(5, y, 200, 20); y += 25;
 
 	m_pRealisticFall = new CheckButton(this, "Fall", "Realistic fall damage");
-	m_pRealisticFall->SetBounds(10, y, 200, 20); y += 25;
+	m_pRealisticFall->SetBounds(5, y, 200, 20); y += 25;
 
 	m_pAutoGamemode = new CheckButton(this, "AutoGM", "Auto gamemode switch for CTF maps");
-	m_pAutoGamemode->SetBounds(10, y, 200, 20); y += 25;
+	m_pAutoGamemode->SetBounds(5, y, 250, 20); y += 25;
 
 	m_pFriendlyFire = new CheckButton(this, "FF", "Friendly Fire");
-	m_pFriendlyFire->SetBounds(10, y, 200, 20); y += 25;
+	m_pFriendlyFire->SetBounds(5, y, 200, 20); y += 25;
 
 	m_pWeaponsStay = new CheckButton(this, "WS", "Weapons Stay");
-	m_pWeaponsStay->SetBounds(10, y, 200, 20); y += 25;
+	m_pWeaponsStay->SetBounds(5, y, 200, 20); y += 25;
 
 	m_pForceRespawn = new CheckButton(this, "FR", "Force Respawn");
-	m_pForceRespawn->SetBounds(10, y, 200, 20); y += 25;
+	m_pForceRespawn->SetBounds(5, y, 200, 20); y += 25;
 
 	m_pAllowCheats = new CheckButton(this, "Cheats", "Allow Cheats");
-	m_pAllowCheats->SetBounds(10, y, 200, 20); y += 25;
+	m_pAllowCheats->SetBounds(5, y, 200, 20); y += 25;
+
+	// SPAWN SYSTEM
+	m_lSpawnSystem = new Label(this, "SpawnLabel", "Spawn System");
+	m_lSpawnSystem->R_BOUNDARY;
+	y += 30;
 
 	m_pSpawnSystem = new ComboBox(this, "SpawnSystem", 3, false);
 	m_pSpawnSystem->AddItem("Sequential", nullptr);
 	m_pSpawnSystem->AddItem("Random", nullptr);
 	m_pSpawnSystem->AddItem("Far", nullptr);
+	m_pSpawnSystem->ActivateItem(0);
 	m_pSpawnSystem->SetBounds(10, y, 200, 20); y += 30;
+
+	// INFINITE AMMO
+	m_lInfiniteAmmo = new Label(this, "InfiniteLabel", "Infinite Ammo Mode");
+	m_lInfiniteAmmo->R_BOUNDARY;
+	y += 30;
 
 	m_pInfiniteAmmo = new ComboBox(this, "InfiniteAmmo", 3, false);
 	m_pInfiniteAmmo->AddItem("Off", nullptr);
 	m_pInfiniteAmmo->AddItem("Clip", nullptr);
 	m_pInfiniteAmmo->AddItem("Full", nullptr);
+	m_pInfiniteAmmo->ActivateItem(0);
 	m_pInfiniteAmmo->SetBounds(10, y, 200, 20); y += 30;
+
+	// MAPCYCLE
+	m_lMapcycle = new Label(this, "CycleLabel", "Mapcycle");
+	m_lMapcycle->R_BOUNDARY;
+	y += 30;
 
 	m_pMapcycle = new ComboBox(this, "Mapcycle", 8, false);
 	m_pMapcycle->AddItem("default.mc", nullptr); // TODO: enumerate
+	m_pMapcycle->ActivateItem(0);
 	m_pMapcycle->SetBounds(10, y, 200, 20); y += 30;
 
+	// FRAG LIMIT
+	m_lFragLimit = new Label(this, "FragLabel", "Frag Limit");
+	m_lFragLimit->R_BOUNDARY;
+	y += 30;
+
 	m_pFragLimit = new TextEntry(this, "FragLimit");
-	m_pFragLimit->SetBounds(10, y, 80, 20);
+	m_pFragLimit->SetBounds(10, y, 200, 20);
 	m_pFragLimit->SetText("50"); y += 30;
 
+	// TIME LIMIT
+	m_lTimeLimit = new Label(this, "TimeLabel", "Time Limit");
+	m_lTimeLimit->R_BOUNDARY;
+	y += 30;
+
 	m_pTimeLimit = new TextEntry(this, "TimeLimit");
-	m_pTimeLimit->SetBounds(10, y, 80, 20);
+	m_pTimeLimit->SetBounds(10, y, 200, 20);
 	m_pTimeLimit->SetText("15"); y += 30;
 }
 
@@ -254,6 +299,19 @@ void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 
 	m_pServerName->GetText(tmp, sizeof(tmp));
 	Q_snprintf(line, sizeof(line), "deathmatch 1 \nhostname \"%s\"\n", tmp);
+	Q_strncat(buffer, line, bufSize);
+
+	m_pMaxplayers->GetText(tmp, sizeof(tmp));
+	Q_snprintf(line, sizeof(line), "maxplayers %s\n", tmp);
+	Q_strncat(buffer, line, bufSize);
+
+	// Frag / Time limits
+	m_pFragLimit->GetText(tmp, sizeof(tmp));
+	Q_snprintf(line, sizeof(line), "mp_fraglimit %s\n", tmp);
+	Q_strncat(buffer, line, bufSize);
+
+	m_pTimeLimit->GetText(tmp, sizeof(tmp));
+	Q_snprintf(line, sizeof(line), "mp_timelimit %s\n", tmp);
 	Q_strncat(buffer, line, bufSize);
 
 	if (m_pLAN->IsSelected())
@@ -275,13 +333,6 @@ void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 
 	if (m_pAllowCheats->IsSelected())
 		Q_strncat(buffer, "sv_cheats 1\n", bufSize);
-
-	// Frag / Time limits
-	m_pFragLimit->GetText(tmp, sizeof(tmp));
-	Q_snprintf(line, sizeof(line), "mp_fraglimit %s\n", tmp);
-	Q_strncat(buffer, line, bufSize);
-
-	m_pTimeLimit->GetText(tmp, sizeof(tmp));
-	Q_snprintf(line, sizeof(line), "mp_timelimit %s\n", tmp);
-	Q_strncat(buffer, line, bufSize);
+	else
+		Q_strncat(buffer, "sv_cheats 0\n", bufSize);
 }
