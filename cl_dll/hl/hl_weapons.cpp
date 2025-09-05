@@ -74,7 +74,6 @@ CGlock g_Glock;
 CCrowbar g_Crowbar;
 CPython g_Python;
 CMP5 g_Mp5;
-CHLDMAR g_HLDMAR;
 CCrossbow g_Crossbow;
 CBattleRifle g_BattleRifle;
 CShotgun g_Shotgun;
@@ -89,6 +88,7 @@ CSqueak g_Snark;
 CSniperRifle g_SniperRifle;
 #ifndef _HALO
 COne g_One;
+CHLDMAR g_HLDMAR;
 CGrapple g_Grapple;
 CEagle g_Eagle;
 CKnife g_Knife;
@@ -681,7 +681,6 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Crowbar	, &player );
 	HUD_PrepEntity( &g_Python	, &player );
 	HUD_PrepEntity( &g_Mp5	, &player );
-	HUD_PrepEntity(&g_HLDMAR, &player);
 	HUD_PrepEntity(&g_BattleRifle, &player);
 	HUD_PrepEntity( &g_Crossbow	, &player );
 	HUD_PrepEntity( &g_Shotgun	, &player );
@@ -696,6 +695,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity(&g_SniperRifle, &player);
 #ifndef _HALO
 	HUD_PrepEntity(&g_One, &player);
+	HUD_PrepEntity(&g_HLDMAR, &player);
 	HUD_PrepEntity(&g_Grapple, &player);
 	HUD_PrepEntity(&g_Eagle, &player);
 	HUD_PrepEntity(&g_Knife, &player);
@@ -752,7 +752,6 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_GLOCK: return &g_Glock;
 	case WEAPON_PYTHON: return &g_Python;
 	case WEAPON_MP5: return &g_Mp5;
-	case WEAPON_HLDMAR: return &g_HLDMAR;
 	case WEAPON_BATTLERIFLE: return &g_BattleRifle;
 	case WEAPON_CROSSBOW: return &g_Crossbow;
 	case WEAPON_SHOTGUN: return &g_Shotgun;
@@ -767,6 +766,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
 #ifndef _HALO
 	case WEAPON_ONE: return &g_One;
+	case WEAPON_HLDMAR: return &g_HLDMAR;
 	case WEAPON_GRAPPLE: return &g_Grapple;
 	case WEAPON_M249: return &g_M249;
 	case WEAPON_PENGUIN: return &g_Penguin;
