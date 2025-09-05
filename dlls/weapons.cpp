@@ -1068,7 +1068,7 @@ BOOL CBasePlayerWeapon :: DefaultDeploy( char *szViewModel, char *szWeaponModel,
 	SendWeaponAnim( iAnim, skiplocal, body );
 
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0;
+	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3.0; // halflife#2495
 	m_flLastFireTime = 0.0;
 
 	return TRUE;
