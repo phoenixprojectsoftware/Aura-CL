@@ -44,8 +44,6 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 
 	m_pCancelButton = new Button(this, "CancelButton", "Cancel", this, "cancel");
 	m_pCancelButton->SetBounds(640, 750, 140, 30);
-
-	LoadMaps();
 }
 
 void CCustomGameComposer::OnCommand(const char* command)
@@ -81,23 +79,42 @@ void CMapListPanel::AddMap(const char* mapName)
 	kv->deleteThis();
 }
 
-void CCustomGameComposer::LoadMaps()
+void CMapListPanel::LoadMaps()
 {
-	// enumerate maps directory for BSP files
+	m_pList->RemoveAll();
+
 	FileFindHandle_t findHandle;
-	const char* pszFile = g_pFullFileSystem->FindFirst("maps/*.bsp", &findHandle);
-	while (pszFile)
+	const char* pszFilename = g_pFullFileSystem->FindFirst("maps/*.tag", &findHandle);
+
+	while (pszFilename)
 	{
-		char mapName[MAX_PATH];
-		Q_StripExtension(pszFile, mapName, sizeof(mapName));
+		if (!pszFilename || !*pszFilename)
+		{
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
+			continue;
+		}
 
-		KeyValues* kv = new KeyValues("Map");
-		kv->SetString("name", mapName);
-		m_pMapList->AddMap(mapName);
-		kv->deleteThis();
+		char tagPath[MAX_PATH];
+		Q_snprintf(tagPath, sizeof(tagPath), "maps/%s", pszFilename);
 
-		pszFile = g_pFullFileSystem->FindNext(findHandle);
+		KeyValues* kvTag = new KeyValues("Tag");
+		if (kvTag->LoadFromFile(g_pFullFileSystem, tagPath))
+		{
+			KeyValues* kvMap = new KeyValues("Map");
+
+			char mapName[MAX_PATH];
+			Q_StripExtension(pszFilename, mapName, sizeof(mapName));
+			const char* displayName = kvTag->GetString("mapname", mapName);
+			kvMap->SetString("name", displayName);
+
+			m_pList->AddItem(kvMap, 0, false, false);
+			kvMap->deleteThis();
+		}
+
+		kvTag->deleteThis();
+		pszFilename = g_pFullFileSystem->FindNext(findHandle);
 	}
+
 	g_pFullFileSystem->FindClose(findHandle);
 }
 
@@ -113,9 +130,14 @@ CMapListPanel::CMapListPanel(Panel* pParent) : Panel(pParent, "MapListPanel")
 {
 	m_pList = new ListPanel(this, "MapList");
 	m_pList->SetBounds(0, 0, 250, 400);
+	m_pList->AddColumnHeader(0, "name", "Map", 128);
+	m_pList->SetColumnVisible(0, true);
+	m_pList->SetMultiselectEnabled(false);
 
 	m_pThumbnail = new ImagePanel(this, "MapThumbnail");
 	m_pThumbnail->SetBounds(0, 410, 250, 90);
+
+	LoadMaps();
 }
 
 void CMapListPanel::SetMapThumbnail(const char* mapName)
@@ -146,6 +168,7 @@ CGamemodeListPanel::CGamemodeListPanel(Panel* pParent) : Panel(pParent, "Gamemod
 {
 	m_pList = new ListPanel(this, "GamemodeList");
 	m_pList->SetBounds(0, 0, 200, 500);
+	m_pList->AddColumnHeader(0, "name", "Gamemode", 128);
 }
 
 void CGamemodeListPanel::LoadGamemodesFromTag(const char* mapName)
@@ -158,23 +181,34 @@ void CGamemodeListPanel::LoadGamemodesFromTag(const char* mapName)
 	if (!g_pFullFileSystem->FileExists(path))
 		return;
 
-	FileHandle_t fh = g_pFullFileSystem->Open(path, "r");
-	if (!fh)
-		return;
+	KeyValues* kv = new KeyValues("TagFile");
 
-	char line[128];
-	while (g_pFullFileSystem->ReadLine(line, sizeof(line), fh))
+	if (!kv->LoadFromFile(g_pFullFileSystem, path))
 	{
-		Q_StripPrecedingAndTrailingWhitespace(line);
-		if (line[0] == '\0')
-			continue;
-
-		KeyValues* kv = new KeyValues("Gamemode");
-		kv->SetString("name", line);
-		m_pList->AddItem(kv, 0, false, false);
 		kv->deleteThis();
+		return;
 	}
-	g_pFullFileSystem->Close(fh);
+
+	KeyValues* gamemodes = kv->FindKey("gamemodes");
+	if (!gamemodes)
+	{
+		kv->deleteThis();
+		return;
+	}
+
+	// iterate through each gamemode entry.
+	for (KeyValues* subKey = gamemodes->GetFirstSubKey(); subKey; subKey = subKey->GetNextKey())
+	{
+		const char* gmName = subKey->GetName();
+
+		KeyValues* kvItem = new KeyValues("Gamemode");
+		kvItem->SetString("name", gmName);
+
+		m_pList->AddItem(kvItem, 0, false, false);
+		kvItem->deleteThis();
+	}
+
+	kv->deleteThis();
 }
 
 const char* CGamemodeListPanel::GetSelectedGamemode()
