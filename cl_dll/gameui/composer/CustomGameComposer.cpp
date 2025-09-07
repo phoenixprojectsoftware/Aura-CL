@@ -16,6 +16,7 @@
 #include <vgui/IVGui.h>
 #include <KeyValues.h>
 #include "../../engineclientcmd.h"
+#include <tier0/dbg.h>
 
 using namespace vgui2;
 
@@ -94,6 +95,10 @@ void CMapListPanel::LoadMaps()
 			continue;
 		}
 
+#ifdef _DEBUG
+		Msg("LoadMaps() Found map tag: %s\n", pszFilename);
+#endif
+
 		char tagPath[MAX_PATH];
 		Q_snprintf(tagPath, sizeof(tagPath), "maps/%s", pszFilename);
 
@@ -107,9 +112,19 @@ void CMapListPanel::LoadMaps()
 			const char* displayName = kvTag->GetString("mapname", mapName);
 			kvMap->SetString("name", displayName);
 
+#ifdef _DEBUG
+			Msg(" - Adding map: %s (from %s)\n", displayName, pszFilename);
+#endif
+
 			m_pList->AddItem(kvMap, 0, false, false);
 			kvMap->deleteThis();
 		}
+#ifdef _DEBUG
+		else
+		{
+			Msg(" - Failed to load tag file: %s\n", tagPath);
+		}
+#endif
 
 		kvTag->deleteThis();
 		pszFilename = g_pFullFileSystem->FindNext(findHandle);
@@ -151,6 +166,34 @@ void CMapListPanel::SetMapThumbnail(const char* mapName)
 		m_pThumbnail->SetImage("ui/gfx/vgui/nomap.tga"); // fallback
 }
 
+void CMapListPanel::OnItemSelected(KeyValues* params)
+{
+	int itemID = params->GetInt("itemID", -1);
+	if (itemID < 0)
+		return;
+
+	KeyValues* kv = m_pList->GetItem(itemID);
+	if (!kv)
+		return;
+
+	const char* mapName = kv->GetString("name", nullptr);
+	if (!mapName || !*mapName)
+		return;
+
+#ifdef _DEBUG
+	Msg("Map selected: %s\n", mapName);
+#endif
+
+	// update thumbnail BOIZ
+	SetMapThumbnail(mapName);
+
+	// tell parent to load gamemodes for this map
+	if (auto* composer = dynamic_cast<CCustomGameComposer*>(GetParent()))
+	{
+		composer->LoadGamemodesForMap(mapName);
+	}
+}
+
 const char* CMapListPanel::GetSelectedMap()
 {
 	int itemID = m_pList->GetSelectedItem(0);
@@ -169,46 +212,101 @@ CGamemodeListPanel::CGamemodeListPanel(Panel* pParent) : Panel(pParent, "Gamemod
 	m_pList = new ListPanel(this, "GamemodeList");
 	m_pList->SetBounds(0, 0, 200, 500);
 	m_pList->AddColumnHeader(0, "name", "Gamemode", 128);
+	m_pList->SetColumnVisible(0, true);
+	m_pList->SetMultiselectEnabled(false);
 }
 
 void CGamemodeListPanel::LoadGamemodesFromTag(const char* mapName)
 {
+#ifdef _DEBUG
+	Msg("[DEBUG] LoadGamemodesFromTag() called for map: '%s'\n", mapName ? mapName : "<null>");
+#endif
+
 	m_pList->RemoveAll();
+
+	if (!mapName || !*mapName)
+	{
+#ifdef _DEBUG
+		Msg("[DEBUG] No mapName provided, returning early.\n");
+#endif
+		return;
+	}
 
 	char path[MAX_PATH];
 	Q_snprintf(path, sizeof(path), "maps/%s.tag", mapName);
 
+#ifdef _DEBUG
+	Msg("[DEBUG] Checking if tag file exists: %s\n", path);
+#endif
+
 	if (!g_pFullFileSystem->FileExists(path))
-		return;
-
-	KeyValues* kv = new KeyValues("TagFile");
-
-	if (!kv->LoadFromFile(g_pFullFileSystem, path))
 	{
-		kv->deleteThis();
+#ifdef _DEBUG
+		Msg("[DEBUG] Tag file does not exist: %s\n", path);
+#endif
 		return;
 	}
 
-	KeyValues* gamemodes = kv->FindKey("gamemodes");
+	KeyValues* kvTag = new KeyValues("TagFile");
+	if (!kvTag->LoadFromFile(g_pFullFileSystem, path))
+	{
+#ifdef _DEBUG
+		Msg("[DEBUG] Failed to load tag file: %s\n", path);
+#endif
+		kvTag->deleteThis();
+		return;
+	}
+
+#ifdef _DEBUG
+	Msg("[DEBUG] Successfully loaded tag file: %s\n", path);
+#endif
+
+	KeyValues* gamemodes = kvTag->FindKey("gamemodes");
 	if (!gamemodes)
 	{
-		kv->deleteThis();
+#ifdef _DEBUG
+		Msg("[DEBUG] No 'gamemodes' key found in tag file: %s\n", path);
+#endif
+		kvTag->deleteThis();
 		return;
 	}
 
-	// iterate through each gamemode entry.
+#ifdef _DEBUG
+	Msg("[DEBUG] Found 'gamemodes' key, iterating subkeys...\n");
+#endif
+
+	int count = 0;
 	for (KeyValues* subKey = gamemodes->GetFirstSubKey(); subKey; subKey = subKey->GetNextKey())
 	{
 		const char* gmName = subKey->GetName();
+		if (!gmName || !*gmName)
+		{
+#ifdef _DEBUG
+			Msg("[DEBUG] Skipping empty subkey name\n");
+#endif
+			continue;
+		}
+
+#ifdef _DEBUG
+		Msg("[DEBUG] Adding gamemode: '%s'\n", gmName);
+#endif
 
 		KeyValues* kvItem = new KeyValues("Gamemode");
 		kvItem->SetString("name", gmName);
-
 		m_pList->AddItem(kvItem, 0, false, false);
 		kvItem->deleteThis();
+		count++;
 	}
 
-	kv->deleteThis();
+#ifdef _DEBUG
+	Msg("[DEBUG] Total gamemodes added: %d\n", count);
+#endif
+
+	kvTag->deleteThis();
+
+	// Force the ListPanel to redraw and refresh
+	m_pList->InvalidateLayout();
+	m_pList->Repaint();
 }
 
 const char* CGamemodeListPanel::GetSelectedGamemode()

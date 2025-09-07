@@ -49,13 +49,14 @@ private:
 class CMapListPanel : public Panel
 {
 	DECLARE_CLASS_SIMPLE(CMapListPanel, Panel);
-	MESSAGE_FUNC_PARAMS(OnItemSelected, "ItemSelected", params);
 
 public:
 	CMapListPanel(Panel* pParent);
 	void LoadMaps();
 	void AddMap(const char* mapName);
 	void SetMapThumbnail(const char* mapName);
+	MESSAGE_FUNC_PARAMS(OnItemSelected, "ItemSelected", params);
+	// void OnItemSelected(KeyValues* params);
 	const char* GetSelectedMap();
 
 private:
