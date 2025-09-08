@@ -500,6 +500,11 @@ void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 	if (m_pRealisticFall->IsSelected())
 		Q_strncat(buffer, "mp_falldamage 2\n", bufSize);
 
+	if (m_pAutoGamemode->IsSelected())
+		Q_strncat(buffer, "sv_aura_gamemode_auto 1\n", bufSize);
+	else
+		Q_strncat(buffer, "sv_aura_gamemode_auto 0\n", bufSize);
+
 	if (m_pFriendlyFire->IsSelected())
 		Q_strncat(buffer, "mp_friendlyfire 1\n", bufSize);
 
@@ -513,4 +518,42 @@ void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 		Q_strncat(buffer, "sv_cheats 1\n", bufSize);
 	else
 		Q_strncat(buffer, "sv_cheats 0\n", bufSize);
+
+	int spawnType = m_pSpawnSystem->GetActiveItem();
+	switch (spawnType)
+	{
+	case 0: // Sequential
+		Q_strncat(buffer, "ag_spawn_system 0\n", bufSize);
+		break;
+	case 1: // Random
+		Q_strncat(buffer, "ag_spawn_system 1\n", bufSize);
+		break;
+	case 2: // Far
+		Q_strncat(buffer, "ag_spawn_system 2\n", bufSize);
+		break;
+	default:
+		Q_strncat(buffer, "ag_spawn_system 0\n", bufSize);
+		break;
+	}
+
+	int ammoType = m_pInfiniteAmmo->GetActiveItem();
+	switch (ammoType)
+	{
+	case 0: // Off
+		Q_strncat(buffer, "sv_aura_infinite_ammo 0\n", bufSize);
+		break;
+	case 1: // Clip
+		Q_strncat(buffer, "sv_aura_infinite_ammo 1\n", bufSize);
+		break;
+	case 2: // Full
+		Q_strncat(buffer, "sv_aura_infinite_ammo 2\n", bufSize);
+		break;
+	default:
+		Q_strncat(buffer, "sv_aura_infinite_ammo 0\n", bufSize);
+		break;
+	}
+
+	m_pMapcycle->GetText(tmp, sizeof(tmp));
+	Q_snprintf(line, sizeof(line), "mapcyclefile %s\n", tmp);
+	Q_strncat(buffer, line, bufSize);
 }
