@@ -54,9 +54,9 @@ public:
 	CMapListPanel(Panel* pParent);
 	void LoadMaps();
 	void AddMap(const char* mapName);
+	void OnItemSelected();
+	void OnCommand(const char* command) override;
 	void SetMapThumbnail(const char* mapName);
-	MESSAGE_FUNC_PARAMS(OnItemSelected, "ItemSelected", params);
-	// void OnItemSelected(KeyValues* params);
 	const char* GetSelectedMap();
 
 private:
@@ -71,7 +71,8 @@ class CGamemodeListPanel : public Panel
 
 public:
 	CGamemodeListPanel(Panel* pParent);
-	void LoadGamemodesFromTag(const char* mapName);
+	void LoadGamemodesFromDir();
+	const char* GetTooltipTextForItem(int itemID);
 	const char* GetSelectedGamemode();
 
 private:

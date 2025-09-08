@@ -20,6 +20,8 @@
 
 using namespace vgui2;
 
+#define GMLIST_TALL 400
+
 //
 // CCustomGameComposer
 //
@@ -30,12 +32,15 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 	SetMoveable(true);
 	SetSizeable(false);
 	SetDeleteSelfOnClose(true);
+	MoveToCenterOfScreen();
 
 	m_pMapList = new CMapListPanel(this);
 	m_pMapList->SetBounds(10, 40, 250, 500);
+	m_pMapList->LoadMaps();
 
 	m_pGamemodeList = new CGamemodeListPanel(this);
-	m_pGamemodeList->SetBounds(270, 40, 200, 500);
+	m_pGamemodeList->SetBounds(270, 40, 200, GMLIST_TALL);
+	m_pGamemodeList->LoadGamemodesFromDir();
 
 	m_pOptionsPanel = new CComposerOptionsPanel(this);
 	m_pOptionsPanel->SetBounds(480, 40, 300, 700);
@@ -57,12 +62,19 @@ void CCustomGameComposer::OnCommand(const char* command)
 		char config[1024];
 		m_pOptionsPanel->GetConfig(config, sizeof(config));
 
-		// build command string (placeholder, will expand)
-		char cmd[128];
-		Q_snprintf(cmd, sizeof(cmd), "map %s\n", map);
+		char mapCmd[128];
+		Q_snprintf(mapCmd, sizeof(mapCmd), "map %s\n", map);
+
+		char gmCmd[128];
+		Q_snprintf(gmCmd, sizeof(gmCmd), "sv_aura_gamemode %s\n", gamemode);
 
 		VGUI2_Cmd(config);
-		VGUI2_Cmd(cmd);
+		VGUI2_Cmd(mapCmd);
+		VGUI2_Cmd(gmCmd);
+
+		// debug output
+		Msg("[Composer] Applied server config: %s\n", config);
+		Msg("[Composer] Starting map: %s on %s\n", map, gamemode);
 
 		Close();
 	}
@@ -85,7 +97,9 @@ void CMapListPanel::LoadMaps()
 	m_pList->RemoveAll();
 
 	FileFindHandle_t findHandle;
-	const char* pszFilename = g_pFullFileSystem->FindFirst("maps/*.tag", &findHandle);
+	const char* pszFilename = g_pFullFileSystem->FindFirst("maps/*.bsp", &findHandle);  // map codename
+
+	CUtlVector<CUtlString> addedMaps; // track added map names to avoid duplicates
 
 	while (pszFilename)
 	{
@@ -94,48 +108,53 @@ void CMapListPanel::LoadMaps()
 			pszFilename = g_pFullFileSystem->FindNext(findHandle);
 			continue;
 		}
+		// strip extension
+		char mapName[MAX_PATH]; // clean version of map name
+		Q_StripExtension(pszFilename, mapName, sizeof(mapName));
 
-#ifdef _DEBUG
-		Msg("LoadMaps() Found map tag: %s\n", pszFilename);
-#endif
-
-		char tagPath[MAX_PATH];
-		Q_snprintf(tagPath, sizeof(tagPath), "maps/%s", pszFilename);
-
-		KeyValues* kvTag = new KeyValues("Tag");
-		if (kvTag->LoadFromFile(g_pFullFileSystem, tagPath))
+		// check for duplicates
+		bool bDuplicate = false;
+		for (int i = 0; i < addedMaps.Count(); i++)
 		{
-			KeyValues* kvMap = new KeyValues("Map");
-
-			char mapName[MAX_PATH];
-			Q_StripExtension(pszFilename, mapName, sizeof(mapName));
-			const char* displayName = kvTag->GetString("mapname", mapName);
-			kvMap->SetString("name", displayName);
-
-#ifdef _DEBUG
-			Msg(" - Adding map: %s (from %s)\n", displayName, pszFilename);
-#endif
-
-			m_pList->AddItem(kvMap, 0, false, false);
-			kvMap->deleteThis();
+			if (!Q_stricmp(addedMaps[i].Get(), mapName))
+			{
+				bDuplicate = true;
+				break;
+			}
 		}
-#ifdef _DEBUG
-		else
+		if (bDuplicate)
 		{
-			Msg(" - Failed to load tag file: %s\n", tagPath);
+#ifdef _DEBUG
+			Msg("LoadMaps() skipping duplicate map: %s\n", mapName);
+#endif
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
+			continue;
 		}
+
+		addedMaps.AddToTail(mapName); // remember we added this map
+
+#ifdef _DEBUG
+		Msg("LoadMaps() found map bsp: %s -> %s\n",pszFilename,  mapName);
 #endif
 
-		kvTag->deleteThis();
+		KeyValues* kvMap = new KeyValues("Map");
+		kvMap->SetString("name", mapName);
+		m_pList->AddItem(kvMap, 0, false, false);
+		kvMap->deleteThis();
+
 		pszFilename = g_pFullFileSystem->FindNext(findHandle);
 	}
-
 	g_pFullFileSystem->FindClose(findHandle);
-}
 
-void CCustomGameComposer::LoadGamemodesForMap(const char* mapName)
-{
-	m_pGamemodeList->LoadGamemodesFromTag(mapName);
+	// refresh UI
+	m_pList->InvalidateLayout();
+	m_pList->Repaint();
+
+	if (m_pList->GetItemCount() > 0)
+	{
+		m_pList->SetSingleSelectedItem(0);
+		OnItemSelected();
+	}
 }
 
 //
@@ -148,11 +167,16 @@ CMapListPanel::CMapListPanel(Panel* pParent) : Panel(pParent, "MapListPanel")
 	m_pList->AddColumnHeader(0, "name", "Map", 128);
 	m_pList->SetColumnVisible(0, true);
 	m_pList->SetMultiselectEnabled(false);
+	m_pList->SetSelectIndividualCells(true); // not sure about keeping this
+	m_pList->AddActionSignalTarget(this);
 
 	m_pThumbnail = new ImagePanel(this, "MapThumbnail");
-	m_pThumbnail->SetBounds(0, 410, 250, 90);
-
-	LoadMaps();
+	m_pThumbnail->SetBounds(0, 410, 250, 150);
+	m_pThumbnail->SetImage("ui/gfx/vgui/nomap.tga"); // fallback
+	m_pThumbnail->SetShouldScaleImage(true);
+	m_pThumbnail->SetShouldCenterImage(true);
+	m_pThumbnail->SetScaleAmount(1.0f);
+	m_pThumbnail->SetPos(4, 4);
 }
 
 void CMapListPanel::SetMapThumbnail(const char* mapName)
@@ -166,32 +190,28 @@ void CMapListPanel::SetMapThumbnail(const char* mapName)
 		m_pThumbnail->SetImage("ui/gfx/vgui/nomap.tga"); // fallback
 }
 
-void CMapListPanel::OnItemSelected(KeyValues* params)
+void CMapListPanel::OnItemSelected()
 {
-	int itemID = params->GetInt("itemID", -1);
-	if (itemID < 0)
+	int itemID = m_pList->GetSelectedItem(0);
+	if (itemID == -1)
+	{
+		m_pThumbnail->SetImage("ui/gfx/vgui/nomap.tga"); // fallback
 		return;
+	}
 
 	KeyValues* kv = m_pList->GetItem(itemID);
-	if (!kv)
-		return;
+	if (kv)
+		SetMapThumbnail(kv->GetString("name", "unknown"));
+}
 
-	const char* mapName = kv->GetString("name", nullptr);
-	if (!mapName || !*mapName)
-		return;
-
-#ifdef _DEBUG
-	Msg("Map selected: %s\n", mapName);
-#endif
-
-	// update thumbnail BOIZ
-	SetMapThumbnail(mapName);
-
-	// tell parent to load gamemodes for this map
-	if (auto* composer = dynamic_cast<CCustomGameComposer*>(GetParent()))
+void CMapListPanel::OnCommand(const char* command)
+{
+	if (!Q_stricmp(command, "ItemSelected"))
 	{
-		composer->LoadGamemodesForMap(mapName);
+		OnItemSelected();
 	}
+	else
+		BaseClass::OnCommand(command);
 }
 
 const char* CMapListPanel::GetSelectedMap()
@@ -201,7 +221,7 @@ const char* CMapListPanel::GetSelectedMap()
 		return "Crossfire"; // fallback
 
 	KeyValues* kv = m_pList->GetItem(itemID);
-	return kv->GetString("name", "Crossfire");
+	return kv ? kv->GetString("name", "Crossfire") : "Crossfire"; // fallback to Crossfire if something goes wrong
 }
 
 //
@@ -210,113 +230,139 @@ const char* CMapListPanel::GetSelectedMap()
 CGamemodeListPanel::CGamemodeListPanel(Panel* pParent) : Panel(pParent, "GamemodeListPanel")
 {
 	m_pList = new ListPanel(this, "GamemodeList");
-	m_pList->SetBounds(0, 0, 200, 500);
+	m_pList->SetBounds(0, 0, 200, GMLIST_TALL);
 	m_pList->AddColumnHeader(0, "name", "Gamemode", 128);
 	m_pList->SetColumnVisible(0, true);
 	m_pList->SetMultiselectEnabled(false);
 }
 
-void CGamemodeListPanel::LoadGamemodesFromTag(const char* mapName)
+void CGamemodeListPanel::LoadGamemodesFromDir()
 {
 #ifdef _DEBUG
-	Msg("[DEBUG] LoadGamemodesFromTag() called for map: '%s'\n", mapName ? mapName : "<null>");
+	Msg("LoadGamemodesFromDir() called\n");
 #endif
 
 	m_pList->RemoveAll();
 
-	if (!mapName || !*mapName)
+	FileFindHandle_t findHandle;
+	const char* pszFilename = g_pFullFileSystem->FindFirst("gamemodes/*.cfg", &findHandle);
+
+	CUtlVector<CUtlString> addedModes; // track added gamemodes to avoid duplicates
+
+	while (pszFilename)
 	{
-#ifdef _DEBUG
-		Msg("[DEBUG] No mapName provided, returning early.\n");
-#endif
-		return;
-	}
-
-	char path[MAX_PATH];
-	Q_snprintf(path, sizeof(path), "maps/%s.tag", mapName);
-
-#ifdef _DEBUG
-	Msg("[DEBUG] Checking if tag file exists: %s\n", path);
-#endif
-
-	if (!g_pFullFileSystem->FileExists(path))
-	{
-#ifdef _DEBUG
-		Msg("[DEBUG] Tag file does not exist: %s\n", path);
-#endif
-		return;
-	}
-
-	KeyValues* kvTag = new KeyValues("TagFile");
-	if (!kvTag->LoadFromFile(g_pFullFileSystem, path))
-	{
-#ifdef _DEBUG
-		Msg("[DEBUG] Failed to load tag file: %s\n", path);
-#endif
-		kvTag->deleteThis();
-		return;
-	}
-
-#ifdef _DEBUG
-	Msg("[DEBUG] Successfully loaded tag file: %s\n", path);
-#endif
-
-	KeyValues* gamemodes = kvTag->FindKey("gamemodes");
-	if (!gamemodes)
-	{
-#ifdef _DEBUG
-		Msg("[DEBUG] No 'gamemodes' key found in tag file: %s\n", path);
-#endif
-		kvTag->deleteThis();
-		return;
-	}
-
-#ifdef _DEBUG
-	Msg("[DEBUG] Found 'gamemodes' key, iterating subkeys...\n");
-#endif
-
-	int count = 0;
-	for (KeyValues* subKey = gamemodes->GetFirstSubKey(); subKey; subKey = subKey->GetNextKey())
-	{
-		const char* gmName = subKey->GetName();
-		if (!gmName || !*gmName)
+		if (!pszFilename || !*pszFilename)
 		{
-#ifdef _DEBUG
-			Msg("[DEBUG] Skipping empty subkey name\n");
-#endif
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
 			continue;
 		}
 
+		// strip extension
+		char gmInternal[MAX_PATH];
+		Q_StripExtension(pszFilename, gmInternal, sizeof(gmInternal));
+
+		char fullPath[MAX_PATH];
+		Q_snprintf(fullPath, sizeof(fullPath), "gamemodes/%s", pszFilename);
+
+		// check for duplicates
+		bool bDuplicate = false;
+		for (int i = 0; i < addedModes.Count(); i++)
+					{
+			if (!Q_stricmp(addedModes[i].Get(), gmInternal))
+			{
+				bDuplicate = true;
+				break;
+			}
+		}
+		if (bDuplicate)
+		{
+			#ifdef _DEBUG
+			Msg("LoadGamemodesFromDir() skipping duplicate gamemode: %s\n", gmInternal);
+#endif
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
+			continue;
+		}
+
+		addedModes.AddToTail(gmInternal); // remember we added this gamemode
+
+		// open file to read first two lines
+		FileHandle_t file = g_pFullFileSystem->Open(fullPath, "r");
+		char displayName[128] = {0};
+		char description[256] = {0};
+
+		if (file)
+		{
+			char line[256];
+
+			// first line: display name
+			if (g_pFullFileSystem->ReadLine(line, sizeof(line), file))
+			{
+				// first line of a gamemode starts with "//", so skip those two chars
+				if (Q_strnicmp(line, "//", 2) == 0)
+				{
+					Q_strncpy(displayName, line + 2, sizeof(displayName));
+					Q_StripPrecedingAndTrailingWhitespace(displayName);
+				}
+			}
+
+			// second line: description
+			if (g_pFullFileSystem->ReadLine(line, sizeof(line), file))
+			{
+				// second line of a gamemode starts with "//", so skip those two chars
+				if (Q_strnicmp(line, "//", 2) == 0)
+				{
+					Q_strncpy(description, line + 2, sizeof(description));
+					Q_StripPrecedingAndTrailingWhitespace(description);
+				}
+			}
+
+			g_pFullFileSystem->Close(file);
+		}
+
+		if (!*displayName)
+			Q_strncpy(displayName, gmInternal, sizeof(displayName));
+
+		if (!*description)
+			Q_strncpy(description, "No description available.", sizeof(description));
+
 #ifdef _DEBUG
-		Msg("[DEBUG] Adding gamemode: '%s'\n", gmName);
+		Msg("Adding gamemode: internal='%s', display='%s'\n", gmInternal, displayName);
 #endif
 
-		KeyValues* kvItem = new KeyValues("Gamemode");
-		kvItem->SetString("name", gmName);
-		m_pList->AddItem(kvItem, 0, false, false);
-		kvItem->deleteThis();
-		count++;
+		// Add to list
+		KeyValues* kv = new KeyValues("Gamemode");
+		kv->SetString("name", displayName);  // visible name
+		kv->SetString("internal", gmInternal); // internal name. this gets fed to sv_aura_gamemode
+		kv->SetString("description", description); // tooltip text
+		m_pList->AddItem(kv, 0, false, false);
+		kv->deleteThis();
+
+		pszFilename = g_pFullFileSystem->FindNext(findHandle);
 	}
 
-#ifdef _DEBUG
-	Msg("[DEBUG] Total gamemodes added: %d\n", count);
-#endif
+	g_pFullFileSystem->FindClose(findHandle);
 
-	kvTag->deleteThis();
-
-	// Force the ListPanel to redraw and refresh
+	// refresh UI
 	m_pList->InvalidateLayout();
 	m_pList->Repaint();
+}
+
+const char* CGamemodeListPanel::GetTooltipTextForItem(int itemID)
+{
+	KeyValues* kv = m_pList->GetItem(itemID);
+	if (kv)
+		return kv->GetString("description", "No description available.");
+	return nullptr;
 }
 
 const char* CGamemodeListPanel::GetSelectedGamemode()
 {
 	int itemID = m_pList->GetSelectedItem(0);
 	if (itemID == -1)
-		return "arcade";
+		return "ffa"; // fallback
 
 	KeyValues* kv = m_pList->GetItem(itemID);
-	return kv->GetString("name", "arcade");
+	return kv->GetString("internal", "ffa");
 }
 
 #define R_BOUNDARY SetBounds(10, y, 200, 20) // sick of fucking repeatin myself man
