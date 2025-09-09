@@ -564,30 +564,28 @@ void CGauss::WeaponIdle( void )
 		m_fInAttack = 0;
 		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 2.0;
 	}
+	
+	if (m_flTimeWeaponIdle > UTIL_WeaponTimeBase())
+		return;
+
+	int iAnim;
+	float flRand = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0, 1);
+	if (flRand <= 0.75)
+	{
+		iAnim = GAUSS_IDLE;
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 80.0 / 15.6 * (2);
+	}
+	else if (flRand <= 0.875)
+	{
+		iAnim = GAUSS_IDLE2;
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 80.0 / 19.0;
+	}
 	else
 	{
-		int iAnim;
-		float flRand = RANDOM_FLOAT(0, 1);
-		if (flRand <= 0.5)
-		{
-			iAnim = GAUSS_IDLE;
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
-		}
-		else if (flRand <= 0.75)
-		{
-			iAnim = GAUSS_IDLE2;
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat( m_pPlayer->random_seed, 10, 15 );
-		}
-		else
-		{
-			iAnim = GAUSS_FIDGET;
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3;
-		}
-
-		return;
-		SendWeaponAnim( iAnim );
-		
+		iAnim = GAUSS_FIDGET;
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 85.0 / 15.0;
 	}
+	SendWeaponAnim(iAnim);
 }
 
 
