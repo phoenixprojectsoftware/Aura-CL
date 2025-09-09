@@ -87,6 +87,8 @@ class CComposerOptionsPanel : public Panel
 public:
 	CComposerOptionsPanel(Panel* pParent);
 
+	const char* GetFragLimit();
+	const char* GetTimeLimit();
 	void GetConfig(char* buffer, size_t bufSize);
 
 private:
