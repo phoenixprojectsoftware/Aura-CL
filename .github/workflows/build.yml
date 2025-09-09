@@ -88,4 +88,42 @@ jobs:
                 build/client.so 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
+  build-linux-clang-cb:
+    name: build-linux (clang-${{ matrix.clang-ver }}, ${{ matrix.configuration }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        clang-ver: [15] # #.0 is interpreted as integer without quotation marks
+        configuration: [SteamClosedBeta]
+    env:
+      CC: clang-${{ matrix.clang-ver }}
+      CXX: clang++-${{ matrix.clang-ver }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup
+        run: |
+          if [ '${{ matrix.clang-ver }}' -ge '11' ]; then
+            wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+            sudo add-apt-repository 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-11 main'
+            sudo add-apt-repository 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main'
+          fi
+          sudo apt-get update
+          sudo apt-get install -y clang-${{ matrix.clang-ver }} g++-multilib libgl-dev ninja-build rapidjson-dev
+      - name: CMake generate
+        run: |
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} -B build
+            ls -1
+      - name: Build
+        working-directory: build
+        run: ninja
+      - name: Publish Linux client binary.
+        uses: actions/upload-artifact@v4
+        with:
+            path: |
+                build/client.so 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
