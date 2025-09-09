@@ -84,6 +84,7 @@ jobs:
       - name: Publish Linux client binary.
         uses: actions/upload-artifact@v4
         with:
+            name: Aura-Client-Linux32-Release
             path: |
                 build/client.so 
         env:
@@ -123,6 +124,7 @@ jobs:
       - name: Publish Linux client binary.
         uses: actions/upload-artifact@v4
         with:
+            name: Aura-Client-Linux32-Beta
             path: |
                 build/client.so 
         env:
