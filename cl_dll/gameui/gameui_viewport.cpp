@@ -8,10 +8,12 @@
 #include "../client_vgui.h"
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
+#include "composer/CustomGameComposer.h"
 #include "serverbrowser/CServerBrowser.h"
 // TODO: ADVANCED OPTIONS
 // TODO: ACHIEVEMENT MENU
 #include "workshop/CWorkshopDialog.h"
+#include "CImageMenuButton.h"
 #include <FileSystem.h>
 #include <filesystem>
 #include <iostream>
@@ -23,6 +25,11 @@
 CON_COMMAND(gameui_opentest, "Opens test")
 {
 	CGameUIViewport::Get()->OpenTestPanel();
+}
+
+CON_COMMAND(gameui_composer, "Composer")
+{
+	CGameUIViewport::Get()->OpenComposer();
 }
 
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
@@ -74,6 +81,14 @@ void CGameUIViewport::OpenTestPanel()
 	GetDialog(m_hTestPanel)->Activate();
 }
 
+void CGameUIViewport::OpenComposer()
+{
+	CCustomGameComposer* pComposer = new CCustomGameComposer(this);
+	pComposer->MakePopup();
+	pComposer->SetVisible(true);
+	pComposer->MoveToFront();
+}
+
 void CGameUIViewport::OnThink()
 {
 	BaseClass::OnThink();
@@ -90,6 +105,16 @@ void CGameUIViewport::OnThink()
 		// So the change is delayed by one frame
 		if (m_bDelayedPreventEscape)
 			m_bDelayedPreventEscape = false;
+	}
+
+	// create the dialog immediately
+	if (!m_hImageButton)
+	{
+		int wx, wy, ww, wt;
+		vgui2::surface()->GetWorkspaceBounds(wx, wy, ww, wt);
+		m_hImageButton = new CImageMenuButton(this, VGUI2_ROOT_DIR "gfx/vgui/discord", "https://discord.gg/mGr94ZqDWU");
+		m_hImageButton->MakePopup(false, false);
+		m_hImageButton->SetContent((ww - 256) - 50, (wt - 128) - 384, 256, 128); // Right-center so it doesn't cover the ver watermark
 	}
 
 	if (m_bPrepareForQueryDownload)
