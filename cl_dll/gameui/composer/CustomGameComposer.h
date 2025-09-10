@@ -89,6 +89,15 @@ public:
 
 	const char* GetFragLimit();
 	const char* GetTimeLimit();
+	const char* GetInfiniteAmmo();
+	const char* GetSpawnSystem();
+	const char* GetAutoGM();
+	const char* GetFlashlight();
+	const char* GetFallDamage();
+	const char* GetFriendlyFire();
+	const char* GetWeaponsStay();
+	const char* GetForceRespawn();
+	const char* GetAllowCheats();
 	void GetConfig(char* buffer, size_t bufSize);
 
 private:
@@ -102,6 +111,7 @@ private:
 	CheckButton* m_pLAN;
 	CheckButton* m_pRealisticFall;
 	CheckButton* m_pAutoGamemode;
+	CheckButton* m_pFlashlight;
 	CheckButton* m_pFriendlyFire;
 	CheckButton* m_pWeaponsStay;
 	CheckButton* m_pForceRespawn;
