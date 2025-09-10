@@ -12,6 +12,7 @@
 // TODO: ADVANCED OPTIONS
 // TODO: ACHIEVEMENT MENU
 #include "workshop/CWorkshopDialog.h"
+#include "CImageMenuButton.h"
 #include <FileSystem.h>
 #include <filesystem>
 #include <iostream>
@@ -90,6 +91,16 @@ void CGameUIViewport::OnThink()
 		// So the change is delayed by one frame
 		if (m_bDelayedPreventEscape)
 			m_bDelayedPreventEscape = false;
+	}
+
+	// create the dialog immediately
+	if (!m_hImageButton)
+	{
+		int wx, wy, ww, wt;
+		vgui2::surface()->GetWorkspaceBounds(wx, wy, ww, wt);
+		m_hImageButton = new CImageMenuButton(this, VGUI2_ROOT_DIR "gfx/vgui/discord", "https://discord.gg/mGr94ZqDWU");
+		m_hImageButton->MakePopup(false, false);
+		m_hImageButton->SetContent((ww - 256) - 50, (wt - 128) - 384, 256, 128); // Right-center so it doesn't cover the ver watermark
 	}
 
 	if (m_bPrepareForQueryDownload)
