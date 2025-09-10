@@ -24,7 +24,6 @@ CImageMenuButton::CImageMenuButton(vgui2::Panel* pParent, const char* szImage, c
 		Q_strcpy(m_szURL, szURL);
 
 	m_pPanel = new vgui2::ImagePanel(this, "Image");
-	// m_pPanel->SetFillColor(Color(0, 0, 0, 100));
 	m_pPanel->SetSize(GetWide(), GetTall());
 	m_pPanel->SetPos(0, 0);
 	m_pPanel->SetShouldScaleImage(true);
@@ -46,6 +45,12 @@ void CImageMenuButton::OnMousePressed(vgui2::MouseCode code)
 	{
 		if (m_szURL && m_szURL[0])
 			SteamFriends()->ActivateGameOverlayToWebPage(m_szURL);
+		return;
+	}
+
+	if (code == vgui2::MouseCode::MOUSE_MIDDLE)
+	{
+		SteamFriends()->ActivateGameOverlayToWebPage("https://phoenixprojectsoftware.github.io/halogs-website/img/donaldson.jpg");
 		return;
 	}
 	BaseClass::OnMousePressed(code);
