@@ -53,7 +53,7 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 
 	m_pMapList = new CMapListPanel(this);
 	m_pMapList->SetBounds(10, 40, 250, 500);
-#ifdef _STEAMWORKS
+#ifdef _HALO
 	m_pMapList->LoadMapFilter();
 #endif
 	m_pMapList->LoadMaps();
