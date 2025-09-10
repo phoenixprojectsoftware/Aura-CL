@@ -52,7 +52,11 @@ class CMapListPanel : public Panel
 
 public:
 	CMapListPanel(Panel* pParent);
-	void LoadMapFilters();
+
+#ifdef _HALO
+	void LoadMapFilter();
+#endif
+
 	void LoadMaps();
 	void AddMap(const char* mapName);
 	void OnItemSelected();
