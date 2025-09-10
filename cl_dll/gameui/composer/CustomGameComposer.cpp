@@ -18,6 +18,10 @@
 #include "../../engineclientcmd.h"
 #include <tier0/dbg.h>
 
+#ifdef _HALO
+CUtlVector<CUtlString> m_excludedMaps;
+#endif
+
 using namespace vgui2;
 
 #define GMLIST_TALL 400
@@ -49,6 +53,9 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 
 	m_pMapList = new CMapListPanel(this);
 	m_pMapList->SetBounds(10, 40, 250, 500);
+#ifdef _STEAMWORKS
+	m_pMapList->LoadMapFilter();
+#endif
 	m_pMapList->LoadMaps();
 
 	m_pGamemodeList = new CGamemodeListPanel(this);
@@ -140,6 +147,27 @@ void CMapListPanel::AddMap(const char* mapName)
 	kv->deleteThis();
 }
 
+#ifdef _HALO
+void CMapListPanel::LoadMapFilter()
+{
+	m_excludedMaps.RemoveAll();
+
+	FileHandle_t f = g_pFullFileSystem->Open("mapfilter.txt", "r");
+	if (!f)
+		return;
+
+	char line[256];
+	while (g_pFullFileSystem->ReadLine(line, sizeof(line), f))
+	{
+		Q_StripPrecedingAndTrailingWhitespace(line);
+		if (*line)
+			m_excludedMaps.AddToTail(line);
+	}
+
+	g_pFullFileSystem->Close(f);
+}
+#endif
+
 void CMapListPanel::LoadMaps()
 {
 	m_pList->RemoveAll();
@@ -170,6 +198,19 @@ void CMapListPanel::LoadMaps()
 				break;
 			}
 		}
+#ifdef _HALO
+		for (int i = 0; i < m_excludedMaps.Count(); i++)
+		{
+			if (!Q_stricmp(m_excludedMaps[i].Get(), mapName))
+			{
+#ifdef _DEBUG
+				Msg("LoadMaps() excluding map: %s\n", mapName);
+#endif
+				bDuplicate = true; // treat excluded maps as duplicates to skip them
+				break;
+			}
+		}
+#endif
 		if (bDuplicate)
 		{
 #ifdef _DEBUG
