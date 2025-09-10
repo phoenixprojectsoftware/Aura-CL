@@ -496,8 +496,7 @@ CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "C
 	y += 30;
 
 	m_pMapcycle = new ComboBox(this, "Mapcycle", 8, false);
-	m_pMapcycle->AddItem("default", nullptr); // TODO: enumerate
-	m_pMapcycle->ActivateItem(0);
+	LoadMapcycles();
 	m_pMapcycle->SetBounds(10, y, 200, 20); y += 30;
 
 	// FRAG LIMIT
@@ -517,6 +516,62 @@ CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "C
 	m_pTimeLimit = new TextEntry(this, "TimeLimit");
 	m_pTimeLimit->SetBounds(10, y, 200, 20);
 	m_pTimeLimit->SetText("15"); y += 30;
+}
+
+void CComposerOptionsPanel::LoadMapcycles()
+{
+	m_pMapcycle->RemoveAll();
+
+	FileFindHandle_t findHandle;
+	const char* pszFilename = g_pFullFileSystem->FindFirst("mapcycles/*.mc", &findHandle);
+
+	CUtlVector<CUtlString> addedCycles; // track added mapcycles to avoid duplicates
+
+	while (pszFilename)
+	{
+		if (!pszFilename || !*pszFilename)
+		{
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
+			continue;
+		}
+		// strip extension
+		char szBase[MAX_PATH]; // clean version of mapcycle name
+		Q_StripExtension(pszFilename, szBase, sizeof(szBase));
+
+		// check for duplicates
+		bool bDuplicate = false;
+		for (int i = 0; i < addedCycles.Count(); i++)
+		{
+			if (!Q_stricmp(addedCycles[i].Get(), szBase))
+			{
+				bDuplicate = true;
+				break;
+			}
+		}
+		if (bDuplicate)
+		{
+#ifdef _DEBUG
+			Msg("LoadMapcycles() skipping duplicate mapcycle: %s\n", szBase);
+#endif
+
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
+			continue;
+		}
+
+		addedCycles.AddToTail(szBase); // remember we added this mapcycle
+		m_pMapcycle->AddItem(szBase, nullptr); // add the mapcycle to the list
+
+#ifdef _DEBUG
+		Msg("LoadMapcycles() found mapcycle: %s\n", szBase);
+#endif
+	}
+
+	g_pFullFileSystem->FindClose(findHandle);
+
+	if (m_pMapcycle->GetItemCount() > 0)
+	{
+		m_pMapcycle->ActivateItem(0);
+	}
 }
 
 const char* CComposerOptionsPanel::GetFragLimit()

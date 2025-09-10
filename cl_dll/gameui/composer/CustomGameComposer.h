@@ -87,6 +87,8 @@ class CComposerOptionsPanel : public Panel
 public:
 	CComposerOptionsPanel(Panel* pParent);
 
+	void LoadMapcycles();
+
 	const char* GetFragLimit();
 	const char* GetTimeLimit();
 	const char* GetInfiniteAmmo();
