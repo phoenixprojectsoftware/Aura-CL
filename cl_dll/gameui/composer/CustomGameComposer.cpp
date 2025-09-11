@@ -18,7 +18,9 @@
 #include "../../engineclientcmd.h"
 #include <tier0/dbg.h>
 
-CUtlVector<CUtlString> g_MapFilters;
+#ifdef _HALO
+CUtlVector<CUtlString> m_excludedMaps;
+#endif
 
 using namespace vgui2;
 
@@ -51,7 +53,9 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 
 	m_pMapList = new CMapListPanel(this);
 	m_pMapList->SetBounds(10, 40, 250, 500);
-	m_pMapList->LoadMapFilters();
+#ifdef _STEAMWORKS
+	m_pMapList->LoadMapFilter();
+#endif
 	m_pMapList->LoadMaps();
 
 	m_pGamemodeList = new CGamemodeListPanel(this);
@@ -143,35 +147,26 @@ void CMapListPanel::AddMap(const char* mapName)
 	kv->deleteThis();
 }
 
-void CMapListPanel::LoadMapFilters()
+#ifdef _HALO
+void CMapListPanel::LoadMapFilter()
 {
-	g_MapFilters.RemoveAll();
+	m_excludedMaps.RemoveAll();
 
-	FileHandle_t file = g_pFullFileSystem->Open("mpfilter.txt", "r");
-	if (!file)
+	FileHandle_t f = g_pFullFileSystem->Open("mapfilter.txt", "r");
+	if (!f)
 		return;
 
-	KeyValues* kvRoot = new KeyValues("MapFilters");
-	if (kvRoot->LoadFromFile(g_pFullFileSystem, "mpfilter.txt", "MOD"))
+	char line[256];
+	while (g_pFullFileSystem->ReadLine(line, sizeof(line), f))
 	{
-		KeyValues* kv = kvRoot->GetFirstSubKey();
-		while (kv)
-		{
-			if (kv->GetName()[0])
-				g_MapFilters.AddToTail(kv->GetString());
-			kv = kv->GetNextKey();
-		}
+		Q_StripPrecedingAndTrailingWhitespace(line);
+		if (*line)
+			m_excludedMaps.AddToTail(line);
 	}
-	kvRoot->deleteThis();
-	g_pFullFileSystem->Close(file);
 
-#ifdef _DEBUG
-	for (int i = 0; i < g_MapFilters.Count(); i++)
-	{
-		Msg("LoadMapFilters() added filter: %s\n", g_MapFilters[i].Get());
-	}
-#endif
+	g_pFullFileSystem->Close(f);
 }
+#endif
 
 void CMapListPanel::LoadMaps()
 {
@@ -193,25 +188,6 @@ void CMapListPanel::LoadMaps()
 		char mapName[MAX_PATH]; // clean version of map name
 		Q_StripExtension(pszFilename, mapName, sizeof(mapName));
 
-		// Skip maps matching any filter
-		bool bFiltered = false;
-		for (int i = 0; i < g_MapFilters.Count(); i++)
-		{
-			if (Q_stristr(mapName, g_MapFilters[i].Get()))
-			{
-				bFiltered = true;
-				break;
-			}
-		}
-		if (bFiltered)
-		{
-#ifdef _DEBUG
-			Msg("LoadMaps() skipping filtered map: %s\n", mapName);
-#endif
-			pszFilename = g_pFullFileSystem->FindNext(findHandle);
-			continue;
-		}
-
 		// check for duplicates
 		bool bDuplicate = false;
 		for (int i = 0; i < addedMaps.Count(); i++)
@@ -222,6 +198,19 @@ void CMapListPanel::LoadMaps()
 				break;
 			}
 		}
+#ifdef _HALO
+		for (int i = 0; i < m_excludedMaps.Count(); i++)
+		{
+			if (!Q_stricmp(m_excludedMaps[i].Get(), mapName))
+			{
+#ifdef _DEBUG
+				Msg("LoadMaps() excluding map: %s\n", mapName);
+#endif
+				bDuplicate = true; // treat excluded maps as duplicates to skip them
+				break;
+			}
+		}
+#endif
 		if (bDuplicate)
 		{
 #ifdef _DEBUG
