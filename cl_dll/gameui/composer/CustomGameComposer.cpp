@@ -18,6 +18,8 @@
 #include "../../engineclientcmd.h"
 #include <tier0/dbg.h>
 
+CUtlVector<CUtlString> g_MapFilters;
+
 using namespace vgui2;
 
 #define GMLIST_TALL 400
@@ -49,6 +51,7 @@ CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "Custo
 
 	m_pMapList = new CMapListPanel(this);
 	m_pMapList->SetBounds(10, 40, 250, 500);
+	m_pMapList->LoadMapFilters();
 	m_pMapList->LoadMaps();
 
 	m_pGamemodeList = new CGamemodeListPanel(this);
@@ -140,6 +143,36 @@ void CMapListPanel::AddMap(const char* mapName)
 	kv->deleteThis();
 }
 
+void CMapListPanel::LoadMapFilters()
+{
+	g_MapFilters.RemoveAll();
+
+	FileHandle_t file = g_pFullFileSystem->Open("mpfilter.txt", "r");
+	if (!file)
+		return;
+
+	KeyValues* kvRoot = new KeyValues("MapFilters");
+	if (kvRoot->LoadFromFile(g_pFullFileSystem, "mpfilter.txt", "MOD"))
+	{
+		KeyValues* kv = kvRoot->GetFirstSubKey();
+		while (kv)
+		{
+			if (kv->GetName()[0])
+				g_MapFilters.AddToTail(kv->GetString());
+			kv = kv->GetNextKey();
+		}
+	}
+	kvRoot->deleteThis();
+	g_pFullFileSystem->Close(file);
+
+#ifdef _DEBUG
+	for (int i = 0; i < g_MapFilters.Count(); i++)
+	{
+		Msg("LoadMapFilters() added filter: %s\n", g_MapFilters[i].Get());
+	}
+#endif
+}
+
 void CMapListPanel::LoadMaps()
 {
 	m_pList->RemoveAll();
@@ -159,6 +192,25 @@ void CMapListPanel::LoadMaps()
 		// strip extension
 		char mapName[MAX_PATH]; // clean version of map name
 		Q_StripExtension(pszFilename, mapName, sizeof(mapName));
+
+		// Skip maps matching any filter
+		bool bFiltered = false;
+		for (int i = 0; i < g_MapFilters.Count(); i++)
+		{
+			if (Q_stristr(mapName, g_MapFilters[i].Get()))
+			{
+				bFiltered = true;
+				break;
+			}
+		}
+		if (bFiltered)
+		{
+#ifdef _DEBUG
+			Msg("LoadMaps() skipping filtered map: %s\n", mapName);
+#endif
+			pszFilename = g_pFullFileSystem->FindNext(findHandle);
+			continue;
+		}
 
 		// check for duplicates
 		bool bDuplicate = false;
