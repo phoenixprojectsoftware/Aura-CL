@@ -66,7 +66,7 @@ void CHLDMAR::Spawn()
 
 void CHLDMAR::Precache(void)
 {
-	PRECACHE_MODEL("models/v_9mmAR.mdl");
+	PRECACHE_MODEL("models/weapons/hldmar/v_hldmar.mdl");
 	PRECACHE_MODEL("models/w_9mmAR.mdl");
 	PRECACHE_MODEL("models/p_9mmAR.mdl");
 
@@ -125,7 +125,7 @@ int CHLDMAR::AddToPlayer(CBasePlayer* pPlayer)
 
 BOOL CHLDMAR::Deploy()
 {
-	return DefaultDeploy("models/v_9mmAR.mdl", "models/p_9mmAR.mdl", MP5_DEPLOY, "mp5");
+	return DefaultDeploy("models/weapons/hldmar/v_hldmar.mdl", "models/p_9mmAR.mdl", MP5_DEPLOY, "mp5");
 }
 
 void CHLDMAR::PrimaryAttack()
