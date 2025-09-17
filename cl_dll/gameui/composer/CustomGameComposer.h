@@ -35,6 +35,8 @@ public:
 	CCustomGameComposer(Panel* pParent);
 	void OnCommand(const char* command) override;
 
+	void OnKeyCodePressed(vgui2::KeyCode code);
+
 	void LoadGamemodesForMap(const char* mapName);
 
 private:
