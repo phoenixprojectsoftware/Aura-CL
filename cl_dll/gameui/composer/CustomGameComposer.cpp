@@ -238,12 +238,14 @@ void CMapListPanel::LoadMaps()
 	// refresh UI
 	m_pList->InvalidateLayout();
 	m_pList->Repaint();
+}
 
-	if (m_pList->GetItemCount() > 0)
-	{
-		m_pList->SetSingleSelectedItem(0);
-		OnItemSelected();
-	}
+void CCustomGameComposer::OnKeyCodePressed(vgui2::KeyCode code)
+{
+	if (code == KEY_ENTER || code == KEY_PAD_ENTER)
+		CCustomGameComposer::OnCommand("startgame");
+	else
+		BaseClass::OnKeyCodePressed(code);
 }
 
 //
