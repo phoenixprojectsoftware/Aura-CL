@@ -727,8 +727,9 @@ void CHud :: Init( void )
 
 #ifdef _STEAMWORKS
 	gEngfuncs.pfnClientCmd("richpresence_gamemode\n"); // reset
-
 	gEngfuncs.pfnClientCmd("richpresence_update\n");
+
+	SteamUtils()->SetOverlayNotificationPosition(k_EPositionTopLeft);
 #endif
 }
 
