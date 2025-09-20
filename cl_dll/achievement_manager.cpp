@@ -53,7 +53,7 @@ void CheckSpecialDay()
 
 	if (day == 20)
 		if (!isAchievementUnlocked(4))
-			UnlockAchievement(5);
+			UnlockAchievement(4);
 }
 
 #endif

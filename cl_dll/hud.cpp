@@ -39,8 +39,11 @@
 
 #include "event_api.h"
 
-#ifdef _STEAMWORKS
+#if defined(_STEAMWORKS) && defined(_HALO)
 #include "steamworks/steam_api.h"
+#elif defined(_STEAMWORKS) && !defined(_HALO)
+#include "achievement_manager.h"
+#endif
 #endif
 #include <dbg.h>
 
@@ -898,6 +901,10 @@ void CHud :: VidInit( void )
 	m_OldScoreBoard.VidInit();
 	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	CheckSpecialDay();
+#endif
 }
 
 void CHud::Frame(double time)
