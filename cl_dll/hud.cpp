@@ -44,7 +44,6 @@
 #elif defined(_STEAMWORKS) && !defined(_HALO)
 #include "achievement_manager.h"
 #endif
-#endif
 #include <dbg.h>
 
 extern tempent_s* pLaserSpot;
