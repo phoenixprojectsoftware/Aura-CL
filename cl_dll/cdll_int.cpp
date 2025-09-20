@@ -177,6 +177,8 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 #ifdef _STEAMWORKS
 	if (!isAchievementUnlocked(3))
 		UnlockAchievement(3);
+
+	CheckSpecialDay();
 #endif
 
 	// get tracker interface, if any

@@ -18,4 +18,6 @@ void UnlockAchievement(int achievementID);
 
 bool isAchievementUnlocked(int achievementID);
 
+void CheckSpecialDay();
+
 #endif

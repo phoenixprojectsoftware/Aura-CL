@@ -43,6 +43,10 @@ inline const char* GetAchievementAPIName(int achievementID)
 		return "ACH_LAN";
 	case 3:
 		return "ACH_WELCOME";
+	case 4:
+		return "ACH_PHOENIX_DAY";
+	case 5:
+		return "ACH_CST";
 	default:
 		return nullptr;
 	}

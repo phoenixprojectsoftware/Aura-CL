@@ -37,22 +37,23 @@ bool isAchievementUnlocked(int achievementID)
 	return false;
 }
 
-#ifdef DATE_ACH
-bool IsSpecialDate()
+void CheckSpecialDay()
 {
-	// Get the Steam server time
-	uint32 steamTime = SteamUtils()->GetServerRealTime();
+	std::time_t t = std::time(nullptr);
+	std::tm* now = std::localtime(&t);
 
-	// convert to calendar date
-	time_t t = static_cast<time_t>(steamTime);
-	tm* timeinfo = gmtime(&t); // UTC
+	if (!now)
+		return;
 
-	int day = timeinfo->tm_mday;
-	int month = timeinfo->tm_mon; // 0-based, so Jan is 0
+	int day = now->tm_mday;
 
-	// check if it's 5th April
-	return (day == 5 && month == 3);
+	if (day == 5)
+		if (!isAchievementUnlocked(5))
+			UnlockAchievement(5);
+
+	if (day == 20)
+		if (!isAchievementUnlocked(4))
+			UnlockAchievement(5);
 }
-#endif
 
 #endif
