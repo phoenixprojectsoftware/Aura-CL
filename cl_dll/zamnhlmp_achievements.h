@@ -37,6 +37,8 @@ inline const char* GetAchievementAPIName(int achievementID)
 		return "ACH_FIRST_BLOOD";
 	case 2:
 		return "ACH_LAN";
+	case 3:
+		return "ACH_WELCOME";
 	default:
 		return nullptr;
 	}

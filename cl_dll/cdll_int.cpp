@@ -61,6 +61,10 @@ IGameUI *g_pGameUI1 = nullptr;
 #include "discord_integration.h"
 #include "update_checker.h"
 
+#ifdef _STEAMWORKS
+#include "achievement_manager.h"
+#endif
+
 void CL_LoadParticleMan( void );
 void CL_UnloadParticleMan( void );
 void CL_LoadGameUI();
@@ -169,6 +173,11 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	EV_HookEvents();
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
+
+#ifdef _STEAMWORKS
+	if (!isAchievementUnlocked(3))
+		UnlockAchievement(3);
+#endif
 
 	// get tracker interface, if any
 	return 1;
