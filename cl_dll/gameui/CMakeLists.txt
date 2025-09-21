@@ -10,6 +10,7 @@ add_sources(
 	
 add_subdirectory(composer)
 add_subdirectory(filedialog)
+add_subdirectory(leaderboard)
 add_subdirectory(serverbrowser)
 add_subdirectory(workshop)
 add_subdirectory(lodepng)

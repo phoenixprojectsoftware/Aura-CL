@@ -42,6 +42,9 @@ public:
 
 	void OpenTestPanel();
 	void OpenComposer();
+#ifndef _HALO
+	void OpenLeaderboard();
+#endif
 	CServerBrowser* GetServerBrowser();
 	CWorkshopDialog* GetWorkshopDialog();
 

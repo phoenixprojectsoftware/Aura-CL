@@ -9,6 +9,9 @@
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
 #include "composer/CustomGameComposer.h"
+#ifndef _HALO
+#include "leaderboard/LeaderboardPanel.h"
+#endif
 #include "serverbrowser/CServerBrowser.h"
 // TODO: ADVANCED OPTIONS
 // TODO: ACHIEVEMENT MENU
@@ -31,6 +34,13 @@ CON_COMMAND(gameui_composer, "Composer")
 {
 	CGameUIViewport::Get()->OpenComposer();
 }
+
+#ifndef _HALO
+CON_COMMAND(gameui_leaderboard, "Leaderboard")
+{
+	CGameUIViewport::Get()->OpenLeaderboard();
+}
+#endif
 
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
 {
@@ -88,6 +98,19 @@ void CGameUIViewport::OpenComposer()
 	pComposer->SetVisible(true);
 	pComposer->MoveToFront();
 }
+
+#ifndef _HALO
+CLeaderboardPanel* g_pLeaderboardPanel = nullptr;
+
+void CGameUIViewport::OpenLeaderboard()
+{
+	if (!g_pLeaderboardPanel)
+		g_pLeaderboardPanel = new CLeaderboardPanel(GetVPanel());
+
+	g_pLeaderboardPanel->SetVisible(true);
+	g_pLeaderboardPanel->Activate();
+}
+#endif
 
 void CGameUIViewport::OnThink()
 {

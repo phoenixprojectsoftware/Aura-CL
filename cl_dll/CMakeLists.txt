@@ -107,6 +107,8 @@ add_sources(
 	interpolation.cpp
 	interpolation.h
 	kbutton.h
+	leaderboard_integration.cpp
+	leaderboard_integration.h
 	menu.cpp
 	message.cpp
 	rainbow.cpp

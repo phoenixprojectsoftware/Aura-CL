@@ -154,6 +154,10 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
+#ifndef _HALO
+#include "leaderboard_integration.h"
+#endif
+
 int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
@@ -177,6 +181,10 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 #ifdef _STEAMWORKS
 	if (!isAchievementUnlocked(3))
 		UnlockAchievement(3);
+#endif
+
+#ifndef _HALO
+	g_Leaderboards.Init();
 #endif
 
 	// get tracker interface, if any

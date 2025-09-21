@@ -26,6 +26,7 @@
 #include "vgui_TeamFortressViewport.h"
 
 #include "achievement_manager.h"
+#include "leaderboard_integration.h"
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );
 
@@ -317,6 +318,10 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			UnlockAchievement(1);
 			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
 		}
+
+		int totalKills = 0;
+		SteamUserStats()->GetStat(PLR_KILL_STATS, &totalKills);
+		g_Leaderboards.UploadScore(totalKills);
 #endif
 
 		if (m_pCvarKillSnd->value > 0.0f)
