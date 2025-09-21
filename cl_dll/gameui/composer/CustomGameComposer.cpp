@@ -17,6 +17,7 @@
 #include <KeyValues.h>
 #include "../../engineclientcmd.h"
 #include <tier0/dbg.h>
+#include <steamworks/steam_api.h>
 
 #ifdef _HALO
 CUtlVector<CUtlString> m_excludedMaps;
@@ -471,7 +472,10 @@ CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "C
 
 	m_pServerName = new TextEntry(this, "ServerName");
 	m_pServerName->R_BOUNDARY;
-	m_pServerName->SetText("Cross Product Server");
+	const char* username = SteamFriends()->GetPersonaName();
+	char usernameBuffer[256];
+	snprintf(usernameBuffer, sizeof(usernameBuffer), "%s's custom game", username);
+	m_pServerName->SetText(usernameBuffer);
 	y += 30;
 
 	// MAXPLAYERS
