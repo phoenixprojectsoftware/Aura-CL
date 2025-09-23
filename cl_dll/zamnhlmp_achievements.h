@@ -47,6 +47,32 @@ inline const char* GetAchievementAPIName(int achievementID)
 		return "ACH_PHOENIX_DAY";
 	case 5:
 		return "ACH_CST";
+	case 6:
+		return "ACH_CLOSE_CALL";
+	case 7:
+		return "ACH_O2";
+	case 8:
+		return "ACH_TRIFECTA";
+	case 9:
+		return "ACH_WES01";
+	case 10:
+		return "ACH_WES02";
+	case 11:
+		return "ACH_WES03";
+	case 12:
+		return "ACH_WES04";
+	case 13:
+		return "ACH_WES05";
+	case 14:
+		return "ACH_WES06";
+	case 15:
+		return "ACH_WES07";
+	case 16:
+		return "ACH_SNARKPIT";
+	case 17:
+		return "ACH_XFIRE_STRIKE";
+	case 18:
+		return "ACH_ROCKET";
 	default:
 		return nullptr;
 	}
@@ -56,6 +82,14 @@ inline const char* GetAchievementAPIName(int achievementID)
 // STATISTICS START
 // =====================
 #define PLR_KILL_STATS "plr_kill"
+#define XFIRE_WIN_STATS "xfire_win"
+#define PLR_WIN_STATS "win"
+#define TRIPMINE_KILL_STATS "trp_kill"
+#define SNARK_KILL_STATS "sqk_kill"
+#define FLAG_CARRIER_KILL_STATS "flg_kill"
+#define SNIPER_KILL_STATS "snp_kill"
+#define KASINO_WIN_STATS "kasino_wins"
+#define SPRAY_STATS "spray"
 // =====================
 // STATISTICS END
 // =====================
