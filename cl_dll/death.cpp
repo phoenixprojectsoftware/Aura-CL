@@ -204,6 +204,11 @@ int CHudDeathNotice::Draw(float flTime)
 	return 1;
 }
 
+int32 plrKillStatValue = 0;
+int32 tripmineKillStat = 0;
+int32 sniperKillStat = 0;
+int32 snarkKillStat = 0;
+
 // This message handler may be better off elsewhere
 int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf)
 {
@@ -300,12 +305,11 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			gEngfuncs.Con_Printf("Failed to update Steam Stats because it's NULL.\n");
 		if (SteamUserStats())
 		{
-			int32 statValue = 0;
-			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &statValue))
+			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &plrKillStatValue))
 			{
-				SteamUserStats()->SetStat(PLR_KILL_STATS, statValue + 1);
+				SteamUserStats()->SetStat(PLR_KILL_STATS, plrKillStatValue + 1);
 				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", statValue + 1);
+				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", plrKillStatValue + 1);
 			}
 			else
 			{
@@ -338,12 +342,11 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		// TRIPMINE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
 		{
-			int32 tripmineKillStat = 0;
 			if (SteamUserStats()->GetStat(TRIPMINE_KILL_STATS, &tripmineKillStat))
 			{
 				SteamUserStats()->SetStat(TRIPMINE_KILL_STATS, tripmineKillStat + 1);
 				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Tripmine kill stat incremented to %s\n", tripmineKillStat + 1);
+				gEngfuncs.Con_Printf("Tripmine kill stat incremented to %d\n", tripmineKillStat + 1);
 			}
 			else
 			{
@@ -354,12 +357,11 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		// SNIPER RIFLE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "sniperrifle"))
 		{
-			int32 sniperKillStat = 0;
 			if (SteamUserStats()->GetStat(SNIPER_KILL_STATS, &sniperKillStat))
 			{
 				SteamUserStats()->SetStat(SNIPER_KILL_STATS, sniperKillStat + 1);
 				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Sniper Rifle kill stat incremented to %s\n", sniperKillStat + 1);
+				gEngfuncs.Con_Printf("Sniper Rifle kill stat incremented to %d\n", sniperKillStat + 1);
 			}
 			else
 			{
@@ -370,12 +372,11 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		// SNARK KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "snark"))
 		{
-			int32 snarkKillStat = 0;
 			if (SteamUserStats()->GetStat(SNARK_KILL_STATS, &snarkKillStat))
 			{
 				SteamUserStats()->SetStat(SNARK_KILL_STATS, snarkKillStat + 1);
 				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Snark kill stat incremented to %s\n", snarkKillStat + 1);
+				gEngfuncs.Con_Printf("Snark kill stat incremented to %d\n", snarkKillStat + 1);
 			}
 			else
 				gEngfuncs.Con_Printf("The Snark Steam Stat failed.\n");
