@@ -178,7 +178,7 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
 
-#ifdef _STEAMWORKS
+#ifndef _HALO
 	if (!isAchievementUnlocked(3))
 		UnlockAchievement(3);
 #endif
