@@ -319,6 +319,68 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
 		}
 
+		// DISPLACER ACHIEVEMENT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "displacer_ball"))
+		{
+			if (!isAchievementUnlocked(19))
+				UnlockAchievement(19);
+		}
+
+		// PENGUIN ACHIEVEMENT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "penguin"))
+		{
+			if (!isAchievementUnlocked(20))
+				UnlockAchievement(20);
+			else
+				gEngfuncs.Con_Printf("It looks like you've already done this. Very clever....\n");
+		}
+
+		// TRIPMINE KILL STAT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
+		{
+			int32 tripmineKillStat = 0;
+			if (SteamUserStats()->GetStat(TRIPMINE_KILL_STATS, &tripmineKillStat))
+			{
+				SteamUserStats()->SetStat(TRIPMINE_KILL_STATS, tripmineKillStat + 1);
+				SteamUserStats()->StoreStats();
+				gEngfuncs.Con_Printf("Tripmine kill stat incremented to %s\n", tripmineKillStat + 1);
+			}
+			else
+			{
+				gEngfuncs.Con_Printf("The tripmine Steam Stat failed.\n");
+			}
+		}
+
+		// SNIPER RIFLE KILL STAT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "sniperrifle"))
+		{
+			int32 sniperKillStat = 0;
+			if (SteamUserStats()->GetStat(SNIPER_KILL_STATS, &sniperKillStat))
+			{
+				SteamUserStats()->SetStat(SNIPER_KILL_STATS, sniperKillStat + 1);
+				SteamUserStats()->StoreStats();
+				gEngfuncs.Con_Printf("Sniper Rifle kill stat incremented to %s\n", sniperKillStat + 1);
+			}
+			else
+			{
+				gEngfuncs.Con_Printf("The sniper Steam Stat failed.\n");
+			}
+		}
+
+		// SNARK KILL STAT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "snark"))
+		{
+			int32 snarkKillStat = 0;
+			if (SteamUserStats()->GetStat(SNARK_KILL_STATS, &snarkKillStat))
+			{
+				SteamUserStats()->SetStat(SNARK_KILL_STATS, snarkKillStat + 1);
+				SteamUserStats()->StoreStats();
+				gEngfuncs.Con_Printf("Snark kill stat incremented to %s\n", snarkKillStat + 1);
+			}
+			else
+				gEngfuncs.Con_Printf("The Snark Steam Stat failed.\n");
+		}
+
 		int totalKills = 0;
 		SteamUserStats()->GetStat(PLR_KILL_STATS, &totalKills);
 		g_Leaderboards.UploadScore(totalKills);
@@ -364,6 +426,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 				ConsolePrint("tau cannon");
 			else
 				ConsolePrint(rgDeathNoticeList[i].szWeapon);
+			// Shut up. Get out.
 		}
 	}
 	ConsolePrint("\n");

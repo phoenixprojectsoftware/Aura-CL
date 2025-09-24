@@ -73,6 +73,10 @@ inline const char* GetAchievementAPIName(int achievementID)
 		return "ACH_XFIRE_STRIKE";
 	case 18:
 		return "ACH_ROCKET";
+	case 19:
+		return "ACH_DISPLACER";
+	case 20:
+		return "ACH_PENGUIN";
 	default:
 		return nullptr;
 	}
