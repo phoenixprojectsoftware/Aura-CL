@@ -139,7 +139,7 @@ int CHud :: Redraw( float flTime, int intermission )
 
 			if (!bEndMusic)
 			{
-				gEngfuncs.pfnClientCmd("mp3 play sound/music/MatchEnd.mp3\n");
+				gEngfuncs.pfnClientCmd("mp3 play sound/music/MX_A5_SUBMIX8.mp3\n");
 				bEndMusic = true;
 			}
 
