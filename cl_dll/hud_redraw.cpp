@@ -111,6 +111,7 @@ int CHud :: Redraw( float flTime, int intermission )
 	m_flTimeDelta = (double)m_flTime - m_fOldTime;
 	static float m_flShotTime = 0;
 	static float m_flStopTime = 0;
+	static bool bEndMusic = false;
 
 	// Clock was reset, reset delta
 	if ( m_flTimeDelta < 0 )
@@ -126,6 +127,7 @@ int CHud :: Redraw( float flTime, int intermission )
 			gViewPort->HideCommandMenu();
 			gViewPort->HideScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
+			bEndMusic = false;
 		}
 		else if ( !m_iIntermission && intermission )
 		{
@@ -134,6 +136,12 @@ int CHud :: Redraw( float flTime, int intermission )
 			gViewPort->HideVGUIMenu();
 			gViewPort->ShowScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
+
+			if (!bEndMusic)
+			{
+				gEngfuncs.pfnClientCmd("mp3 play sound/music/MatchEnd.mp3\n");
+				bEndMusic = true;
+			}
 
 			// Take a screenshot if the client's got the cvar set
 			if ( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )
