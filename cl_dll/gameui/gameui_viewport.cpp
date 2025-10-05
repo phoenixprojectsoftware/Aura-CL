@@ -468,8 +468,18 @@ void CGameUIViewport::MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const 
 		// If root, and is a dir, make sure we only allow certain folders.
 		else if (bIsRoot && g_pFullFileSystem->FindIsDirectory(fh))
 		{
+			// WORKSHOP ITEM DIRECTORY WHITELIST
 			bIsValidFile = false;
 			if (vgui2::FStrEq(strFile, "logos")
+				|| vgui2::FStrEq(strFile, "gfx")
+				|| vgui2::FStrEq(strFile, "gamemodes")
+				|| vgui2::FStrEq(strFile, "ctf")
+				|| vgui2::FStrEq(strFile, "dom")
+				|| vgui2::FStrEq(strFile, "ff")
+				|| vgui2::FStrEq(strFile, "mapcycles")
+				|| vgui2::FStrEq(strFile, "locs")
+				|| vgui2::FStrEq(strFile, "cfg")
+				|| vgui2::FStrEq(strFile, "video")
 				|| vgui2::FStrEq(strFile, "maps")
 				|| vgui2::FStrEq(strFile, "media")
 				|| vgui2::FStrEq(strFile, "models")
