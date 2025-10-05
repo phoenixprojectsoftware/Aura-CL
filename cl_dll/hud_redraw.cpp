@@ -154,7 +154,11 @@ int CHud :: Redraw( float flTime, int intermission )
 
 	if (m_flShotTime && m_flShotTime < flTime)
 	{
+#ifdef _STEAMWORKS
+		SteamScreenshots()->TriggerScreenshot();
+#else
 		gEngfuncs.pfnClientCmd("snapshot\n");
+#endif
 		m_flShotTime = 0;
 	}
 
