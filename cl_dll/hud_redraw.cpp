@@ -113,6 +113,7 @@ int CHud :: Redraw( float flTime, int intermission )
 	m_flTimeDelta = (double)m_flTime - m_fOldTime;
 	static float m_flShotTime = 0;
 	static float m_flStopTime = 0;
+	static bool bStartMusic = false;
 	static bool bEndMusic = false;
 
 	// Clock was reset, reset delta
@@ -130,6 +131,12 @@ int CHud :: Redraw( float flTime, int intermission )
 			gViewPort->HideScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
 			bEndMusic = false;
+
+			if (!bStartMusic)
+			{
+				gEngfuncs.pfnClientCmd("mp3 play sound/music/MX_A5_SUBMIX7_TRIM.mp3\n");
+				bStartMusic = true;
+			}
 		}
 		else if ( !m_iIntermission && intermission )
 		{
@@ -138,6 +145,7 @@ int CHud :: Redraw( float flTime, int intermission )
 			gViewPort->HideVGUIMenu();
 			gViewPort->ShowScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
+			bStartMusic = false;
 
 			if (!bEndMusic)
 			{

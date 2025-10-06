@@ -145,8 +145,6 @@ CMessageWindowPanel::CMessageWindowPanel( const char *szMOTD, const char *szTitl
 	pButton->addActionSignal(new CMenuHandler_TextWindow(HIDE_TEXTWINDOW));
 	pButton->setParent(this);
 
-	EngineClientCmd("mp3 play sound/music/MX_A5_SUBMIX7_TRIM.mp3\n");
-
 }
 
 
