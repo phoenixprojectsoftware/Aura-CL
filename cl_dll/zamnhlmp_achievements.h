@@ -94,6 +94,38 @@ inline const char* GetAchievementAPIName(int achievementID)
 #define SNIPER_KILL_STATS "snp_kill"
 #define KASINO_WIN_STATS "kasino_wins"
 #define SPRAY_STATS "spray"
+#define PLR_MATCH_STATS "matches_played"
 // =====================
 // STATISTICS END
 // =====================
+
+// ============== Copyright (c) 2025 Monochrome Games ============== \\
+
+#ifndef SHARED_ZOMBIEPANIC_ACHIEVEMENTS
+#define SHARED_ZOMBIEPANIC_ACHIEVEMENTS
+#pragma once
+
+
+enum EAchievements
+{
+	ACH_KILLS100 = 0,
+	ACH_500KILLS,
+	ACH_1000KILLS,
+	ACH_FIRST_BLOOD,
+	ACH_LAN,
+	ACH_WELCOME,
+	ACH_PHOENIX_PARTY,
+	ACH_PHOENIX_DAY,
+	ACH_CST,
+	ACH_TRIFECTA,
+	ACH_TRIP20,
+	ACH_SNARK10,
+	ACH_SNIPER10,
+	ACH_DISPLACER,
+	ACH_PENGUIN,
+	ACH_MATCHES20,
+
+	ACHV_MAX
+};
+
+#endif // SHARED_ZOMBIEPANIC_ACHIEVEMENTS

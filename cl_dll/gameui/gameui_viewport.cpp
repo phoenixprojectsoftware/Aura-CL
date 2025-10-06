@@ -8,6 +8,7 @@
 #include "../client_vgui.h"
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
+#include "achievements/C_AchievementDialog.h"
 #include "composer/CustomGameComposer.h"
 #ifndef _HALO
 #include "leaderboard/LeaderboardPanel.h"
@@ -183,6 +184,11 @@ void CGameUIViewport::OnThink()
 		LoadWorkshopItems(true);
 	}
 
+}
+
+C_AchievementDialog* CGameUIViewport::GetAchievementDialog()
+{
+	return GetDialog(m_hAchDialog);
 }
 
 CServerBrowser* CGameUIViewport::GetServerBrowser()

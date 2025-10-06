@@ -8,6 +8,7 @@ add_sources(
 	gameui_viewport.cpp
 	gameui_viewport.h)
 	
+add_subdirectory(achievements)
 add_subdirectory(composer)
 add_subdirectory(filedialog)
 add_subdirectory(leaderboard)

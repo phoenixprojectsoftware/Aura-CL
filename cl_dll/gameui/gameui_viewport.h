@@ -17,6 +17,7 @@
 #endif
 
 class CGameUITestPanel;
+class C_AchievementDialog;
 class CServerBrowser;
 // TODO: class CAdvOptionsDialog;
 // TODO: class C_AchievementDialog;
@@ -45,6 +46,7 @@ public:
 #ifndef _HALO
 	void OpenLeaderboard();
 #endif
+	C_AchievementDialog* GetAchievementDialog();
 	CServerBrowser* GetServerBrowser();
 	CWorkshopDialog* GetWorkshopDialog();
 
@@ -100,6 +102,7 @@ private:
 	int m_bDelayedPreventEscape = 0;
 	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
 	// vgui2::DHANDLE<CCustomGameComposer> m_hCustomGameComposer;
+	vgui2::DHANDLE<C_AchievementDialog> m_hAchDialog;
 	vgui2::DHANDLE<CServerBrowser> m_hServerBrowser;
 	vgui2::DHANDLE<CWorkshopDialog> m_hWorkshopDialog;
 	vgui2::DHANDLE<CCreateWorkshopInfoBox> m_hWorkshopInfoBox;

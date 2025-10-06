@@ -20,7 +20,7 @@
 #include "cl_util.h"
 #include "bench.h"
 #ifdef _STEAMWORKS
-#include "steamworks/steam_api.h"
+#include "achievement_manager.h"
 #endif
 
 #include "vgui_TeamFortressViewport.h"
@@ -104,6 +104,8 @@ void CheckSuspend();
 // returns 1 if they've changed, 0 otherwise
 extern cvar_t* r_pissfilter;
 
+int matchStatValue = 0;
+
 int CHud :: Redraw( float flTime, int intermission )
 {
 	m_fOldTime = m_flTime;	// save time of previous redraw
@@ -140,6 +142,19 @@ int CHud :: Redraw( float flTime, int intermission )
 			if (!bEndMusic)
 			{
 				gEngfuncs.pfnClientCmd("mp3 play sound/music/MX_A5_SUBMIX8.mp3\n");
+#ifdef _STEAMWORKS
+				if (SteamUserStats())
+				{
+					if (SteamUserStats()->GetStat(PLR_MATCH_STATS, &matchStatValue))
+					{
+						SteamUserStats()->SetStat(PLR_MATCH_STATS, matchStatValue + 1);
+						SteamUserStats()->StoreStats();
+						gEngfuncs.Con_Printf("Match stat incremented to %d\n", matchStatValue + 1);
+					}
+					else
+						gEngfuncs.Con_Printf("The STAT INCREMENT failed because the API key hasn't been published or something. Idk I just work here.\nSay hiya to Midge for me, Homer.\n");
+				}
+#endif
 				bEndMusic = true;
 			}
 
