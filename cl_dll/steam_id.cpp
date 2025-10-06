@@ -11,6 +11,10 @@
 #include "parsemsg.h"
 #include "forcemodel.h"
 
+#ifdef _STEAMWORKS
+#include <steamworks/steam_api.h>
+#endif
+
 namespace steam_id
 {
 	namespace
@@ -130,6 +134,40 @@ namespace steam_id
 			return 1;
 		}
 
+#ifdef _STEAMWORKS
+		void apply_real_name()
+		{
+			if (!SteamUser() || !SteamUser()->BLoggedOn())
+				return;
+
+			CSteamID steamID = SteamUser()->GetSteamID();
+			uint32 accountID = steamID.GetAccountID();
+
+			// Convert AccountID -> Steam2 format (STEAM_0:Y:Z)
+			uint32 Y = accountID & 1;      // auth server bit
+			uint32 Z = accountID / 2;      // account number
+
+			char steam2ID[64];
+			snprintf(steam2ID, sizeof(steam2ID), "0:%u:%u", Y, Z); // do we need to have "STEAM_" in front of this?
+
+			auto it = steam_id_to_real_name.find(steam2ID);
+			if (it != steam_id_to_real_name.end())
+			{
+				const std::string& realName = it->second;
+				char cmd[128];
+				snprintf(cmd, sizeof(cmd), "name \"%s\"\n", realName.c_str());
+				gEngfuncs.pfnClientCmd(cmd);
+
+				gEngfuncs.Con_Printf("Set local player name to real name: %s (ID: %s)\n",
+					realName.c_str(), steam2ID);
+			}
+			else
+			{
+				gEngfuncs.Con_DPrintf("apply_real_name: no match for %s\n", steam2ID);
+			}
+		}
+#endif
+
 		void callback_loadauthid()
 		{
 			auto start = std::chrono::steady_clock::now();
@@ -137,6 +175,9 @@ namespace steam_id
 			auto end = std::chrono::steady_clock::now();
 
 			update_real_names();
+#ifdef _STEAMWORKS
+			apply_real_name();
+#endif
 
 			showing_real_names = true;
 
