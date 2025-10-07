@@ -91,12 +91,22 @@ qboolean	v_resetCamera = 1;
 
 vec3_t ev_punchangle;
 
+extern Legacy_Vector g_vViewOrigin;
+extern Legacy_Vector g_vViewForward;
+extern Legacy_Vector g_vViewRight;
+extern Legacy_Vector g_vViewUp;
+
 cvar_t* scr_ofsx;
 cvar_t* scr_ofsy;
 cvar_t* scr_ofsz;
 
 cvar_t* v_centermove;
 cvar_t* v_centerspeed;
+
+cvar_t* cl_legacy_bob_enabled;
+cvar_t* cl_legacy_bobcycle;
+cvar_t* cl_legacy_bob;
+cvar_t* cl_legacy_bobup;
 
 cvar_t* cl_bobcycle_max;
 cvar_t* cl_bobup;
@@ -195,6 +205,45 @@ void V_InterpolateAngles( float *start, float *end, float *output, float frac )
 
 	V_NormalizeAngles( output );
 } */
+
+// Quakeworld bob code
+float V_CalcLegacyBob(struct ref_params_s* pparams)
+{
+	static double bobtime;
+	static float bob;
+	float cycle;
+	static float lasttime;
+	vec3_t vel;
+
+	if (pparams->onground == -1 || pparams->time == lasttime)
+	{
+		return bob;
+	}
+
+	lasttime = pparams->time;
+
+	bobtime += pparams->frametime;
+	cycle = bobtime - (int)(bobtime / cl_legacy_bobcycle->value) * cl_legacy_bobcycle->value;
+	cycle /= cl_legacy_bobcycle->value;
+
+	if (cycle < cl_legacy_bobup->value)
+	{
+		cycle = M_PI * cycle / cl_legacy_bobup->value;
+	}
+	else
+	{
+		cycle = M_PI + M_PI * (cycle - cl_legacy_bobup->value) / (1.0 - cl_legacy_bobup->value);
+	}
+
+	VectorCopy(pparams->simvel, vel);
+	vel[2] = 0;
+
+	bob = sqrt(vel[0] * vel[0] + vel[1] * vel[1]) * cl_legacy_bob->value;
+	bob = bob * 0.3 + bob * 0.7 * sin(cycle);
+	bob = V_min(bob, 4);
+	bob = V_max(bob, -7);
+	return bob;
+}
 
 inline float RemapVal(float val, float A, float B, float C, float D)
 {
@@ -991,6 +1040,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 {
 	cl_entity_t* ent, * view;
 	int				i;
+	float bob;
 
 	vec3_t camAngles, camForward, camRight, camUp;
 
@@ -1103,14 +1153,35 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// Let the viewmodel shake at about 10% of the amplitude
 	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
 
-	V_ApplyBob(pparams, view);
+	for (i = 0; i < 3; i++)
+	{
+		view->origin[i] += bob * 0.4 * pparams->forward[i];
+	}
+	view->origin[2] += bob;
+
+	// throw in a little tilt.
+	view->angles[YAW] -= bob * 0.5;
+	view->angles[ROLL] -= bob * 1;
+	view->angles[PITCH] -= bob * 0.3;
+
+	if (cl_legacy_bob_enabled->value != 0)
+	{
+		bob = V_CalcLegacyBob(pparams);
+		VectorCopy(pparams->simorg, pparams->vieworg);
+		for (int i = 0; i < 3; i++)
+			pparams->vieworg[i] -= bob * 0.4 * pparams->forward[i];
+		VectorAdd(pparams->vieworg, pparams->viewheight, pparams->vieworg);
+	}
+	else
+		V_ApplyBob(pparams, view);
 
 	VectorCopy(view->angles, view->curstate.angles);
 
 	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
 	// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
 	// with view model distortion, this may be a cause. (SJB). 
-	// view->origin[2] -= 1;
+	if (cl_legacy_bob_enabled->value != 0)
+		view->origin[2] -= 1;
 
 	// fudge position around to keep amount of weapon visible
 	// roughly equal with different FOV
@@ -1147,11 +1218,12 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	view->angles = view->angles + ev_punchangle + sv_punchangle;
 	// view->curstate.angles = view->curstate.angles + ev_punchangle + Legacy_Vector(pparams->punchangle);
 
-	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view);
-	V_RetractWeapon(pparams, view);
-
-	//V_PunchAngle(cl_jumpangle, pparams->frametime, cl_jumppunch);
-	V_Jump(pparams, view);
+	if (cl_legacy_bob_enabled->value <= 0)
+	{
+		V_CalcViewModelLag(pparams, view);
+		V_RetractWeapon(pparams, view);
+		V_Jump(pparams, view);
+	}
 
 	VectorAdd(pparams->viewangles, InvPitch(cl_jumpangle) / 3.0f, pparams->viewangles);
 	VectorAdd(view->angles, cl_jumpangle, view->angles);
@@ -2050,60 +2122,62 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	bool bJustJumped = (!bOnGround && gHUD.m_bWasJumping);
 	bool bJustLanded = (bOnGround && !gHUD.m_bWasJumping);
 	
-	// on jump, store starting Z position
-	if (bJustJumped)
+	if (cl_legacy_bob_enabled->value <= 0)
 	{
-#ifdef _DEBUG
-		gEngfuncs.Con_Printf("Jump initiated.\n");
-#endif
-		gHUD.m_flTargetJumpBob = 2.0f;
-		gHUD.m_flAirborneStartZ = pparams->simorg[2]; // store z for fall tracking
-	}
-
-	// on land compare fall height
-	if (bJustLanded)
-	{
-		float flFallDistance = gHUD.m_flAirborneStartZ - pparams->simorg[2];
-
-		if (flFallDistance > 50.0f)
+		// on jump, store starting Z position
+		if (bJustJumped)
 		{
 #ifdef _DEBUG
-			gEngfuncs.Con_Printf("Landing bob triggered\n");
+			gEngfuncs.Con_Printf("Jump initiated.\n");
 #endif
-			gHUD.m_flTargetJumpBob = -2.5f; // thump upward
+			gHUD.m_flTargetJumpBob = 2.0f;
+			gHUD.m_flAirborneStartZ = pparams->simorg[2]; // store z for fall tracking
 		}
-	}
-	
-	// update state for next frame
-	gHUD.m_bWasJumping = bOnGround;
 
-	// smooth approach
-	float approachSpeed = 10.0f;
-
-	if (gHUD.m_flJumpViewmodelBob != gHUD.m_flTargetJumpBob)
-	{
-		float delta = gHUD.m_flTargetJumpBob - gHUD.m_flJumpViewmodelBob;
-		float step = pparams->frametime * approachSpeed;
-
-		// clamp step so we don't overshoot
-		if (fabs(delta) < step)
+		// on land compare fall height
+		if (bJustLanded)
 		{
-			gHUD.m_flJumpViewmodelBob = gHUD.m_flTargetJumpBob;
-		}
-		else
-		{
-			gHUD.m_flJumpViewmodelBob += (delta > 0.0f ? step : -step);
-		}
-	}
-	
-	// smooth comeback
-	if (gHUD.m_flJumpViewmodelBob == gHUD.m_flTargetJumpBob && gHUD.m_flJumpViewmodelBob != 0.0f)
-	{
-		gHUD.m_flTargetJumpBob = 0.0f;
-	}
-	// apply to vieworigin
-	pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
+			float flFallDistance = gHUD.m_flAirborneStartZ - pparams->simorg[2];
 
+			if (flFallDistance > 50.0f)
+			{
+#ifdef _DEBUG
+				gEngfuncs.Con_Printf("Landing bob triggered\n");
+#endif
+				gHUD.m_flTargetJumpBob = -2.5f; // thump upward
+			}
+		}
+
+		// update state for next frame
+		gHUD.m_bWasJumping = bOnGround;
+
+		// smooth approach
+		float approachSpeed = 10.0f;
+
+		if (gHUD.m_flJumpViewmodelBob != gHUD.m_flTargetJumpBob)
+		{
+			float delta = gHUD.m_flTargetJumpBob - gHUD.m_flJumpViewmodelBob;
+			float step = pparams->frametime * approachSpeed;
+
+			// clamp step so we don't overshoot
+			if (fabs(delta) < step)
+			{
+				gHUD.m_flJumpViewmodelBob = gHUD.m_flTargetJumpBob;
+			}
+			else
+			{
+				gHUD.m_flJumpViewmodelBob += (delta > 0.0f ? step : -step);
+			}
+		}
+
+		// smooth comeback
+		if (gHUD.m_flJumpViewmodelBob == gHUD.m_flTargetJumpBob && gHUD.m_flJumpViewmodelBob != 0.0f)
+		{
+			gHUD.m_flTargetJumpBob = 0.0f;
+		}
+		// apply to vieworigin
+		pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
+	}
 	//-- Sabian Roberts
 }
 
@@ -2151,6 +2225,11 @@ void V_Init(void)
 
 	v_centermove = gEngfuncs.pfnRegisterVariable("v_centermove", "0.15", 0);
 	v_centerspeed = gEngfuncs.pfnRegisterVariable("v_centerspeed", "500", 0);
+
+	cl_legacy_bob_enabled = gEngfuncs.pfnRegisterVariable("cl_legacy_bob_enabled", "0", FCVAR_ARCHIVE);
+	cl_legacy_bobcycle = gEngfuncs.pfnRegisterVariable("cl_legacy_bobcycle", "0.8", FCVAR_ARCHIVE);
+	cl_legacy_bob = gEngfuncs.pfnRegisterVariable("cl_legacy_bob", "0.01", FCVAR_ARCHIVE);
+	cl_legacy_bobup = gEngfuncs.pfnRegisterVariable("cl_legacy_bobup", "0.5", FCVAR_ARCHIVE);
 
 	cl_bobcycle_max = gEngfuncs.pfnRegisterVariable("cl_bobcycle_max", "0.45", 0);
 	cl_bobup = gEngfuncs.pfnRegisterVariable("cl_bobup", "0.5", 0);
