@@ -51,6 +51,7 @@ void CSniperRifle::Precache()
 	PRECACHE_MODEL("models/w_sniper.mdl");
 	PRECACHE_MODEL("models/v_sniper.mdl");
 	PRECACHE_MODEL("models/p_sniper.mdl");
+	PRECACHE_SOUND("weapons/sniper_zoom2.wav");
 #endif
 	PRECACHE_SOUND("weapons/sniper_fire.wav");
 	PRECACHE_SOUND("weapons/sniper_zoom.wav");
@@ -199,7 +200,10 @@ void CSniperRifle::PrimaryAttack()
 
 void CSniperRifle::SecondaryAttack()
 {
-	EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/sniper_zoom.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
+	if (!m_bInZoom)
+		EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/sniper_zoom.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
+	else
+		EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/sniper_zoom2.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
 
 	m_bInZoom = !m_bInZoom;
 
