@@ -42,6 +42,7 @@ enum
 enum EStats
 {
 	plr_kill = 0,
+	uw_kill,
 	trp_kill,
 	sqk_kill,
 	snp_kill,
@@ -61,6 +62,7 @@ DialogAchievement_t g_DAchievements[] =
 	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        plr_kill, 1000),
 	_ACH_ID(ACH_KILLS10000,              CATEGORY_KILLS,        plr_kill, 10000),
 	_ACH_ID(ACH_FIRST_BLOOD,               CATEGORY_KILLS,        NULL, NULL),
+	_ACH_ID(ACH_O2, CATEGORY_KILLS, uw_kills, 25),
 
 	// Conditionals
 	_ACH_ID(ACH_CLOSE_CALL, CATEGORY_GENERAL, NULL, NULL),

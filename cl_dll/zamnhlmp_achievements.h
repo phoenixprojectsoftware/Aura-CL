@@ -86,6 +86,7 @@ inline const char* GetAchievementAPIName(int achievementID)
 // STATISTICS START
 // =====================
 #define PLR_KILL_STATS "plr_kill"
+#define PLR_UW_KILLS_STATS "uw_kill"
 #define XFIRE_WIN_STATS "xfire_win"
 #define PLR_WIN_STATS "win"
 #define TRIPMINE_KILL_STATS "trp_kill"
@@ -113,6 +114,7 @@ enum EAchievements
 	ACH_1000KILLS,
 	ACH_KILLS10000,
 	ACH_FIRST_BLOOD,
+	ACH_O2,
 	ACH_CLOSE_CALL,
 	ACH_LAN,
 	ACH_WELCOME,
