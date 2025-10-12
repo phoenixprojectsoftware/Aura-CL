@@ -392,7 +392,8 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		g_Leaderboards.UploadScore(totalKills);
 
 		int uwKills = 0;
-		if (WaterLevel() == 3)
+		extern int g_iClientWaterLevel;
+		if (g_iClientWaterLevel >= 2)
 		{
 			if (SteamUserStats()->GetStat(PLR_UW_KILLS_STATS, &uwKills))
 			{

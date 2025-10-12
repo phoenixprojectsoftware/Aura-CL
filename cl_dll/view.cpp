@@ -2072,10 +2072,11 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 }
 
 
-
+int g_iClientWaterLevel = 0;
 void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 {
 	//	RecClCalcRefdef(pparams);
+	g_iClientWaterLevel = pparams->waterlevel;
 
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
 	gHUD.m_StrafeGuide.Update(pparams);
