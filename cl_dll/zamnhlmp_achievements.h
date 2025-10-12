@@ -48,7 +48,7 @@ inline const char* GetAchievementAPIName(int achievementID)
 	case 5:
 		return "ACH_CST";
 	case 6:
-		return "ACH_CLOSE_CALL";
+		return "ACH_CLOSE_CALL"; // Close Call
 	case 7:
 		return "ACH_O2";
 	case 8:
@@ -86,6 +86,7 @@ inline const char* GetAchievementAPIName(int achievementID)
 // STATISTICS START
 // =====================
 #define PLR_KILL_STATS "plr_kill"
+#define PLR_UW_KILLS_STATS "uw_kill"
 #define XFIRE_WIN_STATS "xfire_win"
 #define PLR_WIN_STATS "win"
 #define TRIPMINE_KILL_STATS "trp_kill"
@@ -111,7 +112,10 @@ enum EAchievements
 	ACH_KILLS100 = 0,
 	ACH_500KILLS,
 	ACH_1000KILLS,
+	ACH_KILLS10000,
 	ACH_FIRST_BLOOD,
+	ACH_O2,
+	ACH_CLOSE_CALL,
 	ACH_LAN,
 	ACH_WELCOME,
 	ACH_PHOENIX_PARTY,

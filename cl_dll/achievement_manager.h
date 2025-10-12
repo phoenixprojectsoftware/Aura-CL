@@ -9,7 +9,7 @@
  *
  ****/
 
-#if defined (_STEAMWORKS) && !defined (_HALO)
+#if defined (_STEAMWORKS)
 #include "zamnhlmp_achievements.h"
 
 #pragma once

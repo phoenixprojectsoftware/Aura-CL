@@ -382,9 +382,29 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 				gEngfuncs.Con_Printf("The Snark Steam Stat failed.\n");
 		}
 
+		// CLOSE CALL ACHIEVEMENT
+		if (gHUD.m_Health.m_iHealth <= 10)
+			if (!isAchievementUnlocked(6))
+				UnlockAchievement(6);
+
 		int totalKills = 0;
 		SteamUserStats()->GetStat(PLR_KILL_STATS, &totalKills);
 		g_Leaderboards.UploadScore(totalKills);
+
+		int uwKills = 0;
+		if (WaterLevel() == 3)
+		{
+			if (SteamUserStats()->GetStat(PLR_UW_KILLS_STATS, &uwKills))
+			{
+				SteamUserStats()->SetStat(PLR_UW_KILLS_STATS, uwKills + 1);
+				SteamUserStats()->StoreStats();
+				gEngfuncs.Con_Printf("Underwater kill stat incremented to %d\n", uwKills + 1);
+			}
+			else
+			{
+				gEngfuncs.Con_Printf("The underwater kill Steam Stat failed.\n");
+			}
+		}
 #endif
 
 		if (m_pCvarKillSnd->value > 0.0f)
