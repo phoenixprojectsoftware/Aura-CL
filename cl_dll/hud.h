@@ -802,6 +802,11 @@ public:
 
 	float GetSensitivity();
 
+#ifdef _HALO
+	void GetEngineBuildNumber();
+	int m_iEngineBuildNumber;
+#endif
+
 	void CallOnNextFrame(std::function<void()> f);
 
 	int m_iLaserState;

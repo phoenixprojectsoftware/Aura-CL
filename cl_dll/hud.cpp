@@ -733,6 +733,10 @@ void CHud :: Init( void )
 
 	SteamUtils()->SetOverlayNotificationPosition(k_EPositionTopLeft);
 #endif
+
+#ifdef _HALO
+	GetEngineBuildNumber();
+#endif
 }
 
 // CHud destructor
@@ -1154,6 +1158,25 @@ float CHud::GetSensitivity( void )
 {
 	return m_flMouseSensitivity;
 }
+
+#ifdef _HALO
+void CHud::GetEngineBuildNumber()
+{
+	std::string version = gEngfuncs.pfnGetCvarString("sv_version");
+
+	auto lastsep = version.find_last_of(',');
+
+	if (lastsep == std::string::npos)
+		return;
+
+	version.erase(0, lastsep + 1);
+
+	m_iEngineBuildNumber = std::stol(version);
+
+	if (m_iEngineBuildNumber < 8684)
+		Error("Your Half-Life install is on the \"steam_legacy\" branch. Get off the game and fix it.");
+}
+#endif
 
 void CHud::CallOnNextFrame(std::function<void()> f)
 {
