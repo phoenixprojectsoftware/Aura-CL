@@ -155,9 +155,7 @@ void CBattleRifle::SecondaryAttack(void)
 
 	ToggleZoom();
 
-	pev->nextthink = 0.0 + 0.1;
-
-	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.1 + 0.5;
+	m_flNextSecondaryAttack = gpGlobals->time + 0.6f;
 }
 
 void CBattleRifle::ToggleZoom()
