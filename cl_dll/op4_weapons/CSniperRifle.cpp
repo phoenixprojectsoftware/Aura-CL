@@ -192,7 +192,7 @@ void CSniperRifle::PrimaryAttack()
 #ifndef _HALO
 	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 2.0f;
 #else
-	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.8f;
+	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.65f;
 #endif
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 2.0f;
 }
