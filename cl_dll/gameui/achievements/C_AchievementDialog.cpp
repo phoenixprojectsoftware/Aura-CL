@@ -59,6 +59,7 @@ DialogAchievement_t g_DAchievements[] =
 	_ACH_ID(ACH_KILLS100,					CATEGORY_KILLS,			plr_kill, 100),
 	_ACH_ID(ACH_500KILLS,					CATEGORY_KILLS,         plr_kill, 500),
 	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        plr_kill, 1000),
+	_ACH_ID(ACH_KILLS10000,              CATEGORY_KILLS,        plr_kill, 10000),
 	_ACH_ID(ACH_FIRST_BLOOD,               CATEGORY_KILLS,        NULL, NULL),
 
 	// Specials
