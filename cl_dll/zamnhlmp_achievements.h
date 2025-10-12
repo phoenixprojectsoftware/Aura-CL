@@ -48,7 +48,7 @@ inline const char* GetAchievementAPIName(int achievementID)
 	case 5:
 		return "ACH_CST";
 	case 6:
-		return "ACH_CLOSE_CALL";
+		return "ACH_CLOSE_CALL"; // Close Call
 	case 7:
 		return "ACH_O2";
 	case 8:
@@ -113,6 +113,7 @@ enum EAchievements
 	ACH_1000KILLS,
 	ACH_KILLS10000,
 	ACH_FIRST_BLOOD,
+	ACH_CLOSE_CALL,
 	ACH_LAN,
 	ACH_WELCOME,
 	ACH_PHOENIX_PARTY,

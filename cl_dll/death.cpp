@@ -382,6 +382,11 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 				gEngfuncs.Con_Printf("The Snark Steam Stat failed.\n");
 		}
 
+		// CLOSE CALL ACHIEVEMENT
+		if (gHUD.m_Health.m_iHealth <= 10)
+			if (!isAchievementUnlocked(6))
+				UnlockAchievement(6);
+
 		int totalKills = 0;
 		SteamUserStats()->GetStat(PLR_KILL_STATS, &totalKills);
 		g_Leaderboards.UploadScore(totalKills);
