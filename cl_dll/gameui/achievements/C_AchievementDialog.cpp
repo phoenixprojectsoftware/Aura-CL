@@ -43,6 +43,7 @@ enum EStats
 {
 	plr_kill = 0,
 	uw_kill,
+	ml_kill,
 	trp_kill,
 	sqk_kill,
 	snp_kill,
@@ -63,6 +64,8 @@ DialogAchievement_t g_DAchievements[] =
 	_ACH_ID(ACH_KILLS10000,              CATEGORY_KILLS,        plr_kill, 10000),
 	_ACH_ID(ACH_FIRST_BLOOD,               CATEGORY_KILLS,        NULL, NULL),
 	_ACH_ID(ACH_O2, CATEGORY_KILLS, uw_kill, 25),
+	_ACH_ID(ACH_UNARMED, CATEGORY_KILLS, NULL, NULL),
+	_ACH_ID(ACH_UNARMED25, CATEGORY_KILLS, ml_kill, 25),
 
 	// Conditionals
 	_ACH_ID(ACH_CLOSE_CALL, CATEGORY_GENERAL, NULL, NULL),
@@ -97,6 +100,8 @@ private:
 	bool m_bInitialized;				// Have we called Request stats and received the callback?
 
 	int m_iAchKills_Total;
+	int m_iAchKills_Water;
+	int m_iAchKills_Melee;
 	int m_iAchKills_Tripmine;
 	int m_iAchKills_Snark;
 	int m_iAchKills_Sniper;
@@ -153,6 +158,8 @@ SteamUserStats()->GetUserStat( pCallback->m_steamIDUser, #_ACH, &s##_DATA ); \
 _DATA = s##_DATA;
 
 		GetStat(plr_kill, m_iAchKills_Total);
+		GetStat(uw_kill, m_iAchKills_Water);
+		GetStat(ml_kill, m_iAchKills_Melee);
 		GetStat(trp_kill, m_iAchKills_Tripmine);
 		GetStat(sqk_kill, m_iAchKills_Snark);
 		GetStat(snp_kill, m_iAchKills_Sniper);
@@ -164,6 +171,8 @@ int CSteamAchievementsDialog::RequestValue(const char* ID)
 {
 	int returnvalue = 0;
 	if (!Q_strcmp("plr_kill", ID)) returnvalue = m_iAchKills_Total;
+	else if (!Q_strcmp("uw_kill", ID)) returnvalue = m_iAchKills_Water;
+	else if (!Q_strcmp("ml_kill", ID)) returnvalue = m_iAchKills_Melee;
 	else if (!Q_strcmp("trp_kill", ID)) returnvalue = m_iAchKills_Tripmine;
 	else if (!Q_strcmp("sqk_kill", ID)) returnvalue = m_iAchKills_Snark;
 	else if (!Q_strcmp("snp_kill", ID)) returnvalue = m_iAchKills_Sniper;

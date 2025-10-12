@@ -205,6 +205,7 @@ int CHudDeathNotice::Draw(float flTime)
 }
 
 int32 plrKillStatValue = 0;
+int32 plrMeleeKillStat = 0;
 int32 tripmineKillStat = 0;
 int32 sniperKillStat = 0;
 int32 snarkKillStat = 0;
@@ -387,10 +388,25 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			if (!isAchievementUnlocked(6))
 				UnlockAchievement(6);
 
-		int totalKills = 0;
-		SteamUserStats()->GetStat(PLR_KILL_STATS, &totalKills);
-		g_Leaderboards.UploadScore(totalKills);
+		// POINTY END ACHIEVEMENT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "crowbar") || !stricmp(rgDeathNoticeList[i].szWeapon, "knife") || (!stricmp(rgDeathNoticeList[i].szWeapon, "pipewrench")))
+		{
+			if (!isAchievementUnlocked(21))
+				UnlockAchievement(21);
 
+			if (SteamUserStats()->GetStat(PLR_MELEE_KILLS_STATS, &plrMeleeKillStat))
+			{
+				SteamUserStats()->SetStat(PLR_MELEE_KILLS_STATS, plrMeleeKillStat + 1);
+				SteamUserStats()->StoreStats();
+				gEngfuncs.Con_Printf("Melee kill stat incremented to %d\n", plrMeleeKillStat + 1);
+			}
+			else
+			{
+				gEngfuncs.Con_Printf("The melee kill Steam Stat failed.\n");
+			}
+		}
+
+		// UNDERWATER KILL STAT
 		int uwKills = 0;
 		extern int g_iClientWaterLevel;
 		if (g_iClientWaterLevel >= 2)
