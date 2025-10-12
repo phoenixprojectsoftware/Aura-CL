@@ -95,7 +95,7 @@ BOOL CSniperRifle::Deploy()
 #ifndef _HALO
 	return BaseClass::DefaultDeploy("models/v_m40a1.mdl", "models/p_m40a1.mdl", SNIPERRIFLE_DRAW, "bow");
 #else
-	return BaseClass::DefaultDeploy("models/v_sniper.mdl", "models/p_sniper.mdl", SNIPERRIFLE_DRAW, "bow");
+	return BaseClass::DefaultDeploy("models/v_sniper.mdl", "models/p_sniper.mdl", SNIPERRIFLE_DRAW1, "bow");
 #endif
 }
 
@@ -108,7 +108,11 @@ void CSniperRifle::Holster(int skiplocal)
 
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.25;
 
+#ifndef _HALO
 	SendWeaponAnim(SNIPERRIFLE_HOLSTER);
+#else
+	SendWeaponAnim(SNIPERRIFLE_HOLSTER1);
+#endif
 }
 
 void CSniperRifle::WeaponIdle()
@@ -120,18 +124,27 @@ void CSniperRifle::WeaponIdle()
 
 	if (m_bReloading && gpGlobals->time >= m_flReloadStart + 2.324)
 	{
+#ifndef _HALO
 		SendWeaponAnim(SNIPERRIFLE_RELOAD2);
+#else
+		SendWeaponAnim(SNIPERRIFLE_RELOAD);
+#endif
 		m_bReloading = false;
 	}
 
 	if (m_flTimeWeaponIdle < UTIL_WeaponTimeBase())
 	{
+#ifndef _HALO
 		if (m_iClip)
 			SendWeaponAnim(SNIPERRIFLE_SLOWIDLE);
 		else
 			SendWeaponAnim(SNIPERRIFLE_SLOWIDLE2);
-
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 4.348;
+#else
+		if (m_iClip)
+			SendWeaponAnim(SNIPERRIFLE_FIDGET1);
+		else
+			SendWeaponAnim(SNIPERRIFLE_FIDGET2);
+#endif
 	}
 }
 
@@ -176,7 +189,11 @@ void CSniperRifle::PrimaryAttack()
 		m_iClip, m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()],
 		0, 0);
 
+#ifndef _HALO
 	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 2.0f;
+#else
+	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.8f;
+#endif
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 2.0f;
 }
 
@@ -206,17 +223,33 @@ void CSniperRifle::Reload()
 
 		if (m_iClip)
 		{
+#ifdef _HALO
+			if (DefaultReload(CROSSBOW_MAX_CLIP, SNIPERRIFLE_RELOAD, 4.0))
+			{
+				m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 4.0;
+			}
+#else
 			if (DefaultReload(SNIPERRIFLE_MAX_CLIP, SNIPERRIFLE_RELOAD3, 2.324, 1))
 			{
 				m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 2.324;
 			}
+#endif
 		}
+#ifdef _HALO
+		else if (DefaultReload(CROSSBOW_MAX_CLIP, SNIPERRIFLE_RELOAD, 4.0))
+		{
+			m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 4.0;
+			m_flReloadStart = gpGlobals->time;
+			m_bReloading = true;
+		}
+#else
 		else if (DefaultReload(SNIPERRIFLE_MAX_CLIP, SNIPERRIFLE_RELOAD1, 2.324, 1))
 		{
 			m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 4.102;
 			m_flReloadStart = gpGlobals->time;
 			m_bReloading = true;
 		}
+#endif
 		else
 		{
 			m_bReloading = false;

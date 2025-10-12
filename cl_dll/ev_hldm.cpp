@@ -2209,8 +2209,23 @@ void EV_SniperRifle(event_args_t* args)
 	if (EV_IsLocal(idx))
 	{
 		EV_MuzzleFlash();
+#ifndef _HALO
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(iClip <= 0 ? SNIPERRIFLE_FIRELASTROUND : SNIPERRIFLE_FIRE, 0);
 		Punch(2, 0, 0);
+#else
+		switch (gEngfuncs.pfnRandomLong(0, 2))
+		{
+		case 0:
+			gEngfuncs.pEventAPI->EV_WeaponAnimation(SNIPERRIFLE_FIRE1, 1);
+			break;
+		case 1:
+			gEngfuncs.pEventAPI->EV_WeaponAnimation(SNIPERRIFLE_FIRE2, 1);
+			break;
+		case 2:
+			gEngfuncs.pEventAPI->EV_WeaponAnimation(SNIPERRIFLE_FIRE3, 1);
+			break;
+		}
+#endif
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound(idx, vecOrigin,
