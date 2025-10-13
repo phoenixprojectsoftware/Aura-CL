@@ -163,6 +163,7 @@ add_subdirectory(dlls)
 add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
+add_subdirectory(external/openal-soft)
 add_subdirectory(source_sdk)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
@@ -181,6 +182,7 @@ target_include_directories(client PRIVATE
     engine
     external
     external/discord-rpc/include
+	external/openal-soft/include
     game_shared
     pm_shared
     public
@@ -287,5 +289,5 @@ target_compile_definitions(client PRIVATE
     -DCLIENT_DLL
     -DCLIENT_WEAPONS
     -DUPDATE_CHECK)
-
-target_link_libraries(client discord-rpc)
+	
+target_link_libraries(client discord-rpc OpenAL)
