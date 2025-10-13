@@ -308,11 +308,12 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 		if (iBulletType == BULLET_PLAYER_CROWBAR)
 			return 0.0; // crowbar already makes this sound
 		fvol = 1.0;	fvolbar = 0.2;
-		//rgsz[0] = "weapons/bullet_hit1.wav";
-		//rgsz[1] = "weapons/bullet_hit2.wav";
-		rgsz[0] = "player/hitsound.wav";
+		rgsz[0] = "player/hitsound01.wav";
+		rgsz[1] = "player/hitsound02.wav";
+		rgsz[2] = "player/hitsound03.wav";
+		rgsz[3] = "player/hitsound04.wav";
 		fattn = 1.0;
-		cnt = 1;
+		cnt = 4;
 		break;
 	}
 
