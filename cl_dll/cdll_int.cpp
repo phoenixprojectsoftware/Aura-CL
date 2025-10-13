@@ -44,6 +44,7 @@ extern "C"
 
 #include "vgui_TeamFortressViewport.h"
 #include "console.h"
+#include "audio/openal_wav.h"
 
 cldll_enginefunc_t gEngfuncs;
 CHud gHUD;
@@ -171,6 +172,9 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 
 	update_checker::check_for_updates();
 	discord_integration::initialize();
+
+	if (!g_WavPlayer.Init())
+		gEngfuncs.Con_Printf("Failed to init openal\n");
 
 	CvarSystem::RegisterCvars();
 	console::Initialize();
@@ -355,6 +359,8 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	CL_UnloadParticleMan();
 	console::HudShutdown();
 	discord_integration::shutdown();
+	g_WavPlayer.Stop();
+	g_WavPlayer.Shutdown();
 }
 
 //---------------------------------------------------
