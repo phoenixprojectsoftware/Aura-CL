@@ -444,23 +444,36 @@ void WeaponsResource :: SelectSlot( int iSlot, int fAdvance, int iDirection )
 	WEAPON *p = NULL;
 	bool fastSwitch = CVAR_GET_FLOAT( "hud_fastswitch" ) != 0;
 
+	if (fastSwitch)
+	{
+		// switching between menus restarts count
+		if (gpLastSel && iSlot != gpLastSel->iSlot)
+			gpLastSel = NULL;
+
+		// no selection, start at top
+		if (!gpLastSel)
+			p = GetFirstPos(iSlot);
+		else
+			// try next
+			p = GetNextActivePos(iSlot, gpLastSel->iSlotPos);
+		// end of list, start at top
+		if (!p)
+			p = GetFirstPos(iSlot);
+	}
+
+	// found a weapon, store and switch
+	if (p)
+	{
+		PlaySound("common/wpn_moveselect.wav", 1);
+		gpLastSel = p;
+		ServerCmd(p->szName);
+		g_weaponselect = p->iId;
+	}
+
 	if ( (gpActiveSel == NULL) || (gpActiveSel == (WEAPON *)1) || (iSlot != gpActiveSel->iSlot) )
 	{
 		PlaySound( "common/wpn_hudon.wav", 1 );
 		p = GetFirstPos( iSlot );
-
-		if ( p && fastSwitch ) // check for fast weapon switch mode
-		{
-			// if fast weapon switch is on, then weapons can be selected in a single keypress
-			// but only if there is only one item in the bucket
-			WEAPON *p2 = GetNextActivePos( p->iSlot, p->iSlotPos );
-			if ( !p2 )
-			{	// only one active item in bucket, so change directly to weapon
-				ServerCmd( p->szName );
-				g_weaponselect = p->iId;
-				return;
-			}
-		}
 	}
 	else
 	{
@@ -475,10 +488,7 @@ void WeaponsResource :: SelectSlot( int iSlot, int fAdvance, int iDirection )
 	if ( !p )  // no selection found
 	{
 		// just display the weapon list, unless fastswitch is on just ignore it
-		if ( !fastSwitch )
 			gpActiveSel = (WEAPON *)1;
-		else
-			gpActiveSel = NULL;
 	}
 	else 
 		gpActiveSel = p;
@@ -648,32 +658,33 @@ int CHudAmmo::MsgFunc_CurWeapon(const char *pszName, int iSize, void *pbuf )
 void CHudAmmo::Warning()
 {
 	static bool ammoWarningPlayed = false;
+
+	if (!m_pWeapon)
+		return;
+
 	int ammoCount = m_iCurrentClipAmmo;
 	lowAmmoThreshold = WEAPON_NOCLIP;
 
 	if (ammoCount < 0)
 		return; //weapon_noclip or invalid ammo count.
 
-	switch (m_iCurrentWeapon)
-	{
-	case WEAPON_GLOCK: lowAmmoThreshold = 3; break;
-	case WEAPON_EAGLE: lowAmmoThreshold = 2; break;
-	case WEAPON_PYTHON: lowAmmoThreshold = 1; break;
-	case WEAPON_MP5: lowAmmoThreshold = 10; break;
-	case WEAPON_SHOTGUN: lowAmmoThreshold = 2; break;
-	case WEAPON_CROSSBOW: lowAmmoThreshold = 1; break;
-	case WEAPON_M249: lowAmmoThreshold = 15; break;
-	case WEAPON_SNIPERRIFLE: lowAmmoThreshold = 1; break;
-	default:
-		return; // skip the warning for weapons without logic above.
-	}
+	const char* pszWeaponName = m_pWeapon->szName; // classname of weapon
+
+	if (!strcmp(pszWeaponName, "weapon_9mmhandgun")) lowAmmoThreshold = 3;
+	else if (!strcmp(pszWeaponName, "weapon_eagle")) lowAmmoThreshold = 2;
+	else if (!strcmp(pszWeaponName, "weapon_357")) lowAmmoThreshold = 1;
+	else if (!strcmp(pszWeaponName, "weapon_9mmAR")) lowAmmoThreshold = 10;
+	else if (!strcmp(pszWeaponName, "weapon_shotgun")) lowAmmoThreshold = 2;
+	else if (!strcmp(pszWeaponName, "weapon_crossbow")) lowAmmoThreshold = 1;
+	else if (!strcmp(pszWeaponName, "weapon_m249")) lowAmmoThreshold = 15;
+	else if (!strcmp(pszWeaponName, "weapon_sniperrifle")) lowAmmoThreshold = 1;
 
 	if (ammoCount > lowAmmoThreshold)
 		ammoWarningPlayed = false;
 	else if (!ammoWarningPlayed && ammoCount <= lowAmmoThreshold)
 	{
 		PlaySound("common/warning.wav", 1.0);
-		gEngfuncs.Con_DPrintf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", m_iCurrentWeapon, ammoCount, lowAmmoThreshold);
+		gEngfuncs.Con_DPrintf("Warning() called: weapon=%d, clipAmmo=%d, threshold=%d\n", pszWeaponName, ammoCount, lowAmmoThreshold);
 		ammoWarningPlayed = true;
 	}
 }
@@ -962,6 +973,7 @@ int CHudAmmo::Draw(float flTime)
 		{
 			UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 			ScaleColors(r, g, b, 192);
+			// gEngfuncs.Con_Printf("Weapon ID - %s", m_pWeapon);
 		}
 		else
 		{
