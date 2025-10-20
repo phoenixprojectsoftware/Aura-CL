@@ -261,14 +261,6 @@ CMapListPanel::CMapListPanel(Panel* pParent) : Panel(pParent, "MapListPanel")
 	m_pList->SetMultiselectEnabled(false);
 	m_pList->SetSelectIndividualCells(true); // not sure about keeping this
 	m_pList->AddActionSignalTarget(this);
-
-	m_pThumbnail = new ImagePanel(this, "MapThumbnail");
-	m_pThumbnail->SetBounds(0, 410, 250, 150);
-	m_pThumbnail->SetImage("ui/gfx/vgui/nomap.tga"); // fallback
-	m_pThumbnail->SetShouldScaleImage(true);
-	m_pThumbnail->SetShouldCenterImage(true);
-	m_pThumbnail->SetScaleAmount(1.0f);
-	m_pThumbnail->SetPos(4, 4);
 }
 
 void CMapListPanel::SetMapThumbnail(const char* mapName)
@@ -488,31 +480,6 @@ CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "C
 	m_pMaxplayers->SetText("12");
 	y += 30;
 
-	// CHECK BUTTONS
-	m_pLAN = new CheckButton(this, "LAN", "Local server");
-	m_pLAN->SetBounds(5, y, 200, 20); y += 25;
-
-	m_pRealisticFall = new CheckButton(this, "Fall", "Realistic fall damage");
-	m_pRealisticFall->SetBounds(5, y, 200, 20); y += 25;
-
-	m_pAutoGamemode = new CheckButton(this, "AutoGM", "Auto gamemode switch for CTF maps");
-	m_pAutoGamemode->SetBounds(5, y, 250, 20); y += 25;
-
-	m_pFlashlight = new CheckButton(this, "Flash", "Enable Flashlight");
-	m_pFlashlight->SetBounds(5, y, 250, 20); y += 25;
-
-	m_pFriendlyFire = new CheckButton(this, "FF", "Friendly Fire");
-	m_pFriendlyFire->SetBounds(5, y, 200, 20); y += 25;
-
-	m_pWeaponsStay = new CheckButton(this, "WS", "Weapons Stay");
-	m_pWeaponsStay->SetBounds(5, y, 200, 20); y += 25;
-
-	m_pForceRespawn = new CheckButton(this, "FR", "Force Respawn");
-	m_pForceRespawn->SetBounds(5, y, 200, 20); y += 25;
-
-	m_pAllowCheats = new CheckButton(this, "Cheats", "Allow Cheats");
-	m_pAllowCheats->SetBounds(5, y, 200, 20); y += 25;
-
 	// SPAWN SYSTEM
 	m_lSpawnSystem = new Label(this, "SpawnLabel", "Spawn System");
 	m_lSpawnSystem->R_BOUNDARY;
@@ -563,6 +530,32 @@ CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "C
 	m_pTimeLimit = new TextEntry(this, "TimeLimit");
 	m_pTimeLimit->SetBounds(10, y, 200, 20);
 	m_pTimeLimit->SetText("15"); y += 30;
+
+	// CHECK BUTTONS
+	m_pLAN = new CheckButton(this, "LAN", "Local server");
+	m_pLAN->SetBounds(5, y, 200, 20); y += 25;
+
+	m_pRealisticFall = new CheckButton(this, "Fall", "Realistic fall damage");
+	m_pRealisticFall->SetBounds(5, y, 200, 20); y += 25;
+
+	m_pAutoGamemode = new CheckButton(this, "AutoGM", "Auto gamemode switch for CTF maps");
+	m_pAutoGamemode->SetBounds(5, y, 250, 20); y += 25;
+
+	m_pFlashlight = new CheckButton(this, "Flash", "Enable Flashlight");
+	m_pFlashlight->SetBounds(5, y, 250, 20); y += 25;
+
+	m_pFriendlyFire = new CheckButton(this, "FF", "Friendly Fire");
+	m_pFriendlyFire->SetBounds(5, y, 200, 20); y += 25;
+
+	m_pWeaponsStay = new CheckButton(this, "WS", "Weapons Stay");
+	m_pWeaponsStay->SetBounds(5, y, 200, 20); y += 25;
+
+	m_pForceRespawn = new CheckButton(this, "FR", "Force Respawn");
+	m_pForceRespawn->SetBounds(5, y, 200, 20); y += 25;
+
+	m_pAllowCheats = new CheckButton(this, "Cheats", "Allow Cheats");
+	m_pAllowCheats->SetBounds(5, y, 200, 20); y += 25;
+
 }
 
 void CComposerOptionsPanel::LoadMapcycles()
