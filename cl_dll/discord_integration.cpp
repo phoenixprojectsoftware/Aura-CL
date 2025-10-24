@@ -14,6 +14,8 @@
 
 using namespace std::literals::string_literals;
 
+static char s_largeImageKey[64];
+
 namespace discord_integration
 {
 	namespace
@@ -28,15 +30,10 @@ namespace discord_integration
 		// BlueNightHawk : Convert Uppercase Map Names to Lowercase. 2021.
 		void LowerCase(const char* in, char* out, int size) 
 		{
-			for (int i = 0; i < size; i++)
-			{
-				if (!out[i] || out[i] == '\0')
-				{
-					out[i] = in[i];
-					continue;
-				}
-				out[i] = (char)tolower(in[i]);
-			}
+			int i = 0;
+			for (; i < size - 1 && in[i] != '\0'; i++)
+				out[i] = (char)tolower((unsigned char)in[i]);
+			out[i] = '\0';
 		}
 
 
@@ -290,16 +287,16 @@ namespace discord_integration
 
 					// Get the map name and icon.
 					get_map_name(map_name, ARRAYSIZE(map_name));
-					if (map_name[0])
+					if (cur_state != game_state::NOT_PLAYING && map_name[0])
 					{
-						char newmapname[64];
+						// lowercased version into static buffer
+						for (int i = 0; i < (int)sizeof(s_largeImageKey) - 1 && map_name[i]; ++i)
+							s_largeImageKey[i] = (char)tolower((unsigned char)map_name[i]);
+						s_largeImageKey[strlen(map_name)] = '\0';
 
-						LowerCase((const char*)map_name, newmapname, ARRAYSIZE(map_name));
+						// verify the map is in the set
 						if (maps_with_thumbnails.find(map_name) != maps_with_thumbnails.cend())
-							presence.largeImageKey = newmapname;
-
-						if (custom_maps_with_thumbnails.find(map_name) != custom_maps_with_thumbnails.cend())
-							presence.largeImageKey = newmapname;
+							presence.largeImageKey = s_largeImageKey;
 
 						presence.largeImageText = map_name;
 					}
@@ -321,6 +318,9 @@ namespace discord_integration
 				}
 
 				presence.state = state.c_str();
+
+				gEngfuncs.Con_Printf("[DiscordRPC] largeImageKey = '%s'\n", presence.largeImageKey);
+				gEngfuncs.Con_Printf("[DiscordRPC] map_name = '%s'\n", map_name);
 
 				Discord_UpdatePresence(&presence);
 			}
