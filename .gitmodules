@@ -9,3 +9,9 @@
 [submodule "source_sdk"]
 	path = source_sdk
 	url = https://github.com/sabianroberts/hl1_source_sdk.git
+[submodule "external/ogg"]
+	path = external/ogg
+	url = https://github.com/xiph/ogg
+[submodule "external/vorbis"]
+	path = external/vorbis
+	url = https://github.com/xiph/vorbis
