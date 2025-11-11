@@ -47,7 +47,6 @@ CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
 {
 	Assert(!m_sInstance);
 	m_sInstance = this;
-
 	vgui2::VPANEL parent = g_pEngineVGui->GetPanel(PANEL_GAMEUIDLL);
 	SetParent(parent);
 

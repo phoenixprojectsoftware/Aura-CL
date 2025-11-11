@@ -1,3 +1,4 @@
+add_subdirectory(audio)
 add_subdirectory(gameui)
 add_subdirectory(halo_weapons)
 add_subdirectory(hl)
