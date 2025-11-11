@@ -173,7 +173,7 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	update_checker::check_for_updates();
 	discord_integration::initialize();
 
-	if (!g_WavPlayer.Init())
+	if (!g_SoundtrackSystem.Init())
 		gEngfuncs.Con_Printf("Failed to init openal\n");
 
 	CvarSystem::RegisterCvars();
@@ -359,8 +359,8 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	CL_UnloadParticleMan();
 	console::HudShutdown();
 	discord_integration::shutdown();
-	g_WavPlayer.Stop();
-	g_WavPlayer.Shutdown();
+	g_SoundtrackSystem.Stop();
+	g_SoundtrackSystem.Shutdown();
 }
 
 //---------------------------------------------------

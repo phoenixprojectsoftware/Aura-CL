@@ -12,26 +12,29 @@
 #pragma once
 
 #include <string>
-#include <AL/al.h>
 #include <AL/alc.h>
+#include <AL/al.h>
+#include <ogg/ogg.h>
+#include <vorbis/vorbisfile.h>
 
-class CWavPlayer
+class CSoundtrackSystem
 {
 public:
 	bool Init();
-	bool LoadWav(const std::string& filename);
-	void Play();
+	bool LoadSoundtrack(const std::string& filename); // handles wav and ogg soundtracks
+	void Play(bool loop);
 	void Stop();
 	void SetVolumeFromCvar();
-	void PlayCmd();
-	void StopCmd();
 	void Shutdown();
 
 private:
+	bool LoadWav(const std::string& filename);
+	bool LoadOgg(const std::string& filename);
+
 	ALCdevice* m_device = nullptr;
 	ALCcontext* m_context = nullptr;
 	ALuint m_source = 0;
 	ALuint m_buffer = 0;
 };
 
-extern CWavPlayer g_WavPlayer;
+extern CSoundtrackSystem g_SoundtrackSystem;

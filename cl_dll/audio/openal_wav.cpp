@@ -41,16 +41,24 @@ bool CSoundtrackSystem::Init()
 		gEngfuncs.Con_Printf("OpenAL error after alGenSources: %d\n", err);
 }
 
+bool CSoundtrackSystem::LoadSoundtrack(const std::string& filename)
+{
+    std::string lower = filename;
+    for (auto& c : lower) c = tolower(c);
+
+	if (lower.find(".ogg") != std::string::npos || lower.find(".rts") != std::string::npos) // .rts is also ogg
+        return LoadOgg(filename);
+    else
+        return LoadWav(filename);
+}
+
 bool CSoundtrackSystem::LoadWav(const std::string& filename)
 {
-    // Construct full path: <gamedir>/sound/<filename>
-    const char* gamedir = gEngfuncs.pfnGetGameDirectory();
-    std::string path = filename;
 
-    FILE* file = fopen(path.c_str(), "rb");
+    FILE* file = fopen(filename.c_str(), "rb");
     if (!file)
     {
-        gEngfuncs.Con_Printf("CSoundtrackSystem: Failed to open file: %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Failed to open file: %s\n", filename.c_str());
         return false;
     }
 
@@ -58,7 +66,7 @@ bool CSoundtrackSystem::LoadWav(const std::string& filename)
     fread(riff, 1, 4, file);
     if (strncmp(riff, "RIFF", 4) != 0)
     {
-        gEngfuncs.Con_Printf("CSoundtrackSystem: Not a RIFF file: %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Not a RIFF file: %s\n", filename.c_str());
         fclose(file);
         return false;
     }
@@ -68,7 +76,7 @@ bool CSoundtrackSystem::LoadWav(const std::string& filename)
     fread(wave, 1, 4, file);
     if (strncmp(wave, "WAVE", 4) != 0)
     {
-        gEngfuncs.Con_Printf("CSoundtrackSystem: Not a WAVE file: %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Not a WAVE file: %s\n", filename.c_str());
         fclose(file);
         return false;
     }
@@ -132,7 +140,7 @@ bool CSoundtrackSystem::LoadWav(const std::string& filename)
 
     if (audioData.empty())
     {
-        gEngfuncs.Con_Printf("CSoundtrackSystem: No audio data found in %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: No audio data found in %s\n", filename.c_str());
         return false;
     }
 
@@ -168,13 +176,56 @@ bool CSoundtrackSystem::LoadWav(const std::string& filename)
         return false;
     }
 
-    gEngfuncs.Con_Printf("CSoundtrackSystem: Loaded WAV file: %s\n", path.c_str());
+    gEngfuncs.Con_Printf("CSoundtrackSystem: Loaded WAV file: %s\n", filename.c_str());
     return true;
 }
 
-void CSoundtrackSystem::Play()
+bool CSoundtrackSystem::LoadOgg(const std::string& filename)
 {
-	alSourcePlay(m_source);
+    OggVorbis_File vf;
+    if (ov_fopen(filename.c_str(), &vf) < 0)
+    {
+		gEngfuncs.Con_Printf("CSoundtrackSystem: Failed to open OGG file: %s\n", filename.c_str());
+        return false;
+    }
+
+    vorbis_info* info = ov_info(&vf, -1);
+    int channels = info->channels;
+	long sampleRate = info->rate;
+    ALenum format = (channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
+
+    std::vector<char> pcm;
+	char buffer[4096];
+    int bitstream;
+
+    long bytes;
+    while ((bytes = ov_read(&vf, buffer, sizeof(buffer), 0,2,1, &bitstream)) > 0)
+		pcm.insert(pcm.end(), buffer, buffer + bytes);
+
+    ov_clear(&vf);
+
+    if (pcm.empty())
+    {
+		gEngfuncs.Con_Printf("CSoundtrackSystem: No audio data found in %s\n", filename.c_str());
+		return false;
+    }
+
+    if (m_buffer)
+		alDeleteBuffers(1, &m_buffer);
+
+    alGenBuffers(1, &m_buffer);
+    alBufferData(m_buffer, format, pcm.data(), (ALsizei)pcm.size(), sampleRate);
+    alSourcei(m_source, AL_BUFFER, m_buffer);
+
+	gEngfuncs.Con_Printf("CSoundtrackSystem: Loaded OGG file: %s\n", filename.c_str());
+    return true;
+}
+
+void CSoundtrackSystem::Play(bool loop)
+{
+	alSourcei(m_source, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
+    SetVolumeFromCvar();
+    alSourcePlay(m_source);
 }
 
 void CSoundtrackSystem::Stop()
@@ -196,51 +247,6 @@ void CSoundtrackSystem::SetVolumeFromCvar()
 	alSourcef(m_source, AL_GAIN, vol);
 }
 
-void CSoundtrackSystem::PlayCmd()
-{
-	if (!g_SoundtrackSystem.Init())
-	{
-		gEngfuncs.Con_Printf("WHAT THE FUCK?!?\n");
-		return;
-	}
-
-	if (gEngfuncs.Cmd_Argc() < 2)
-	{
-		gEngfuncs.Con_Printf("Usage: al_play <filename.wav> [play|loop]\n");
-		return;
-	}
-
-	const char* filename = gEngfuncs.Cmd_Argv(1);
-	const char* mode = (gEngfuncs.Cmd_Argc() >= 3) ? gEngfuncs.Cmd_Argv(2) : "play";
-
-	std::string path;
-	std::string snd = "sound/";
-	const char* gamedir = gEngfuncs.pfnGetGameDirectory();
-	path = std::string(gamedir) + "/" + snd + filename;
-
-	if (!g_SoundtrackSystem.LoadWav(path))
-	{
-		gEngfuncs.Con_Printf("Failed to load WAV file from %s.\n", path.c_str());
-		return;
-	}
-	else
-		gEngfuncs.Con_Printf("Loading WAV from %s.\n", path.c_str());
-
-	if (stricmp(mode, "loop") == 0)
-		alSourcei(g_SoundtrackSystem.m_source, AL_LOOPING, AL_TRUE);
-	else
-		alSourcei(g_SoundtrackSystem.m_source, AL_LOOPING, AL_FALSE);
-
-	g_SoundtrackSystem.SetVolumeFromCvar();
-	g_SoundtrackSystem.Play();
-}
-
-void CSoundtrackSystem::StopCmd()
-{
-	g_SoundtrackSystem.Stop();
-	gEngfuncs.Con_Printf("stopped\n");
-}
-
 void CSoundtrackSystem::Shutdown()
 {
 	alDeleteSources(1, &m_source);
@@ -249,12 +255,31 @@ void CSoundtrackSystem::Shutdown()
 	alcCloseDevice(m_device);
 }
 
-CON_COMMAND(al_play, "None")
+CON_COMMAND(soundtrack_play, "file.ext [loop]")
 {
-	g_SoundtrackSystem.PlayCmd();
+    if (!g_SoundtrackSystem.Init())
+    {
+        gEngfuncs.Con_Printf("soundtrack_play: Failed to initialize OpenAL\n");
+		return;
+    }
+
+    if (gEngfuncs.Cmd_Argc() < 2)
+    {
+        gEngfuncs.Con_Printf("Usage: soundtrack_play <file.ext> [loop]\n");
+        return;
+	}
+
+    std::string file = gEngfuncs.Cmd_Argv(1);
+	std::string path = std::string(gEngfuncs.pfnGetGameDirectory()) + "/sound/" + file;
+
+    if (!g_SoundtrackSystem.LoadSoundtrack(path))
+        return;
+
+	bool loop = (gEngfuncs.Cmd_Argc() >= 3 && !stricmp(gEngfuncs.Cmd_Argv(2), "loop"));
+	g_SoundtrackSystem.Play(loop);
 }
 
-CON_COMMAND(al_stop, "none")
+CON_COMMAND(soundtrack_stop, "Stop soundtrack")
 {
-	g_SoundtrackSystem.StopCmd();
+    g_SoundtrackSystem.Stop();
 }

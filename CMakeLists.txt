@@ -2,6 +2,19 @@ set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
 cmake_minimum_required(VERSION 3.23)
 set(ALSOFT_USE_CPP20_MODULES OFF CACHE BOOL "Disable OpenAL C++20 modules" FORCE)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF CACHE BOOL "Disable module scanning" FORCE)
+set(ALSOFT_UTILS OFF CACHE BOOL "" FORCE)
+set(ALSOFT_TESTS OFF CACHE BOOL "" FORCE)
+set(ALSOFT_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+set(ALSOFT_INSTALL OFF CACHE BOOL "" FORCE)
+
+set(ALSOFT_NO_CONFIG_UTIL OFF CACHE BOOL "" FORCE)
+
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(OGG_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(VORBIS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(VORBIS_ENABLE_DOCS OFF CACHE BOOL "" FORCE)
+
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>,$<CONFIG:HaloDebug>>:Debug>DLL")
 
@@ -166,6 +179,8 @@ add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
 add_subdirectory(external/openal-soft)
+add_subdirectory(external/ogg)
+add_subdirectory(external/vorbis)
 add_subdirectory(source_sdk)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
@@ -185,6 +200,8 @@ target_include_directories(client PRIVATE
     external
     external/discord-rpc/include
 	external/openal-soft/include
+	external/ogg/include
+	external/vorbis/include
     game_shared
     pm_shared
     public
@@ -292,4 +309,4 @@ target_compile_definitions(client PRIVATE
     -DCLIENT_WEAPONS
     -DUPDATE_CHECK)
 	
-target_link_libraries(client discord-rpc OpenAL)
+target_link_libraries(client discord-rpc OpenAL::OpenAL vorbisfile vorbis ogg)
