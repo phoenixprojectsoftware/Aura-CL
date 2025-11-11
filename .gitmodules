@@ -12,3 +12,7 @@
 [submodule "external/vorbis"]
 	path = external/vorbis
 	url = https://github.com/xiph/vorbis
+[submodule "external/openal-soft"]
+	path = external/openal-soft
+	url = https://github.com/sabianroberts/openal-soft.git
+	branch = halflife
