@@ -20,9 +20,9 @@
 
 #include <convar.h>
 
-CWavPlayer g_WavPlayer;
+CSoundtrackSystem g_SoundtrackSystem;
 
-bool CWavPlayer::Init()
+bool CSoundtrackSystem::Init()
 {
 	m_device = alcOpenDevice(nullptr);
 	if (!m_device)
@@ -41,7 +41,7 @@ bool CWavPlayer::Init()
 		gEngfuncs.Con_Printf("OpenAL error after alGenSources: %d\n", err);
 }
 
-bool CWavPlayer::LoadWav(const std::string& filename)
+bool CSoundtrackSystem::LoadWav(const std::string& filename)
 {
     // Construct full path: <gamedir>/sound/<filename>
     const char* gamedir = gEngfuncs.pfnGetGameDirectory();
@@ -50,7 +50,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
     FILE* file = fopen(path.c_str(), "rb");
     if (!file)
     {
-        gEngfuncs.Con_Printf("CWavPlayer: Failed to open file: %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Failed to open file: %s\n", path.c_str());
         return false;
     }
 
@@ -58,7 +58,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
     fread(riff, 1, 4, file);
     if (strncmp(riff, "RIFF", 4) != 0)
     {
-        gEngfuncs.Con_Printf("CWavPlayer: Not a RIFF file: %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Not a RIFF file: %s\n", path.c_str());
         fclose(file);
         return false;
     }
@@ -68,7 +68,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
     fread(wave, 1, 4, file);
     if (strncmp(wave, "WAVE", 4) != 0)
     {
-        gEngfuncs.Con_Printf("CWavPlayer: Not a WAVE file: %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Not a WAVE file: %s\n", path.c_str());
         fclose(file);
         return false;
     }
@@ -101,7 +101,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
 
             if (audioFormat != 1) // PCM
             {
-                gEngfuncs.Con_Printf("CWavPlayer: Unsupported WAV format: %d\n", audioFormat);
+                gEngfuncs.Con_Printf("CSoundtrackSystem: Unsupported WAV format: %d\n", audioFormat);
                 fclose(file);
                 return false;
             }
@@ -115,7 +115,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
             audioData.resize(chunkSize);
             if (fread(audioData.data(), 1, chunkSize, file) != (size_t)chunkSize)
             {
-                gEngfuncs.Con_Printf("CWavPlayer: Failed to read WAV data\n");
+                gEngfuncs.Con_Printf("CSoundtrackSystem: Failed to read WAV data\n");
                 fclose(file);
                 return false;
             }
@@ -132,7 +132,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
 
     if (audioData.empty())
     {
-        gEngfuncs.Con_Printf("CWavPlayer: No audio data found in %s\n", path.c_str());
+        gEngfuncs.Con_Printf("CSoundtrackSystem: No audio data found in %s\n", path.c_str());
         return false;
     }
 
@@ -144,7 +144,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
     else if (channels == 2 && bitsPerSample == 16) format = AL_FORMAT_STEREO16;
     else
     {
-        gEngfuncs.Con_Printf("CWavPlayer: Unsupported WAV format: %d channels, %d bits\n", channels, bitsPerSample);
+        gEngfuncs.Con_Printf("CSoundtrackSystem: Unsupported WAV format: %d channels, %d bits\n", channels, bitsPerSample);
         return false;
     }
 
@@ -155,7 +155,7 @@ bool CWavPlayer::LoadWav(const std::string& filename)
     ALenum err = alGetError();
     if (err != AL_NO_ERROR)
     {
-        gEngfuncs.Con_Printf("CWavPlayer: OpenAL error %d on buffer data\n", err);
+        gEngfuncs.Con_Printf("CSoundtrackSystem: OpenAL error %d on buffer data\n", err);
         return false;
     }
 
@@ -164,25 +164,25 @@ bool CWavPlayer::LoadWav(const std::string& filename)
     err = alGetError();
     if (err != AL_NO_ERROR)
     {
-        gEngfuncs.Con_Printf("CWavPlayer: OpenAL error %d on source bind\n", err);
+        gEngfuncs.Con_Printf("CSoundtrackSystem: OpenAL error %d on source bind\n", err);
         return false;
     }
 
-    gEngfuncs.Con_Printf("CWavPlayer: Loaded WAV file: %s\n", path.c_str());
+    gEngfuncs.Con_Printf("CSoundtrackSystem: Loaded WAV file: %s\n", path.c_str());
     return true;
 }
 
-void CWavPlayer::Play()
+void CSoundtrackSystem::Play()
 {
 	alSourcePlay(m_source);
 }
 
-void CWavPlayer::Stop()
+void CSoundtrackSystem::Stop()
 {
 	alSourceStop(m_source);
 }
 
-void CWavPlayer::SetVolumeFromCvar()
+void CSoundtrackSystem::SetVolumeFromCvar()
 {
 	cvar_t* mp3_volume = gEngfuncs.pfnGetCvarPointer("MP3Volume");
 
@@ -196,9 +196,9 @@ void CWavPlayer::SetVolumeFromCvar()
 	alSourcef(m_source, AL_GAIN, vol);
 }
 
-void CWavPlayer::PlayCmd()
+void CSoundtrackSystem::PlayCmd()
 {
-	if (!g_WavPlayer.Init())
+	if (!g_SoundtrackSystem.Init())
 	{
 		gEngfuncs.Con_Printf("WHAT THE FUCK?!?\n");
 		return;
@@ -218,7 +218,7 @@ void CWavPlayer::PlayCmd()
 	const char* gamedir = gEngfuncs.pfnGetGameDirectory();
 	path = std::string(gamedir) + "/" + snd + filename;
 
-	if (!g_WavPlayer.LoadWav(path))
+	if (!g_SoundtrackSystem.LoadWav(path))
 	{
 		gEngfuncs.Con_Printf("Failed to load WAV file from %s.\n", path.c_str());
 		return;
@@ -227,21 +227,21 @@ void CWavPlayer::PlayCmd()
 		gEngfuncs.Con_Printf("Loading WAV from %s.\n", path.c_str());
 
 	if (stricmp(mode, "loop") == 0)
-		alSourcei(g_WavPlayer.m_source, AL_LOOPING, AL_TRUE);
+		alSourcei(g_SoundtrackSystem.m_source, AL_LOOPING, AL_TRUE);
 	else
-		alSourcei(g_WavPlayer.m_source, AL_LOOPING, AL_FALSE);
+		alSourcei(g_SoundtrackSystem.m_source, AL_LOOPING, AL_FALSE);
 
-	g_WavPlayer.SetVolumeFromCvar();
-	g_WavPlayer.Play();
+	g_SoundtrackSystem.SetVolumeFromCvar();
+	g_SoundtrackSystem.Play();
 }
 
-void CWavPlayer::StopCmd()
+void CSoundtrackSystem::StopCmd()
 {
-	g_WavPlayer.Stop();
+	g_SoundtrackSystem.Stop();
 	gEngfuncs.Con_Printf("stopped\n");
 }
 
-void CWavPlayer::Shutdown()
+void CSoundtrackSystem::Shutdown()
 {
 	alDeleteSources(1, &m_source);
 	alDeleteBuffers(1, &m_buffer);
@@ -251,10 +251,10 @@ void CWavPlayer::Shutdown()
 
 CON_COMMAND(al_play, "None")
 {
-	g_WavPlayer.PlayCmd();
+	g_SoundtrackSystem.PlayCmd();
 }
 
 CON_COMMAND(al_stop, "none")
 {
-	g_WavPlayer.StopCmd();
+	g_SoundtrackSystem.StopCmd();
 }
