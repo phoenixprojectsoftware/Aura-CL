@@ -15,6 +15,17 @@ set(OGG_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(VORBIS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(VORBIS_ENABLE_DOCS OFF CACHE BOOL "" FORCE)
 
+# Completely disable system OpenAL discovery
+set(OpenAL_ROOT "" CACHE PATH "" FORCE)
+set(OPENAL_LIBRARY "" CACHE FILEPATH "" FORCE)
+set(OPENAL_INCLUDE_DIR "" CACHE PATH "" FORCE)
+set(OPENAL_INCLUDE_DIRS "" CACHE PATH "" FORCE)
+set(OPENAL_FOUND FALSE CACHE BOOL "" FORCE)
+unset(OpenAL_ROOT CACHE)
+unset(OPENAL_INCLUDE_DIR CACHE)
+unset(OPENAL_LIBRARY CACHE)
+
+
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>,$<CONFIG:HaloDebug>>:Debug>DLL")
 
@@ -309,4 +320,4 @@ target_compile_definitions(client PRIVATE
     -DCLIENT_WEAPONS
     -DUPDATE_CHECK)
 	
-target_link_libraries(client discord-rpc OpenAL::OpenAL vorbisfile vorbis ogg)
+target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg)
