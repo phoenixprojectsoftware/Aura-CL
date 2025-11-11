@@ -1,7 +1,7 @@
 set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
 cmake_minimum_required(VERSION 3.23)
-set(ALSOFT_USE_CPP20_MODULES OFF CACHE BOOL "Disable OpenAL C++20 modules")
-set(CMAKE_CXX_SCAN_FOR_MODULES OFF CACHE BOOL "Disable module scanning")
+set(ALSOFT_USE_CPP20_MODULES OFF CACHE BOOL "Disable OpenAL C++20 modules" FORCE)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF CACHE BOOL "Disable module scanning" FORCE)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>,$<CONFIG:HaloDebug>>:Debug>DLL")
 
