@@ -431,6 +431,32 @@ void CSoundtrackSystem::Update()
     // otherwise: stop
 }
 
+void CSoundtrackSystem::PauseMusic()
+{
+    if (m_paused)
+        return;
+
+    ALint state;
+    alGetSourcei(m_source, AL_SOURCE_STATE, &state);
+
+    if (state == AL_PLAYING)
+    {
+        m_paused = true;
+        alSourcePause(m_source);
+        gEngfuncs.Con_Printf("MUSIC PAUSED\n");
+    }
+}
+
+void CSoundtrackSystem::ResumeMusic()
+{
+    if (!m_paused)
+        return;
+
+    m_paused = false;
+    alSourcePlay(m_source);
+    gEngfuncs.Con_Printf("MUSIC RESUMED\n");
+}
+
 CON_COMMAND(soundtrack_play, "file.ext [loop]")
 {
     if (!g_SoundtrackSystem.Init())

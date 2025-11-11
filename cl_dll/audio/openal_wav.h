@@ -43,6 +43,9 @@ public:
 	void Shutdown();
 	void Update();
 
+	void PauseMusic();
+	void ResumeMusic();
+
 	void Queue(const std::string& filename, bool loop = false);
 
 	ALuint m_source = 0;
@@ -60,6 +63,8 @@ private:
 	ALCdevice* m_device = nullptr;
 	ALCcontext* m_context = nullptr;
 	ALuint m_buffer = 0;
+
+	bool m_paused = false;
 };
 
 extern CSoundtrackSystem g_SoundtrackSystem;

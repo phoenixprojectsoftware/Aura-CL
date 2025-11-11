@@ -288,3 +288,5 @@ HSPRITE LoadSprite(const char *pszName);
 // frac should always be multiplied by frametime
 float lerp(float start, float end, float frac);
 double dlerp(double start, double end, double frac);
+
+inline bool g_Paused = false;
