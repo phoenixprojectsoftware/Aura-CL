@@ -213,6 +213,7 @@ target_include_directories(client PRIVATE
 	external/openal-soft/include
 	external/ogg/include
 	external/vorbis/include
+    external/drmp3
     game_shared
     pm_shared
     public

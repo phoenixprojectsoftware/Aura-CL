@@ -276,6 +276,9 @@ int CL_DLLEXPORT HUD_UpdateClientData(client_data_t *pcldata, float flTime )
 
 	discord_integration::on_update_client_data();
 
+	g_SoundtrackSystem.SetVolumeFromCvar();
+	g_SoundtrackSystem.Update();
+
 	return gHUD.UpdateClientData(pcldata, flTime );
 }
 
