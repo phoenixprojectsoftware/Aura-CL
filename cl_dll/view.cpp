@@ -145,7 +145,7 @@ cvar_t	v_ipitch_level = { "v_ipitch_level", "0.3", 0, 0.3 };
 float	v_idlescale;  // used by TFC for concussion grenade effect
 
 cvar_s* crosshair_low;
-int HUD_LAG_VALUE; // The sensitivity of the HUD-sway effect is dependent on the screen resolution.
+int m_iHudLagSensitivity; // The sensitivity of the HUD-sway effect is dependent on the screen resolution.
 
 
 
@@ -939,17 +939,17 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 		origin = origin + (vDifference * -1.0f) * flScale;
 
 		if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
-			HUD_LAG_VALUE = 17;
+			m_iHudLagSensitivity = 17;
 		else if (ScreenWidth >= 1280 && ScreenHeight > 720)
-			HUD_LAG_VALUE = 13;
+			m_iHudLagSensitivity = 13;
 		else if (ScreenWidth >= 640)
-			HUD_LAG_VALUE = 8;
+			m_iHudLagSensitivity = 8;
 		else
-			HUD_LAG_VALUE = 2;
+			m_iHudLagSensitivity = 2;
 
 		// HUD lag
-		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * flScale), HUD_LAG_VALUE, 500) * 280.0f;
-		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
+		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * flScale), m_iHudLagSensitivity, 500) * 280.0f;
+		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * flScale), m_iHudLagSensitivity, 500, 2) * 280.0f;
 		view->origin = view->origin + (vDifference * -1.0f) * flScale;
 	}
 	AngleVectors(InvPitch(vOriginalAngles), forward, right, up);
