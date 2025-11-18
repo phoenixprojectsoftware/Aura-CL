@@ -29,3 +29,19 @@
 #elif defined(_HALO) && defined(_DEBUG)
 #define buildCfg "HaloDebug"
 #endif
+
+#ifdef _LINUX
+#define buildSys "Linux"
+#endif
+
+#ifdef _WIN32
+#if _MSC_VER >= 1910 && _MSC_VER <= 1916
+#define buildSys "Microsoft Visual C++ 2017"
+#elif _MSC_VER >= 1920 && _MSC_VER <= 1929
+#define buildSys "Microsoft Visual C++ 2019"
+#elif _MSC_VER >= 1930 && _MSC_VER <= 1944
+#define buildSys "Microsoft Visual C++ 2022"
+#elif _MSC_VER >= 1950
+#define buildSys "Microsoft Visual C++ 2026"
+#endif
+#endif

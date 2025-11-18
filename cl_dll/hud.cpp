@@ -567,6 +567,7 @@ void PrintVersion()
 	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
 	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
 	gEngfuncs.Con_Printf("\n  Configuration - %s \n", buildCfg);
+	gEngfuncs.Con_Printf("\n  Build System - %s \n", buildSys);
 }
 
 

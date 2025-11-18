@@ -1,4 +1,4 @@
-// view/refresh setup functions
+// view/refresh setup functions.
 #include <cmath>
 #include <algorithm>
 #include "hud.h"
@@ -1153,17 +1153,6 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// Let the viewmodel shake at about 10% of the amplitude
 	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
 
-	for (i = 0; i < 3; i++)
-	{
-		view->origin[i] += bob * 0.4 * pparams->forward[i];
-	}
-	view->origin[2] += bob;
-
-	// throw in a little tilt.
-	view->angles[YAW] -= bob * 0.5;
-	view->angles[ROLL] -= bob * 1;
-	view->angles[PITCH] -= bob * 0.3;
-
 	if (cl_legacy_bob_enabled->value != 0)
 	{
 		bob = V_CalcLegacyBob(pparams);
@@ -1174,6 +1163,17 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	}
 	else
 		V_ApplyBob(pparams, view);
+
+	for (i = 0; i < 3; i++)
+	{
+		view->origin[i] += bob * 0.4 * pparams->forward[i];
+	}
+	view->origin[2] += bob;
+
+	// throw in a little tilt.
+	view->angles[YAW] -= bob * 0.5;
+	view->angles[ROLL] -= bob * 1;
+	view->angles[PITCH] -= bob * 0.3;
 
 	VectorCopy(view->angles, view->curstate.angles);
 
