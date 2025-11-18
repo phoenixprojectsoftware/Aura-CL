@@ -179,8 +179,10 @@ else()
 endif()
 
 # Enable SSE globally for all targets (needed for mathlib.h intrinsics)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+if(UNIX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+endif()
 
 # Source layout
 add_subdirectory(cl_dll)
