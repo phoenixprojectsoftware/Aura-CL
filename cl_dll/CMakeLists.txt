@@ -153,4 +153,5 @@ add_sources(
 	view.cpp
 	view.h
 	voice_status.cpp
-	zamnhlmp_achievements.h)
+	zamnhlmp_achievements.h
+	resource.rc)
