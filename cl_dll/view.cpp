@@ -22,7 +22,6 @@
 #include "hltv.h"
 #include "Exports.h"
 #include "Platform.h"
-#include "audio/openal_wav.h"
 #include <pm_shared.h>
 
 
@@ -1276,13 +1275,6 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	}
 
 	v_origin = pparams->vieworg;
-
-	g_Paused = pparams->paused != 0;
-
-	if (g_Paused)
-		g_SoundtrackSystem.PauseMusic();
-	else
-		g_SoundtrackSystem.ResumeMusic();
 }
 
 void V_SmoothInterpolateAngles(float* startAngle, float* endAngle, float* finalAngle, float degreesPerSec)
