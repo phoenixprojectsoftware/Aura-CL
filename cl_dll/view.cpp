@@ -1040,7 +1040,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 {
 	cl_entity_t* ent, * view;
 	int				i;
-	float bob;
+	float bob = 0.0f;
 
 	vec3_t camAngles, camForward, camRight, camUp;
 
@@ -1153,35 +1153,38 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// Let the viewmodel shake at about 10% of the amplitude
 	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
 
+	// VIEW BOBBING
 	if (cl_legacy_bob_enabled->value != 0)
 	{
 		bob = V_CalcLegacyBob(pparams);
+
 		VectorCopy(pparams->simorg, pparams->vieworg);
 		for (int i = 0; i < 3; i++)
 			pparams->vieworg[i] -= bob * 0.4 * pparams->forward[i];
+
 		VectorAdd(pparams->vieworg, pparams->viewheight, pparams->vieworg);
+
+		// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
+		// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
+		// with view model distortion, this may be a cause. (SJB). 
+		view->origin[2] -= 1;
 	}
 	else
+	{ 
 		V_ApplyBob(pparams, view);
-
-	for (i = 0; i < 3; i++)
-	{
-		view->origin[i] += bob * 0.4 * pparams->forward[i];
+		V_CalcViewModelLag(pparams, view);
+		V_RetractWeapon(pparams, view);
+		V_Jump(pparams, view);
 	}
-	view->origin[2] += bob;
 
 	// throw in a little tilt.
+	/*
 	view->angles[YAW] -= bob * 0.5;
 	view->angles[ROLL] -= bob * 1;
 	view->angles[PITCH] -= bob * 0.3;
+	*/
 
 	VectorCopy(view->angles, view->curstate.angles);
-
-	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
-	// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
-	// with view model distortion, this may be a cause. (SJB). 
-	if (cl_legacy_bob_enabled->value != 0)
-		view->origin[2] -= 1;
 
 	// fudge position around to keep amount of weapon visible
 	// roughly equal with different FOV
@@ -1217,13 +1220,6 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
 	view->angles = view->angles + ev_punchangle + sv_punchangle;
 	// view->curstate.angles = view->curstate.angles + ev_punchangle + Legacy_Vector(pparams->punchangle);
-
-	if (cl_legacy_bob_enabled->value <= 0)
-	{
-		V_CalcViewModelLag(pparams, view);
-		V_RetractWeapon(pparams, view);
-		V_Jump(pparams, view);
-	}
 
 	VectorAdd(pparams->viewangles, InvPitch(cl_jumpangle) / 3.0f, pparams->viewangles);
 	VectorAdd(view->angles, cl_jumpangle, view->angles);
