@@ -140,30 +140,6 @@ else()
     endif()
 endif()
 
-# Set up current_version.h (unchanged)
-find_package(Git)
-if(GIT_FOUND)
-    message(STATUS "Found git at ${GIT_EXECUTABLE}")
-    execute_process(COMMAND "${GIT_EXECUTABLE}" show -s --format=%ct
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            OUTPUT_VARIABLE CURRENT_VERSION
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            RESULT_VARIABLE CURRENT_VERSION_RESULT)
-
-    if(CURRENT_VERSION_RESULT EQUAL "0")
-        set(CURRENT_VERSION "${CURRENT_VERSION}ull")
-        message(STATUS "Set current version to ${CURRENT_VERSION}")
-    else()
-        set(CURRENT_VERSION UINT64_MAX)
-        message(WARNING "Could not get current version from git; update checking will be disabled")
-    endif()
-else()
-    set(CURRENT_VERSION UINT64_MAX)
-    message(WARNING "Could not find git; update checking will be disabled")
-endif()
-
-configure_file(cl_dll/current_version.h.in current_version.h)
-
 # Add discord-rpc (unchanged)
 set(BUILD_EXAMPLES OFF CACHE BOOL "build discord-rpc examples" FORCE)
 set(CLANG_FORMAT_SUFFIX "-dummy")
