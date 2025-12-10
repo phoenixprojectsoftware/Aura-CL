@@ -171,6 +171,7 @@ add_subdirectory(external/openal-soft)
 add_subdirectory(external/ogg)
 add_subdirectory(external/vorbis)
 add_subdirectory(source_sdk)
+add_subdirectory(external/spectra)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")

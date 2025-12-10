@@ -16,3 +16,6 @@
 	path = external/openal-soft
 	url = https://github.com/sabianroberts/openal-soft.git
 	branch = halflife
+[submodule "external/spectra"]
+	path = external/spectra
+	url = https://github.com/phoenixprojectsoftware/spectra.git
