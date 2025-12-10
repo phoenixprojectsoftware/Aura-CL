@@ -45,7 +45,7 @@ LINK_ENTITY_TO_CLASS( weapon_gauss, CGauss );
 
 float CGauss::GetFullChargeTime( void )
 {
-	return 20;
+	return 1.4;
 }
 
 #ifdef CLIENT_DLL
