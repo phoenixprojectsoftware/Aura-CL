@@ -112,6 +112,7 @@
 #define EF_NIGHTVISION			256 // player nightvision
 #define EF_SNIPERLASER			512 // sniper laser effect
 #define EF_FIBERCAMERA			1024// fiber camera
+#define EF_REDLIGHT 2048 // red dlight from entity attachment 1
 
 
 // entity flags
