@@ -341,10 +341,10 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 	g_pFullFileSystem->FindClose(fh);
 }
 
-void CGameUIViewport::AutoMountWorkshopItem(vgui2::WorkshopItem WorkshopFile)
+void CGameUIViewport::AutoMountWorkshopItem(vgui2::WorkshopItem &WorkshopFile)
 {
 	if (!WorkshopIDIsMounted(WorkshopFile.uWorkshopID)) return;
-	MountWorkshopItem(WorkshopFile, nullptr, nullptr);
+	WorkshopFile.bMounted = true;
 }
 
 struct CopyPath
