@@ -55,7 +55,7 @@ public:
 	bool IsVACBanned() const;
 
 	void GetCurrentItems(std::vector<vgui2::WorkshopItem>& items);
-	void AutoMountWorkshopItem(vgui2::WorkshopItem WorkshopFile);
+	void AutoMountWorkshopItem(vgui2::WorkshopItem &WorkshopFile);
 	void MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const char* szPath, const char* szRootPath);
 	bool HasConflictingFiles(vgui2::WorkshopItem WorkshopFile);
 	vgui2::WorkshopItem GetWorkshopItem(PublishedFileId_t nWorkshopID);
