@@ -174,7 +174,6 @@ add_subdirectory(source_sdk)
 add_subdirectory(external/spectra)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
-set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
@@ -297,7 +296,6 @@ endif()
 
 target_compile_definitions(client PRIVATE
     -DCLIENT_DLL
-    -DCLIENT_WEAPONS
-    -DUPDATE_CHECK)
+    -DCLIENT_WEAPONS)
 	
 target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg)

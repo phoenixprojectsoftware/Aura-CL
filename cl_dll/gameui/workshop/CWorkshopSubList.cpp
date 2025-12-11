@@ -14,8 +14,6 @@
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/CheckButton.h>
 #include <KeyValues.h>
-#include <current_version.h>
-// #include <bhl_urls.h>
 #include "../../client_vgui.h"
 #include "../gameui_viewport.h"
 #include "CWorkshopSubList.h"

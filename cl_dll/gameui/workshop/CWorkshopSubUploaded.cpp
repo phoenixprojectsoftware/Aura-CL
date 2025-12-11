@@ -12,8 +12,6 @@
 #include <vgui_controls/PropertySheet.h>
 #include <vgui_controls/RichText.h>
 #include <KeyValues.h>
-#include <current_version.h>
-// #include <bhl_urls.h>
 #include "../../client_vgui.h"
 #include "../gameui_viewport.h"
 #include "CWorkshopSubUploaded.h"
