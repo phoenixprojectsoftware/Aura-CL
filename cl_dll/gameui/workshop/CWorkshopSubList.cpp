@@ -223,6 +223,8 @@ void CWorkshopSubList::OnCommand(const char* pcCommand)
 		CGameUIViewport::Get()->ShowWorkshopInfoBox(item.szName, WorkshopInfoBoxState::State_Done);
 		CGameUIViewport::Get()->MountWorkshopItem(item, nullptr, nullptr);
 	}
+	else if (!Q_stricmp(pcCommand, "Refresh"))
+		UpdateItems();
 	else
 	{
 		BaseClass::OnCommand(pcCommand);
