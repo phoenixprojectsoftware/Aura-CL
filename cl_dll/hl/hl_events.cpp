@@ -49,6 +49,8 @@ void EV_FireDisplacer(struct event_args_s* args);
 void EV_FireM249(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
 void EV_FireBattleRifle(event_args_t* args);
+void EV_RayTouch(particle_s* particle);
+void EV_FireRailgun(event_args_t* args);
 
 #ifdef _HALO
 void EV_FireSMG(event_args_t* args);
@@ -105,6 +107,8 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent("events/m249.sc", EV_FireM249);
 	gEngfuncs.pfnHookEvent("events/penguinfire.sc", EV_PenguinFire);
 	gEngfuncs.pfnHookEvent("events/olr.sc", EV_FireBattleRifle);
+	//gEngfuncs.pfnHookEvent("events/tf_railtouch.sc", EV_RayTouch);
+	gEngfuncs.pfnHookEvent("events/tf_rail.sc", EV_FireRailgun);
 
 #ifdef _HALO
 	gEngfuncs.pfnHookEvent("events/m7.sc", EV_FireSMG);

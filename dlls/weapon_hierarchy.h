@@ -30,6 +30,7 @@
 #define WPN_GAUSS_POS 2
 #define WPN_EGON_POS 3
 #define WPN_HIVEHAND_POS 4
+#define WPN_RAILGUN_POS 5
 
 // Slot 5 - explosives
 #define WPN_EXPL_SLOT 4

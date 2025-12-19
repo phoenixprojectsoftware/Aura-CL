@@ -98,6 +98,7 @@ CShockRifle g_ShockRifle;
 CSporeLauncher g_SporeLauncher;
 CM249 g_M249;
 CPenguin g_Penguin;
+CRailgun g_Railgun;
 #endif
 
 /*
@@ -705,6 +706,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity(&g_Displacer, &player);
 	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
+	HUD_PrepEntity(&g_Railgun, &player);
 #endif
 }
 
@@ -770,6 +772,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_GRAPPLE: return &g_Grapple;
 	case WEAPON_M249: return &g_M249;
 	case WEAPON_PENGUIN: return &g_Penguin;
+	case WEAPON_RAILGUN: return &g_Railgun;
 	case WEAPON_KNIFE: return &g_Knife;
 	case WEAPON_EAGLE: return &g_Eagle;
 	case WEAPON_PIPEWRENCH: return &g_Pipewrench;

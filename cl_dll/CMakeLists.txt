@@ -4,6 +4,7 @@ add_subdirectory(halo_weapons)
 add_subdirectory(hl)
 add_subdirectory(op4_weapons)
 add_subdirectory(vgui)
+add_subdirectory(s10_weapons)
 
 add_sources(
 	achievement_manager.cpp

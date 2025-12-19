@@ -106,6 +106,7 @@ public:
 
 #define WEAPON_BATTLERIFLE 30
 #define WEAPON_HLDMAR 32
+#define WEAPON_RAILGUN 33
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -272,6 +273,7 @@ public:
 #define SNIPERRIFLE_DEFAULT_GIVE 5
 #define M249_DEFAULT_GIVE					100
 #define DISPLACER_DEFAULT_GIVE		40
+#define RAILGUN_DEFAULT_GIVE 20
 #endif
 #define BR_DEFAULT_GIVE BR_MAX_CLIP
 
@@ -852,6 +854,25 @@ private:
 
 	int m_iBurstShotsFired;
 };
+
+#ifndef _HALO
+class CRailgun : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int GetItemInfo(ItemInfo* p);
+	void Fire(void);
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+	BOOL Deploy();
+	void Holster(int skiplocal = 0) override;
+	void WeaponIdle(void);
+
+private:
+	unsigned short m_usRailgun;
+};
+#endif
 
 enum m7_e
 {
