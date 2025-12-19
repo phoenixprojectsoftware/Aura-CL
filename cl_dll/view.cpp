@@ -890,7 +890,7 @@ void NewPunch(float* ev_punchangle, float frametime)
 		//ev_punchangle[2] = clamp(ev_punchangle[2], -7, 7);
 	}
 }
-
+// Source style smooth-punch. Punch, Yaw, Roll.
 void Punch(float p, float y, float r)
 {
 	punch[0] -= p * 20;
