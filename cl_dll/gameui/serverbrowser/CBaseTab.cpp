@@ -812,6 +812,10 @@ void CBaseTab::UpdateFilterSettings()
 		m_vecServerFilters.AddToTail(MatchMakingKeyValuePair_t("region", szRegCode));
 	}
 
+	// Johan: history should only check for dedicated servers, no p2p.
+	if (m_eMatchMakingType == eHistoryServer)
+		m_vecServerFilters.AddToTail(MatchMakingKeyValuePair_t("dedicated", "1"));
+
 	// copy filter settings into filter file
 	KeyValues* filter = CGameUIViewport::Get()->GetServerBrowser()->GetFilterSaveData(GetName());
 
