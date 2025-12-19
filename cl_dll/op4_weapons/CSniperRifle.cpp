@@ -51,10 +51,10 @@ void CSniperRifle::Precache()
 	PRECACHE_MODEL("models/w_sniper.mdl");
 	PRECACHE_MODEL("models/v_sniper.mdl");
 	PRECACHE_MODEL("models/p_sniper.mdl");
-	PRECACHE_SOUND("weapons/sniper_zoom2.wav");
 #endif
 	PRECACHE_SOUND("weapons/sniper_fire.wav");
 	PRECACHE_SOUND("weapons/sniper_zoom.wav");
+	PRECACHE_SOUND("weapons/sniper_zoom2.wav");
 	PRECACHE_SOUND("weapons/sniper_reload_first_seq.wav");
 	PRECACHE_SOUND("weapons/sniper_reload_second_seq.wav");
 	PRECACHE_SOUND("weapons/sniper_miss.wav");
