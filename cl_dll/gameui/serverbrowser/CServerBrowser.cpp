@@ -52,6 +52,8 @@ CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 	: Frame(parent, "CServerBrowser")
 {
+	SetProportional(true);
+
 	SetTitle("#ServerBrowser_Title", true);
 
 	m_pSavedData = NULL;
@@ -60,7 +62,7 @@ CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 	m_pHistory = NULL;
 	m_pInternetGames = NULL;
 
-	SetMinimumSize(640, 384);
+	SetMinimumSize(GetScaledValue(640), GetScaledValue(384));
 
 	m_pGameList = m_pInternetGames;
 
@@ -68,7 +70,7 @@ CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 
 	// property sheet
 	m_pTabPanel = new vgui2::PropertySheet(this, "GameTabs");
-	m_pTabPanel->SetTabWidth(72);
+	m_pTabPanel->SetTabWidth(GetScaledValue(72));
 	m_pTabPanel->AddActionSignalTarget(this);
 
 	m_pStatusLabel = new vgui2::Label(this, "StatusLabel", "");
@@ -382,8 +384,8 @@ void CServerBrowser::LoadUserData()
 	vgui2::surface()->GetScreenSize(wide, tall);
 
 	// Half it
-	wide -= 20;
-	tall -= 20;
+	wide -= GetScaledValue(20);
+	tall -= GetScaledValue(20);
 
 	m_pSavedData = new KeyValues("Filters");
 	if (m_pSavedData->LoadFromFile(g_pFullFileSystem, "ServerBrowser.vdf", "CONFIG"))
@@ -408,7 +410,7 @@ void CServerBrowser::LoadUserData()
 	// fix the tabs being "fucked in the ass"
 	// to quote jonnyboy, after loading filters.
 	GetSize(wide, tall);
-	m_pTabPanel->SetSize(wide - 15, tall - 78);
+	m_pTabPanel->SetSize(wide - GetScaledValue(15), tall - GetScaledValue(78));
 
 	KeyValues* filters = m_pSavedData->FindKey("Filters", false);
 	if (filters)
