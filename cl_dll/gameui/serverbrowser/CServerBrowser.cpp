@@ -75,7 +75,7 @@ CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 
 	m_pStatusLabel = new vgui2::Label(this, "StatusLabel", "");
 
-	LoadControlSettingsAndUserConfig("servers/DialogServerBrowser.res");
+	LoadControlSettingsAndUserConfig("servers/DialogServerBrowserv2.res");
 
 	m_pStatusLabel->SetText("");
 
