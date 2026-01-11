@@ -204,7 +204,6 @@ void CWorkshopSubList::OnCommand(const char* pcCommand)
 		vgui2::WorkshopItem item = CGameUIViewport::Get()->GetWorkshopItem(nWorkshopID);
 
 		CGameUIViewport::Get()->ShowWorkshopInfoBox(item.szName, item.bMounted ? WorkshopInfoBoxState::State_Dismounting : WorkshopInfoBoxState::State_Mounting);
-		CGameUIViewport::Get()->ShowWorkshopInfoBox(item.szName, WorkshopInfoBoxState::State_Done);
 		CGameUIViewport::Get()->MountWorkshopItem(item, nullptr, nullptr);
 	}
 	else
