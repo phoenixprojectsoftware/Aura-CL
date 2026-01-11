@@ -473,6 +473,37 @@ unsigned RemoveFilesFromAddons(void* Data)
 	return 1;
 }
 
+static bool MountingCheck(const char* szStrFile)
+{
+	const char* ext = strrchr(szStrFile, '.');
+	if (!ext || !ext[1])
+	{
+		// No extension => deny
+		return false;
+	}
+
+	// Skip the dot
+	ext = ext + 1;
+
+	// Allowed extensions (lowercase). Add or remove as needed.
+	const char* allowedExts[] = {
+		"wad", "wav", "mp3", "ogg"
+	};
+
+	const size_t allowedCount = sizeof(allowedExts) / sizeof(allowedExts[0]);
+
+	bool bAllowed = false;
+	for (size_t i = 0; i < allowedCount; ++i)
+	{
+		if (Q_stricmp(ext, allowedExts[i]) == 0)
+		{
+			bAllowed = true;
+			break;
+		}
+	}
+	return bAllowed;
+}
+
 void CGameUIViewport::MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const char* szPath, const char* szRootPath)
 {
 	// Copies files to zp_addon,
@@ -511,10 +542,11 @@ void CGameUIViewport::MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const 
 		if (vgui2::FStrEq(strFile, ".") || vgui2::FStrEq(strFile, ".."))
 			bIsValidFile = false;
 
-		// If we are a root dir, ignore.
-		// We do NOT want to override any CFG files and so on.
+		// If we are a root dir.
 		if (bIsRoot && !g_pFullFileSystem->FindIsDirectory(fh))
-			bIsValidFile = false;
+		{
+			bIsValidFile = MountingCheck(strFile);
+		}
 		// If root, and is a dir, make sure we only allow certain folders.
 		else if (bIsRoot && g_pFullFileSystem->FindIsDirectory(fh))
 		{
@@ -659,7 +691,12 @@ bool CGameUIViewport::ShouldAutoMount(PublishedFileId_t nWorkshopID)
 	KeyValuesAD autodel(pAddonList);
 	if (pAddonList->LoadFromFile(g_pFullFileSystem, "addonlist.txt", "WORKSHOP"))
 	{
+		bool bShouldMount = false;
 		std::string strWorkshopID(std::to_string(nWorkshopID));
+		KeyValues* pKey = pAddonList->FindKey(strWorkshopID.c_str());
+		if (!pKey)
+			bShouldMount = true;
+
 		if (!pAddonList->FindKey(strWorkshopID.c_str()))
 			return true;
 	}
