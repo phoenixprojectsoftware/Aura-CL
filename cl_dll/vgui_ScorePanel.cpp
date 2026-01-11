@@ -606,6 +606,7 @@ bool IsLANOnlyID(const char* steamID)
 		if (strcmp(steamID, g_LANSteamID[i]) == 0)
 			return true;
 	}
+	return false;
 }
 
 #endif
