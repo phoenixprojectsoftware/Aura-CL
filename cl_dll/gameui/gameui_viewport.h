@@ -54,6 +54,8 @@ public:
 
 	bool IsVACBanned() const;
 
+	void DownloadWorkshopAddon(PublishedFileId_t nWorkshopID);
+
 	void GetCurrentItems(std::vector<vgui2::WorkshopItem>& items);
 	void AutoMountWorkshopItem(vgui2::WorkshopItem &WorkshopFile);
 	void MountWorkshopItem(vgui2::WorkshopItem WorkshopFile, const char* szPath, const char* szRootPath);
@@ -66,6 +68,7 @@ public:
 	void SetWorkshopInfoBoxProgress(float flProgress);
 
 	bool WorkshopIDIsMounted(PublishedFileId_t nWorkshopID);
+	bool ShouldAutoMount(PublishedFileId_t nWorkshopID);
 
 	void OpenFileExplorer(int eFilter, const char* szFolder, const char* szPathID, DialogSelected_t pFunction);
 	void OpenFileExplorer(const char* szFolder, const char* szPathID, DialogSelected_t pFunction);
@@ -75,8 +78,13 @@ public:
 protected:
 	void UpdateAddonList();
 	void LoadWorkshop();
+	void CheckWorkshopSubscriptions();
+	bool HasSubscribedToItem(PublishedFileId_t nWorkshopID);
 	bool HasLoadedItem(PublishedFileId_t nWorkshopID);
 	void LoadWorkshopItems(bool bWorkshopFolder);
+
+	// Our subscribed items. If we sub to a new one we should mount it immediately.
+	std::vector<PublishedFileId_t> m_SubscribedItems;
 
 	// list of our sources
 	std::vector<vgui2::WorkshopItem> m_Items;
@@ -93,7 +101,9 @@ protected:
 	};
 	std::vector<PrepareForDownload> m_QueryRequests;
 	PrepareForDownload m_CurrentQueryItem;
+	bool m_bDownloadedItemsReady;
 	float m_flQueryWait;
+	void SetQueryWait(const float& flTime);
 	bool m_bPrepareForQueryDownload;
 	bool PrepareForQueryDownload();
 
@@ -118,6 +128,9 @@ private:
 
 		return handle;
 	}
+
+	// Grab our stats on creation.
+	STEAM_CALLBACK(CGameUIViewport, OnDownloadItemResult, DownloadItemResult_t, m_steamcallback_OnDownloadItemResult);
 
 	static inline CGameUIViewport* m_sInstance = nullptr;
 };
