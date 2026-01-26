@@ -11,10 +11,16 @@
 #include "cl_util.h"
 #include "vgui_TeamFortressViewport.h"
 #include "discord_integration.h"
+#include "achievement_manager.h"
 
 using namespace std::literals::string_literals;
 
 static char s_largeImageKey[64];
+
+bool IsBeta()
+{
+	return SteamUtils()->GetAppID() == 3903990;
+}
 
 namespace discord_integration
 {
@@ -25,6 +31,7 @@ namespace discord_integration
 		constexpr const char CLIENT_ID[] = "1381646338604667072"; // Halo: GoldSource
 #else
 		constexpr const char CLIENT_ID[] = "836328170360799284";
+		constexpr const char BETA_ID[] = "1465161235669454944";
 #endif
 
 #ifdef _HALO
@@ -32,6 +39,7 @@ namespace discord_integration
 		constexpr const char STEAM_APP_ID[] = "11600264564054163526";
 #else
 		// Half-Life: Cross Product Steam App ID
+		constexpr const char BETA_APP_ID[] = "3903990";
 		constexpr const char STEAM_APP_ID[] = "3416640";
 #endif
 		
@@ -420,7 +428,10 @@ namespace discord_integration
 		handlers.disconnected = handle_disconnected;
 		handlers.joinGame = handle_joinGame;
 		handlers.joinRequest = handle_joinRequest;
-		Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);
+		if (IsBeta())
+			Discord_Initialize(BETA_ID, &handlers, 1, BETA_APP_ID);
+		else
+			Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);
 
 		discord_state = std::make_unique<DiscordState>();
 
