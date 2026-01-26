@@ -7,6 +7,11 @@
 #include <steamworks/steam_api.h>
 #endif
 
+bool IsBetaApp()
+{
+	return SteamUtils()->GetAppID() == 3903990;
+}
+
 #define DRAW_STRING gEngfuncs.pfnDrawString
 int CHudWatermark::Init()
 {
@@ -109,7 +114,10 @@ int CHudWatermark::Draw(float time)
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 #ifndef _DEBUG
-		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
+		if (IsBetaApp())
+			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - internal use only", 255, 0, 0);
+		else
+			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
 #else
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "DEBUG BUILD - internal use only.", 255, 0, 0);
 #endif
