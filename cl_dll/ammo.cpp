@@ -390,7 +390,7 @@ void CHudAmmo::Think(void)
 		gpActiveSel = NULL;
 		gHUD.m_iKeyBits &= ~IN_ATTACK;
 
-		PlaySound("common/wpn_hudoff.wav", 1);
+		PlaySound("UI/wpn_accept.wav", 1);
 	}
 
 }
@@ -464,7 +464,7 @@ void WeaponsResource :: SelectSlot( int iSlot, int fAdvance, int iDirection )
 	// found a weapon, store and switch
 	if (p)
 	{
-		PlaySound("common/wpn_moveselect.wav", 1);
+		PlaySound("UI/wpn_rollover.wav", 1);
 		gpLastSel = p;
 		ServerCmd(p->szName);
 		g_weaponselect = p->iId;
@@ -477,7 +477,7 @@ void WeaponsResource :: SelectSlot( int iSlot, int fAdvance, int iDirection )
 	}
 	else
 	{
-		PlaySound("common/wpn_moveselect.wav", 1);
+		PlaySound("UI/wpn_rollover.wav", 1);
 		if ( gpActiveSel )
 			p = GetNextActivePos( gpActiveSel->iSlot, gpActiveSel->iSlotPos );
 		if ( !p )
@@ -793,7 +793,7 @@ void CHudAmmo::UserCmd_Close(void)
 	{
 		gpLastSel = gpActiveSel;
 		gpActiveSel = NULL;
-		PlaySound("common/wpn_hudoff.wav", 1);
+		PlaySound("UI/wpn_accept.wav", 1);
 	}
 	else
 		EngineClientCmd("escape");
@@ -815,7 +815,7 @@ void CHudAmmo::UserCmd_NextWeapon(void)
 	{
 		pos = gpActiveSel->iSlotPos + 1;
 		slot = gpActiveSel->iSlot;
-		PlaySound("common/wpn_moveselect.wav", 1);
+		PlaySound("UI/wpn_rollover.wav", 1);
 	}
 
 	for ( int loop = 0; loop <= 1; loop++ )
@@ -857,7 +857,7 @@ void CHudAmmo::UserCmd_PrevWeapon(void)
 	{
 		pos = gpActiveSel->iSlotPos - 1;
 		slot = gpActiveSel->iSlot;
-		PlaySound("common/wpn_moveselect.wav", 1);
+		PlaySound("UI/wpn_rollover.wav", 1);
 	}
 	
 	for ( int loop = 0; loop <= 1; loop++ )
