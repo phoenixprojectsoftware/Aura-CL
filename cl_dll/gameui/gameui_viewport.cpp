@@ -32,7 +32,7 @@ CON_COMMAND(gameui_composer, "Composer")
 	CGameUIViewport::Get()->OpenComposer();
 }
 
-CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport"), m_steamcallback_OnDownloadItemResult(this, &CGameUIViewport::OnDownloadItemResult)
+CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport")
 {
 	Assert(!m_sInstance);
 	m_sInstance = this;
@@ -45,10 +45,9 @@ CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport"),
 	SetSize(0, 0);
 	SetVisible(true);
 
-	m_bDownloadedItemsReady = false;
 	m_bPrepareForQueryDownload = false;
 	m_hWorkshopInfoBox = nullptr;
-	SetQueryWait(1.0f);
+	m_flQueryWait = 0.0f;
 
 	LoadWorkshopItems(false);
 	LoadWorkshop();
@@ -154,16 +153,13 @@ void CGameUIViewport::OnThink()
 		// Clear it
 		m_QueryRequests.clear();
 
-		if (!m_bDownloadedItemsReady) return;
-
 		// Returned false? then stop the query download.
 		m_bPrepareForQueryDownload = false;
 
 		// Now check the client workshop content
 		LoadWorkshopItems(true);
 	}
-	else
-		CheckWorkshopSubscriptions();
+
 }
 
 CServerBrowser* CGameUIViewport::GetServerBrowser()
@@ -185,70 +181,9 @@ bool CGameUIViewport::IsVACBanned() const
 	return SteamApps()->BIsVACBanned(); // have you been a naughty boy?
 }
 
-void CGameUIViewport::OnDownloadItemResult(DownloadItemResult_t* pCallback)
-{
-	// Item either downloaded properly or not.
-	// Let's continue, and try reading the directory after 1 second delay.
-	SetQueryWait(1.0f);
-	m_bDownloadedItemsReady = true;
-	m_bPrepareForQueryDownload = true;
-
-	Color clr = Color(255, 22, 22, 255);
-	const char* szMsg = nullptr;
-	switch (pCallback->m_eResult)
-	{
-	case k_EResultOK: szMsg = "Successfully downloaded Workshop Item"; clr = Color(0, 255, 255, 255); break;
-	case k_EResultFail: szMsg = "Failed to download Workshop Item"; break;
-	case k_EResultNoConnection: szMsg = "Failed to download: No Internet Connection"; break;
-	case k_EResultInvalidPassword: szMsg = "Failed to download: Invalid Password"; break;
-	case k_EResultLoggedInElsewhere: szMsg = "Failed to download: Already logged in elsewhere"; break;
-	case k_EResultInvalidProtocolVer: szMsg = "Failed to download: Invalid Protocol Version"; break;
-	case k_EResultInvalidParam: szMsg = "Failed to download: Invalid parameter"; break;
-	case k_EResultFileNotFound: szMsg = "Failed to download: File Not Found"; break;
-	case k_EResultAccessDenied: szMsg = "Failed to download: Access Denied"; break;
-	case k_EResultTimeout: szMsg = "Failed to download: Connection Timed Out"; break;
-	case k_EResultAccountNotFound: szMsg = "Failed to download: Account Not Found"; break;
-	case k_EResultBanned: szMsg = "Failed to download: VAC Banned"; break;
-	case k_EResultInvalidSteamID: szMsg = "Failed to download: Invalid SteamID"; break;
-	case k_EResultNotLoggedOn: szMsg = "Failed to download: Not Logged On"; break;
-	case k_EResultServiceUnavailable: szMsg = "Failed to download: Service Unavailable"; break;
-	default: szMsg = vgui2::VarArgs("Returned result ID [%i]", pCallback->m_eResult); break;
-	}
-
-	ConPrintf(clr, "[Workshop] %s [%llu]\n", szMsg, pCallback->m_nPublishedFileId);
-}
-
 void CGameUIViewport::GetCurrentItems(std::vector<vgui2::WorkshopItem>& items)
 {
 	items = m_Items;
-}
-
-void CGameUIViewport::CheckWorkshopSubscriptions()
-{
-	if (m_flQueryWait > 0.0f)
-	{
-		m_flQueryWait -= 1.0f;
-		return;
-	}
-	SetQueryWait(1.55f);
-	const int MAX_WORKSHOP_ITEMS = 100;
-	PublishedFileId_t vWorkshopItems[MAX_WORKSHOP_ITEMS];
-	uint32 nItems = SteamUGC()->GetSubscribedItems(vWorkshopItems, MAX_WORKSHOP_ITEMS);
-	for (size_t i = 0; i < nItems; i++)
-	{
-		if (!HasSubscribedToItem(vWorkshopItems[i]))
-			DownloadWorkshopAddon(vWorkshopItems[i]);
-	}
-}
-
-bool CGameUIViewport::HasSubscribedToItem(PublishedFileId_t nWorkshopID)
-{
-	for (size_t i = 0; i < m_SubscribedItems.size(); i++)
-	{
-		if (m_SubscribedItems[i] == nWorkshopID)
-			return true;
-	}
-	return false;
 }
 
 void CGameUIViewport::UpdateAddonList()
@@ -408,12 +343,6 @@ void CGameUIViewport::LoadWorkshopItems(bool bWorkshopFolder)
 
 void CGameUIViewport::AutoMountWorkshopItem(vgui2::WorkshopItem &WorkshopFile)
 {
-	if (ShouldAutoMount(WorkshopFile.uWorkshopID))
-	{
-		CGameUIViewport::Get()->ShowWorkshopInfoBox(WorkshopFile.szName, WorkshopInfoBoxState::State_Mounting);
-		CGameUIViewport::Get()->MountWorkshopItem(WorkshopFile, nullptr, nullptr);
-		return;
-	}
 	if (!WorkshopIDIsMounted(WorkshopFile.uWorkshopID)) return;
 	WorkshopFile.bMounted = true;
 }
@@ -457,7 +386,6 @@ unsigned CopyFilesToNewDestination(void* Data)
 	std::ifstream src(((CopyPath*)Data)->from, std::ios::binary);
 	std::ofstream dest(((CopyPath*)Data)->to, std::ios::binary);
 	dest << src.rdbuf();
-	CGameUIViewport::Get()->ShowWorkshopInfoBox(CGameUIViewport::Get()->GetWorkshopItem(((CopyPath*)Data)->item).szName, WorkshopInfoBoxState::State_Done);
 	return 1;
 }
 
@@ -469,7 +397,6 @@ struct DeleteFile
 unsigned RemoveFilesFromAddons(void* Data)
 {
 	g_pFullFileSystem->RemoveFile(((DeleteFile*)Data)->file.c_str(), "ADDON");
-	CGameUIViewport::Get()->ShowWorkshopInfoBox(CGameUIViewport::Get()->GetWorkshopItem(((CopyPath*)Data)->item).szName, WorkshopInfoBoxState::State_Done);
 	return 1;
 }
 
@@ -663,8 +590,6 @@ void CGameUIViewport::ShowWorkshopInfoBox(const char* szText, WorkshopInfoBoxSta
 	}
 
 	m_hWorkshopInfoBox->SetData(buffer, nState);
-	m_hWorkshopInfoBox->MoveToCenterOfScreen();
-	m_hWorkshopInfoBox->MoveToFront();
 }
 
 void CGameUIViewport::SetWorkshopInfoBoxProgress(float flProgress)
@@ -685,24 +610,6 @@ bool CGameUIViewport::WorkshopIDIsMounted(PublishedFileId_t nWorkshopID)
 	return false;
 }
 
-bool CGameUIViewport::ShouldAutoMount(PublishedFileId_t nWorkshopID)
-{
-	KeyValues* pAddonList = new KeyValues("AddonList");
-	KeyValuesAD autodel(pAddonList);
-	if (pAddonList->LoadFromFile(g_pFullFileSystem, "addonlist.txt", "WORKSHOP"))
-	{
-		bool bShouldMount = false;
-		std::string strWorkshopID(std::to_string(nWorkshopID));
-		KeyValues* pKey = pAddonList->FindKey(strWorkshopID.c_str());
-		if (!pKey)
-			bShouldMount = true;
-
-		if (!pAddonList->FindKey(strWorkshopID.c_str()))
-			return true;
-	}
-	return false;
-}
-
 void CGameUIViewport::OpenFileExplorer(int eFilter, const char* szFolder, const char* szPathID, DialogSelected_t pFunction)
 {
 	g_pFileDialogManager->OpenFileBrowser(eFilter, szFolder, szPathID, pFunction);
@@ -719,22 +626,6 @@ void CGameUIViewport::ShowMessageDialog(const char* szTitle, const char* szDescr
 	pMessageBox->SetOKButtonVisible(true);
 	pMessageBox->SetCancelButtonVisible(false);
 	pMessageBox->DoModal();
-}
-
-void CGameUIViewport::DownloadWorkshopAddon(PublishedFileId_t nWorkshopID)
-{
-	if (!SteamUGC()->DownloadItem(nWorkshopID, true)) return;
-	PrepareForDownload data;
-	data.IsDownloading = false;
-	data.WorkshopID = nWorkshopID;
-	Q_snprintf(data.Title, sizeof(data.Title), "%llu", nWorkshopID);
-	m_QueryRequests.push_back(data);
-
-	ShowWorkshopInfoBox(data.Title, WorkshopInfoBoxState::State_GatheringData);
-
-	SetQueryWait(1.15);
-	m_bDownloadedItemsReady = false;
-	m_bPrepareForQueryDownload = true;
 }
 
 // ===================================
@@ -758,8 +649,6 @@ void CGameUIViewport::OnSendQueryUGCRequest(SteamUGCQueryCompleted_t* pCallback,
 		ConPrintf(Color(255, 22, 22, 255), "[Workshop] Failed to send query. ErrorID: %i\n", pCallback->m_eResult);
 #endif
 		SteamUGC()->ReleaseQueryUGCRequest(handle);
-		m_bDownloadedItemsReady = false;
-		m_bPrepareForQueryDownload = true;
 		return;
 	}
 
@@ -789,11 +678,6 @@ void CGameUIViewport::OnSendQueryUGCRequest(SteamUGCQueryCompleted_t* pCallback,
 	m_bPrepareForQueryDownload = true;
 }
 
-void CGameUIViewport::SetQueryWait(const float& flTime)
-{
-	m_flQueryWait = flTime * 60;
-}
-
 bool CGameUIViewport::PrepareForQueryDownload()
 {
 	for (size_t i = 0; i < m_QueryRequests.size(); i++)
@@ -804,10 +688,8 @@ bool CGameUIViewport::PrepareForQueryDownload()
 		bool bCanDownload = SteamUGC()->DownloadItem(m_QueryRequests[i].WorkshopID, true);
 		if (bCanDownload)
 		{
-			ConPrintf(Color(0, 255, 255, 255), "[Workshop] Downloading Workshop Item: %llu\n", data.WorkshopID);
 			ShowWorkshopInfoBox(data.Title, WorkshopInfoBoxState::State_Downloading);
 			m_CurrentQueryItem = data;
-			m_steamcallback_OnDownloadItemResult.Register(this, &CGameUIViewport::OnDownloadItemResult);
 			return true;
 		}
 	}
