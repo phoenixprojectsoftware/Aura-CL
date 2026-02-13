@@ -577,6 +577,7 @@ void CGameUIViewport::ShowWorkshopInfoBox(const char* szText, WorkshopInfoBoxSta
 	if (!m_hWorkshopInfoBox)
 	{
 		m_hWorkshopInfoBox = new CCreateWorkshopInfoBox(this);
+		m_hWorkshopInfoBox->MoveToCenterOfScreen();
 		m_hWorkshopInfoBox->Activate();
 	}
 
