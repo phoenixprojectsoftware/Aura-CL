@@ -6,6 +6,8 @@ add_subdirectory(op4_weapons)
 add_subdirectory(vgui)
 add_subdirectory(s10_weapons)
 
+add_subdirectory(push)
+
 add_sources(
 	achievement_manager.cpp
 	achievement_manager.h

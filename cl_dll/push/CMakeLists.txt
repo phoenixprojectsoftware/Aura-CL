@@ -1,0 +1,9 @@
+add_sources(
+      push2_system.h
+      push2_system.cpp
+      push2_display.cpp
+      push2_display.h
+      push2_input.cpp
+      push2_input.h
+      push2_modes.cpp
+      push2_modes.h)

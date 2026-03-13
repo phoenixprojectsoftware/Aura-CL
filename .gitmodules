@@ -19,3 +19,12 @@
 [submodule "external/spectra"]
 	path = external/spectra
 	url = https://github.com/phoenixprojectsoftware/Spectra.git
+[submodule "external/libusb"]
+	path = external/libusb
+	url = https://github.com/libusb/libusb
+[submodule "external/rtmidi"]
+	path = external/rtmidi
+	url = https://github.com/thestk/rtmidi
+[submodule "external/libusb-cmake"]
+	path = external/libusb-cmake
+	url = https://github.com/libusb/libusb-cmake

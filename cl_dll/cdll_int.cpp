@@ -24,6 +24,8 @@
 #undef INTERFACE_H
 #include <tier1/interface.h>
 //#include "vgui_schememanager.h"
+#include "push/push2_system.h"
+static CPush2System g_Push2;
 
 extern "C"
 {
@@ -191,6 +193,11 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	g_Leaderboards.Init();
 #endif
 
+	if (!g_Push2.Init())
+		gEngfuncs.Con_Printf("Ableton Push 2 not initialized, idk why\n");
+	else
+		gEngfuncs.Con_Printf("Ableton Push 2 initialized.\n");
+
 	// get tracker interface, if any
 	return 1;
 }
@@ -313,6 +320,8 @@ void CL_DLLEXPORT HUD_Frame( double time )
 	gHUD.Frame(time);
 	GetClientVoiceMgr()->Frame(time);
 
+	g_Push2.Update();
+
 	discord_integration::on_frame();
 }
 
@@ -364,6 +373,7 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	discord_integration::shutdown();
 	g_SoundtrackSystem.Stop();
 	g_SoundtrackSystem.Shutdown();
+	g_Push2.Shutdown();
 }
 
 //---------------------------------------------------
