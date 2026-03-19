@@ -99,6 +99,7 @@ CSporeLauncher g_SporeLauncher;
 CM249 g_M249;
 CPenguin g_Penguin;
 CRailgun g_Railgun;
+CHealer g_Healer;
 #endif
 
 /*
@@ -707,6 +708,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
 	HUD_PrepEntity(&g_Railgun, &player);
+	HUD_PrepEntity(&g_Healer, &player);
 #endif
 }
 
@@ -779,6 +781,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SHOCKRIFLE: return &g_ShockRifle;
 	case WEAPON_SPORELAUNCHER: return &g_SporeLauncher;
 	case WEAPON_DISPLACER: return &g_Displacer;
+	case WEAPON_HEALER: return &g_Healer;
 #endif
 
 	default: return nullptr;

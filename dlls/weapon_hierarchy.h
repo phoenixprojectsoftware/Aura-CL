@@ -6,6 +6,7 @@
 #define WPN_PIPEWRENCH_POS 2
 #define WPN_KNIFE_POS 3
 #define WPN_GRAPPLE_POS 4
+#define WPN_HEALER_POS 5
 
 // Slot 2 - handgun
 #define WPN_HANDGUN_SLOT 1
