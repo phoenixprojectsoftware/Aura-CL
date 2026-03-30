@@ -71,7 +71,7 @@ int CHudWatermark::Draw(float time)
 			gEngfuncs.Con_Printf("version.txt not found");
 		}
 
-	sprintf(displayString, "Half-Life: Cross Product Multiplayer %s", zamnhlmpVersion);
+	sprintf(displayString, "Horse-Life: Horse Product Feeding Time %s", zamnhlmpVersion);
 
 	extern cvar_t* hud_watermark;
 
@@ -104,7 +104,7 @@ int CHudWatermark::Draw(float time)
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 3, "client built " __DATE__, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
-		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - internal use only", 255, 0, 0);
 
 		DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
 #else

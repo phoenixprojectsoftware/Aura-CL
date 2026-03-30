@@ -23,6 +23,7 @@ add_sources(
 	crossbow.cpp
 	crowbar.cpp
 	egon.cpp
+	fruit.cpp
 	gauss.cpp
 	handgrenade.cpp
 	hornetgun.cpp

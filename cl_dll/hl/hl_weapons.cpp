@@ -82,6 +82,7 @@ CGauss g_Gauss;
 CEgon g_Egon;
 CHgun g_HGun;
 CHandGrenade g_HandGren;
+CFruitGrenade g_FruitGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
@@ -670,6 +671,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Egon	, &player );
 	HUD_PrepEntity( &g_HGun	, &player );
 	HUD_PrepEntity( &g_HandGren	, &player );
+	HUD_PrepEntity(&g_FruitGren, &player);
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
@@ -737,6 +739,7 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_EGON: return &g_Egon;
 	case WEAPON_HORNETGUN: return &g_HGun;
 	case WEAPON_HANDGRENADE: return &g_HandGren;
+	case WEAPON_FRUIT: return &g_FruitGren;
 	case WEAPON_SATCHEL: return &g_Satchel;
 	case WEAPON_TRIPMINE: return &g_Tripmine;
 	case WEAPON_SNARK: return &g_Snark;

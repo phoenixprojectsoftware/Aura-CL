@@ -98,6 +98,7 @@ public:
 #define WEAPON_KNIFE			25
 #define WEAPON_PENGUIN			26
 #define WEAPON_ONE 27
+#define WEAPON_FRUIT 28
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -1015,6 +1016,33 @@ public:
 		return FALSE;
 #endif
 	}
+};
+
+class CFruitGrenade : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int iItemSlot(void) { return 5; }
+	int GetItemInfo(ItemInfo* p);
+
+	void PrimaryAttack(void);
+	BOOL Deploy(void);
+	BOOL CanHolster(void);
+	void Holster(int skiplocal = 0);
+	void WeaponIdle(void);
+
+	virtual BOOL UseDecrement(void)
+	{
+#if defined( CLIENT_WEAPONS )
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+
+private:
+	void SetBodygroups();
 };
 
 class CSatchel : public CBasePlayerWeapon
