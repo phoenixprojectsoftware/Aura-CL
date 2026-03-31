@@ -93,7 +93,8 @@ void CGrenade::Explode( Legacy_Vector, Legacy_Vector ) { }
 void CGrenade::Explode( TraceResult *, int ) { }
 void CGrenade::Killed( entvars_t *, int ) { }
 void CGrenade::Spawn( void ) { }
-CGrenade * CGrenade:: ShootTimed( entvars_t *pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity, float time ){ return 0; }
+CGrenade* CGrenade::ShootTimed(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity, float time) { return 0; }
+CGrenade* CGrenade::FruitTimed(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity, float time) { return 0; }
 CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity ){ return 0; }
 void CGrenade::DetonateUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value ){ }
 

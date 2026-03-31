@@ -42,7 +42,7 @@ void CFruitGrenade::Spawn()
 {
 	Precache();
 	m_iId = WEAPON_FRUIT;
-	SET_MODEL(ENT(pev), "models/w_grenade.mdl");
+	SET_MODEL(ENT(pev), "models/weapons/w_fruit.mdl");
 
 #ifndef CLIENT_DLL
 	pev->dmg = gSkillData.plrDmgHandGrenade;
@@ -56,16 +56,16 @@ void CFruitGrenade::Spawn()
 
 void CFruitGrenade::Precache(void)
 {
-	PRECACHE_MODEL("models/w_grenade.mdl");
+	PRECACHE_MODEL("models/weapons/w_fruit.mdl");
 	PRECACHE_MODEL("models/weapons/v_fruit.mdl");
-	PRECACHE_MODEL("models/p_grenade.mdl");
+	PRECACHE_MODEL("models/weapons/p_fruit.mdl");
 }
 
 int CFruitGrenade::GetItemInfo(ItemInfo* p)
 {
 	p->pszName = STRING(pev->classname);
 	p->pszAmmo1 = "Fruit Grenade";
-	p->iMaxAmmo1 = HANDGRENADE_MAX_CARRY;
+	p->iMaxAmmo1 = 25;
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
 	p->iMaxClip = WEAPON_NOCLIP;
@@ -98,7 +98,7 @@ void CFruitGrenade::SetBodygroups()
 BOOL CFruitGrenade::Deploy()
 {
 	m_flReleaseThrow = -1;
-	BOOL bResult = DefaultDeploy("models/weapons/v_fruit.mdl", "models/p_grenade.mdl", FRUIT_DRAW, "crowbar");
+	BOOL bResult = DefaultDeploy("models/weapons/v_fruit.mdl", "models/weapons/p_fruit.mdl", FRUIT_DRAW, "crowbar");
 
 	if (bResult)
 	{
@@ -179,7 +179,7 @@ void CFruitGrenade::WeaponIdle(void)
 		if (time < 0)
 			time = 0;
 
-		CGrenade::ShootTimed(m_pPlayer->pev, vecSrc, vecThrow, time);
+		CGrenade::FruitTimed(m_pPlayer->pev, vecSrc, vecThrow, time);
 
 		if (flVel < 500)
 		{

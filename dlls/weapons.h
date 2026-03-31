@@ -39,6 +39,7 @@ public:
 	typedef enum { SATCHEL_DETONATE = 0, SATCHEL_RELEASE } SATCHELCODE;
 
 	static CGrenade* ShootTimed(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity, float time);
+	static CGrenade* FruitTimed(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity, float time);
 	static CGrenade* ShootContact(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity);
 	static CGrenade* ShootSatchelCharge(entvars_t* pevOwner, Legacy_Vector vecStart, Legacy_Vector vecVelocity);
 	static void UseSatchelCharges(entvars_t* pevOwner, SATCHELCODE code);
