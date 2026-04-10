@@ -125,7 +125,7 @@ BOOL CGauss::Deploy( )
 {
 	m_pPlayer->m_flPlayAftershock = 0.0;
 	if (GameType::HLDM == g_iGameType)
-		return DefaultDeploy("models/wepaons/hldmtau/v_hldmtau.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
+		return DefaultDeploy("models/weapons/hldmtau/v_hldmtau.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
 	else
 		return DefaultDeploy("models/v_gauss.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
 }
