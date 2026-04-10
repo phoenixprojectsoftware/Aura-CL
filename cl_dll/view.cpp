@@ -70,7 +70,7 @@ ref_params_s g_pparams;
 
 bool ShouldUseLegacyBob()
 {
-	auto gametype = gHUD.GetGameType();
+	int gametype = gHUD.GetGameType();
 
 	return gametype == GameType::HLDM;
 }

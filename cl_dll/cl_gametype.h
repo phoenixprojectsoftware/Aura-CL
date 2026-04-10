@@ -29,3 +29,5 @@ enum GameType
 	CHILL,
 	TAUGUYS
 };
+
+extern int g_iGameType; // global gametype integer.

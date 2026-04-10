@@ -86,6 +86,9 @@ void CMusicSystem::Init()
 
 	Stop();
 
+	if (FIREFIGHT == gHUD.GetGameType() || FIESTAFIGHT == gHUD.GetGameType())
+		return;
+
 	m_Command.clear();
 	m_bMapMusic = false;
 
