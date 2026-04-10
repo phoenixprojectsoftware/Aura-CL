@@ -18,6 +18,7 @@ add_sources(
 	camera.h
 	cdll_int.cpp
 	cl_dll.h
+	cl_gametype.h
 	cl_util.h
 	cl_weapons.h
 	client_vgui.cpp

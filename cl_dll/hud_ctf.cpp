@@ -1,6 +1,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
+#include "cl_gametype.h"
 
 DECLARE_MESSAGE(m_CTF, CTF);
 DECLARE_MESSAGE(m_CTF, CTFSound);
@@ -54,7 +55,7 @@ int CHudCTF::VidInit()
 
 int CHudCTF::Draw(float time)
 {
-	if (gHUD.GetGameType() != 3) {
+	if (gHUD.GetGameType() != GameType::CTF) {
 		m_iFlags &= ~HUD_ACTIVE;
 		return 0;
 	}

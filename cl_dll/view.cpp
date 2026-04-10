@@ -7,6 +7,8 @@
 #include "usercmd.h"
 #include "const.h"
 
+#include "cl_gametype.h"
+
 #include "entity_state.h"
 #include "cl_entity.h"
 #include "ref_params.h"
@@ -65,6 +67,13 @@ extern engine_studio_api_t IEngineStudio;
 extern kbutton_t	in_mlook;
 
 ref_params_s g_pparams;
+
+bool ShouldUseLegacyBob()
+{
+	auto gametype = gHUD.GetGameType();
+
+	return gametype == GameType::HLDM;
+}
 
 /*
 The view is allowed to move slightly from it's true position for bobbing,
@@ -1154,7 +1163,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
 
 	// VIEW BOBBING
-	if (cl_legacy_bob_enabled->value != 0)
+	if (ShouldUseLegacyBob())
 	{
 		bob = V_CalcLegacyBob(pparams);
 
@@ -2119,7 +2128,7 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	bool bJustJumped = (!bOnGround && gHUD.m_bWasJumping);
 	bool bJustLanded = (bOnGround && !gHUD.m_bWasJumping);
 	
-	if (cl_legacy_bob_enabled->value <= 0)
+	if (!ShouldUseLegacyBob())
 	{
 		// on jump, store starting Z position
 		if (bJustJumped)
