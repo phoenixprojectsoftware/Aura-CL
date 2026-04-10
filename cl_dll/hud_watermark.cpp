@@ -7,6 +7,8 @@
 #include <steamworks/steam_api.h>
 #endif
 
+#include "audio/music.h"
+
 bool CHudWatermark::IsBetaApp()
 {
 	return SteamUtils()->GetAppID() == 3903990;
@@ -26,6 +28,7 @@ int CHudWatermark::VidInit()
 	m_iFlags |= HUD_ACTIVE;
 	refresh_draw_until = true;
 	update_is_available = update_checker::is_update_available();
+	hasMusicPlayed = false;
 
 	return 1;
 }
@@ -38,13 +41,19 @@ int CHudWatermark::Draw(float time)
 		draw_until = gHUD.m_flTime + 15.0f;
 	}
 
-#if !defined (CLOSED_BETA) && !defined (_DEBUG)
 	if (gHUD.m_flTime >= draw_until) 
 	{
+#ifdef PHX_FINAL
 		m_iFlags &= ~HUD_ACTIVE;
 		return 0;
-	}
 #endif
+
+		if (!hasMusicPlayed)
+		{
+			g_MusicSystem.Play();
+			hasMusicPlayed = true;
+		}
+	}
 
 	int r, g, b;
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);

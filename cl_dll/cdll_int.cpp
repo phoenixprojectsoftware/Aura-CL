@@ -19,6 +19,7 @@
 //
 
 #include "hud.h"
+#include "audio/music.h"
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
@@ -364,6 +365,7 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	discord_integration::shutdown();
 	g_SoundtrackSystem.Stop();
 	g_SoundtrackSystem.Shutdown();
+	g_MusicSystem.Shutdown();
 }
 
 //---------------------------------------------------

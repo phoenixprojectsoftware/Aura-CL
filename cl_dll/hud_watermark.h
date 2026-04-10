@@ -5,6 +5,7 @@ class CHudWatermark : public CHudBase
 	float draw_until;
 	bool refresh_draw_until;
 	bool update_is_available;
+	bool hasMusicPlayed;
 
 public:
 	virtual int Init();

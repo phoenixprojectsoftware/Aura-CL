@@ -779,6 +779,7 @@ int CHud :: GetSpriteIndex( const char *SpriteName )
 	return -1; // invalid sprite
 }
 
+#include "audio/music.h"
 void CHud :: VidInit( void )
 {
 	m_scrinfo.iSize = sizeof(m_scrinfo);
