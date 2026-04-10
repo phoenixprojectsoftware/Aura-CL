@@ -175,6 +175,15 @@ add_subdirectory(external/spectra)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 
+# Preserve source folder structure in Visual Studio filters
+if(MSVC)
+    source_group(
+        TREE "${CMAKE_SOURCE_DIR}"
+        PREFIX "Source Files"
+        FILES ${SOURCE_FILES}
+    )
+endif()
+
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
 
