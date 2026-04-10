@@ -10,4 +10,5 @@ public:
 	virtual int Init();
 	virtual int VidInit();
 	virtual int Draw(float time);
+	bool IsBetaApp();
 };

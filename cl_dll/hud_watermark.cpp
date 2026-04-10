@@ -7,7 +7,7 @@
 #include <steamworks/steam_api.h>
 #endif
 
-bool IsBetaApp()
+bool CHudWatermark::IsBetaApp()
 {
 	return SteamUtils()->GetAppID() == 3903990;
 }
