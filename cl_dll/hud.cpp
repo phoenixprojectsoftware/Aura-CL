@@ -51,7 +51,7 @@
 #define GOOD_MORNING "greeting/MORNING.WAV"
 #define GOOD_AFTERNOON "greeting/AFTERNOON.WAV"
 #define GOOD_EVENING "greeting/EVENING.WAV"
-#define GREETING_DELAY 3 // how many seconds after launch to play the greeting sound
+#define GREETING_DELAY 5 // how many seconds after launch to play the greeting sound
 
 extern tempent_s* pLaserSpot;
 
