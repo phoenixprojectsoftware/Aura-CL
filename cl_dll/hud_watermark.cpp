@@ -14,6 +14,11 @@ bool CHudWatermark::IsBetaApp()
 	return SteamUtils()->GetAppID() == 3903990;
 }
 
+bool CHudWatermark::Neptune()
+{
+	return SteamUtils()->IsSteamRunningOnSteamDeck();
+}
+
 #define DRAW_STRING gEngfuncs.pfnDrawString
 int CHudWatermark::Init()
 {
@@ -127,6 +132,9 @@ int CHudWatermark::Draw(float time)
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - internal use only", 255, 0, 0);
 		else
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
+
+		if (Neptune())
+			DRAW_STRING(ScreenWidth / 20, CharHeight * 7, "STEAM DECK mode", 128, 128, 128);
 #else
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "DEBUG BUILD - internal use only.", 255, 0, 0);
 #endif

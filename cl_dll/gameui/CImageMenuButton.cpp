@@ -16,6 +16,9 @@
 CImageMenuButton::CImageMenuButton(vgui2::Panel* pParent, const char* szImage, const char* szURL)
 	: BaseClass(pParent, "CImageMenuButton") 
 {
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		return;
+
 	SetSize(100, 80);
 	SetPos(0, 0);
 
@@ -34,6 +37,8 @@ CImageMenuButton::CImageMenuButton(vgui2::Panel* pParent, const char* szImage, c
 
 void CImageMenuButton::SetContent(const int& x, const int& y, const int& w, const int& h)
 {
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		return;
 	SetPos(x, y);
 	SetSize(w, h);
 	m_pPanel->SetSize(GetWide(), GetTall());
@@ -41,6 +46,9 @@ void CImageMenuButton::SetContent(const int& x, const int& y, const int& w, cons
 
 void CImageMenuButton::OnMousePressed(vgui2::MouseCode code)
 {
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		return;
+
 	if (code == vgui2::MouseCode::MOUSE_LEFT)
 	{
 		if (m_szURL && m_szURL[0])

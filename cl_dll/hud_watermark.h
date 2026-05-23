@@ -12,4 +12,5 @@ public:
 	virtual int VidInit();
 	virtual int Draw(float time);
 	bool IsBetaApp();
+	bool Neptune();
 };
