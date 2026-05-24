@@ -1,21 +1,11 @@
-/****
-*
-* Copyright (c) 2021-2025 The Phoenix Project Software. Some Rights Reserved.
-*
-* AURA
-*
-* Steam Leaderboards - NOT for Excession right now
-*
-*
-****/
+#pragma once
 
 #ifndef _HALO
 
-#pragma once
-
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/ListPanel.h>
-#include "../../leaderboard_integration.h"
+
+#include <steamworks/steam_api.h>
 
 class CLeaderboardPanel : public vgui2::Frame
 {
@@ -23,18 +13,22 @@ class CLeaderboardPanel : public vgui2::Frame
 
 public:
 	CLeaderboardPanel(vgui2::VPANEL parent);
-	~CLeaderboardPanel() override {}
 
-	void Activate();
-	void RefreshLeaderboard();
+	void Activate() override;
+	void OnClose() override;
 
 private:
-	MESSAGE_FUNC(OnClose, "Close");
+	void RefreshStats();
+	void PopulateStatsTable();
 
-	void OnDownloadScores(LeaderboardScoresDownloaded_t* pResult, bool bIOFailure);
+	void OnUserStatsReceived(UserStatsReceived_t* pResult, bool bIOFailure);
 
+private:
 	vgui2::ListPanel* m_pList;
 
-	CCallResult<CLeaderboardPanel, LeaderboardScoresDownloaded_t> m_SteamCallResultDownloadScores;
+	bool m_bStatsReady;
+
+	CCallResult<CLeaderboardPanel, UserStatsReceived_t> m_CallResultUserStatsReceived;
 };
+
 #endif
