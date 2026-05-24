@@ -799,7 +799,9 @@ void CHud :: VidInit( void )
 	m_hsprLogo = 0;	
 	m_hsprCursor = 0;
 
-	if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		m_iRes = 640;
+	else if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 		m_iRes = 2560;
 	else if (ScreenWidth >= 1280 && ScreenHeight > 720)
 		m_iRes = 1280;
