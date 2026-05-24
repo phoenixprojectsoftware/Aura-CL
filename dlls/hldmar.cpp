@@ -85,10 +85,7 @@ void CHLDMAR::Precache(void)
 	PRECACHE_SOUND("weapons/hldmar_fire03.wav");
 	PRECACHE_SOUND("weapons/hldmar_fire04.wav");
 
-	PRECACHE_SOUND("weapons/hldmar_grenade01.wav");
 	PRECACHE_SOUND("weapons/glauncher2.wav");
-
-	PRECACHE_SOUND("weapons/357_cock.wav");
 
 	m_usMP5 = PRECACHE_EVENT(1, "events/hldmar.sc");
 	m_usMP52 = PRECACHE_EVENT(1, "events/hldmar2.sc");
