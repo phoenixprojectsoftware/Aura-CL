@@ -27,7 +27,8 @@ enum GameType
 	HLDM,
 	BUSTERS,
 	CHILL,
-	TAUGUYS
+	TAUGUYS,
+	OITC
 };
 
 extern int g_iGameType; // global gametype integer.
