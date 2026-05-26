@@ -48,16 +48,15 @@ int CHudWatermark::Draw(float time)
 
 	if (gHUD.m_flTime >= draw_until) 
 	{
-#ifdef PHX_FINAL
-		m_iFlags &= ~HUD_ACTIVE;
-		return 0;
-#endif
-
 		if (!hasMusicPlayed)
 		{
 			g_MusicSystem.Play();
 			hasMusicPlayed = true;
 		}
+#ifdef PHX_FINAL
+		m_iFlags &= ~HUD_ACTIVE;
+		return 0;
+#endif
 	}
 
 	int r, g, b;
