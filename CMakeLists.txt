@@ -25,7 +25,12 @@ unset(OpenAL_ROOT CACHE)
 unset(OPENAL_INCLUDE_DIR CACHE)
 unset(OPENAL_LIBRARY CACHE)
 
-
+# RmlUI
+# set(RMLUI_SAMPLES_OFF CACHE BOOL "" FORCE)
+# set(RMLUI_TESTS OFF CACHE BOOL "" FORCE)
+set(RMLUI_LUA_BINDINGS OFF CACHE BOOL "" FORCE)
+set(RMLUI_SVG_PLUGIN OFF CACHE BOOL "" FORCE)
+set(RMLUI_LOTTIE_PLUGIN OFF CACHE BOOL "" FORCE)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>,$<CONFIG:HaloDebug>>:Debug>DLL")
 
@@ -172,6 +177,9 @@ add_subdirectory(external/ogg)
 add_subdirectory(external/vorbis)
 add_subdirectory(source_sdk)
 add_subdirectory(external/spectra)
+add_subdirectory(external/freetype)
+add_library(Freetype::Freetype ALIAS freetype)
+add_subdirectory(external/rmlui)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 
@@ -319,4 +327,4 @@ target_compile_definitions(client PRIVATE
     -DCLIENT_DLL
     -DCLIENT_WEAPONS)
 	
-target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg)
+target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg RmlUi::Core)
