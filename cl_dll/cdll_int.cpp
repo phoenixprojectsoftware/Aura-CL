@@ -17,7 +17,7 @@
 //
 // this implementation handles the linking of the engine to the DLL
 //
-
+#include "menu/GameMenu.h"
 #include "hud.h"
 #include "audio/music.h"
 #include "cl_util.h"
@@ -194,6 +194,8 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	g_Leaderboards.Init();
 #endif
 
+	g_GameMenu.Init();
+
 	// get tracker interface, if any
 	return 1;
 }
@@ -213,6 +215,8 @@ int CL_DLLEXPORT HUD_VidInit( void )
 {
 //	RecClHudVidInit();
 	gHUD.VidInit();
+
+	g_GameMenu.VidInit();
 
 	VGui_Startup();
 
@@ -281,6 +285,8 @@ int CL_DLLEXPORT HUD_UpdateClientData(client_data_t *pcldata, float flTime )
 
 	g_SoundtrackSystem.SetVolumeFromCvar();
 	g_SoundtrackSystem.Update();
+
+	g_GameMenu.Update(flTime);
 
 	return gHUD.UpdateClientData(pcldata, flTime );
 }
@@ -370,6 +376,7 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	g_SoundtrackSystem.Stop();
 	g_SoundtrackSystem.Shutdown();
 	g_MusicSystem.Shutdown();
+	g_GameMenu.Shutdown();
 }
 
 //---------------------------------------------------

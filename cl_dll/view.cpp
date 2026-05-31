@@ -1,6 +1,7 @@
 // view/refresh setup functions.
 #include <cmath>
 #include <algorithm>
+#include "menu/GameMenu.h"
 #include "hud.h"
 #include "cl_util.h"
 #include "cvardef.h"
@@ -2099,6 +2100,12 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	else if (!pparams->paused)
 	{
 		V_CalcNormalRefdef(pparams);
+		g_GameMenu.Hide();
+	}
+	if (pparams->paused)
+	{
+		g_GameMenu.Render();
+		g_GameMenu.Show();
 	}
 
 	memcpy(&g_pparams, pparams, sizeof(ref_params_s));

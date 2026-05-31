@@ -1,0 +1,9 @@
+add_sources(
+	GameMenu.h
+	GameMenu.cpp
+	GameMenuSystemInterface.h
+	GameMenuSystemInterface.cpp
+	GameMenuFileInterface.h
+	GameMenuFileInterface.cpp
+	GameMenuRenderInterface.h
+	GameMenuRenderInterface.cpp)
