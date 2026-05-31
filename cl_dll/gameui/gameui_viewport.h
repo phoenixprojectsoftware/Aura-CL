@@ -17,6 +17,7 @@
 #endif
 
 class CGameUITestPanel;
+class CGameMenuHostPanel;
 class C_AchievementDialog;
 class CServerBrowser;
 // TODO: class CAdvOptionsDialog;
@@ -46,6 +47,7 @@ public:
 #ifndef _HALO
 	void OpenLeaderboard();
 #endif
+	CGameMenuHostPanel* GetRmlMainMenu();
 	C_AchievementDialog* GetAchievementDialog();
 	CServerBrowser* GetServerBrowser();
 	CWorkshopDialog* GetWorkshopDialog();
@@ -53,6 +55,9 @@ public:
 	virtual void OnThink() override;
 
 	bool IsVACBanned() const;
+
+	void OpenRmlMainMenu();
+	void CloseRmlMainMenu();
 
 	void DownloadWorkshopAddon(PublishedFileId_t nWorkshopID);
 
@@ -112,6 +117,7 @@ private:
 	int m_bDelayedPreventEscape = 0;
 	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
 	// vgui2::DHANDLE<CCustomGameComposer> m_hCustomGameComposer;
+	vgui2::DHANDLE<CGameMenuHostPanel> m_hRmlMainMenu;
 	vgui2::DHANDLE<C_AchievementDialog> m_hAchDialog;
 	vgui2::DHANDLE<CServerBrowser> m_hServerBrowser;
 	vgui2::DHANDLE<CWorkshopDialog> m_hWorkshopDialog;

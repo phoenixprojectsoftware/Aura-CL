@@ -1,3 +1,4 @@
+#include "../menu/GameMenu.h"
 #include <tier1/interface.h>
 #include <IBaseUI.h>
 #include <IEngineVGui.h>
@@ -8,6 +9,7 @@
 #include "../client_vgui.h"
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
+#include "GameMenuHostPanel.h"
 #include "achievements/C_AchievementDialog.h"
 #include "composer/CustomGameComposer.h"
 #ifndef _HALO
@@ -43,6 +45,20 @@ CON_COMMAND(gameui_leaderboard, "Leaderboard")
 }
 #endif
 
+#ifdef _DEBUG
+CON_COMMAND(gameui_rmlmenu, "Opens the RmlUi main menu")
+{
+	if (CGameUIViewport::Get())
+		CGameUIViewport::Get()->OpenRmlMainMenu();
+}
+
+CON_COMMAND(gameui_rmlmenu_close, "Closes the RmlUi main menu")
+{
+	if (CGameUIViewport::Get())
+		CGameUIViewport::Get()->CloseRmlMainMenu();
+}
+#endif
+
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport"), m_steamcallback_OnDownloadItemResult(this, &CGameUIViewport::OnDownloadItemResult)
 {
 	Assert(!m_sInstance);
@@ -57,6 +73,7 @@ CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport"),
 
 	m_bDownloadedItemsReady = false;
 	m_bPrepareForQueryDownload = false;
+	m_hRmlMainMenu = nullptr;
 	m_hWorkshopInfoBox = nullptr;
 	SetQueryWait(1.0f);
 
@@ -98,6 +115,37 @@ void CGameUIViewport::OpenComposer()
 	pComposer->MakePopup();
 	pComposer->SetVisible(true);
 	pComposer->MoveToFront();
+}
+
+CGameMenuHostPanel* CGameUIViewport::GetRmlMainMenu()
+{
+	if (!m_hRmlMainMenu.Get())
+	{
+		vgui2::VPANEL parent = g_pEngineVGui->GetPanel(PANEL_GAMEUIDLL);
+		m_hRmlMainMenu = new CGameMenuHostPanel(parent);
+	}
+
+	return m_hRmlMainMenu.Get();
+}
+
+void CGameUIViewport::OpenRmlMainMenu()
+{
+	if (!g_GameMenu.IsInitialized())
+	{
+		g_GameMenu.Init();
+	}
+
+	InvalidateLayout(true);
+
+	CGameMenuHostPanel* panel = GetRmlMainMenu();
+	panel->SetParent(this);
+	panel->Activate();
+}
+
+void CGameUIViewport::CloseRmlMainMenu()
+{
+	if (m_hRmlMainMenu.Get())
+		m_hRmlMainMenu->Deactivate();
 }
 
 #ifndef _HALO

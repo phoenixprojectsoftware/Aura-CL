@@ -216,8 +216,6 @@ int CL_DLLEXPORT HUD_VidInit( void )
 //	RecClHudVidInit();
 	gHUD.VidInit();
 
-	g_GameMenu.VidInit();
-
 	VGui_Startup();
 
 	return 1;

@@ -12,6 +12,10 @@
 #pragma once
 
 #include <RmlUi/Core.h>
+#include "GameMenuRenderInterface.h"
+
+#include <vgui/KeyCode.h>
+#include <vgui/MouseCode.h>
 
 class CGameMenu
 {
@@ -21,6 +25,10 @@ public:
 
 	bool Init();
 	void Shutdown();
+
+	bool HasContext() const;
+
+	void SetViewportSize(int width, int height);
 
 	void VidInit();
 	void Update(float flTime);
@@ -33,9 +41,23 @@ public:
 	void Hide();
 	void Toggle();
 
+	void OnMouseMove(int x, int y);
+	void OnMousePressed(vgui2::MouseCode code);
+	void OnMouseReleased(vgui2::MouseCode code);
+	void OnMouseWheeled(int delta);
+
+	void OnKeyCodePressed(vgui2::KeyCode code);
+	void OnKeyCodeReleased(vgui2::KeyCode code);
+	void OnTextInput(wchar_t unichar);
+
+	int m_iWidth;
+	int m_iHeight;
+
 private:
 	bool m_bInitialized;
 	bool m_bVisible;
+
+	CGameMenuRenderInterface m_RenderInterface;
 
 	Rml::Context* m_pContext;
 	Rml::ElementDocument* m_pDocument;
