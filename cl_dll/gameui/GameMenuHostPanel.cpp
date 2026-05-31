@@ -37,11 +37,9 @@ void CGameMenuHostPanel::Activate()
 	UpdateSize();
 
 	MakePopup(false, true);
-	SetZPos(32767);
+	SetZPos(-100);
 	MoveToFront();
 	RequestFocus();
-
-	vgui2::input()->SetAppModalSurface(GetVPanel());
 
 	if (g_GameMenu.HasContext())
 		g_GameMenu.Show();
@@ -50,9 +48,6 @@ void CGameMenuHostPanel::Activate()
 void CGameMenuHostPanel::Deactivate()
 {
 	g_GameMenu.Hide();
-
-	if (vgui2::input()->GetAppModalSurface() == GetVPanel())
-		vgui2::input()->SetAppModalSurface(0);
 
 	SetVisible(false);
 	SetEnabled(false);
