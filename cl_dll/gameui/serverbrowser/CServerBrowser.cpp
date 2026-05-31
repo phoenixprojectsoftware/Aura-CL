@@ -65,6 +65,8 @@ CServerBrowser::CServerBrowser(vgui2::Panel* parent)
 	m_pInternetGames = NULL;
 
 	SetMinimumSize(GetScaledValue(640), GetScaledValue(384));
+	MoveToFront();
+	MoveToCenterOfScreen();
 
 	m_pGameList = m_pInternetGames;
 

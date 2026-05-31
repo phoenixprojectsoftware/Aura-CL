@@ -198,11 +198,10 @@ bool CGameMenu::Init()
 		return false;
 	}
 
-	if (!Rml::LoadFontFace(gamedir + "resource/typeface/eurostile/Eurostile.otf"))
+	if (!Rml::LoadFontFace(gamedir + "resource/typeface/nokiafc22.ttf"))
 	{
 		gEngfuncs.Con_Printf(
-			"CGameMenu: failed to load %s /resource/typeface/eurostile/Eurostile.otf\n",
-			gamedir.c_str()
+			"CGameMenu: failed to load font\n"
 		);
 	}
 	else
@@ -310,6 +309,37 @@ bool CGameMenu::IsVisible() const
 	return m_bVisible;
 }
 
+void CGameMenu::RegisterDocumentEvents()
+{
+	if (!m_pDocument)
+		return;
+
+	const char* buttonIDs[] =
+	{
+		"serverbrowser",
+		"play",
+		"multiplayer",
+		"composer",
+		"workshop",
+		"options",
+		"extras",
+		"quit"
+	};
+
+	for (size_t i = 0; i < ARRAYSIZE(buttonIDs); ++i)
+	{
+		Rml::Element* element = m_pDocument->GetElementById(buttonIDs[i]);
+
+		if (!element)
+			continue;
+
+		element->AddEventListener("click", &m_EventListener);
+		element->AddEventListener("mouseover", &m_EventListener);
+
+		gEngfuncs.Con_Printf("CGameMenu: registered events for '%s'\n", buttonIDs[i]);
+	}
+}
+
 void CGameMenu::Show()
 {
 	if (!m_bInitialized || !m_pContext)
@@ -321,6 +351,7 @@ void CGameMenu::Show()
 	if (!m_pDocument)
 	{
 		m_pDocument = m_pContext->LoadDocument(MainMenuPath);
+		RegisterDocumentEvents();
 
 		if (!m_pDocument)
 		{

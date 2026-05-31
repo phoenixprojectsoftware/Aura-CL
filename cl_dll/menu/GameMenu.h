@@ -13,6 +13,7 @@
 
 #include <RmlUi/Core.h>
 #include "GameMenuRenderInterface.h"
+#include "GameMenuEventListener.h"
 
 #include <vgui/KeyCode.h>
 #include <vgui/MouseCode.h>
@@ -54,10 +55,12 @@ public:
 	int m_iHeight;
 
 private:
+	void RegisterDocumentEvents();
 	bool m_bInitialized;
 	bool m_bVisible;
 
 	CGameMenuRenderInterface m_RenderInterface;
+	CGameMenuEventListener m_EventListener;
 
 	Rml::Context* m_pContext;
 	Rml::ElementDocument* m_pDocument;
