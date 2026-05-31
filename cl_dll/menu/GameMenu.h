@@ -24,6 +24,8 @@ public:
 	CGameMenu();
 	~CGameMenu();
 
+	float m_flNextDynamicRefresh;
+
 	bool Init();
 	void Shutdown();
 
@@ -41,6 +43,9 @@ public:
 	void Show();
 	void Hide();
 	void Toggle();
+
+	void RefreshDynamicContent();
+	void SetElementText(const char* pszElementId, const char* pszText);
 
 	void OnMouseMove(int x, int y);
 	void OnMousePressed(vgui2::MouseCode code);

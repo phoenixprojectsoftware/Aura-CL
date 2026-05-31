@@ -30,6 +30,7 @@ CGameMenu::CGameMenu()
 	, m_bVisible(false)
 	, m_pContext(nullptr)
 	, m_pDocument(nullptr)
+	, m_flNextDynamicRefresh(0.0f)
 {
 }
 
@@ -289,6 +290,12 @@ void CGameMenu::Update(float flTime)
 		return;
 
 	m_pContext->Update();
+
+	if (flTime >= m_flNextDynamicRefresh)
+	{
+		m_flNextDynamicRefresh = flTime + 1.0f;
+		RefreshDynamicContent();
+	}
 }
 
 void CGameMenu::Render()
@@ -352,6 +359,7 @@ void CGameMenu::Show()
 	{
 		m_pDocument = m_pContext->LoadDocument(MainMenuPath);
 		RegisterDocumentEvents();
+		RefreshDynamicContent();
 
 		if (!m_pDocument)
 		{
@@ -382,4 +390,47 @@ void CGameMenu::Toggle()
 		Hide();
 	else
 		Show();
+}
+
+void CGameMenu::SetElementText(const char* pszElementId, const char* pszText)
+{
+	if (!m_pDocument)
+		return;
+
+	if (!pszElementId || !pszElementId[0])
+		return;
+
+	if (!pszText)
+		pszText = "";
+
+	Rml::Element* pElement = m_pDocument->GetElementById(pszElementId);
+
+	if (!pElement)
+		return;
+
+	pElement->SetInnerRML(pszText);
+}
+
+void CGameMenu::RefreshDynamicContent()
+{
+	if (!m_pDocument)
+		return;
+
+	SetElementText("frontend-value", "RMLUI ONLINE");
+	SetElementText("branch-value", "CROSS PRODUCT");
+	SetElementText("player-name", "LOCAL PLAYER");
+
+#if defined(PHX_FINAL)
+	SetElementText("build-value", "FINAL");
+#elif defined(_DEBUG)
+	SetElementText("build-value", "DEBUG");
+#else
+	SetElementText("build-value", "DEVELOPMENT");
+#endif
+
+#ifdef _STEAMWORKS
+	SetElementText("steam-status", "STEAMWORKS ENABLED");
+#else
+	SetElementText("steam-status", "STEAMWORKS DISABLED");
+#endif
 }
