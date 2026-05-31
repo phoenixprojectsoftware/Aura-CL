@@ -107,6 +107,7 @@ public:
 #define WEAPON_BATTLERIFLE 30
 #define WEAPON_HLDMAR 32
 #define WEAPON_RAILGUN 33
+#define WEAPON_HEALER 34
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -186,6 +187,7 @@ public:
 #endif
 #define BR_MAX_CARRY 180
 #define SNARK_MAX_CARRY			15
+#define HEALER_MAX_CARRY 100
 
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP			-1
@@ -871,6 +873,49 @@ public:
 
 private:
 	unsigned short m_usRailgun;
+};
+
+enum healer_e
+{
+	HEALER_IDLE = 0,
+	HEALER_LONGIDLE,
+	HEALER_HEAL,
+	HEALER_LONGUSE,
+	HEALER_SHORTUSE,
+	HEALER_HOLSTER,
+	HEALER_DRAW
+};
+
+class CHealer : public CBasePlayerWeapon
+{
+public:
+	void Spawn(void);
+	void Precache(void);
+	int GetItemInfo(ItemInfo* p);
+	int AddToPlayer(CBasePlayer* pPlayer);
+	void PrimaryAttack(void);
+	void SecondaryAttack(void);
+
+	BOOL Deploy();
+	void Holster(int skiplocal = 0) override;
+	void WeaponIdle(void);
+
+private:
+	void PlayFailSound();
+	void PlayHealSound();
+	void PlayReviveSound();
+
+	CBaseEntity* FindMedkitTarget(float flRange);
+	bool CanHealTarget(CBaseEntity* pTarget);
+	bool CanReviveTarget(CBaseMonster* pMonster);
+
+	void HealTarget(CBaseEntity* pTarget, float flAmount);
+	bool ReviveTarget(CBaseMonster* pCorpse);
+
+	bool IsFriendlyMonster(CBaseMonster* pMonster);
+	bool IsFriendlyPlayer(CBaseEntity* pEntity);
+
+	bool CheckReviveHullClear(const Legacy_Vector& vecOrigin, edict_t* pentIgnore);
 };
 #endif
 

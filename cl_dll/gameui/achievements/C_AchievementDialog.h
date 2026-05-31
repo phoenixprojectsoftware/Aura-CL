@@ -47,8 +47,6 @@ private:
 	vgui2::Label* ui_CurrentCompleted;
 
 	int iAchievement;
-	int CurrentCategory;
-
 	bool HideAchieved;
 	int miTotalAchievements;
 	int miCompletedAchievements;

@@ -19,6 +19,7 @@
 //
 
 #include "hud.h"
+#include "audio/music.h"
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
@@ -161,6 +162,8 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 #include "leaderboard_integration.h"
 #endif
 
+#include "greeting.h"
+
 int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
@@ -187,9 +190,9 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 #ifndef _HALO
 	if (!isAchievementUnlocked(3))
 		UnlockAchievement(3);
-#endif
 
-#ifndef _HALO
+	InitGreeting();
+
 	g_Leaderboards.Init();
 #endif
 
@@ -323,6 +326,8 @@ void CL_DLLEXPORT HUD_Frame( double time )
 	g_Push2.Update();
 
 	discord_integration::on_frame();
+
+	UpdateGreeting();
 }
 
 
@@ -374,6 +379,7 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	g_SoundtrackSystem.Stop();
 	g_SoundtrackSystem.Shutdown();
 	g_Push2.Shutdown();
+	g_MusicSystem.Shutdown();
 }
 
 //---------------------------------------------------

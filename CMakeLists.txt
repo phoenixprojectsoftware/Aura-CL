@@ -177,8 +177,29 @@ add_subdirectory(external/rtmidi)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 
+# Preserve source folder structure in Visual Studio filters
+if(MSVC)
+    source_group(
+        TREE "${CMAKE_SOURCE_DIR}"
+        PREFIX "Source Files"
+        FILES ${SOURCE_FILES}
+    )
+endif()
+
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
+
+# Add PHX_FINAL define for final/release shipping configs
+foreach(FINAL_CONFIG Release SteamRelease HaloRelease)
+    string(TOUPPER "${FINAL_CONFIG}" UPPER_CONFIG)
+    if(MSVC)
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DPHX_FINAL")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DPHX_FINAL")
+    else()
+        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -DPHX_FINAL")
+        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -DPHX_FINAL")
+    endif()
+endforeach()
 
 target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES)
 

@@ -216,7 +216,6 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 	vgui2::ivgui()->AddTickSignal(GetVPanel(), 25);
 
 	iAchievement = 0;
-	CurrentCategory = -1;
 
 	HideAchieved = false;
 	miProgressBar = 0;
@@ -229,20 +228,6 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 	// Fonts
 	vgui2::HFont	hTextFont;
 	vgui2::IScheme* pScheme = vgui2::scheme()->GetIScheme(vgui2::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "resource/ClientSourceScheme.res", "ClientSourceScheme"));
-
-	// Set Achievements categories
-	ui_AchvList = new vgui2::ComboBox(this, "achievement_pack_combo", MAX_CATEGORIES, false);
-	ui_AchvList->SetPos(25, 410);
-	ui_AchvList->SetSize(235, 24);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_Show_All_Achievements", kv);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_General", kv);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_Objective_Humans", kv);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_Survival_Humans", kv);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_Objective_Zombies", kv);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_Survival_Zombies", kv);
-	ui_AchvList->AddItem("#ZP_UI_Achievements_Kills", kv);
-	// Auto select "Show All Achievements"
-	ui_AchvList->ActivateItem(0);
 
 	// Should we hide achieved ones?
 	ui_AchvTaken = new vgui2::CheckButton(this, "HideAchieved", "#ZP_UI_Achievement_Hide_Achieved");
@@ -313,12 +298,6 @@ void C_AchievementDialog::OnTick()
 	ui_TotalProgress->SetSize(miProgressBar, 16);
 
 	LoadAchievements();
-
-	if (ui_AchvList->GetActiveItem() != CurrentCategory)
-	{
-		CurrentCategory = ui_AchvList->GetActiveItem();
-		iAchievement = 0;
-	}
 }
 
 void C_AchievementDialog::LoadAchievements()
@@ -342,14 +321,6 @@ ReadAchievement:
 
 	// Graba achievement
 	SteamUserStats()->GetAchievement(ach.m_pchAchievementID, &ach.m_bAchieved);
-
-	// Wrong category!
-	// If its not on (Show All)
-	if (CATEGORY_SHOWALL != ui_AchvList->GetActiveItem())
-	{
-		if (ach.m_eCategory != ui_AchvList->GetActiveItem())
-			goto ReadAchievement;
-	}
 
 	// We won't show hidden achievements
 	// Unless we have achieved em

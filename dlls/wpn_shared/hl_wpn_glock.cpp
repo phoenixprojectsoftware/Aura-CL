@@ -20,6 +20,7 @@
 #include "weapons.h"
 #include "nodes.h"
 #include "player.h"
+#include "../cl_dll/cl_gametype.h"
 
 enum glock_e {
 	GLOCK_IDLE1 = 0,
@@ -45,7 +46,10 @@ void CGlock::Spawn( )
 	m_iId = WEAPON_GLOCK;
 	SET_MODEL(ENT(pev), "models/w_9mmhandgun.mdl");
 
-	m_iDefaultAmmo = GLOCK_DEFAULT_GIVE;
+	if (OITC != g_iGameType)
+		m_iDefaultAmmo = GLOCK_DEFAULT_GIVE;
+	else
+		m_iDefaultAmmo = ONE_DEFAULT_GIVE;
 
 	FallInit();// get ready to fall down.
 }
@@ -73,11 +77,24 @@ void CGlock::Precache( void )
 int CGlock::GetItemInfo(ItemInfo *p)
 {
 	p->pszName = STRING(pev->classname);
-	p->pszAmmo1 = "9mm";
-	p->iMaxAmmo1 = _9MM_MAX_CARRY;
-	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
-	p->iMaxClip = GLOCK_MAX_CLIP;
+
+	if (OITC != g_iGameType)
+	{
+		p->pszAmmo1 = "9mm";
+		p->iMaxAmmo1 = _9MM_MAX_CARRY;
+		p->pszAmmo2 = NULL;
+		p->iMaxAmmo2 = -1;
+		p->iMaxClip = GLOCK_MAX_CLIP;
+	}
+	else
+	{
+		p->pszAmmo1 = "9mm";
+		p->iMaxAmmo1 = ONE_MAX_CARRY;
+		p->pszAmmo2 = NULL;
+		p->iMaxAmmo2 = -1;
+		p->iMaxClip = 1;
+	}
+
 	p->iSlot = 1;
 	p->iPosition = 0;
 	p->iFlags = 0;
@@ -178,10 +195,15 @@ void CGlock::Reload( void )
 
 	int iResult;
 
-	if (m_iClip == 0)
-		iResult = DefaultReload( 17, GLOCK_RELOAD, 1.5 );
+	if (OITC != g_iGameType)
+	{
+		if (m_iClip < 1)
+			iResult = DefaultReload(17, GLOCK_RELOAD, 1.5);
+		else
+			iResult = DefaultReload(18, GLOCK_RELOAD_NOT_EMPTY, 1.5);
+	}
 	else
-		iResult = DefaultReload( 18, GLOCK_RELOAD_NOT_EMPTY, 1.5 );
+		iResult = DefaultReload(1, GLOCK_RELOAD_NOT_EMPTY, 1.5);
 
 	if (iResult)
 	{

@@ -22,6 +22,11 @@ bool IsBeta()
 	return SteamUtils()->GetAppID() == 3903990;
 }
 
+bool ForceRetailID()
+{
+	return true;
+}
+
 namespace discord_integration
 {
 	namespace
@@ -428,7 +433,7 @@ namespace discord_integration
 		handlers.disconnected = handle_disconnected;
 		handlers.joinGame = handle_joinGame;
 		handlers.joinRequest = handle_joinRequest;
-		if (IsBeta())
+		if (IsBeta() && !ForceRetailID())
 			Discord_Initialize(BETA_ID, &handlers, 1, BETA_APP_ID);
 		else
 			Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);

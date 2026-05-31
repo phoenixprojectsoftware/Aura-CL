@@ -27,6 +27,7 @@
 
 #include "achievement_manager.h"
 #include "leaderboard_integration.h"
+#include "cl_gametype.h"
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );
 
@@ -164,19 +165,19 @@ int CHudDeathNotice::Draw(float flTime)
 			else if (isLocalKiller)
 			{
 				msg << "You killed " << victim;
-				if (*weapon)
+				if (*weapon && INSTAGIB != gHUD.GetGameType())
 					msg << " with " << weapon;
 			}
 			else if (isLocalVictim)
 			{
 				msg << killer << " killed you";
-				if (*weapon)
+				if (*weapon && INSTAGIB != gHUD.GetGameType())
 					msg << " with " << weapon;
 			}
 			else
 			{
 				msg << killer << " killed " << victim;
-				if (*weapon)
+				if (*weapon && INSTAGIB != gHUD.GetGameType())
 					msg << " with " << weapon;
 			}
 

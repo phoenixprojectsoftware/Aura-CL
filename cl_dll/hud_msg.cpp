@@ -167,11 +167,18 @@ int CHud :: MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 	return 1;
 }
 
+#include "audio/music.h"
+#include "cl_gametype.h"
+int g_iGameType = GameType::STANDARD; // global gametype integer.
+
 int CHud::MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
 	m_iGameType = READ_BYTE();
+	g_iGameType = m_iGameType;
+
+	g_MusicSystem.Init();
 
 	return 1;
 }

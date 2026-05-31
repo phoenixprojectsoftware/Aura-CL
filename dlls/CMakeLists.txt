@@ -36,4 +36,5 @@ add_sources(
 	skill.h
 	squeakgrenade.cpp
 	tripmine.cpp
-	UserMessages.h)
+	UserMessages.h
+	wpn_healer.cpp)

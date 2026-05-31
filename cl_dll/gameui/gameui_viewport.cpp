@@ -132,7 +132,7 @@ void CGameUIViewport::OnThink()
 	}
 
 	// create the dialog immediately
-	if (!m_hImageButton)
+	if (!m_hImageButton && !SteamUtils()->IsSteamRunningOnSteamDeck())
 	{
 		int wx, wy, ww, wt;
 		vgui2::surface()->GetWorkspaceBounds(wx, wy, ww, wt);

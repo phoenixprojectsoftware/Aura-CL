@@ -46,6 +46,13 @@
 #endif
 #include <dbg.h>
 
+#include "audio/music.h"
+#include <ctime>
+#define GOOD_MORNING "greeting/MORNING.WAV"
+#define GOOD_AFTERNOON "greeting/AFTERNOON.WAV"
+#define GOOD_EVENING "greeting/EVENING.WAV"
+#define GREETING_DELAY 5 // how many seconds after launch to play the greeting sound
+
 extern tempent_s* pLaserSpot;
 
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
@@ -792,7 +799,9 @@ void CHud :: VidInit( void )
 	m_hsprLogo = 0;	
 	m_hsprCursor = 0;
 
-	if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		m_iRes = 640;
+	else if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 		m_iRes = 2560;
 	else if (ScreenWidth >= 1280 && ScreenHeight > 720)
 		m_iRes = 1280;
@@ -909,6 +918,48 @@ void CHud :: VidInit( void )
 #if defined(_STEAMWORKS) && !defined(_HALO)
 	CheckSpecialDay();
 #endif
+}
+
+#include "greeting.h"
+
+#include <ctime>
+
+static bool g_bGreetingStarted = false;
+static bool g_bGreetingPlayed = false;
+static std::time_t g_flGreetingStartTime = 0;
+
+void InitGreeting()
+{
+	g_bGreetingStarted = true;
+	g_bGreetingPlayed = false;
+	g_flGreetingStartTime = std::time(nullptr);
+}
+
+void UpdateGreeting()
+{
+	if (!g_bGreetingStarted || g_bGreetingPlayed)
+		return;
+
+	std::time_t t = std::time(nullptr);
+
+	if (t < g_flGreetingStartTime + GREETING_DELAY)
+		return;
+
+	std::tm* now = std::localtime(&t);
+
+	if (!now)
+		return;
+
+	const int hour = now->tm_hour;
+
+	if (hour >= 0 && hour < 12)
+		PlaySound(GOOD_MORNING, 1);
+	else if (hour >= 12 && hour < 18)
+		PlaySound(GOOD_AFTERNOON, 1);
+	else
+		PlaySound(GOOD_EVENING, 1);
+
+	g_bGreetingPlayed = true;
 }
 
 void CHud::Frame(double time)

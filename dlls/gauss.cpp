@@ -14,6 +14,7 @@
 ****/
 #if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
 
+#include "../cl_dll/cl_gametype.h"
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -45,7 +46,10 @@ LINK_ENTITY_TO_CLASS( weapon_gauss, CGauss );
 
 float CGauss::GetFullChargeTime( void )
 {
-	return 1.4;
+	if (g_iGameType == GameType::TAUGUYS)
+		return 20;
+	else
+		return 1.4;
 }
 
 #ifdef CLIENT_DLL
@@ -69,6 +73,8 @@ void CGauss::Precache( void )
 	PRECACHE_MODEL("models/w_gauss.mdl");
 	PRECACHE_MODEL("models/v_gauss.mdl");
 	PRECACHE_MODEL("models/p_gauss.mdl");
+
+	PRECACHE_MODEL("models/weapons/hldmtau/v_hldmtau.mdl");
 
 	PRECACHE_SOUND("items/9mmclip1.wav");
 
@@ -118,7 +124,10 @@ int CGauss::GetItemInfo(ItemInfo *p)
 BOOL CGauss::Deploy( )
 {
 	m_pPlayer->m_flPlayAftershock = 0.0;
-	return DefaultDeploy( "models/v_gauss.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss" );
+	if (GameType::HLDM == g_iGameType)
+		return DefaultDeploy("models/weapons/hldmtau/v_hldmtau.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
+	else
+		return DefaultDeploy("models/v_gauss.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
 }
 
 void CGauss::Holster( int skiplocal /* = 0 */ )

@@ -7,9 +7,16 @@
 #include <steamworks/steam_api.h>
 #endif
 
-bool IsBetaApp()
+#include "audio/music.h"
+
+bool CHudWatermark::IsBetaApp()
 {
 	return SteamUtils()->GetAppID() == 3903990;
+}
+
+bool CHudWatermark::Neptune()
+{
+	return SteamUtils()->IsSteamRunningOnSteamDeck();
 }
 
 #define DRAW_STRING gEngfuncs.pfnDrawString
@@ -26,6 +33,7 @@ int CHudWatermark::VidInit()
 	m_iFlags |= HUD_ACTIVE;
 	refresh_draw_until = true;
 	update_is_available = update_checker::is_update_available();
+	hasMusicPlayed = false;
 
 	return 1;
 }
@@ -38,13 +46,18 @@ int CHudWatermark::Draw(float time)
 		draw_until = gHUD.m_flTime + 15.0f;
 	}
 
-#if !defined (CLOSED_BETA) && !defined (_DEBUG)
 	if (gHUD.m_flTime >= draw_until) 
 	{
+		if (!hasMusicPlayed)
+		{
+			g_MusicSystem.Play();
+			hasMusicPlayed = true;
+		}
+#ifdef PHX_FINAL
 		m_iFlags &= ~HUD_ACTIVE;
 		return 0;
-	}
 #endif
+	}
 
 	int r, g, b;
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
@@ -118,6 +131,9 @@ int CHudWatermark::Draw(float time)
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - internal use only", 255, 0, 0);
 		else
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
+
+		if (Neptune())
+			DRAW_STRING(ScreenWidth / 20, CharHeight * 7, "STEAM DECK mode", 128, 128, 128);
 #else
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "DEBUG BUILD - internal use only.", 255, 0, 0);
 #endif

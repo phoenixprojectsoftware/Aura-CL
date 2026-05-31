@@ -9,6 +9,8 @@
  *
  ****/
 
+#pragma once
+
 #include <steamworks/steam_api.h>
 #include <string>
 
@@ -23,6 +25,11 @@ static const char* g_PhoenixSteamIDs[] = {
 	"0:1:457283837", // berony
 	"0:1:516167454", // hitoshii
 	"0:0:421607015", // galexion
+	"0:0:105253777" // finger
+	"0:1:77747696", // playmann
+	"0:0:102486805", // ivan naii_
+	"0:1:175018298", // maxresdefault
+
 };
 static const int g_NumPhoenixIDs = sizeof(g_PhoenixSteamIDs) / sizeof(g_PhoenixSteamIDs[0]);
 
@@ -103,13 +110,6 @@ inline const char* GetAchievementAPIName(int achievementID)
 // STATISTICS END
 // =====================
 
-// ============== Copyright (c) 2025 Monochrome Games ============== \\
-
-#ifndef SHARED_ZOMBIEPANIC_ACHIEVEMENTS
-#define SHARED_ZOMBIEPANIC_ACHIEVEMENTS
-#pragma once
-
-
 enum EAchievements
 {
 	ACH_KILLS100 = 0,
@@ -136,5 +136,3 @@ enum EAchievements
 
 	ACHV_MAX
 };
-
-#endif // SHARED_ZOMBIEPANIC_ACHIEVEMENTS
