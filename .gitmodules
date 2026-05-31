@@ -22,3 +22,6 @@
 [submodule "external/rmlui"]
 	path = external/rmlui
 	url = https://github.com/mikke89/RmlUi.git
+[submodule "external/freetype"]
+	path = external/freetype
+	url = https://github.com/freetype/freetype.git
