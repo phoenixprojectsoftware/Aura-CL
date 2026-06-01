@@ -55,7 +55,8 @@ int CHudSettings::Draw(float time)
 		sprintf(str, "Aura %s", ag_version);
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
 
-		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), gamemode, r, g, b);
+		sprintf(str, "Gamemode: %s", gamemode);
+		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
 
 		sprintf(str, "Time limit: %hhd", time_limit);
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight / 2 * 3), str, r, g, b);
@@ -138,6 +139,8 @@ int CHudSettings::MsgFunc_Settings(const char* name, int size, void* buf)
 
 	discord_integration::set_gamemode(gamemode);
 	discord_integration::set_match_is_on(match_is_on);
+
+	gHUD.m_Watermark.pszGamemode = gamemode;
 
 	return 1;
 }

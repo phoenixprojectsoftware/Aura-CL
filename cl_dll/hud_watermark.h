@@ -6,6 +6,7 @@ class CHudWatermark : public CHudBase
 	bool refresh_draw_until;
 	bool update_is_available;
 	bool hasMusicPlayed;
+	bool m_bDrawInfo;
 
 public:
 	virtual int Init();
@@ -13,4 +14,6 @@ public:
 	virtual int Draw(float time);
 	bool IsBetaApp();
 	bool Neptune();
+
+	std::string pszGamemode;
 };
