@@ -174,6 +174,9 @@ void CMusicSystem::Play()
 	if (m_Command.empty())
 		return;
 
+	if (gHUD.GetGameType() == FIREFIGHT || gHUD.GetGameType() == FIESTAFIGHT)
+		return;
+
 	gEngfuncs.pfnClientCmd(m_Command.c_str());
 
 	gEngfuncs.Con_Printf("CMusicSystem: playing%s\n", m_Command.c_str());
