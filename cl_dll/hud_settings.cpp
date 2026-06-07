@@ -55,8 +55,11 @@ int CHudSettings::Draw(float time)
 		sprintf(str, "Aura %s", ag_version);
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
 
-		sprintf(str, "Gamemode: %s", gamemode);
+		sprintf(str, "Gamemode:");
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
+
+		sprintf(str, "%s", gamemode);
+		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, 0, 255, 0);
 
 		sprintf(str, "Time limit: %hhd", time_limit);
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight / 2 * 3), str, r, g, b);
