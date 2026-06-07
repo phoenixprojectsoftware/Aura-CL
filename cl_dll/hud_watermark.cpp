@@ -44,6 +44,7 @@ int CHudWatermark::Draw(float time)
 	{
 		refresh_draw_until = false;
 		draw_until = gHUD.m_flTime + 15.0f;
+		m_bDrawInfo = true;
 	}
 
 	if (gHUD.m_flTime >= draw_until) 
@@ -54,8 +55,7 @@ int CHudWatermark::Draw(float time)
 			hasMusicPlayed = true;
 		}
 #ifdef PHX_FINAL
-		m_iFlags &= ~HUD_ACTIVE;
-		return 0;
+		m_bDrawInfo = false;
 #endif
 	}
 
@@ -137,15 +137,22 @@ int CHudWatermark::Draw(float time)
 #else
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "DEBUG BUILD - internal use only.", 255, 0, 0);
 #endif
-
+		if (!pszGamemode.empty())
+			DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, pszGamemode.c_str(), r, g, b);
 		DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
-#else
-		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
-		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
+#else // Release
+		if (m_bDrawInfo)
+		{
+			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
+			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
 #ifndef _HALO
-		gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
+			gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
 #endif
-		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, "Press / to open the COMMAND MENU.", 0, 255, 0);
+			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, "Press / to open the COMMAND MENU.", 0, 255, 0);
+		}
+
+		if(!pszGamemode.empty())
+			DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, pszGamemode.c_str(), r, g, b);
 #endif
 #if !defined(CLOSED_BETA)
 	}
