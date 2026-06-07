@@ -24,4 +24,4 @@
 	url = https://github.com/mikke89/RmlUi.git
 [submodule "external/freetype"]
 	path = external/freetype
-	url = https://github.com/freetype/freetype.git
+	url = https://github.com/freetype/freetype

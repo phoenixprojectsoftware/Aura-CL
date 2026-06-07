@@ -45,7 +45,6 @@ CON_COMMAND(gameui_leaderboard, "Leaderboard")
 }
 #endif
 
-#ifdef _DEBUG
 CON_COMMAND(gameui_rmlmenu, "Opens the RmlUi main menu")
 {
 	if (CGameUIViewport::Get())
@@ -57,7 +56,6 @@ CON_COMMAND(gameui_rmlmenu_close, "Closes the RmlUi main menu")
 	if (CGameUIViewport::Get())
 		CGameUIViewport::Get()->CloseRmlMainMenu();
 }
-#endif
 
 CGameUIViewport::CGameUIViewport() : BaseClass(nullptr, "ClientGameUIViewport"), m_steamcallback_OnDownloadItemResult(this, &CGameUIViewport::OnDownloadItemResult)
 {
