@@ -123,6 +123,7 @@ void EV_Knife(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
 void EV_RayTouch(particle_s* particle);
 void EV_FireRailgun(event_args_t* args);
+void EV_FireThumper(event_args_t* args);
 
 #ifdef _HALO
 void EV_FireSMG(event_args_t* args);
@@ -1168,6 +1169,32 @@ void EV_FireRailgun(event_args_t* args)
 //======================
 //	    RAILGUN END
 //======================
+
+//======================
+//	    THUMPER START
+//======================
+void EV_FireThumper(event_args_t* args)
+{
+	int idx;
+	vec3_t origin;
+
+	idx = args->entindex;
+	VectorCopy(args->origin, origin);
+
+	if (EV_IsLocal(idx))
+	{
+		if (steam_vibrate_enabled->value >= 1)
+			gHUD.StartControllerVibration(0, 0, 0, 20000, 0.1f);
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(1, 2);
+		Punch(7.35, 0, 0);
+	}
+
+	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP1, "weapons/glauncher.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+}
+//======================
+//	    THUMPER START
+//======================
+
 
 //======================
 //	   PHYTON START 

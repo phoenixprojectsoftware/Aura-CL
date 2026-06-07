@@ -186,7 +186,7 @@ void CBattleRifle::ToggleZoom()
 
 BOOL CBattleRifle::Deploy(void)
 {
-	return DefaultDeploy("models/weapons/br/v_br.mdl", "models/weapons/br/p_br.mdl", OLR_DEPLOY, "olr");
+	return DefaultDeploy("models/weapons/br/v_br.mdl", "models/weapons/br/p_br.mdl", OLR_DEPLOY, "mp5");
 }
 
 void CBattleRifle::Holster(int skiplocal)

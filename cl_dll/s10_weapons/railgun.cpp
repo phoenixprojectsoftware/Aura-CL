@@ -27,7 +27,7 @@ enum railgun_e
 	RAILGUN_HOLSTER,
 };
 
-LINK_ENTITY_TO_CLASS(weapon_railgun, CRailgun);
+// LINK_ENTITY_TO_CLASS(weapon_railgun, CRailgun);
 
 void CRailgun::Spawn()
 {

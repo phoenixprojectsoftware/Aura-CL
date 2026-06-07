@@ -28,10 +28,11 @@
 #define WPN_FOREIGN_SLOT 3
 
 #define WPN_RPG_POS 1
-#define WPN_GAUSS_POS 2
-#define WPN_EGON_POS 3
-#define WPN_HIVEHAND_POS 4
-#define WPN_RAILGUN_POS 5
+#define WPN_THUMPER_POS 2
+#define WPN_GAUSS_POS 3
+#define WPN_EGON_POS 4
+#define WPN_HIVEHAND_POS 5
+#define WPN_RAILGUN_POS 6
 
 // Slot 5 - explosives
 #define WPN_EXPL_SLOT 4

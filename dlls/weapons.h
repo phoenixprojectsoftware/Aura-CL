@@ -108,6 +108,7 @@ public:
 #define WEAPON_HLDMAR 32
 #define WEAPON_RAILGUN 33
 #define WEAPON_HEALER 34
+#define WEAPON_THUMPER 35
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
@@ -145,6 +146,7 @@ public:
 #define M249_WEIGHT					20
 #define DISPLACER_WEIGHT	10
 #define PENGUIN_WEIGHT		5
+#define THUMPER_WEIGHT 25
 
 #ifdef _HALO
 #define M7_WEIGHT 7
@@ -230,6 +232,7 @@ public:
 #define SATCHEL_MAX_CLIP		WEAPON_NOCLIP
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
+#define THUMPER_MAX_CLIP 1
 
 // the default amount of ammo that comes with each gun when it spawns
 #ifdef _HALO
@@ -276,6 +279,7 @@ public:
 #define M249_DEFAULT_GIVE					100
 #define DISPLACER_DEFAULT_GIVE		40
 #define RAILGUN_DEFAULT_GIVE 20
+#define THUMPER_DEFAULT_GIVE 3
 #endif
 #define BR_DEFAULT_GIVE BR_MAX_CLIP
 
@@ -918,6 +922,47 @@ private:
 	bool CheckReviveHullClear(const Legacy_Vector& vecOrigin, edict_t* pentIgnore);
 };
 #endif
+
+class CThumper : public CBasePlayerWeapon
+{
+public:
+	void Spawn() override;
+	void Precache() override;
+	int GetItemInfo(ItemInfo* p) override;
+	BOOL Deploy() override;
+	void Holster(int skiplocal) override;
+	void PrimaryAttack() override;
+	void Reload() override;
+	void WeaponIdle() override;
+
+#ifndef CLIENT_DLL
+	int Save(CSave& save) override;
+	int Restore(CRestore& restore) override;
+	static TYPEDESCRIPTION m_SaveData[];
+#endif
+
+private:
+	unsigned short m_usThumper;
+	BOOL m_bReloading;
+	float m_flReloadStartTime;
+	float m_flReloadStart;
+};
+
+enum thumper_e
+{
+	THUMPER_IDLE1,
+	THUMPER_IDLE2,
+	THUMPER_FIRE1,
+	THUMPER_FIRE2,
+	THUMPER_RELOAD1,
+	THUMPER_RELOAD2,
+	THUMPER_RELOAD3,
+	THUMPER_RELOAD4,
+	THUMPER_DRAW,
+	THUMPER_DRAW2,
+	THUMPER_HOLSTER,
+	THUMPER_HOLSTER2
+};
 
 enum m7_e
 {

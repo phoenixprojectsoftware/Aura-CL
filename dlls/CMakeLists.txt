@@ -1,4 +1,5 @@
 add_subdirectory(wpn_shared)
+add_subdirectory(s10_weapons)
 
 add_sources(
 	br.cpp
