@@ -84,7 +84,7 @@ void CThumper::Holster(int skiplocal)
 	SendWeaponAnim(THUMPER_HOLSTER);
 	m_bReloading = false;
 	m_fInReload = false;
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_pPlayer->m_flNextAttack = gpGlobals->time + 0.5;
 	m_flTimeWeaponIdle = UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10.0, 15.0);
 }
 
@@ -98,7 +98,7 @@ void CThumper::PrimaryAttack()
 	if (m_iClip <= 0)
 	{
 		PlayEmptySound();
-		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.35f;
+		m_flNextPrimaryAttack = gpGlobals->time + 0.35f;
 		return;
 	}
 
@@ -108,9 +108,9 @@ void CThumper::PrimaryAttack()
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
 
-	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16 + gpGlobals->v_right * 6 - gpGlobals->v_up * 4;
+	Vector vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16 + gpGlobals->v_right * 6 - gpGlobals->v_up * 4;
 
-	Legacy_Vector vecVelocity = gpGlobals->v_forward * 1250;
+	Vector vecVelocity = gpGlobals->v_forward * 1250;
 
 	CGrenade::ShootContact(m_pPlayer->pev, vecSrc, vecVelocity);
 
@@ -118,8 +118,8 @@ void CThumper::PrimaryAttack()
 
 	SendWeaponAnim(THUMPER_FIRE1);
 
-	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 1.0f;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.5f;
+	m_flNextPrimaryAttack = gpGlobals->time + 1.0f;
+	m_flTimeWeaponIdle = gpGlobals->time + 1.5f;
 }
 
 void CThumper::Reload()
@@ -134,9 +134,9 @@ void CThumper::Reload()
 	{
 		m_bReloading = true;
 
-		m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + (0.60 + 0.60);
+		m_flNextPrimaryAttack = gpGlobals->time + (0.60 + 0.60);
 
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (0.60 + 0.60);
+		m_flTimeWeaponIdle = gpGlobals->time + (0.60 + 0.60);
 
 		m_flReloadStart = gpGlobals->time;
 	}
@@ -154,10 +154,10 @@ void CThumper::WeaponIdle()
 		SendWeaponAnim(THUMPER_RELOAD2);
 	}
 
-	if (m_flTimeWeaponIdle > UTIL_WeaponTimeBase())
+	if (m_flTimeWeaponIdle > gpGlobals->time)
 		return;
 
 	SendWeaponAnim(THUMPER_IDLE1);
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + RANDOM_FLOAT(10.0f, 15.0f);
+	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT(10.0f, 15.0f);
 }
 #endif //_HALO
