@@ -232,7 +232,7 @@ public:
 #define SATCHEL_MAX_CLIP		WEAPON_NOCLIP
 #define TRIPMINE_MAX_CLIP		WEAPON_NOCLIP
 #define SNARK_MAX_CLIP			WEAPON_NOCLIP
-#define THUMPER_MAX_CLIP 1
+#define THUMPER_MAX_CLIP 3
 
 // the default amount of ammo that comes with each gun when it spawns
 #ifdef _HALO

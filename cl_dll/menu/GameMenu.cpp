@@ -363,7 +363,7 @@ void CGameMenu::Show()
 
 		if (!m_pDocument)
 		{
-			gEngfuncs.Con_Printf("CGameMenu: failed to load ui/mainmenu/mainmenu.rml\n");
+			gEngfuncs.Con_Printf("CGameMenu: failed to load ui/main/main.rml\n");
 			return;
 		}
 
