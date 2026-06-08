@@ -349,8 +349,8 @@ if(WIN32)
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "$<TARGET_FILE_DIR:client>"
-            "${GAME_PATH}/zamnhlmp_dev/cl_dll"
+            "${GAME_PATH}/zamnhlmp_dev/cl_dlls"
 
-        COMMENT "Copying client build output to ${GAME_PATH}/zamnhlmp_dev/cl_dll"
+        COMMENT "Copying client build output to ${GAME_PATH}/zamnhlmp_dev/cl_dlls"
     )
 endif()
