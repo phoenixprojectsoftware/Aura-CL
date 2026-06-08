@@ -1,3 +1,5 @@
+# Aura-CL
+
 set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
 cmake_minimum_required(VERSION 3.23)
 set(ALSOFT_USE_CPP20_MODULES OFF CACHE BOOL "Disable OpenAL C++20 modules" FORCE)
