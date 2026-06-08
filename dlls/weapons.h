@@ -932,20 +932,14 @@ public:
 	BOOL Deploy() override;
 	void Holster(int skiplocal) override;
 	void PrimaryAttack() override;
+	void SecondaryAttack() override;
+	void ToggleZoom();
 	void Reload() override;
 	void WeaponIdle() override;
 
-#ifndef CLIENT_DLL
-	int Save(CSave& save) override;
-	int Restore(CRestore& restore) override;
-	static TYPEDESCRIPTION m_SaveData[];
-#endif
-
 private:
 	unsigned short m_usThumper;
-	BOOL m_bReloading;
-	float m_flReloadStartTime;
-	float m_flReloadStart;
+	bool m_bInZoom;
 };
 
 enum thumper_e
