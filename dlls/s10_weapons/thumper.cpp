@@ -114,7 +114,7 @@ void CThumper::PrimaryAttack()
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
 
-	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16 + gpGlobals->v_right * 6 - gpGlobals->v_up * 4;
+	Legacy_Vector vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 38 + gpGlobals->v_right * 6 - gpGlobals->v_up * 4;
 
 	Legacy_Vector vecVelocity = gpGlobals->v_forward * 2000;
 
