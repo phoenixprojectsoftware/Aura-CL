@@ -70,6 +70,15 @@ set(CMAKE_SHARED_LINKER_FLAGS_HALORELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}"
 project(Aura-Client)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# WINDOWS ONLY - REQUIRE THE LOCAL 3903990 INSTALL 
+if(WIN32)
+	set(GAME_PATH "" CACHE PATH "Path to the Cross Product Beta app's hl.exe")
+	
+	if(NOT GAME_PATH)
+		message(FATAL_ERROR "GAME_PATH variable is REQUIRED on WINDOWS!!! GRR!!!!\n" "Or set GAME_PATH in CMake GUI before generating.")
+	endif()
+endif()
+
 include("CMake/helpers.cmake")
 
 set(CMAKE_CXX_STANDARD 17)
@@ -194,6 +203,17 @@ endif()
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
+
+# Visual Studio debugger settings for the client DLL project.
+if(WIN32)
+    set_target_properties(client PROPERTIES
+        VS_DEBUGGER_COMMAND "${GAME_PATH}/hl.exe"
+        VS_DEBUGGER_COMMAND_ARGUMENTS "-game zamnhlmp_dev -dev"
+        VS_DEBUGGER_WORKING_DIRECTORY "${GAME_PATH}"
+    )
+	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT client)
+
+endif()
 
 # Add PHX_FINAL define for final/release shipping configs
 foreach(FINAL_CONFIG Release SteamRelease HaloRelease)
@@ -328,3 +348,17 @@ target_compile_definitions(client PRIVATE
     -DCLIENT_WEAPONS)
 	
 target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg RmlUi::Core)
+
+# Windows-only: copy built client files into the local game folder for debugging.
+if(WIN32)
+    add_custom_command(TARGET client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "${GAME_PATH}/zamnhlmp_dev/cl_dll"
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "$<TARGET_FILE_DIR:client>"
+            "${GAME_PATH}/zamnhlmp_dev/cl_dll"
+
+        COMMENT "Copying client build output to ${GAME_PATH}/zamnhlmp_dev/cl_dll"
+    )
+endif()
