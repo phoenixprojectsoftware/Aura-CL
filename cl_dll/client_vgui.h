@@ -3,6 +3,8 @@
 #include <vgui/VGUI2.h>
 #include <IClientVGUI.h>
 
+#define GetChildPanel(_Name, _Class) dynamic_cast<_Class*>(FindChildByName(_Name))
+
 #define VGUI2_ROOT_DIR "ui/"
 
 class CClientVGUI : public IClientVGUI
