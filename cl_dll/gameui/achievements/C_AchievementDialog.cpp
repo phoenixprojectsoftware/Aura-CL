@@ -70,15 +70,17 @@ DialogAchievement_t g_DAchievements[] =
 	// Conditionals
 	_ACH_ID(ACH_CLOSE_CALL, CATEGORY_GENERAL, NULL, NULL),
 
+	// Objectives
+	_ACH_ID(ACH_XFIRE_STRIKE, CATEGORY_GENERAL, NULL, NULL),
+	_ACH_ID(ACH_SNARKPIT, CATEGORY_GENERAL, NULL, NULL),
+
 	// Specials
-	_ACH_ID(ACH_LAN, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_WELCOME, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_PHOENIX_PARTY, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_PHOENIX_DAY, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_CST, CATEGORY_GENERAL, NULL, NULL),
 
 	// Weapon Specific Kills
-	_ACH_ID(ACH_TRIFECTA,					CATEGORY_KILLS,			NULL, NULL),
 	_ACH_ID(ACH_TRIP20,					CATEGORY_KILLS,			trp_kill, 20),
 	_ACH_ID(ACH_SNARK10,					CATEGORY_KILLS,			sqk_kill, 10),
 	_ACH_ID(ACH_SNIPER10,					CATEGORY_KILLS,			snp_kill, 10),
@@ -211,7 +213,7 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 
 	SetScheme(vgui2::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "resource/ClientSourceScheme.res", "ClientSourceScheme"));
 
-	LoadControlSettings(VGUI2_ROOT_DIR "resource/zps/zp_achievementsdialog.res");
+	LoadControlSettings(VGUI2_ROOT_DIR "resource/achievement/achievementsdialog.res");
 
 	vgui2::ivgui()->AddTickSignal(GetVPanel(), 25);
 
