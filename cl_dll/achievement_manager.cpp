@@ -25,6 +25,20 @@ void UnlockAchievement(int achievementID)
 	}
 }
 
+void UnlockAchievementByName(const char* apiName)
+{
+	if (!apiName || !apiName[0])
+		return;
+
+	if (SteamUserStats())
+	{
+		if (SteamUserStats()->SetAchievement(apiName))
+		{
+			SteamUserStats()->StoreStats();
+		}
+	}
+}
+
 bool isAchievementUnlocked(int achievementID)
 {
 	const char* apiName = GetAchievementAPIName(achievementID);

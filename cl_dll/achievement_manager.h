@@ -16,6 +16,8 @@
 
 void UnlockAchievement(int achievementID);
 
+void UnlockAchievementByName(const char* apiName);
+
 bool isAchievementUnlocked(int achievementID);
 
 void CheckSpecialDay();

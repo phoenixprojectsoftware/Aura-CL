@@ -319,6 +319,22 @@ int __MsgFunc_LaserSpot(const char* name, int size, void* buf)
 	return 1;
 }
 
+int __MsgFunc_Achievement(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	const char* pszAchievement = READ_STRING();
+
+	if (!pszAchievement || !pszAchievement[0])
+		return 1;
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	UnlockAchievementByName(pszAchievement);
+#endif
+
+	return 1;
+}
+
 // TFFree Command Menu
 void __CmdFunc_OpenCommandMenu(void)
 {
@@ -635,6 +651,8 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( PlaySound );
 
 	HOOK_MESSAGE( LaserSpot );
+
+	HOOK_MESSAGE(Achievement);
 
 	gHUD.m_iLaserState = 0;
 
