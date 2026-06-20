@@ -22,6 +22,7 @@
 #ifdef _STEAMWORKS
 #include "achievement_manager.h"
 #endif
+#include "video/video_player.h"
 
 #include "vgui_TeamFortressViewport.h"
 
@@ -331,6 +332,12 @@ int CHud :: Redraw( float flTime, int intermission )
 	SteamInput()->RunFrame();
 	UpdateControllerVibration();
 #endif
+
+	gVideoPlayer.Update(flTime);
+
+	if (gVideoPlayer.IsPlaying())
+		gVideoPlayer.Draw();
+
 	return 1;
 }
 

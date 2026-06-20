@@ -47,6 +47,7 @@
 #include <dbg.h>
 
 #include "audio/music.h"
+#include "video/video_player.h"
 #include <ctime>
 #define GOOD_MORNING "greeting/MORNING.WAV"
 #define GOOD_AFTERNOON "greeting/AFTERNOON.WAV"
@@ -593,6 +594,31 @@ void PrintVersion()
 	gEngfuncs.Con_Printf("\n  Build System - %s \n", buildSys);
 }
 
+void Cmd_PlayVideo()
+{
+	if (gEngfuncs.Cmd_Argc() < 2)
+	{
+		gEngfuncs.Con_Printf("Usage: playvideo <video.ogv> [audio.ogg]\n");
+		return;
+	}
+
+	const char* pszVideo = gEngfuncs.Cmd_Argv(1);
+
+	std::string videoPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszVideo;
+
+	std::string audioPath;
+	const char* pszAudioPath = nullptr;
+
+	if (gEngfuncs.Cmd_Argc() >= 3)
+	{
+		const char* pszAudio = gEngfuncs.Cmd_Argv(2);
+		audioPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszAudio;
+		pszAudioPath = audioPath.c_str();
+	}
+
+	if (!gVideoPlayer.Play(videoPath.c_str(), pszAudioPath))
+		gEngfuncs.Con_Printf("Failed to play video: %s\n", videoPath.c_str());
+}
 
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
@@ -691,6 +717,8 @@ void CHud :: Init( void )
 
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
 	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
+
+	gEngfuncs.pfnAddCommand("playvideo", Cmd_PlayVideo);
 
 	
 

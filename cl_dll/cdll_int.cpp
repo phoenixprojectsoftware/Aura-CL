@@ -20,6 +20,7 @@
 
 #include "hud.h"
 #include "audio/music.h"
+#include "video/video_player.h"
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
@@ -193,6 +194,8 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 
 	g_Leaderboards.Init();
 #endif
+
+	gVideoPlayer.Init();
 
 	// get tracker interface, if any
 	return 1;
@@ -370,6 +373,7 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	g_SoundtrackSystem.Stop();
 	g_SoundtrackSystem.Shutdown();
 	g_MusicSystem.Shutdown();
+	gVideoPlayer.Shutdown();
 }
 
 //---------------------------------------------------

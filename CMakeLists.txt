@@ -183,6 +183,7 @@ add_subdirectory(external/ogg)
 add_subdirectory(external/vorbis)
 add_subdirectory(source_sdk)
 add_subdirectory(external/spectra)
+add_subdirectory(external/theora)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
 
@@ -235,6 +236,7 @@ target_include_directories(client PRIVATE
 	external/ogg/include
 	external/vorbis/include
     external/drmp3
+	external/theora/include
     game_shared
     pm_shared
     public
@@ -341,7 +343,7 @@ target_compile_definitions(client PRIVATE
     -DCLIENT_DLL
     -DCLIENT_WEAPONS)
 	
-target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg)
+target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg theora)
 
 # Windows-only: copy built client files into the local game folder for debugging.
 if(WIN32)
