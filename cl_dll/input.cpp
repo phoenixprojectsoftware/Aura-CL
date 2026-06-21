@@ -22,6 +22,8 @@ extern "C"
 #include <ctype.h>
 #include "Exports.h"
 
+#include "video/video_player.h"
+
 #include "vgui_TeamFortressViewport.h"
 
 #include "discord_integration.h"
@@ -430,6 +432,19 @@ Return 1 to allow engine to process the key, otherwise, act on it as needed
 int CL_DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding )
 {
 //	RecClKeyEvent(down, keynum, pszCurrentBinding);
+
+	/*
+	if (gVideoPlayer.IsPlaying())
+	{
+		if (down && (keynum == K_ESCAPE || keynum == K_SPACE || keynum == K_ENTER || keynum == K_KP_ENTER))
+		{
+			gVideoPlayer.Stop();
+			return 0;
+		}
+
+		return 0;
+	}
+	*/
 
 	if (gViewPort)
 		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
@@ -853,6 +868,17 @@ void CL_DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int ac
 	else
 	{
 		VectorCopy( oldangles, cmd->viewangles );
+	}
+
+	if (gVideoPlayer.IsPlaying() && cmd)
+	{
+		cmd->forwardmove = 0.0f;
+		cmd->sidemove = 0.0f;
+		cmd->upmove = 0.0f;
+
+		cmd->buttons = 0;
+		cmd->impulse = 0;
+		cmd->weaponselect = 0;
 	}
 
 	Bench_SetViewAngles( 1, (float *)&cmd->viewangles, frametime, cmd );

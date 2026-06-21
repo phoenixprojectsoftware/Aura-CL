@@ -336,6 +336,35 @@ int __MsgFunc_Achievement(const char* name, int size, void* buf)
 	return 1;
 }
 
+int __MsgFunc_PlayVideo(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	const char* pszVideo = READ_STRING();
+	const char* pszAudio = READ_STRING();
+
+	if (!pszVideo || !pszVideo[0])
+		return 1;
+
+	std::string videoPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszVideo;
+
+	std::string audioPath;
+	const char* pszAudioPath = nullptr;
+
+	if (pszAudio && pszAudio[0])
+	{
+		audioPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszAudio;
+		pszAudioPath = audioPath.c_str();
+	}
+
+	if (!gVideoPlayer.Play(videoPath.c_str(), pszAudioPath))
+	{
+		gEngfuncs.Con_Printf("PlayVideo message failed: video='%s' audio = '%s'\n", videoPath.c_str(), pszAudioPath ? pszAudioPath : "");
+	}
+
+	return 1;
+}
+
 // TFFree Command Menu
 void __CmdFunc_OpenCommandMenu(void)
 {
@@ -679,6 +708,8 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( LaserSpot );
 
 	HOOK_MESSAGE(Achievement);
+
+	HOOK_MESSAGE(PlayVideo);
 
 	gHUD.m_iLaserState = 0;
 
