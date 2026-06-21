@@ -340,26 +340,30 @@ int __MsgFunc_PlayVideo(const char* name, int size, void* buf)
 {
 	BEGIN_READ(buf, size);
 
-	const char* pszVideo = READ_STRING();
-	const char* pszAudio = READ_STRING();
+	std::string videoName = READ_STRING();
+	std::string audioName = READ_STRING();
 
-	if (!pszVideo || !pszVideo[0])
+	if (videoName.empty())
 		return 1;
 
-	std::string videoPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszVideo;
+	std::string videoPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + videoName;
 
 	std::string audioPath;
 	const char* pszAudioPath = nullptr;
 
-	if (pszAudio && pszAudio[0])
+	if (!audioName.empty())
 	{
-		audioPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszAudio;
+		audioPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + audioName;
 		pszAudioPath = audioPath.c_str();
 	}
 
 	if (!gVideoPlayer.Play(videoPath.c_str(), pszAudioPath))
 	{
-		gEngfuncs.Con_Printf("PlayVideo message failed: video='%s' audio = '%s'\n", videoPath.c_str(), pszAudioPath ? pszAudioPath : "");
+		gEngfuncs.Con_Printf(
+			"PlayVideo message failed: video='%s' audio='%s'\n",
+			videoPath.c_str(),
+			pszAudioPath ? pszAudioPath : ""
+		);
 	}
 
 	return 1;
