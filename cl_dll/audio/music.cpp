@@ -43,6 +43,9 @@ const char* MusicLevelName()
 
 char* AgGametypeName()
 {
+	if (gHUD.m_Watermark.pszGamemode == "Noobtubes" || gHUD.m_Watermark.pszGamemode == "Team Noobtubes")
+		return "thumpers";
+
 	switch (gHUD.GetGameType())
 	{
 	case ARENA: return "arena";
