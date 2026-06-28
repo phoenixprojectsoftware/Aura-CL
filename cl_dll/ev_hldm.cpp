@@ -1189,7 +1189,7 @@ void EV_FireThumper(event_args_t* args)
 		Punch(7.35, 0, 0);
 	}
 
-	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP1, "weapons/glauncher.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
+	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP1, "weapons/hx40/hx40_fire.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
 }
 //======================
 //	    THUMPER START

@@ -43,7 +43,7 @@ void CThumper::Precache()
 	PRECACHE_MODEL("models/w_railgun.mdl");
 	PRECACHE_MODEL("models/weapons/thumper/p_rock2.mdl");
 
-	PRECACHE_SOUND("weapons/glauncher.wav");
+	PRECACHE_SOUND("weapons/hx40/hx40_fire.wav");
 
 	PRECACHE_MODEL("models/grenade.mdl");
 
