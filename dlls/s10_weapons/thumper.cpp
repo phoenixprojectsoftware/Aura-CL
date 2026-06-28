@@ -69,12 +69,12 @@ int CThumper::GetItemInfo(ItemInfo* p)
 
 BOOL CThumper::Deploy()
 {
-	return DefaultDeploy("models/weapons/thumper/v_rock2.mdl", "models/weapons/thumper/p_rock2.mdl", THUMPER_IDLE1, "mp5");
+	return DefaultDeploy("models/weapons/thumper/v_rock2.mdl", "models/weapons/thumper/p_rock2.mdl", THUMPER_DRAW, "mp5");
 }
 
 void CThumper::Holster(int skiplocal)
 {
-	SendWeaponAnim(THUMPER_HOLSTER);
+	// SendWeaponAnim(THUMPER_HOLSTER);
 
 	if (m_bInZoom)
 		SecondaryAttack();
@@ -127,7 +127,7 @@ void CThumper::PrimaryAttack()
 
 	PLAYBACK_EVENT_FULL(0, pPlayer->edict(), m_usThumper, 0.0, (float*)&g_vecZero, (float*)&g_vecZero, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-	SendWeaponAnim(THUMPER_FIRE1);
+	SendWeaponAnim(THUMPER_FIRE);
 
 	m_flNextPrimaryAttack = gpGlobals->time + 1.0f;
 	m_flTimeWeaponIdle = gpGlobals->time + 1.5f;
@@ -171,7 +171,7 @@ void CThumper::Reload()
 	if (m_bInZoom)
 		SecondaryAttack();
 
-	DefaultReload(1, THUMPER_RELOAD1, 1.70);
+	DefaultReload(1, THUMPER_RELOAD, 1.70);
 }
 
 void CThumper::WeaponIdle()
