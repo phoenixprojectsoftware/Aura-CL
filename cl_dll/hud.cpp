@@ -52,7 +52,7 @@
 #define GOOD_MORNING "greeting/MORNING.WAV"
 #define GOOD_AFTERNOON "greeting/AFTERNOON.WAV"
 #define GOOD_EVENING "greeting/EVENING.WAV"
-#define GREETING_DELAY 5 // how many seconds after launch to play the greeting sound
+#define GREETING_DELAY 7.5 // how many seconds after launch to play the greeting sound
 
 extern tempent_s* pLaserSpot;
 
@@ -180,6 +180,24 @@ int __MsgFunc_GameMode(const char *pszName, int iSize, void *pbuf )
 int __MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
 {
 	return gHUD.MsgFunc_Gametype( pszName, iSize, pbuf );
+}
+
+int __MsgFunc_KOTHHill(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	char szHillName[64];
+	strncpy(szHillName, READ_STRING(), sizeof(szHillName) - 1);
+	szHillName[sizeof(szHillName) - 1] = '\0';
+
+	vec3_t origin;
+	origin[0] = READ_COORD();
+	origin[1] = READ_COORD();
+	origin[2] = READ_COORD();
+
+	gHUD.m_KOTH.SetHill(szHillName, origin);
+
+	return 1;
 }
 
 int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
@@ -666,6 +684,7 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( Concuss );
 
 	HOOK_MESSAGE( Gametype );
+	HOOK_MESSAGE(KOTHHill);
 
 	// TFFree CommandMenu
 	HOOK_COMMAND( "+commandmenu", OpenCommandMenu );
@@ -791,6 +810,7 @@ void CHud :: Init( void )
 	m_Countdown.Init();
 	m_Crosshairs.Init();
 	m_CTF.Init();
+	m_KOTH.Init();
 	m_CustomTimer.Init();
 	m_Jumpspeed.Init();
 	m_Debug.Init();
@@ -977,6 +997,7 @@ void CHud :: VidInit( void )
 	m_Countdown.VidInit();
 	m_Crosshairs.VidInit();
 	m_CTF.VidInit();
+	m_KOTH.VidInit();
 	m_CustomTimer.VidInit();
 	m_Debug.VidInit();
 	m_Jumpspeed.VidInit();

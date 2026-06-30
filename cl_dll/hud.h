@@ -127,6 +127,7 @@ struct HUDLIST {
 #include "hud_ctf.h"
 #include "hud_debug.h"
 #include "hud_jumpspeed.h"
+#include "hud_koth.h"
 #include "hud_location.h"
 #include "hud_nextmap.h"
 #include "hud_oldscoreboard.h"
@@ -747,6 +748,7 @@ public:
 	CHudCustomTimer m_CustomTimer;
 	CHudDebug		m_Debug;
 	CHudLocation	m_Location;
+	CHudKOTH m_KOTH;
 	CHudNextMap		m_NextMap;
 	CHudPlayerId		m_PlayerId;
 	CHudScores	m_Scores;

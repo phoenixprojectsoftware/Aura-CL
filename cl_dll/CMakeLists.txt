@@ -68,6 +68,8 @@ add_sources(
 	hud_debug.h
 	hud_jumpspeed.cpp
 	hud_jumpspeed.h
+	hud_koth.cpp
+	hud_koth.h
 	hud_location.cpp
 	hud_location.h
 	hud_msg.cpp

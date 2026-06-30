@@ -28,7 +28,8 @@ enum GameType
 	BUSTERS,
 	CHILL,
 	TAUGUYS,
-	OITC
+	OITC,
+	KING
 };
 
 extern int g_iGameType; // global gametype integer.
