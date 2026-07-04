@@ -29,17 +29,20 @@
 CON_COMMAND(gameui_opentest, "Opens test")
 {
 	CGameUIViewport::Get()->OpenTestPanel();
+	g_pBaseUI->ActivateGameUI();
 }
 
 CON_COMMAND(gameui_composer, "Composer")
 {
 	CGameUIViewport::Get()->OpenComposer();
+	g_pBaseUI->ActivateGameUI();
 }
 
 #ifndef _HALO
 CON_COMMAND(gameui_leaderboard, "Leaderboard")
 {
 	CGameUIViewport::Get()->OpenLeaderboard();
+	g_pBaseUI->ActivateGameUI();
 }
 #endif
 
