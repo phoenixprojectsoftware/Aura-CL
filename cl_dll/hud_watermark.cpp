@@ -128,7 +128,7 @@ int CHudWatermark::Draw(float time)
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 #ifndef _DEBUG
 		if (IsBetaApp())
-			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - internal use only", 255, 0, 0);
+			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "OPEN BETA", 255, 0, 0);
 		else
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
 
@@ -139,7 +139,7 @@ int CHudWatermark::Draw(float time)
 #endif
 		if (!pszGamemode.empty())
 			DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, pszGamemode.c_str(), r, g, b);
-		DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
+		// DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
 #else // Release
 		if (m_bDrawInfo)
 		{
