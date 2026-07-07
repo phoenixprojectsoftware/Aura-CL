@@ -2068,7 +2068,10 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 		case INSET_CHASE_FREE: V_GetChasePos(g_iUser2, v_cl_angles, v_origin, v_angles);
 			break;
 
-		case INSET_IN_EYE:	V_CalcNormalRefdef(pparams);
+		case INSET_IN_EYE:	
+			g_bSpectatorInEyeRefdef = true;
+			V_CalcNormalRefdef(pparams);
+			g_bSpectatorInEyeRefdef = false;
 			break;
 
 		case INSET_MAP_FREE:	pparams->onlyClientDraw = true;
