@@ -68,6 +68,8 @@ extern kbutton_t	in_mlook;
 
 ref_params_s g_pparams;
 
+static bool g_bSpectatorInEyeRefdef = false;
+
 bool ShouldUseLegacyBob()
 {
 	int gametype = gHUD.GetGameType();
@@ -1079,7 +1081,14 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// model origin for the view
 
 	// add view height
-	VectorAdd(pparams->simorg, pparams->viewheight, pparams->vieworg);
+	// in spectator first-person, V_GetInEyePos already returns the target player's
+	// actual eye origin, so do not add spectator viewheight again.
+	if (g_bSpectatorInEyeRefdef)
+	{
+		VectorCopy(pparams->simorg, pparams->vieworg);
+	}
+	else
+		VectorAdd(pparams->simorg, pparams->viewheight, pparams->vieworg);
 
 	VectorCopy(pparams->cl_viewangles, pparams->viewangles);
 
@@ -1134,9 +1143,17 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	V_CalcGunAngle(pparams);
 
 	// Use predicted origin as view origin.
-	VectorCopy(pparams->simorg, view->origin);
-	view->origin[2] += (waterOffset);
-	VectorAdd(view->origin, pparams->viewheight, view->origin);
+	if (g_bSpectatorInEyeRefdef)
+	{
+		VectorCopy(pparams->simorg, view->origin);
+		view->origin[2] += waterOffset;
+	}
+	else
+	{
+		VectorCopy(pparams->simorg, view->origin);
+		view->origin[2] += waterOffset;
+		VectorAdd(view->origin, pparams->viewheight, view->origin);
+	}
 
 	// Change the origin from which the camera is looking at the viewmodel
 	// This does not change the angles of the viewmodel camera
@@ -1942,11 +1959,12 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 		}
 
 		// predict missing client data and set weapon model ( in HLTV mode or inset in eye mode )
-#ifdef _TFC
-		if (gEngfuncs.IsSpectateOnly() || gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)
-#else
-		if (gEngfuncs.IsSpectateOnly())
-#endif
+// Predict missing client data and set weapon model.
+// Do this for normal multiplayer OBS_IN_EYE too, not just HLTV/spectate-only.
+		const bool bFullScreenInEye = (g_iUser1 == OBS_IN_EYE);
+		const bool bInsetInEye = (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE);
+
+		if (bFullScreenInEye || bInsetInEye || gEngfuncs.IsSpectateOnly())
 		{
 			V_GetInEyePos(g_iUser2, pparams->simorg, pparams->cl_viewangles);
 
@@ -1956,18 +1974,16 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 
 			if (lastWeaponModelIndex != ent->curstate.weaponmodel)
 			{
-				// weapon model changed
-
 				lastWeaponModelIndex = ent->curstate.weaponmodel;
 				lastViewModelIndex = V_FindViewModelByWeaponModel(lastWeaponModelIndex);
+
 				if (lastViewModelIndex)
 				{
-					gEngfuncs.pfnWeaponAnim(0, 0);	// reset weapon animation
+					gEngfuncs.pfnWeaponAnim(0, 0);
 				}
 				else
 				{
-					// model not found
-					gunModel->model = NULL;	// disable weapon model
+					gunModel->model = NULL;
 					lastWeaponModelIndex = lastViewModelIndex = 0;
 				}
 			}
@@ -1982,14 +1998,14 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 			}
 			else
 			{
-				gunModel->model = NULL;	// disable weaopn model
+				gunModel->model = NULL;
 			}
 		}
 		else
 		{
 			// only get viewangles from entity
 			VectorCopy(ent->angles, pparams->cl_viewangles);
-			pparams->cl_viewangles[PITCH] *= -3.0f;	// see CL_ProcessEntityUpdate()
+			pparams->cl_viewangles[PITCH] *= -3.0f;
 		}
 	}
 
@@ -2014,7 +2030,10 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 			gHUD.m_Spectator.GetDirectorCamera(v_origin, v_angles);
 			break;
 
-		case OBS_IN_EYE:   V_CalcNormalRefdef(pparams);
+		case OBS_IN_EYE:   
+			g_bSpectatorInEyeRefdef = true;
+			V_CalcNormalRefdef(pparams);
+			g_bSpectatorInEyeRefdef = false;
 			break;
 
 		case OBS_MAP_FREE:	pparams->onlyClientDraw = true;
