@@ -142,7 +142,7 @@ int CHud :: Redraw( float flTime, int intermission )
 		else if ( !m_iIntermission && intermission )
 		{
 			m_iIntermission = intermission;
-			m_Message.Reset();
+			CenterPrint("");
 			gViewPort->HideCommandMenu();
 			gViewPort->HideVGUIMenu();
 			gViewPort->ShowScoreBoard();
