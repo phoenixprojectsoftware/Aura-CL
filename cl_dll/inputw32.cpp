@@ -29,6 +29,7 @@
 #ifdef _WIN32
 #include <process.h>
 #endif
+#include <SDL2/SDL_events.h>
 
 #define MOUSE_BUTTON_COUNT 5
 
@@ -308,6 +309,9 @@ void IN_SetVisibleMouse(bool visible)
 #endif
 
 	iVisibleMouse = visible;
+
+	// legacy vgui1 expects the OS cursor to be explicitly visible when mouse capture is released
+	SDL_ShowCursor(visible ? SDL_ENABLE : SDL_DISABLE);
 
 	IN_SetMouseMode(!visible);
 
