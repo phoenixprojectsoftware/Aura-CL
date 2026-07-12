@@ -1851,45 +1851,51 @@ void V_GetMapChasePosition(int target, float* cl_angles, float* origin, float* a
 	VectorMA(origin, -1536, forward, origin);
 }
 
+#define WEP(name) \
+	{ "models/p_" #name ".mdl", "models/v_" #name ".mdl" }
+
+#define SEASON10_WEP(path, model_name) \
+	{ "models/weapons/" #path "/p_" #model_name ".mdl", "models/weapons/" #path "/v_" #model_name ".mdl" }
+
 int V_FindViewModelByWeaponModel(int weaponindex)
 {
 
 	static const char* modelmap[][2] = {
 
-# ifdef _TFC	// TFC models override HL models
-		{ "models/p_mini.mdl",			"models/v_tfac.mdl"			},
-		{ "models/p_sniper.mdl",		"models/v_tfc_sniper.mdl"	},
-		{ "models/p_umbrella.mdl",		"models/v_umbrella.mdl"		},
-		{ "models/p_crowbar.mdl",		"models/v_tfc_crowbar.mdl"	},
-		{ "models/p_spanner.mdl",		"models/v_tfc_spanner.mdl"	},
-		{ "models/p_knife.mdl",			"models/v_tfc_knife.mdl"	},
-		{ "models/p_medkit.mdl",		"models/v_tfc_medkit.mdl"	},
-		{ "models/p_egon.mdl",			"models/v_flame.mdl"		},
-		{ "models/p_glauncher.mdl",		"models/v_tfgl.mdl"			},
-		{ "models/p_rpg.mdl",			"models/v_tfc_rpg.mdl"		},
-		{ "models/p_nailgun.mdl",		"models/v_tfc_nailgun.mdl"	},
-		{ "models/p_snailgun.mdl",		"models/v_tfc_supernailgun.mdl" },
-		{ "models/p_9mmhandgun.mdl",	"models/v_tfc_railgun.mdl"	},
-		{ "models/p_srpg.mdl",			"models/v_tfc_rpg.mdl"		},
-		{ "models/p_smallshotgun.mdl",	"models/v_tfc_12gauge.mdl"	},
-		{ "models/p_shotgun.mdl",		"models/v_tfc_shotgun.mdl"	},
-		{ "models/p_spygun.mdl",		"models/v_tfc_pistol.mdl"	},
-#endif
-		{ "models/p_crossbow.mdl",		"models/v_crossbow.mdl"		},
-		{ "models/p_crowbar.mdl",		"models/v_crowbar.mdl"		},
-		{ "models/p_egon.mdl",			"models/v_egon.mdl"			},
-		{ "models/p_gauss.mdl",			"models/v_gauss.mdl"		},
-		{ "models/p_9mmhandgun.mdl",	"models/v_9mmhandgun.mdl"	},
-		{ "models/p_grenade.mdl",		"models/v_grenade.mdl"		},
-		{ "models/p_hgun.mdl",			"models/v_hgun.mdl"			},
-		{ "models/p_9mmAR.mdl",			"models/v_9mmAR.mdl"		},
-		{ "models/p_357.mdl",			"models/v_357.mdl"			},
-		{ "models/p_rpg.mdl",			"models/v_rpg.mdl"			},
-		{ "models/p_shotgun.mdl",		"models/v_shotgun.mdl"		},
-		{ "models/p_squeak.mdl",		"models/v_squeak.mdl"		},
-		{ "models/p_tripmine.mdl",		"models/v_tripmine.mdl"		},
-		{ "models/p_satchel_radio.mdl",	"models/v_satchel_radio.mdl"},
-		{ "models/p_satchel.mdl",		"models/v_satchel.mdl"		},
+		WEP(crossbow),
+		WEP(crowbar),
+		WEP(egon),
+		WEP(gauss),
+		WEP(9mmhandgun),
+		WEP(grenade),
+		WEP(hgun),
+		WEP(9mmAR),
+		WEP(357),
+		WEP(rpg),
+		WEP(shotgun),
+		WEP(squeak),
+		WEP(tripmine),
+		WEP(satchel_radio),
+		WEP(satchel),
+
+		// Season 6 weapons
+		WEP(penguin),
+		WEP(spore_launcher),
+		WEP(saw),
+		WEP(bgrap),
+		WEP(desert_eagle),
+		WEP(displacer),
+		WEP(knife),
+		WEP(m40a1), // sniper
+		WEP(pipe_wrench),
+		WEP(shock),
+
+		// Season 10 weapons
+		SEASON10_WEP(thumper, rock2),
+		// FIXME: hldmtau tracking {"models/p_gauss.mdl", "v_hldmtau.mdl"},
+		// FIXME: hldmar tracking
+		SEASON10_WEP(br, br),
+		WEP(medkit),
 		{ NULL, NULL } };
 
 	struct model_s* weaponModel = IEngineStudio.GetModelByIndex(weaponindex);
