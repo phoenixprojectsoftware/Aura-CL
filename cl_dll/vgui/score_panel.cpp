@@ -12,6 +12,8 @@
 #include <KeyValues.h>
 
 #include <vgui/IScheme.h>
+
+#include <vgui_controls/Label.h>
 #include <vgui_controls/SectionedListPanel.h>
 
 #include "score_panel.h"
@@ -22,12 +24,58 @@
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
 
+static void GetDisplayMapName(
+	const char* levelPath,
+	char* output,
+	std::size_t outputSize)
+{
+	if (!output || outputSize == 0)
+		return;
+
+	output[0] = '\0';
+
+	if (!levelPath || levelPath[0] == '\0')
+		return;
+
+	const char* mapName = levelPath;
+
+	const char* slash =
+		strrchr(levelPath, '/');
+
+	const char* backslash =
+		strrchr(levelPath, '\\');
+
+	if (slash && slash + 1 > mapName)
+		mapName = slash + 1;
+
+	if (backslash && backslash + 1 > mapName)
+		mapName = backslash + 1;
+
+	strncpy(
+		output,
+		mapName,
+		outputSize - 1);
+
+	output[outputSize - 1] = '\0';
+
+	char* extension =
+		strrchr(output, '.');
+
+	if (extension &&
+		stricmp(extension, ".bsp") == 0)
+	{
+		*extension = '\0';
+	}
+}
+
 CScorePanel::CScorePanel(vgui2::Panel* parent)
 	: BaseClass(parent, PANEL_SCOREBOARD),
+	m_pMapLabel(nullptr),
+	m_pPlayerCountLabel(nullptr),
 	m_pPlayerList(nullptr),
 	m_flNextUpdateTime(0.0)
 {
-	SetTitle("CROSS PRODUCT MULTIPLAYER", true);
+	SetTitle(" ", true);
 
 	SetSizeable(false);
 	SetMoveable(false);
@@ -39,6 +87,22 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	// prototype is display-only
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
+
+	m_pMapLabel = new vgui2::Label(
+		this,
+		"MapLabel",
+		"");
+
+	m_pMapLabel->SetContentAlignment(
+		vgui2::Label::a_west);
+
+	m_pPlayerCountLabel = new vgui2::Label(
+		this,
+		"PlayerCountLabel",
+		"");
+
+	m_pPlayerCountLabel->SetContentAlignment(
+		vgui2::Label::a_east);
 
 	m_pPlayerList = new vgui2::SectionedListPanel(
 		this,
@@ -258,8 +322,60 @@ int CScorePanel::GetSectionForPlayer(int clientIndex) const
 	return SECTION_TEAM_BASE + teamIndex;
 }
 
+void CScorePanel::UpdateHeader()
+{
+	const char* serverName = gEngfuncs.pfnGetCvarString("hostname");
+	if (serverName && serverName[0] != '\0')
+		SetTitle(serverName, true);
+	else
+	{
+		SetTitle("CROSS PRODUCT MULTIPLAYER", true);
+	}
+
+	char mapName[128];
+
+	GetDisplayMapName(gEngfuncs.pfnGetLevelName(), mapName, sizeof(mapName));
+
+	char mapText[160];
+
+	if (mapName[0] != '\0')
+	{
+		snprintf(mapText, sizeof(mapText), "MAP: %s", mapName);
+	}
+	else
+	{
+		strncpy(mapText, "MAP: UNKNOWN", sizeof(mapText) - 1);
+
+		mapText[sizeof(mapText) - 1] = '\0';
+	}
+
+	m_pMapLabel->SetText(mapText);
+
+	int connectedPlayers = 0;
+
+	for (int clientIndex = 1; clientIndex <= MAX_PLAYERS; ++clientIndex)
+	{
+		gEngfuncs.pfnGetPlayerInfo(clientIndex, &g_PlayerInfoList[clientIndex]);
+
+		const hud_player_info_t& playerInfo = g_PlayerInfoList[clientIndex];
+
+		if (playerInfo.name && playerInfo.name[0] != '\0')
+			++connectedPlayers;
+
+		int maxPlayers = gEngfuncs.GetMaxClients();
+
+		char playerCountText[64];
+
+		snprintf(playerCountText, sizeof(playerCountText), "%d / %d PLAYERS", connectedPlayers, maxPlayers);
+
+		m_pPlayerCountLabel->SetText(playerCountText);
+	}
+}
+
 void CScorePanel::UpdatePlayerList()
 {
+	UpdateHeader();
+
 	CreateSections();
 
 	for (int clientIndex = 1; clientIndex <= MAX_PLAYERS; ++clientIndex)
@@ -382,9 +498,16 @@ void CScorePanel::Reset()
 {
 	m_flNextUpdateTime = 0.0;
 
+	if (m_pMapLabel)
+		m_pMapLabel->SetText("");
+
+	if (m_pPlayerCountLabel)
+		m_pPlayerCountLabel->SetText("");
+
 	if (m_pPlayerList)
 		m_pPlayerList->RemoveAll();
 
+	SetTitle("CROSS PRODUCT MULTIPLAYER", true);
 	ShowPanel(false);
 }
 
@@ -441,9 +564,44 @@ void CScorePanel::PerformLayout()
 
 	SetBounds((parentWide - wide) / 2, (parentTall - tall) / 2, wide, tall);
 
-	const int sideMargin = vgui2::scheme()->GetProportionalScaledValue(12);
-	const int topMargin = vgui2::scheme()->GetProportionalScaledValue(34);
-	const int bottomMargin = sideMargin;
+	const int sideMargin =
+		vgui2::scheme()->GetProportionalScaledValue(12);
 
-	m_pPlayerList->SetBounds(sideMargin, topMargin, wide - sideMargin * 2, tall - topMargin - bottomMargin);
+	const int titleBarBottom =
+		vgui2::scheme()->GetProportionalScaledValue(34);
+
+	const int headerTall =
+		vgui2::scheme()->GetProportionalScaledValue(24);
+
+	const int headerGap =
+		vgui2::scheme()->GetProportionalScaledValue(4);
+
+	const int bottomMargin =
+		vgui2::scheme()->GetProportionalScaledValue(12);
+
+	const int headerWide =
+		wide - sideMargin * 2;
+
+	m_pMapLabel->SetBounds(
+		sideMargin,
+		titleBarBottom,
+		headerWide / 2,
+		headerTall);
+
+	m_pPlayerCountLabel->SetBounds(
+		sideMargin + headerWide / 2,
+		titleBarBottom,
+		headerWide / 2,
+		headerTall);
+
+	const int listY =
+		titleBarBottom +
+		headerTall +
+		headerGap;
+
+	m_pPlayerList->SetBounds(
+		sideMargin,
+		listY,
+		headerWide,
+		tall - listY - bottomMargin);
 }

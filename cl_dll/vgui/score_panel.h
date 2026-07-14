@@ -7,6 +7,7 @@
 
 namespace vgui2
 {
+	class Label;
 	class SectionedListPanel;
 }
 
@@ -44,6 +45,7 @@ private:
 	void CreateSections();
 	void AddPlayerColumns(int sectionID, const char* sectionName, bool showStatHeadings);
 	void ApplyTeamSectionColor(int sectionID, int teamNumber);
+	void UpdateHeader();
 	void UpdatePlayerList();
 
 	int GetSectionForPlayer(int clientIndex) const;
@@ -51,6 +53,8 @@ private:
 
 	static bool ScoreSort(vgui2::SectionedListPanel* list, int itemID1, int itemID2);
 
+	vgui2::Label* m_pMapLabel;
+	vgui2::Label* m_pPlayerCountLabel;
 	vgui2::SectionedListPanel* m_pPlayerList;
 
 	double m_flNextUpdateTime;
