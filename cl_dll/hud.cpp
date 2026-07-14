@@ -195,6 +195,8 @@ int __MsgFunc_KOTHHill(const char* name, int size, void* buf)
 	origin[1] = READ_COORD();
 	origin[2] = READ_COORD();
 
+	PlaySound("koth/hill_change.wav", 1);
+
 	gHUD.m_KOTH.SetHill(szHillName, origin);
 
 	return 1;
