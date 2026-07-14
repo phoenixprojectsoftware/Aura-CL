@@ -19,6 +19,9 @@
 
 #include "../hud.h"
 
+extern int iTeamColors[5][3];
+extern int iNumberOfTeamColors;
+
 CScorePanel::CScorePanel(vgui2::Panel* parent)
 	: BaseClass(parent, PANEL_SCOREBOARD),
 	m_pPlayerList(nullptr),
@@ -46,39 +49,218 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	SetVisible(false);
 }
 
+bool CScorePanel::ScoreSort(vgui2::SectionedListPanel* list, int itemID1, int itemID2)
+{
+	if (!list)
+		return false;
+
+	KeyValues* player1 = list->GetItemData(itemID1);
+	KeyValues* player2 = list->GetItemData(itemID2);
+
+	if (!player1 || !player2)
+		return false;
+
+	const int score1 = player1->GetInt("score_value");
+	const int score2 = player2->GetInt("score_value");
+
+	// higher score appears first
+	if (score1 != score2)
+		return score1 > score2;
+
+	const int deaths1 = player1->GetInt("deaths_value");
+	const int deaths2 = player2->GetInt("deaths_value");
+
+	// when scores match, fewer deaths appears first
+	if (deaths1 != deaths2)
+		return deaths1 < deaths2;
+
+	const char* name1 = player1->GetString("name");
+	const char* name2 = player2->GetString("name");
+
+	// final fallback = alphabetical by name
+	return stricmp(name1, name2) < 0;
+}
+
 void CScorePanel::CreateSections()
 {
-	m_pPlayerList->RemoveAllSections();
 	m_pPlayerList->RemoveAll();
+	m_pPlayerList->RemoveAllSections();
 
-	const int nameWidth = vgui2::scheme()->GetProportionalScaledValue(280);
-	const int scoreWidth = vgui2::scheme()->GetProportionalScaledValue(70);
-	const int deathsWidth = scoreWidth;
-	const int pingWidth = scoreWidth;
-	
-	//
-	// Active players
-	//
-	m_pPlayerList->AddSection(SECTION_PLAYERS, "PLAYERS");
-	m_pPlayerList->SetSectionAlwaysVisible(SECTION_PLAYERS, true);
-	m_pPlayerList->AddColumnToSection(SECTION_PLAYERS, "name", "PLAYER", vgui2::SectionedListPanel::COLUMN_BRIGHT, nameWidth);
-	m_pPlayerList->AddColumnToSection(SECTION_PLAYERS, "score", "SCORE", vgui2::SectionedListPanel::COLUMN_BRIGHT | vgui2::SectionedListPanel::COLUMN_CENTER, scoreWidth);
-	m_pPlayerList->AddColumnToSection(SECTION_PLAYERS, "deaths", "DEATHS", vgui2::SectionedListPanel::COLUMN_BRIGHT | vgui2::SectionedListPanel::COLUMN_CENTER, deathsWidth);
-	m_pPlayerList->AddColumnToSection(SECTION_PLAYERS, "ping", "PING", vgui2::SectionedListPanel::COLUMN_BRIGHT | vgui2::SectionedListPanel::COLUMN_CENTER, pingWidth);
+	if (gHUD.m_Teamplay)
+	{
+		for (int teamIndex = 1;
+			teamIndex <= MAX_TEAMS;
+			++teamIndex)
+		{
+			const team_info_t& team =
+				g_TeamInfo[teamIndex];
 
-	//
-	// Spectators
-	// 
-	m_pPlayerList->AddSection(SECTION_SPECTATORS, "Spectators");
-	m_pPlayerList->AddColumnToSection(SECTION_SPECTATORS, "name", "PLAYER", vgui2::SectionedListPanel::COLUMN_BRIGHT, nameWidth);
-	m_pPlayerList->AddColumnToSection(SECTION_SPECTATORS, "score", "", vgui2::SectionedListPanel::COLUMN_CENTER, scoreWidth);
-	m_pPlayerList->AddColumnToSection(SECTION_SPECTATORS, "deaths", "", vgui2::SectionedListPanel::COLUMN_CENTER, deathsWidth);
-	m_pPlayerList->AddColumnToSection(SECTION_SPECTATORS, "ping", "PING", vgui2::SectionedListPanel::COLUMN_BRIGHT | vgui2::SectionedListPanel::COLUMN_CENTER, pingWidth);
+			if (team.name[0] == '\0')
+				continue;
+
+			if (team.players <= 0)
+				continue;
+
+			const int sectionID =
+				SECTION_TEAM_BASE + teamIndex;
+
+			// Aura displays section names through column headings,
+			// rather than the AddSection name argument.
+			m_pPlayerList->AddSection(
+				sectionID,
+				"",
+				&CScorePanel::ScoreSort);
+
+			m_pPlayerList->SetSectionAlwaysVisible(
+				sectionID,
+				true);
+
+			AddPlayerColumns(
+				sectionID,
+				team.name,
+				true);
+
+			ApplyTeamSectionColor(sectionID, team.teamnumber);
+		}
+	}
+	else
+	{
+		m_pPlayerList->AddSection(
+			SECTION_PLAYERS,
+			"",
+			&CScorePanel::ScoreSort);
+
+		m_pPlayerList->SetSectionAlwaysVisible(
+			SECTION_PLAYERS,
+			true);
+
+		AddPlayerColumns(
+			SECTION_PLAYERS,
+			"Players",
+			true);
+	}
+
+	m_pPlayerList->AddSection(
+		SECTION_SPECTATORS,
+		"",
+		&CScorePanel::ScoreSort);
+
+	AddPlayerColumns(
+		SECTION_SPECTATORS,
+		"Spectators",
+		false);
+}
+
+void CScorePanel::AddPlayerColumns(
+	int sectionID,
+	const char* sectionName,
+	bool showStatHeadings)
+{
+	const int nameWidth =
+		vgui2::scheme()->GetProportionalScaledValue(280);
+
+	const int scoreWidth =
+		vgui2::scheme()->GetProportionalScaledValue(70);
+
+	const int deathsWidth =
+		vgui2::scheme()->GetProportionalScaledValue(70);
+
+	const int pingWidth =
+		vgui2::scheme()->GetProportionalScaledValue(70);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"name",
+		sectionName,
+		vgui2::SectionedListPanel::COLUMN_BRIGHT,
+		nameWidth);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"score",
+		showStatHeadings ? "Score" : "",
+		vgui2::SectionedListPanel::COLUMN_BRIGHT |
+		vgui2::SectionedListPanel::COLUMN_CENTER,
+		scoreWidth);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"deaths",
+		showStatHeadings ? "Deaths" : "",
+		vgui2::SectionedListPanel::COLUMN_BRIGHT |
+		vgui2::SectionedListPanel::COLUMN_CENTER,
+		deathsWidth);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"ping",
+		showStatHeadings ? "Ping" : "",
+		vgui2::SectionedListPanel::COLUMN_BRIGHT |
+		vgui2::SectionedListPanel::COLUMN_CENTER,
+		pingWidth);
+}
+
+void CScorePanel::ApplyTeamSectionColor(int sectionID, int teamNumber)
+{
+	if (iNumberOfTeamColors <= 0)
+		return;
+
+	int colorIndex = teamNumber % iNumberOfTeamColors;
+
+	if (colorIndex < 0)
+		colorIndex += iNumberOfTeamColors;
+
+	m_pPlayerList->SetSectionFgColor(sectionID, Color(iTeamColors[colorIndex][0], iTeamColors[colorIndex][1], iTeamColors[colorIndex][2], 255));
+}
+
+int CScorePanel::FindTeamIndex(
+	const char* teamName) const
+{
+	if (!teamName || teamName[0] == '\0')
+		return 0;
+
+	for (int teamIndex = 1;
+		teamIndex <= MAX_TEAMS;
+		++teamIndex)
+	{
+		if (g_TeamInfo[teamIndex].name[0] == '\0')
+			continue;
+
+		if (stricmp(
+			teamName,
+			g_TeamInfo[teamIndex].name) == 0)
+		{
+			return teamIndex;
+		}
+	}
+
+	return 0;
+}
+
+int CScorePanel::GetSectionForPlayer(int clientIndex) const
+{
+	if (clientIndex < 1 || clientIndex > MAX_PLAYERS)
+		return SECTION_SPECTATORS;
+
+	const extra_player_info_t& extraInfo = g_PlayerExtraInfo[clientIndex];
+
+	if (g_IsSpectator[clientIndex])
+		return SECTION_SPECTATORS;
+
+	if (!gHUD.m_Teamplay)
+		return SECTION_PLAYERS;
+
+	const int teamIndex = FindTeamIndex(extraInfo.teamname);
+
+	if (teamIndex <= 0)
+		return SECTION_SPECTATORS;
+
+	return SECTION_TEAM_BASE + teamIndex;
 }
 
 void CScorePanel::UpdatePlayerList()
 {
-	m_pPlayerList->RemoveAll();
+	CreateSections();
 
 	for (int clientIndex = 1; clientIndex <= MAX_PLAYERS; ++clientIndex)
 	{
@@ -94,15 +276,16 @@ void CScorePanel::UpdatePlayerList()
 			continue;
 		}
 
-		const bool isSpectator = g_IsSpectator[clientIndex] != 0 || extraInfo.teamnumber == 0;
-
-		const int section = isSpectator ? SECTION_SPECTATORS : SECTION_PLAYERS;
+		const int section = GetSectionForPlayer(clientIndex);
+		const bool isSpectator = section == SECTION_SPECTATORS;
 
 		KeyValues* playerData = new KeyValues("Player");
 
 		playerData->SetInt("client", clientIndex);
 
 		playerData->SetString("name", playerInfo.name);
+		playerData->SetInt("score_value", extraInfo.frags);
+		playerData->SetInt("deaths_value", extraInfo.deaths);
 
 		if (isSpectator)
 		{
@@ -117,12 +300,59 @@ void CScorePanel::UpdatePlayerList()
 
 		playerData->SetInt("ping", playerInfo.ping);
 
-		const int itemID = m_pPlayerList->AddItem(section, playerData);
+		const int itemID =
+			m_pPlayerList->AddItem(
+				section,
+				playerData);
+
+		if (!isSpectator &&
+			gHUD.m_Teamplay &&
+			iNumberOfTeamColors > 0)
+		{
+			int colorIndex =
+				extraInfo.teamnumber %
+				iNumberOfTeamColors;
+
+			if (colorIndex < 0)
+				colorIndex += iNumberOfTeamColors;
+
+			m_pPlayerList->SetItemFgColor(
+				itemID,
+				Color(
+					iTeamColors[colorIndex][0],
+					iTeamColors[colorIndex][1],
+					iTeamColors[colorIndex][2],
+					255));
+		}
 
 		// highlight our own row.
 		if (playerInfo.thisplayer)
 		{
-			m_pPlayerList->SetItemBgColor(itemID, Color(80, 80, 80, 160));
+			if (!isSpectator &&
+				gHUD.m_Teamplay &&
+				iNumberOfTeamColors > 0)
+			{
+				int colorIndex =
+					extraInfo.teamnumber %
+					iNumberOfTeamColors;
+
+				if (colorIndex < 0)
+					colorIndex += iNumberOfTeamColors;
+
+				m_pPlayerList->SetItemBgColor(
+					itemID,
+					Color(
+						iTeamColors[colorIndex][0],
+						iTeamColors[colorIndex][1],
+						iTeamColors[colorIndex][2],
+						110));
+			}
+			else
+			{
+				m_pPlayerList->SetItemBgColor(
+					itemID,
+					Color(100, 100, 100, 110));
+			}
 		}
 
 		playerData->deleteThis();

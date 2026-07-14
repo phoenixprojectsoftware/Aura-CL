@@ -32,14 +32,24 @@ protected:
 	void PerformLayout() override;
 
 private:
-	enum
+	enum BoardSectionID
 	{
 		SECTION_PLAYERS = 1,
-		SECTION_SPECTATORS = 2
+
+		SECTION_TEAM_BASE = 100,
+
+		SECTION_SPECTATORS = 1000
 	};
 
 	void CreateSections();
+	void AddPlayerColumns(int sectionID, const char* sectionName, bool showStatHeadings);
+	void ApplyTeamSectionColor(int sectionID, int teamNumber);
 	void UpdatePlayerList();
+
+	int GetSectionForPlayer(int clientIndex) const;
+	int FindTeamIndex(const char* teamName) const;
+
+	static bool ScoreSort(vgui2::SectionedListPanel* list, int itemID1, int itemID2);
 
 	vgui2::SectionedListPanel* m_pPlayerList;
 
