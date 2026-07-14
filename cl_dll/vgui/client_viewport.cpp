@@ -83,12 +83,16 @@ void CClientViewport::ShowScoreBoard()
 	// The parent viewport must be visible or its visible children will not draw.
 	SetVisible(true);
 
+	SetMouseInputEnabled(true);
+
 	if (m_pScorePanel)
 		m_pScorePanel->ShowPanel(true);
 }
 
 void CClientViewport::HideScoreBoard()
 {
+	SetMouseInputEnabled(false);
+
 	if (m_pScorePanel)
 		m_pScorePanel->ShowPanel(false);
 }
@@ -125,4 +129,9 @@ void HideVGUI2ScoreBoard()
 {
 	if (g_pViewport)
 		g_pViewport->HideScoreBoard();
+}
+
+bool IsVGUI2ScoreBoardMouseActive()
+{
+	return g_pViewport && g_pViewport->GetScoreboard() && g_pViewport->GetScoreboard()->IsMousePointerEnabled();
 }

@@ -11,18 +11,28 @@
 
 #include <KeyValues.h>
 
+#include <vgui/IInput.h>
+#include <vgui/IInputInternal.h>
 #include <vgui/IScheme.h>
 
 #include <vgui_controls/Label.h>
+#include <vgui_controls/Menu.h>
 #include <vgui_controls/SectionedListPanel.h>
 
 #include "score_panel.h"
 #include "viewport_panel_names.h"
 
 #include "../hud.h"
+#include "../voice_status.h"
 
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
+
+extern "C"
+{
+	void IN_ActivateMouse();
+	void IN_DeactivateMouse();
+}
 
 static void GetDisplayMapName(
 	const char* levelPath,
@@ -73,6 +83,10 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_pMapLabel(nullptr),
 	m_pPlayerCountLabel(nullptr),
 	m_pPlayerList(nullptr),
+	m_pPlayerMenu(nullptr),
+	m_iSelectedClient(0),
+	m_bMousePointerEnabled(false),
+	m_iMuteMenuItem(-1),
 	m_flNextUpdateTime(0.0)
 {
 	SetTitle(" ", true);
@@ -107,6 +121,21 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_pPlayerList = new vgui2::SectionedListPanel(
 		this,
 		"PlayerList");
+
+	m_pPlayerList->SetClickable(true);
+	m_pPlayerList->SetMouseInputEnabled(true);
+
+	m_pPlayerMenu = new vgui2::Menu(
+		this,
+		"PlayerMenu");
+	m_pPlayerMenu->SetVisible(false);
+
+	m_iMuteMenuItem =
+		m_pPlayerMenu->AddMenuItem(
+			"MutePlayer",
+			"Mute player",
+			"TogglePlayerMute",
+			this);
 
 	CreateSections();
 
@@ -221,7 +250,7 @@ void CScorePanel::AddPlayerColumns(
 	bool showStatHeadings)
 {
 	const int nameWidth =
-		vgui2::scheme()->GetProportionalScaledValue(280);
+		vgui2::scheme()->GetProportionalScaledValue(220);
 
 	const int scoreWidth =
 		vgui2::scheme()->GetProportionalScaledValue(70);
@@ -231,6 +260,16 @@ void CScorePanel::AddPlayerColumns(
 
 	const int pingWidth =
 		vgui2::scheme()->GetProportionalScaledValue(70);
+
+	const int statusWidth =
+		vgui2::scheme()->GetProportionalScaledValue(60);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"status",
+		"",
+		vgui2::SectionedListPanel::COLUMN_CENTER,
+		statusWidth);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -399,6 +438,14 @@ void CScorePanel::UpdatePlayerList()
 
 		playerData->SetInt("client", clientIndex);
 
+		bool isMuted = false;
+		if (!playerInfo.thisplayer && GetClientVoiceMgr())
+		{
+			isMuted = GetClientVoiceMgr()->IsPlayerBlocked(clientIndex);
+		}
+
+		playerData->SetString("status", isMuted ? "Muted" : "");
+
 		playerData->SetString("name", playerInfo.name);
 		playerData->SetInt("score_value", extraInfo.frags);
 		playerData->SetInt("deaths_value", extraInfo.deaths);
@@ -438,6 +485,17 @@ void CScorePanel::UpdatePlayerList()
 					iTeamColors[colorIndex][0],
 					iTeamColors[colorIndex][1],
 					iTeamColors[colorIndex][2],
+					255));
+		}
+
+		if (isMuted)
+		{
+			m_pPlayerList->SetItemFgColor(
+				itemID,
+				Color(
+					150,
+					150,
+					150,
 					255));
 		}
 
@@ -516,15 +574,28 @@ void CScorePanel::ShowPanel(bool state)
 	if (state == IsVisible())
 		return;
 
-	SetVisible(state);
-
 	if (state)
 	{
+		SetVisible(true);
+
+		EnableMousePointer(true);
+
 		m_flNextUpdateTime = 0.0;
+		m_iSelectedClient = 0;
 
 		UpdatePlayerList();
-
 		MoveToFront();
+	}
+	else
+	{
+		EnableMousePointer(false);
+
+		m_iSelectedClient = 0;
+
+		if (m_pPlayerMenu)
+			m_pPlayerMenu->SetVisible(false);
+
+		SetVisible(false);
 	}
 }
 
@@ -604,4 +675,171 @@ void CScorePanel::PerformLayout()
 		listY,
 		headerWide,
 		tall - listY - bottomMargin);
+}
+
+void CScorePanel::EnableMousePointer(bool enable)
+{
+	if (enable && !IsVisible())
+		return;
+
+	SetMouseInputEnabled(enable);
+	SetKeyBoardInputEnabled(false);
+
+	if (m_pPlayerList)
+		m_pPlayerList->SetMouseInputEnabled(enable);
+
+	if (enable)
+	{
+		// Clear gameplay actions which may already be held before handing
+		// the mouse to the scoreboard.
+		gEngfuncs.pfnClientCmd("-attack\n");
+		gEngfuncs.pfnClientCmd("-attack2\n");
+		IN_DeactivateMouse();
+		m_bMousePointerEnabled = true;
+
+		int cursorX = 0;
+		int cursorY = 0;
+
+		vgui2::input()->GetCursorPos(cursorX, cursorY);
+
+		vgui2::input()->SetCursorPos(cursorX, cursorY);
+	}
+	else
+	{
+		if (m_pPlayerMenu)
+			m_pPlayerMenu->SetVisible(false);
+
+		IN_ActivateMouse();
+		m_bMousePointerEnabled = false;
+	}
+}
+
+void CScorePanel::OnItemContextMenu(int itemID)
+{
+	EnableMousePointer(true);
+	OpenPlayerMenu(itemID);
+}
+
+void CScorePanel::OpenPlayerMenu(int itemID)
+{
+	if (!m_pPlayerList ||
+		!m_pPlayerMenu)
+	{
+		return;
+	}
+
+	KeyValues* playerData =
+		m_pPlayerList->GetItemData(itemID);
+
+	if (!playerData)
+		return;
+
+	const int clientIndex =
+		playerData->GetInt("client", 0);
+
+	if (clientIndex < 1 ||
+		clientIndex > MAX_PLAYERS)
+	{
+		return;
+	}
+
+	hud_player_info_t& playerInfo =
+		g_PlayerInfoList[clientIndex];
+
+	if (!playerInfo.name ||
+		playerInfo.name[0] == '\0')
+	{
+		return;
+	}
+
+	m_iSelectedClient = clientIndex;
+
+	const bool thisPlayer =
+		playerInfo.thisplayer != 0;
+
+	const bool muted =
+		GetClientVoiceMgr() &&
+		GetClientVoiceMgr()->IsPlayerBlocked(
+			clientIndex);
+
+	m_pPlayerMenu->SetItemEnabled(
+		m_iMuteMenuItem,
+		!thisPlayer);
+
+	m_pPlayerMenu->UpdateMenuItem(
+		m_iMuteMenuItem,
+		muted
+		? "Unmute player"
+		: "Mute player",
+		new KeyValues(
+			"Command",
+			"command",
+			"TogglePlayerMute"));
+
+	m_pPlayerMenu->PositionRelativeToPanel(
+		this,
+		vgui2::Menu::CURSOR,
+		0,
+		true);
+}
+
+void CScorePanel::OnCommand(
+	const char* command)
+{
+	if (command &&
+		stricmp(
+			command,
+			"TogglePlayerMute") == 0)
+	{
+		ToggleSelectedPlayerMute();
+		return;
+	}
+
+	BaseClass::OnCommand(command);
+}
+
+void CScorePanel::ToggleSelectedPlayerMute()
+{
+	if (m_iSelectedClient < 1 ||
+		m_iSelectedClient > MAX_PLAYERS)
+	{
+		return;
+	}
+
+	hud_player_info_t& playerInfo =
+		g_PlayerInfoList[m_iSelectedClient];
+
+	// Refresh the slot in case the player disconnected or changed.
+	gEngfuncs.pfnGetPlayerInfo(
+		m_iSelectedClient,
+		&playerInfo);
+
+	if (!playerInfo.name ||
+		playerInfo.name[0] == '\0' ||
+		playerInfo.thisplayer)
+	{
+		return;
+	}
+
+	CVoiceStatus* voiceManager =
+		GetClientVoiceMgr();
+
+	if (!voiceManager)
+		return;
+
+	const bool currentlyMuted =
+		voiceManager->IsPlayerBlocked(
+			m_iSelectedClient);
+
+	voiceManager->SetPlayerBlockedState(
+		m_iSelectedClient,
+		!currentlyMuted);
+
+	m_iSelectedClient = 0;
+
+	if (m_pPlayerMenu)
+		m_pPlayerMenu->SetVisible(false);
+
+	// Refresh immediately rather than waiting for the next half-second tick.
+	UpdatePlayerList();
 }

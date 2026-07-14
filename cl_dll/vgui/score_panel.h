@@ -8,6 +8,7 @@
 namespace vgui2
 {
 	class Label;
+	class Menu;
 	class SectionedListPanel;
 }
 
@@ -28,6 +29,13 @@ public:
 	vgui2::VPANEL GetVPanel() override;
 	bool IsVisible() override;
 	void SetParent(vgui2::VPANEL parent) override;
+
+	MESSAGE_FUNC_INT(OnItemContextMenu, "ItemContextMenu", itemID);
+
+	bool IsMousePointerEnabled() const
+	{
+		return m_bMousePointerEnabled;
+	}
 
 protected:
 	void PerformLayout() override;
@@ -53,9 +61,20 @@ private:
 
 	static bool ScoreSort(vgui2::SectionedListPanel* list, int itemID1, int itemID2);
 
+	void EnableMousePointer(bool enable);
+	void OpenPlayerMenu(int itemID);
+	void ToggleSelectedPlayerMute();
+
+	void OnCommand(const char* command) override;
+
 	vgui2::Label* m_pMapLabel;
 	vgui2::Label* m_pPlayerCountLabel;
 	vgui2::SectionedListPanel* m_pPlayerList;
+	vgui2::Menu* m_pPlayerMenu;
+
+	bool m_bMousePointerEnabled;
+	int m_iSelectedClient;
+	int m_iMuteMenuItem;
 
 	double m_flNextUpdateTime;
 };

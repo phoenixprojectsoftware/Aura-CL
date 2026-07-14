@@ -531,6 +531,8 @@ extern void __CmdFunc_InputPlayerSpecial(void);
 
 void IN_Attack2Down(void) 
 {
+	if (IsVGUI2ScoreBoardMouseActive())
+		return;
 	KeyDown(&in_attack2);
 
 #ifdef _TFC
@@ -578,6 +580,8 @@ void IN_GraphUp(void) {KeyUp(&in_graph);}
 
 void IN_AttackDown(void)
 {
+	if (IsVGUI2ScoreBoardMouseActive())
+		return;
 	KeyDown( &in_attack );
 	gHUD.m_Spectator.HandleButtonsDown( IN_ATTACK );
 }

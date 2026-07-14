@@ -4,5 +4,6 @@
 bool VGUI2ViewportAvailable();
 void ShowVGUI2ScoreBoard();
 void HideVGUI2ScoreBoard();
+bool IsVGUI2ScoreBoardMouseActive();
 
 #endif
