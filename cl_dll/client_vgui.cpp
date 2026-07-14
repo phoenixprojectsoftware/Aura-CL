@@ -65,7 +65,8 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 
 void CClientVGUI::Start()
 {
-
+	if (g_pViewport)
+		g_pViewport->Start();
 }
 
 void CClientVGUI::SetParent(vgui2::VPANEL parent)
@@ -79,7 +80,7 @@ int CClientVGUI::UseVGUI1()
 
 void CClientVGUI::HideScoreBoard()
 {
-	// g_pViewport->HideScoreBoard();
+	g_pViewport->HideScoreBoard();
 }
 
 void CClientVGUI::HideAllVGUIMenu()

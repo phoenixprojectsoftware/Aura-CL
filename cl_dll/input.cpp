@@ -25,6 +25,7 @@ extern "C"
 #include "video/video_player.h"
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 
 #include "discord_integration.h"
 
@@ -614,7 +615,11 @@ void IN_Impulse (void)
 void IN_ScoreDown(void)
 {
 	KeyDown(&in_score);
-	if ( gViewPort )
+	if (VGUI2ViewportAvailable())
+	{
+		ShowVGUI2ScoreBoard();
+	}
+	else if ( gViewPort )
 	{
 		gViewPort->ShowScoreBoard();
 	}
@@ -623,7 +628,11 @@ void IN_ScoreDown(void)
 void IN_ScoreUp(void)
 {
 	KeyUp(&in_score);
-	if ( gViewPort )
+	if (VGUI2ViewportAvailable())
+	{
+		HideVGUI2ScoreBoard();
+	}
+	else if ( gViewPort )
 	{
 		gViewPort->HideScoreBoard();
 	}
