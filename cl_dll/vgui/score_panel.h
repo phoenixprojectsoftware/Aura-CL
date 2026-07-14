@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VGUI_SCORE_PANEL_H
+#define VGUI_SCORE_PANEL_H
 
 #include <vgui_controls/Frame.h>
 
@@ -6,7 +7,7 @@
 
 namespace vgui2
 {
-	class Label;
+	class SectionedListPanel;
 }
 
 class CScorePanel : public vgui2::Frame, public IViewportPanel
@@ -16,6 +17,10 @@ class CScorePanel : public vgui2::Frame, public IViewportPanel
 public:
 	explicit CScorePanel(vgui2::Panel* parent);
 
+	// vgui2::Panel overrides.
+	void OnThink() override;
+
+	// IViewportPanel implementation.
 	const char* GetName() override;
 	void Reset() override;
 	void ShowPanel(bool state) override;
@@ -27,5 +32,18 @@ protected:
 	void PerformLayout() override;
 
 private:
-	vgui2::Label* m_pStatusLabel;
+	enum
+	{
+		SECTION_PLAYERS = 1,
+		SECTION_SPECTATORS = 2
+	};
+
+	void CreateSections();
+	void UpdatePlayerList();
+
+	vgui2::SectionedListPanel* m_pPlayerList;
+
+	double m_flNextUpdateTime;
 };
+
+#endif // VGUI_SCORE_PANEL_H
