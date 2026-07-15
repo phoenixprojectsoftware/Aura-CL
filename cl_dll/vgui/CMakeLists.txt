@@ -4,5 +4,7 @@ add_sources(
 	client_viewport.h
 	score_panel.cpp
 	score_panel.h
+	steam_avatar.cpp
+	steam_avatar.h
 	IViewportPanel.h
 	viewport_panel_names.h)

@@ -15,18 +15,57 @@
 #include <vgui/IInputInternal.h>
 #include <vgui/IScheme.h>
 
+#include <vgui_controls/ImageList.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/Menu.h>
 #include <vgui_controls/SectionedListPanel.h>
 
 #include "score_panel.h"
+#include "steam_avatar.h"
 #include "viewport_panel_names.h"
 
 #include "../hud.h"
 #include "../voice_status.h"
+#include "../steam_id.h"
+
+#include <steamworks/steam_api.h>
 
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
+
+static std::uint64_t Steam2ToSteamID64(
+	const std::string& steam2ID)
+{
+	if (steam2ID.empty())
+		return 0;
+
+	unsigned int authServer = 0;
+	unsigned long accountNumber = 0;
+
+	// OpenAG's AuthID handler removes the "STEAM_" prefix, leaving:
+	//
+	//     0:Y:Z
+	//
+	// The first value is the Steam2 universe and is not needed for the
+	// normal public individual-account conversion.
+	if (sscanf(
+		steam2ID.c_str(),
+		"%*u:%u:%lu",
+		&authServer,
+		&accountNumber) != 2)
+	{
+		return 0;
+	}
+
+	if (authServer > 1)
+		return 0;
+
+	const std::uint64_t accountID =
+		static_cast<std::uint64_t>(accountNumber) * 2ULL +
+		static_cast<std::uint64_t>(authServer);
+
+	return 76561197960265728ULL + accountID;
+}
 
 extern "C"
 {
@@ -84,9 +123,10 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_pPlayerCountLabel(nullptr),
 	m_pPlayerList(nullptr),
 	m_pPlayerMenu(nullptr),
-	m_iSelectedClient(0),
 	m_bMousePointerEnabled(false),
+	m_iSelectedClient(0),
 	m_iMuteMenuItem(-1),
+	m_pImageList(nullptr),
 	m_flNextUpdateTime(0.0)
 {
 	SetTitle(" ", true);
@@ -125,6 +165,10 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_pPlayerList->SetClickable(true);
 	m_pPlayerList->SetMouseInputEnabled(true);
 
+	m_pImageList = new vgui2::ImageList(true);
+
+	m_pPlayerList->SetImageList(m_pImageList, true);
+
 	m_pPlayerMenu = new vgui2::Menu(
 		this,
 		"PlayerMenu");
@@ -137,9 +181,51 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 			"TogglePlayerMute",
 			this);
 
+	for (int clientIndex = 0;
+		clientIndex <= SCOREBOARD_MAX_PLAYERS;
+		++clientIndex)
+	{
+		m_pAvatars[clientIndex] = nullptr;
+	}
+
+	for (int clientIndex = 1;
+		clientIndex <= SCOREBOARD_MAX_PLAYERS;
+		++clientIndex)
+	{
+		CSteamAvatarImage* avatar =
+			new CSteamAvatarImage();
+
+		avatar->SetSize(
+			vgui2::scheme()->GetProportionalScaledValue(24),
+			vgui2::scheme()->GetProportionalScaledValue(24));
+
+		m_pAvatars[clientIndex] = avatar;
+
+		m_pPlayerList->SetLineSpacingOverride(
+			vgui2::scheme()->GetProportionalScaledValue(28));
+
+		m_pImageList->SetImageAtIndex(
+			clientIndex,
+			avatar);
+	}
+
 	CreateSections();
 
 	SetVisible(false);
+}
+
+CScorePanel::~CScorePanel()
+{
+	// m_pPlayerList owns m_pImageList.
+	// m_pImageList owns the avatar image objects.
+	m_pImageList = nullptr;
+
+	for (int clientIndex = 0;
+		clientIndex <= SCOREBOARD_MAX_PLAYERS;
+		++clientIndex)
+	{
+		m_pAvatars[clientIndex] = nullptr;
+	}
 }
 
 bool CScorePanel::ScoreSort(vgui2::SectionedListPanel* list, int itemID1, int itemID2)
@@ -250,7 +336,7 @@ void CScorePanel::AddPlayerColumns(
 	bool showStatHeadings)
 {
 	const int nameWidth =
-		vgui2::scheme()->GetProportionalScaledValue(220);
+		vgui2::scheme()->GetProportionalScaledValue(186);
 
 	const int scoreWidth =
 		vgui2::scheme()->GetProportionalScaledValue(70);
@@ -263,6 +349,17 @@ void CScorePanel::AddPlayerColumns(
 
 	const int statusWidth =
 		vgui2::scheme()->GetProportionalScaledValue(60);
+
+	const int avatarWidth =
+		vgui2::scheme()->GetProportionalScaledValue(34);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"avatar",
+		"",
+		vgui2::SectionedListPanel::COLUMN_IMAGE |
+			vgui2::SectionedListPanel::COLUMN_CENTER,
+		avatarWidth);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -411,6 +508,36 @@ void CScorePanel::UpdateHeader()
 	}
 }
 
+void CScorePanel::UpdatePlayerAvatar(
+	int clientIndex,
+	std::uint64_t steamID)
+{
+	if (clientIndex < 1 ||
+		clientIndex > SCOREBOARD_MAX_PLAYERS)
+	{
+		return;
+	}
+
+	CSteamAvatarImage* avatar =
+		m_pAvatars[clientIndex];
+
+	if (!avatar)
+	{
+		return;
+	}
+
+	if (steamID == 0)
+	{
+		avatar->Clear();
+		return;
+	}
+
+	if (avatar->GetSteamID() != steamID)
+	{
+		avatar->SetSteamID(steamID);
+	}
+}
+
 void CScorePanel::UpdatePlayerList()
 {
 	UpdateHeader();
@@ -426,10 +553,41 @@ void CScorePanel::UpdatePlayerList()
 		extra_player_info_t& extraInfo = g_PlayerExtraInfo[clientIndex];
 
 		// an empty name means that this client slot is unoccupied.
-		if (playerInfo.name == nullptr || playerInfo.name[0] == '\0')
+		if (playerInfo.name == nullptr ||
+			playerInfo.name[0] == '\0')
 		{
+			if (clientIndex >= 1 &&
+				clientIndex <= SCOREBOARD_MAX_PLAYERS &&
+				m_pAvatars[clientIndex])
+			{
+				m_pAvatars[clientIndex]->Clear();
+			}
+
 			continue;
 		}
+
+		const std::string& steam2ID = steam_id::get_steam_id(clientIndex - 1);
+		const std::uint64_t steamID = Steam2ToSteamID64(steam2ID);
+
+#ifdef _DEBUG
+		static bool printedSteamIDs[
+			SCOREBOARD_MAX_PLAYERS + 1] = {};
+
+			if (!printedSteamIDs[clientIndex] &&
+				!steam2ID.empty())
+			{
+				gEngfuncs.Con_Printf(
+					"Scoreboard slot %d: Steam2=%s, SteamID64=%llu\n",
+					clientIndex,
+					steam2ID.c_str(),
+					static_cast<unsigned long long>(
+						steamID));
+
+				printedSteamIDs[clientIndex] = true;
+			}
+#endif
+
+		UpdatePlayerAvatar(clientIndex, steamID);
 
 		const int section = GetSectionForPlayer(clientIndex);
 		const bool isSpectator = section == SECTION_SPECTATORS;
@@ -437,6 +595,12 @@ void CScorePanel::UpdatePlayerList()
 		KeyValues* playerData = new KeyValues("Player");
 
 		playerData->SetInt("client", clientIndex);
+			
+		playerData->SetInt(
+			"avatar",
+			steamID != 0
+			? clientIndex
+			: 0);
 
 		bool isMuted = false;
 		if (!playerInfo.thisplayer && GetClientVoiceMgr())
@@ -564,6 +728,16 @@ void CScorePanel::Reset()
 
 	if (m_pPlayerList)
 		m_pPlayerList->RemoveAll();
+
+	for (int clientIndex = 1;
+		clientIndex <= SCOREBOARD_MAX_PLAYERS;
+		++clientIndex)
+	{
+		if (m_pAvatars[clientIndex])
+		{
+			m_pAvatars[clientIndex]->Clear();
+		}
+	}
 
 	SetTitle("CROSS PRODUCT MULTIPLAYER", true);
 	ShowPanel(false);

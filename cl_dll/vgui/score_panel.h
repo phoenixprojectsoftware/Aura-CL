@@ -5,12 +5,20 @@
 
 #include "IViewportPanel.h"
 
+class CSteamAvatarImage;
+
 namespace vgui2
 {
+	class ImageList;
 	class Label;
 	class Menu;
 	class SectionedListPanel;
 }
+
+enum
+{
+	SCOREBOARD_MAX_PLAYERS = 32
+};
 
 class CScorePanel : public vgui2::Frame, public IViewportPanel
 {
@@ -18,6 +26,7 @@ class CScorePanel : public vgui2::Frame, public IViewportPanel
 
 public:
 	explicit CScorePanel(vgui2::Panel* parent);
+	~CScorePanel() override;
 
 	// vgui2::Panel overrides.
 	void OnThink() override;
@@ -55,6 +64,7 @@ private:
 	void ApplyTeamSectionColor(int sectionID, int teamNumber);
 	void UpdateHeader();
 	void UpdatePlayerList();
+	void UpdatePlayerAvatar(int clientIndex, std::uint64_t steamID);
 
 	int GetSectionForPlayer(int clientIndex) const;
 	int FindTeamIndex(const char* teamName) const;
@@ -75,6 +85,9 @@ private:
 	bool m_bMousePointerEnabled;
 	int m_iSelectedClient;
 	int m_iMuteMenuItem;
+
+	vgui2::ImageList* m_pImageList;
+	CSteamAvatarImage* m_pAvatars[SCOREBOARD_MAX_PLAYERS + 1];
 
 	double m_flNextUpdateTime;
 };
