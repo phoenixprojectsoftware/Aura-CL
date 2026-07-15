@@ -13,6 +13,7 @@ void ActivateScoreBoardMouse();
 void PrintVGUI2Chat(const char* text, int clientIndex);
 void StartVGUI2ChatMessageMode(int messageMode);
 void StopVGUI2ChatMessageMode();
+void PreventGameUIEscape(bool prevent);
 
 extern char gServerName[128];
 

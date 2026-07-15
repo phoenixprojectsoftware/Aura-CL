@@ -107,6 +107,8 @@ protected:
 	void ApplySchemeSettings(
 		vgui2::IScheme* scheme) override;
 
+	void OnKeyCodePressed(vgui2::KeyCode code) override;
+
 	void OnKeyCodeTyped(
 		vgui2::KeyCode code) override;
 
@@ -207,6 +209,8 @@ private:
 		const char* text,
 		int clientIndex);
 
+	void FadeChatHistory();
+
 	Color GetClientColor(
 		int clientIndex) const;
 
@@ -218,6 +222,8 @@ private:
 
 	CAuraChatInputLine* m_pChatInput;
 	int m_iMessageMode;
+
+	double m_flHistoryFadeTime;
 };
 
 #endif

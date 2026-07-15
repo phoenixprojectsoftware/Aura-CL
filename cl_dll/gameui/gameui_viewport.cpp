@@ -6,6 +6,7 @@
 #include <vgui/ILocalize.h>
 #include "../hud.h"
 #include "../client_vgui.h"
+#include "../vgui/bridge.h"
 #include "gameui_viewport.h"
 #include "gameui_test_panel.h"
 #include "achievements/C_AchievementDialog.h"
@@ -984,4 +985,12 @@ bool CGameUIViewport::PrepareForQueryDownload()
 		}
 	}
 	return false;
+}
+
+void PreventGameUIEscape(bool prevent)
+{
+	if (CGameUIViewport::m_sInstance)
+	{
+		CGameUIViewport::m_sInstance->PreventEscapeToShow(prevent);
+	}
 }

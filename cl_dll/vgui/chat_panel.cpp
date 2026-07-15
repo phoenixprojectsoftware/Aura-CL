@@ -8,7 +8,6 @@
 #include <vgui/ISurface.h>
 #include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
-#include <vgui/IPanel.h>
 #include <vgui/ILocalize.h>
 
 #include <vgui_controls/Label.h>
@@ -20,6 +19,13 @@
 #include "bridge.h"
 
 #include "../hud.h"
+
+extern "C"
+{
+	void IN_DeactivateMouse();
+	void IN_ActivateMouse();
+	void IN_ClearStates();
+}
 
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
@@ -186,6 +192,8 @@ namespace
 	constexpr double CHAT_DISPLAY_TIME = 12.0;
 	constexpr double CHAT_FADE_TIME = 1.0;
 
+	constexpr double CHAT_HISTORY_FADE_TIME = 0.25;
+
 	constexpr int CHAT_HISTORY_ALPHA = 64;
 
 	Color GetAuraChatClientColor(
@@ -242,7 +250,8 @@ namespace
 		const char* text,
 		int clientIndex,
 		Color defaultColor,
-		int alpha)
+		int alpha,
+		bool clearExisting)
 	{
 		if (!target ||
 			!text ||
@@ -251,7 +260,10 @@ namespace
 			return;
 		}
 
-		target->SetText("");
+		if (clearExisting)
+		{
+			target->SetText("");
+		}
 
 		Color textColor(
 			defaultColor.r(),
@@ -374,6 +386,22 @@ void CAuraChatEntry::ApplySchemeSettings(
 			0,
 			0,
 			0));
+}
+
+void CAuraChatEntry::OnKeyCodePressed(
+	vgui2::KeyCode code)
+{
+	if (code == vgui2::KEY_ESCAPE)
+	{
+		if (m_pChatPanel)
+		{
+			PostMessage(m_pChatPanel, new KeyValues("ChatEntryStopMessageMode"));
+		}
+
+		return;
+	}
+
+	BaseClass::OnKeyCodePressed(code);
 }
 
 void CAuraChatEntry::OnKeyCodeTyped(
@@ -603,8 +631,6 @@ CAuraChatHistory::CAuraChatHistory(
 	SetVerticalScrollbar(false);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-
-	InsertFade(-1, -1);
 }
 
 void CAuraChatHistory::ApplySchemeSettings(
@@ -621,6 +647,14 @@ void CAuraChatHistory::ApplySchemeSettings(
 			"ChatFont",
 			false));
 
+	SetBgColor(
+		Color(
+			0,
+			0,
+			0,
+			0));
+
+	SetBorder(nullptr);
 	SetAlpha(255);
 }
 
@@ -782,7 +816,8 @@ void CAuraChatLine::ApplyFormattedText(
 		m_szText,
 		m_iClientIndex,
 		m_DefaultTextColor,
-		alpha);
+		alpha,
+		true);
 }
 
 void CAuraChatLine::PerformFadeout()
@@ -847,7 +882,8 @@ CChatPanel::CChatPanel(
 	m_pChatLine(nullptr),
 	m_hChatFont(vgui2::INVALID_FONT),
 	m_DefaultTextColor(255, 178, 0, 255),
-	m_iMessageMode(MM_NONE)
+	m_iMessageMode(MM_NONE),
+	m_flHistoryFadeTime(0.0)
 {
 	SetProportional(true);
 
@@ -875,7 +911,7 @@ CChatPanel::CChatPanel(
 	m_pChatHistory->SetMaximumCharCount(
 		127 * 100);
 
-	m_pChatHistory->SetVisible(true);
+	m_pChatHistory->SetVisible(false);
 
 	m_pChatLine =
 		new CAuraChatLine(
@@ -944,14 +980,20 @@ void CChatPanel::StartMessageMode(
 			L"Say (TEAM):");
 	}
 
+	// Reveal the full persistent history while message mode is open.
 	if (m_pChatHistory)
 	{
+		m_pChatHistory->SetVisible(true);
+
 		m_pChatHistory->SetMouseInputEnabled(true);
 		m_pChatHistory->SetKeyBoardInputEnabled(false);
+
 		m_pChatHistory->SetVerticalScrollbar(true);
-		m_pChatHistory->ResetAllFades(true);
 		m_pChatHistory->SetPaintBorderEnabled(true);
-		m_pChatHistory->SetVisible(true);
+
+		// Reveal messages whose normal gameplay fade has completed.
+		m_pChatHistory->ResetAllFades(true);
+
 		m_pChatHistory->GotoTextEnd();
 	}
 
@@ -962,17 +1004,26 @@ void CChatPanel::StartMessageMode(
 	{
 		parentPanel->SetVisible(true);
 		parentPanel->SetKeyBoardInputEnabled(true);
+		parentPanel->SetMouseInputEnabled(true);
 	}
 
 	vgui2::SETUP_PANEL(this);
 
 	SetVisible(true);
+	SetEnabled(true);
+
 	SetKeyBoardInputEnabled(true);
 	SetMouseInputEnabled(true);
 
+	SetPaintBackgroundEnabled(true);
+	SetPaintBackgroundType(2);
+
 	m_pChatInput->SetVisible(true);
+	m_pChatInput->SetEnabled(true);
+
 	m_pChatInput->SetKeyBoardInputEnabled(true);
 	m_pChatInput->SetMouseInputEnabled(true);
+
 	m_pChatInput->SetPaintBorderEnabled(true);
 
 	vgui2::Panel* inputPanel =
@@ -982,31 +1033,40 @@ void CChatPanel::StartMessageMode(
 	{
 		inputPanel->SetVisible(true);
 		inputPanel->SetEnabled(true);
+
 		inputPanel->SetKeyBoardInputEnabled(true);
 		inputPanel->SetMouseInputEnabled(true);
 
-#ifdef _DEBUG
-		// Aura's older Panel::RequestFocus() only propagates a focus
-		// request through the parent hierarchy. Request focus directly
-		// for the actual TextEntry through IPanel instead.
-		vgui2::ipanel()->RequestFocus(
-			inputPanel->GetVPanel());
-
-		const vgui2::VPANEL focusedPanel =
-			vgui2::input()->GetFocus();
-
-		gEngfuncs.Con_Printf(
-			"Chat focus: wanted %u, got %u\n",
-			static_cast<unsigned int>(
-				inputPanel->GetVPanel()),
-			static_cast<unsigned int>(
-				focusedPanel));
+		inputPanel->SetAlpha(255);
 	}
-#endif
+
+	// Make sure the popup and its children have completed layout before
+	// requesting focus.
+	InvalidateLayout(true);
+	PerformLayout();
 
 	MoveToFront();
 
+	// Release normal game mouse-look while chat is open.
+	IN_DeactivateMouse();
+
 	vgui2::surface()->CalculateMouseVisible();
+
+	// Focus the actual TextEntry only after the popup is visible,
+	// laid out, and moved to the front.
+	if (inputPanel)
+	{
+		inputPanel->RequestFocus();
+	}
+	else
+	{
+		m_pChatInput->RequestFocus();
+	}
+
+	// Begin the translucent chat-box fade-in.
+	m_flHistoryFadeTime =
+		gEngfuncs.GetAbsoluteTime() +
+		CHAT_HISTORY_FADE_TIME;
 
 	Repaint();
 }
@@ -1021,16 +1081,10 @@ void CChatPanel::StopMessageMode()
 
 	if (m_pChatHistory)
 	{
-		m_pChatHistory->SetPaintBorderEnabled(
-			false);
-
+		m_pChatHistory->SetPaintBorderEnabled(false);
 		m_pChatHistory->GotoTextEnd();
-
-		m_pChatHistory->SetMouseInputEnabled(
-			false);
-
-		m_pChatHistory->SetVerticalScrollbar(
-			false);
+		m_pChatHistory->SetMouseInputEnabled(false);
+		m_pChatHistory->SetVerticalScrollbar(false);
 
 		m_pChatHistory->ResetAllFades(
 			false,
@@ -1038,6 +1092,10 @@ void CChatPanel::StopMessageMode()
 			2.5f);
 
 		m_pChatHistory->SelectNoText();
+
+		// Keep the control alive and visible. Only its old text ranges
+		// become faded; newly received messages will still appear.
+		m_pChatHistory->SetVisible(true);
 	}
 
 	if (m_pChatInput)
@@ -1056,9 +1114,17 @@ void CChatPanel::StopMessageMode()
 	m_iMessageMode =
 		MM_NONE;
 
+	IN_ClearStates();
+	IN_ActivateMouse();
+	IN_ClearStates();
+
+	PreventGameUIEscape(false);
+
 	vgui2::surface()->CalculateMouseVisible();
 
 	Repaint();
+
+	m_flHistoryFadeTime = gEngfuncs.GetAbsoluteTime() + CHAT_HISTORY_FADE_TIME;
 }
 
 void CChatPanel::Send()
@@ -1186,11 +1252,6 @@ void CChatPanel::Reset()
 		m_pChatHistory->InsertFade(-1, -1);
 	}
 
-	if (m_pChatLine)
-	{
-		m_pChatLine->ClearMessage();
-	}
-
 	SetVisible(true);
 }
 
@@ -1275,6 +1336,18 @@ void CChatPanel::ApplySchemeSettings(
 		m_pChatHistory->SetVerticalScrollbar(
 			false);
 	}
+
+	const int backgroundAlpha =
+		messageModeActive
+		? CHAT_HISTORY_ALPHA
+		: 0;
+
+	SetBgColor(
+		Color(
+			backgroundColor.r(),
+			backgroundColor.g(),
+			backgroundColor.b(),
+			backgroundAlpha));
 }
 
 void CChatPanel::Print(
@@ -1291,13 +1364,6 @@ void CChatPanel::Print(
 		text,
 		clientIndex);
 
-	if (m_pChatLine)
-	{
-		m_pChatLine->SetMessage(
-			text,
-			clientIndex);
-	}
-
 	SetVisible(true);
 
 	InvalidateLayout();
@@ -1308,8 +1374,12 @@ void CChatPanel::AddToHistory(
 	const char* text,
 	int clientIndex)
 {
-	if (!m_pChatHistory)
+	if (!m_pChatHistory ||
+		!text ||
+		text[0] == '\0')
+	{
 		return;
+	}
 
 	char cleanText[4096];
 
@@ -1335,25 +1405,112 @@ void CChatPanel::AddToHistory(
 			--length;
 		}
 
+		if (cleanText[0] == '\0')
+			return;
+
+		// Source chat starts each message on a fresh line.
+		m_pChatHistory->InsertString("\n");
+
 		InsertFormattedChatText(
 			m_pChatHistory,
 			cleanText,
 			clientIndex,
 			m_DefaultTextColor,
-			255);
+			255,
+			false);
 
-		m_pChatHistory->InsertString(
-			"\n");
-
+		// The message remains stored, but fades from the gameplay view.
 		m_pChatHistory->InsertFade(
 			CHAT_DISPLAY_TIME,
 			2.5f);
 
+		// End the fade range so the next message gets its own timing.
 		m_pChatHistory->InsertFade(
 			-1,
 			-1);
 
 		m_pChatHistory->GotoTextEnd();
+}
+
+void CChatPanel::FadeChatHistory()
+{
+	const double remaining =
+		m_flHistoryFadeTime -
+		gEngfuncs.GetAbsoluteTime();
+
+	double fraction =
+		remaining /
+		CHAT_HISTORY_FADE_TIME;
+
+	if (fraction < 0.0)
+		fraction = 0.0;
+
+	if (fraction > 1.0)
+		fraction = 1.0;
+
+	int alpha =
+		static_cast<int>(
+			fraction *
+			CHAT_HISTORY_ALPHA);
+
+	if (alpha < 0)
+		alpha = 0;
+
+	if (alpha > CHAT_HISTORY_ALPHA)
+		alpha = CHAT_HISTORY_ALPHA;
+
+	if (m_iMessageMode != MM_NONE)
+	{
+		// Fade the box in while entering message mode.
+		const int visibleAlpha =
+			CHAT_HISTORY_ALPHA -
+			alpha;
+
+		SetBgColor(
+			Color(
+				GetBgColor().r(),
+				GetBgColor().g(),
+				GetBgColor().b(),
+				visibleAlpha));
+
+		if (m_pChatHistory)
+		{
+			m_pChatHistory->SetBgColor(
+				Color(
+					0,
+					0,
+					0,
+					visibleAlpha));
+		}
+
+		SetPaintBackgroundEnabled(true);
+		SetPaintBackgroundType(2);
+	}
+	else
+	{
+		// Fade the box out after sending/cancelling.
+		SetBgColor(
+			Color(
+				GetBgColor().r(),
+				GetBgColor().g(),
+				GetBgColor().b(),
+				alpha));
+
+		if (m_pChatHistory)
+		{
+			m_pChatHistory->SetBgColor(
+				Color(
+					0,
+					0,
+					0,
+					alpha));
+		}
+
+		if (alpha == 0)
+		{
+			SetPaintBackgroundEnabled(false);
+		}
+	}
 }
 
 Color CChatPanel::GetClientColor(
@@ -1367,14 +1524,7 @@ void CChatPanel::OnThink()
 {
 	BaseClass::OnThink();
 
-	if (!IsVisible())
-		return;
-
-	if (m_pChatLine &&
-		m_pChatLine->IsActive())
-	{
-		m_pChatLine->PerformFadeout();
-	}
+	FadeChatHistory();
 }
 
 void CChatPanel::PerformLayout()
@@ -1441,25 +1591,6 @@ void CChatPanel::PerformLayout()
 			historyY,
 			historyWide,
 			historyTall);
-	}
-
-	if (m_pChatLine)
-	{
-		const int fontTall =
-			m_hChatFont !=
-			vgui2::INVALID_FONT
-			? vgui2::surface()->GetFontTall(
-				m_hChatFont) + 2
-			: vgui2::scheme()
-			->GetProportionalScaledValue(19);
-
-		m_pChatLine->SetBounds(
-			historyX,
-			historyY +
-			historyTall -
-			fontTall,
-			historyWide,
-			fontTall);
 	}
 
 	if (m_pChatInput)

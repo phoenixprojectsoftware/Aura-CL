@@ -75,6 +75,8 @@ public:
 
 	void ShowMessageDialog(const char* szTitle, const char* szDescription);
 
+	static inline CGameUIViewport* m_sInstance = nullptr;
+
 protected:
 	void UpdateAddonList();
 	void LoadWorkshop();
@@ -131,8 +133,6 @@ private:
 
 	// Grab our stats on creation.
 	STEAM_CALLBACK(CGameUIViewport, OnDownloadItemResult, DownloadItemResult_t, m_steamcallback_OnDownloadItemResult);
-
-	static inline CGameUIViewport* m_sInstance = nullptr;
 };
 
 #endif
