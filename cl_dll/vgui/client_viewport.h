@@ -35,6 +35,9 @@ public:
 
 	void PrintChat(const char* text, int clientIndex);
 
+	void StartChatMessageMode(int messageMode);
+	void StopChatMessageMode();
+
 protected:
 	void PerformLayout() override;
 

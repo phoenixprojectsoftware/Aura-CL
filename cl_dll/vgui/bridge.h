@@ -11,6 +11,8 @@ void ActivateScoreBoardMouse();
 
 // Chat
 void PrintVGUI2Chat(const char* text, int clientIndex);
+void StartVGUI2ChatMessageMode(int messageMode);
+void StopVGUI2ChatMessageMode();
 
 extern char gServerName[128];
 

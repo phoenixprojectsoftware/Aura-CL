@@ -123,6 +123,43 @@ void CClientViewport::PerformLayout()
 		m_pScorePanel->InvalidateLayout(true);
 }
 
+void CClientViewport::StartChatMessageMode(int messageMode)
+{
+	ActivateClientUI();
+
+	SetVisible(true);
+	SetKeyBoardInputEnabled(true);
+
+	if (m_pChatPanel)
+	{
+		m_pChatPanel->StartMessageMode(messageMode);
+	}
+}
+
+void CClientViewport::StopChatMessageMode()
+{
+	if (m_pChatPanel)
+	{
+		m_pChatPanel->StopMessageMode();
+	}
+
+	SetKeyBoardInputEnabled(false);
+
+	SetMouseInputEnabled(false);
+}
+
+void CClientViewport::PrintChat(const char* text, int clientIndex)
+{
+	SetVisible(true);
+
+	if (m_pChatPanel)
+	{
+		m_pChatPanel->Print(text, clientIndex);
+	}
+}
+
+// Bridge functions
+
 bool VGUI2ViewportAvailable()
 {
 	return g_pViewport != nullptr;
@@ -167,18 +204,24 @@ void ActivateScoreBoardMouse()
 		scoreBoard->EnableMousePointer(true);
 }
 
-void CClientViewport::PrintChat(const char* text, int clientIndex)
-{
-	SetVisible(true);
-
-	if (m_pChatPanel)
-	{
-		m_pChatPanel->Print(text, clientIndex);
-	}
-}
-
 void PrintVGUI2Chat(const char* text, int clientIndex)
 {
 	if (g_pViewport)
 		g_pViewport->PrintChat(text, clientIndex);
+}
+
+void StartVGUI2ChatMessageMode(int messageMode)
+{
+	if (g_pViewport)
+	{
+		g_pViewport->StartChatMessageMode(messageMode);
+	}
+}
+
+void StopVGUI2ChatMessageMode()
+{
+	if (g_pViewport)
+	{
+		g_pViewport->StopChatMessageMode();
+	}
 }
