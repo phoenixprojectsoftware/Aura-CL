@@ -2444,12 +2444,16 @@ int TeamFortressViewport::MsgFunc_RandomPC( const char *pszName, int iSize, void
 
 	return 1;
 }
-
+#include "vgui/bridge.h"
 int TeamFortressViewport::MsgFunc_ServerName( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
 
 	strncpy( m_szServerName, READ_STRING(), sizeof(m_szServerName) );
+
+	// copy the server name to the global data
+	strncpy(gServerName, m_szServerName, sizeof(gServerName));
+
 	m_szServerName[sizeof(m_szServerName) - 1] = 0;
 
 	return 1;

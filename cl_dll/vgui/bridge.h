@@ -8,4 +8,6 @@ bool IsVGUI2ScoreBoardMouseActive();
 bool IsVGUI2ScoreBoardVisible();
 void ActivateScoreBoardMouse();
 
+extern char gServerName[128];
+
 #endif

@@ -1,6 +1,12 @@
 #ifndef VGUI_SCORE_PANEL_H
 #define VGUI_SCORE_PANEL_H
 
+#ifndef _HALO
+#define GAME_NAME "CROSS PRODUCT MULTIPLAYER"
+#else
+#define GAME_NAME "HALO: GOLDSOURCE"
+#endif
+
 #include <vgui_controls/Frame.h>
 
 #include "IViewportPanel.h"
@@ -10,6 +16,7 @@ class CSteamAvatarImage;
 namespace vgui2
 {
 	class ImageList;
+	class IScheme;
 	class Label;
 	class Menu;
 	class SectionedListPanel;
@@ -49,6 +56,8 @@ public:
 	}
 
 protected:
+	void ApplySchemeSettings(vgui2::IScheme* scheme) override;
+
 	void PerformLayout() override;
 
 private:
@@ -78,6 +87,7 @@ private:
 
 	void OnCommand(const char* command) override;
 
+	vgui2::Label* m_pServerNameLabel;
 	vgui2::Label* m_pMapLabel;
 	vgui2::Label* m_pPlayerCountLabel;
 	vgui2::SectionedListPanel* m_pPlayerList;
@@ -89,6 +99,9 @@ private:
 
 	vgui2::ImageList* m_pImageList;
 	CSteamAvatarImage* m_pAvatars[SCOREBOARD_MAX_PLAYERS + 1];
+
+	vgui2::HFont m_hHeaderFont;
+	vgui2::HFont m_hPlayerFont;
 
 	double m_flNextUpdateTime;
 };

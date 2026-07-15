@@ -13,6 +13,7 @@
 
 #include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
+#include <vgui/ISurface.h>
 #include <vgui/IScheme.h>
 
 #include <vgui_controls/ImageList.h>
@@ -20,6 +21,7 @@
 #include <vgui_controls/Menu.h>
 #include <vgui_controls/SectionedListPanel.h>
 
+#include "bridge.h"
 #include "score_panel.h"
 #include "steam_avatar.h"
 #include "viewport_panel_names.h"
@@ -33,6 +35,8 @@
 
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
+
+char gServerName[128];
 
 static std::uint64_t Steam2ToSteamID64(
 	const std::string& steam2ID)
@@ -120,6 +124,7 @@ static void GetDisplayMapName(
 
 CScorePanel::CScorePanel(vgui2::Panel* parent)
 	: BaseClass(parent, PANEL_SCOREBOARD),
+	m_pServerNameLabel(nullptr),
 	m_pMapLabel(nullptr),
 	m_pPlayerCountLabel(nullptr),
 	m_pPlayerList(nullptr),
@@ -128,9 +133,12 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_iSelectedClient(0),
 	m_iMuteMenuItem(-1),
 	m_pImageList(nullptr),
+	m_hHeaderFont(vgui2::INVALID_FONT),
+	m_hPlayerFont(vgui2::INVALID_FONT),
 	m_flNextUpdateTime(0.0)
 {
 	SetTitle(" ", true);
+	SetTitleBarVisible(false);
 
 	SetSizeable(false);
 	SetMoveable(false);
@@ -139,9 +147,22 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 
 	SetProportional(true);
 
-	// prototype is display-only
+	if (parent)
+	{
+		SetScheme(parent->GetScheme());
+	}
+
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
+
+	m_pServerNameLabel =
+		new vgui2::Label(
+			this,
+			"ServerNameLabel",
+			GAME_NAME);
+
+	m_pServerNameLabel->SetContentAlignment(
+		vgui2::Label::a_center);
 
 	m_pMapLabel = new vgui2::Label(
 		this,
@@ -209,6 +230,12 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 			clientIndex,
 			avatar);
 	}
+
+	LoadControlSettings(
+		"ui/resource/ScorePanel.res");
+
+	// Force VGUI to run ApplySchemeSettings() and PerformLayout().
+	InvalidateLayout(true, true);
 
 	CreateSections();
 
@@ -329,6 +356,40 @@ void CScorePanel::CreateSections()
 		SECTION_SPECTATORS,
 		"Spectators",
 		false);
+
+	if (m_hHeaderFont != vgui2::INVALID_FONT)
+	{
+		if (gHUD.m_Teamplay)
+		{
+			for (int teamIndex = 1;
+				teamIndex <= MAX_TEAMS;
+				++teamIndex)
+			{
+				const team_info_t& team =
+					g_TeamInfo[teamIndex];
+
+				if (team.name[0] == '\0' ||
+					team.players <= 0)
+				{
+					continue;
+				}
+
+				m_pPlayerList->SetFontSection(
+					SECTION_TEAM_BASE + teamIndex,
+					m_hHeaderFont);
+			}
+		}
+		else
+		{
+			m_pPlayerList->SetFontSection(
+				SECTION_PLAYERS,
+				m_hHeaderFont);
+		}
+
+		m_pPlayerList->SetFontSection(
+			SECTION_SPECTATORS,
+			m_hHeaderFont);
+	}
 }
 
 void CScorePanel::AddPlayerColumns(
@@ -374,7 +435,8 @@ void CScorePanel::AddPlayerColumns(
 		"name",
 		sectionName,
 		vgui2::SectionedListPanel::COLUMN_BRIGHT,
-		nameWidth);
+		nameWidth,
+		m_hHeaderFont);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -382,7 +444,8 @@ void CScorePanel::AddPlayerColumns(
 		showStatHeadings ? "Score" : "",
 		vgui2::SectionedListPanel::COLUMN_BRIGHT |
 		vgui2::SectionedListPanel::COLUMN_CENTER,
-		scoreWidth);
+		scoreWidth,
+		m_hHeaderFont);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -390,7 +453,8 @@ void CScorePanel::AddPlayerColumns(
 		showStatHeadings ? "Deaths" : "",
 		vgui2::SectionedListPanel::COLUMN_BRIGHT |
 		vgui2::SectionedListPanel::COLUMN_CENTER,
-		deathsWidth);
+		deathsWidth,
+		m_hHeaderFont);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -398,7 +462,8 @@ void CScorePanel::AddPlayerColumns(
 		showStatHeadings ? "Ping" : "",
 		vgui2::SectionedListPanel::COLUMN_BRIGHT |
 		vgui2::SectionedListPanel::COLUMN_CENTER,
-		pingWidth);
+		pingWidth,
+		m_hHeaderFont);
 }
 
 void CScorePanel::ApplyTeamSectionColor(int sectionID, int teamNumber)
@@ -461,12 +526,16 @@ int CScorePanel::GetSectionForPlayer(int clientIndex) const
 
 void CScorePanel::UpdateHeader()
 {
-	const char* serverName = gEngfuncs.pfnGetCvarString("hostname");
-	if (serverName && serverName[0] != '\0')
-		SetTitle(serverName, true);
-	else
+	const char* serverName = gServerName;
+
+	if (m_pServerNameLabel)
 	{
-		SetTitle("CROSS PRODUCT MULTIPLAYER", true);
+		if (serverName && serverName[0] != '\0')
+		{
+			m_pServerNameLabel->SetText(serverName);
+		}
+		else
+			m_pServerNameLabel->SetText(GAME_NAME);
 	}
 
 	char mapName[128];
@@ -498,15 +567,15 @@ void CScorePanel::UpdateHeader()
 
 		if (playerInfo.name && playerInfo.name[0] != '\0')
 			++connectedPlayers;
-
-		int maxPlayers = gEngfuncs.GetMaxClients();
-
-		char playerCountText[64];
-
-		snprintf(playerCountText, sizeof(playerCountText), "%d / %d PLAYERS", connectedPlayers, maxPlayers);
-
-		m_pPlayerCountLabel->SetText(playerCountText);
 	}
+
+	int maxPlayers = gEngfuncs.GetMaxClients();
+
+	char playerCountText[64];
+
+	snprintf(playerCountText, sizeof(playerCountText), "%d / %d PLAYERS", connectedPlayers, maxPlayers);
+
+	m_pPlayerCountLabel->SetText(playerCountText);
 }
 
 void CScorePanel::UpdatePlayerAvatar(
@@ -637,6 +706,13 @@ void CScorePanel::UpdatePlayerList()
 				section,
 				playerData);
 
+		if (m_hPlayerFont != vgui2::INVALID_FONT)
+		{
+			m_pPlayerList->SetItemFont(
+				itemID,
+				m_hPlayerFont);
+		}
+
 		if (!isSpectator &&
 			gHUD.m_Teamplay &&
 			iNumberOfTeamColors > 0)
@@ -744,7 +820,10 @@ void CScorePanel::Reset()
 		}
 	}
 
-	SetTitle("CROSS PRODUCT MULTIPLAYER", true);
+	if (m_pServerNameLabel)
+	{
+		m_pServerNameLabel->SetText(GAME_NAME);
+	}
 	ShowPanel(false);
 }
 
@@ -756,6 +835,10 @@ void CScorePanel::ShowPanel(bool state)
 	if (state)
 	{
 		SetVisible(true);
+
+		// Ensures ApplySchemeSettings() has run before sections and rows
+		// are recreated with the cached font handles.
+		InvalidateLayout(true, true);
 
 		m_flNextUpdateTime = 0.0;
 		m_iSelectedClient = 0;
@@ -796,6 +879,49 @@ void CScorePanel::SetParent(vgui2::VPANEL parent)
 	BaseClass::SetParent(parent);
 }
 
+void CScorePanel::ApplySchemeSettings(
+	vgui2::IScheme* scheme)
+{
+	BaseClass::ApplySchemeSettings(scheme);
+
+	if (!scheme)
+		return;
+
+	m_hHeaderFont =
+		scheme->GetFont(
+			"ScoreboardHeader",
+			false);
+
+	m_hPlayerFont =
+		scheme->GetFont(
+			"ScoreboardPlayer",
+			false);
+
+	if (m_hHeaderFont != vgui2::INVALID_FONT &&
+		m_pPlayerList)
+	{
+		m_pPlayerList->SetHeaderFont(
+			m_hHeaderFont);
+	}
+
+	if (m_hPlayerFont != vgui2::INVALID_FONT &&
+		m_pPlayerList)
+	{
+		m_pPlayerList->SetRowFont(
+			m_hPlayerFont);
+	}
+
+#ifdef _DEBUG
+	gEngfuncs.Con_Printf(
+		"Scoreboard fonts: header=%u player=%u scheme=%u\n",
+		static_cast<unsigned int>(m_hHeaderFont),
+		static_cast<unsigned int>(m_hPlayerFont),
+		static_cast<unsigned int>(GetScheme()));
+#endif
+
+	InvalidateLayout();
+}
+
 void CScorePanel::PerformLayout()
 {
 	BaseClass::PerformLayout();
@@ -804,19 +930,35 @@ void CScorePanel::PerformLayout()
 	int parentTall = 480;
 
 	if (GetParent())
-		GetParent()->GetSize(parentWide, parentTall);
+	{
+		GetParent()->GetSize(
+			parentWide,
+			parentTall);
+	}
 
-	const int wide = vgui2::scheme()->GetProportionalScaledValue(520);
+	const int wide =
+		vgui2::scheme()->GetProportionalScaledValue(520);
 
-	const int tall = vgui2::scheme()->GetProportionalScaledValue(380);
+	const int tall =
+		vgui2::scheme()->GetProportionalScaledValue(380);
 
-	SetBounds((parentWide - wide) / 2, (parentTall - tall) / 2, wide, tall);
+	SetBounds(
+		(parentWide - wide) / 2,
+		(parentTall - tall) / 2,
+		wide,
+		tall);
 
 	const int sideMargin =
 		vgui2::scheme()->GetProportionalScaledValue(12);
 
-	const int titleBarBottom =
-		vgui2::scheme()->GetProportionalScaledValue(34);
+	const int topMargin =
+		vgui2::scheme()->GetProportionalScaledValue(8);
+
+	const int serverNameTall =
+		vgui2::scheme()->GetProportionalScaledValue(26);
+
+	const int serverNameGap =
+		vgui2::scheme()->GetProportionalScaledValue(2);
 
 	const int headerTall =
 		vgui2::scheme()->GetProportionalScaledValue(20);
@@ -827,31 +969,62 @@ void CScorePanel::PerformLayout()
 	const int bottomMargin =
 		vgui2::scheme()->GetProportionalScaledValue(8);
 
-	const int headerWide =
+	const int contentWide =
 		wide - sideMargin * 2;
 
-	m_pMapLabel->SetBounds(
-		sideMargin,
-		titleBarBottom,
-		headerWide / 2,
-		headerTall);
+	// Server hostname/title.
+	if (m_pServerNameLabel)
+	{
+		m_pServerNameLabel->SetBounds(
+			sideMargin,
+			topMargin,
+			contentWide,
+			serverNameTall);
+	}
 
-	m_pPlayerCountLabel->SetBounds(
-		sideMargin + headerWide / 2,
-		titleBarBottom,
-		headerWide / 2,
-		headerTall);
+	// Map and player-count row.
+	const int headerY =
+		topMargin +
+		serverNameTall +
+		serverNameGap;
 
+	if (m_pMapLabel)
+	{
+		m_pMapLabel->SetBounds(
+			sideMargin,
+			headerY,
+			contentWide / 2,
+			headerTall);
+	}
+
+	if (m_pPlayerCountLabel)
+	{
+		m_pPlayerCountLabel->SetBounds(
+			sideMargin + contentWide / 2,
+			headerY,
+			contentWide - contentWide / 2,
+			headerTall);
+	}
+
+	// Team/player list below the header row.
 	const int listY =
-		titleBarBottom +
+		headerY +
 		headerTall +
 		headerGap;
 
-	m_pPlayerList->SetBounds(
-		sideMargin,
-		listY,
-		headerWide,
-		tall - listY - bottomMargin);
+	const int listTall =
+		tall -
+		listY -
+		bottomMargin;
+
+	if (m_pPlayerList)
+	{
+		m_pPlayerList->SetBounds(
+			sideMargin,
+			listY,
+			contentWide,
+			listTall);
+	}
 }
 
 void CScorePanel::EnableMousePointer(bool enable)

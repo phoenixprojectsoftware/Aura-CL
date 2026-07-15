@@ -27,6 +27,7 @@ CClientViewport::CClientViewport()
 	SetMouseInputEnabled(false);
 
 	ReloadScheme("ui/resource/ClientScheme.res");
+	InvalidateLayout(true, true);
 
 	m_pScorePanel = new CScorePanel(this);
 
