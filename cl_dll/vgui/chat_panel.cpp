@@ -661,6 +661,29 @@ void CAuraChatHistory::ApplySchemeSettings(
 	SetAlpha(255);
 }
 
+void CAuraChatHistory::OnKeyCodeTyped(
+	vgui2::KeyCode code)
+{
+	if (code == vgui2::KEY_ESCAPE)
+	{
+		StopVGUI2ChatMessageMode();
+		return;
+	}
+
+	BaseClass::OnKeyCodeTyped(code);
+}
+
+void CAuraChatHistory::OnKeyCodePressed(
+	vgui2::KeyCode code)
+{
+	if (code == vgui2::KEY_ESCAPE)
+	{
+		StopVGUI2ChatMessageMode();
+		return;
+	}
+
+	BaseClass::OnKeyCodePressed(code);
+}
 
 // -------------------------------------------------------------------------
 // CAuraChatLine
@@ -1376,6 +1399,32 @@ void CChatPanel::ApplySchemeSettings(
 			backgroundAlpha));
 }
 
+void CChatPanel::OnKeyCodeTyped(
+	vgui2::KeyCode code)
+{
+	if (m_iMessageMode != MM_NONE &&
+		code == vgui2::KEY_ESCAPE)
+	{
+		StopVGUI2ChatMessageMode();
+		return;
+	}
+
+	BaseClass::OnKeyCodeTyped(code);
+}
+
+void CChatPanel::OnKeyCodePressed(
+	vgui2::KeyCode code)
+{
+	if (m_iMessageMode != MM_NONE &&
+		code == vgui2::KEY_ESCAPE)
+	{
+		StopVGUI2ChatMessageMode();
+		return;
+	}
+
+	BaseClass::OnKeyCodePressed(code);
+}
+
 void CChatPanel::Print(
 	const char* text,
 	int clientIndex)
@@ -1408,68 +1457,116 @@ void CChatPanel::AddToHistory(
 	}
 
 	char cleanText[4096];
-	char strippedText[4096];
 
-	strncpy(
+	color_tags::strip_color_tags(
 		cleanText,
 		text,
-		sizeof(cleanText) - 1);
+		sizeof(cleanText));
 
-	cleanText[
-		sizeof(cleanText) - 1] =
-		'\0';
+	std::size_t length =
+		strlen(cleanText);
 
-		strippedText[0] =
-			'\0';
+	while (length > 0 &&
+		(cleanText[length - 1] == '\n' ||
+			cleanText[length - 1] == '\r'))
+	{
+		cleanText[length - 1] = '\0';
+		--length;
+	}
 
-		// Destination first, source second.
-		color_tags::strip_color_tags(
-			strippedText,
+	if (cleanText[0] == '\0')
+		return;
+
+	m_pChatHistory->InsertString("\n");
+
+	const Color defaultColor(
+		m_DefaultTextColor.r(),
+		m_DefaultTextColor.g(),
+		m_DefaultTextColor.b(),
+		255);
+
+	const bool isPlayerMessage =
+		clientIndex >= 1 &&
+		clientIndex <= MAX_PLAYERS;
+
+	const char* separator =
+		isPlayerMessage
+		? strchr(cleanText, ':')
+		: nullptr;
+
+	if (separator)
+	{
+		const std::size_t prefixLength =
+			static_cast<std::size_t>(
+				separator - cleanText) + 1;
+
+		char prefix[1024];
+
+		std::size_t copyLength =
+			prefixLength;
+
+		if (copyLength >= sizeof(prefix))
+		{
+			copyLength =
+				sizeof(prefix) - 1;
+		}
+
+		memcpy(
+			prefix,
 			cleanText,
-			sizeof(strippedText));
+			copyLength);
 
-		std::size_t length =
-			strlen(strippedText);
+		prefix[copyLength] = '\0';
 
-		// Remove line endings supplied by SayText.
-		while (length > 0 &&
-			(strippedText[length - 1] == '\n' ||
-				strippedText[length - 1] == '\r'))
-		{
-			strippedText[length - 1] =
-				'\0';
-
-			--length;
-		}
-
-		if (strippedText[0] == '\0')
-		{
-			return;
-		}
-
-		// Append without clearing the existing map-long history.
-		InsertFormattedChatText(
-			m_pChatHistory,
-			strippedText,
-			clientIndex,
-			m_DefaultTextColor,
-			255,
-			false);
+		// Player/team-coloured prefix.
+		m_pChatHistory->InsertColorChange(
+			GetAuraChatClientColor(
+				clientIndex));
 
 		m_pChatHistory->InsertString(
-			"\n");
+			prefix);
 
-		// Keep this message stored but fade it from the gameplay display.
+		// Apply the gameplay fade to this colour range.
 		m_pChatHistory->InsertFade(
 			CHAT_DISPLAY_TIME,
 			2.5f);
 
-		// Ensure the next message receives its own fade range.
-		m_pChatHistory->InsertFade(
-			-1,
-			-1);
+		// Normal message body.
+		m_pChatHistory->InsertColorChange(
+			defaultColor);
 
-		m_pChatHistory->GotoTextEnd();
+		m_pChatHistory->InsertString(
+			cleanText + prefixLength);
+
+		// Apply the same fade to the body range.
+		m_pChatHistory->InsertFade(
+			CHAT_DISPLAY_TIME,
+			2.5f);
+	}
+	else
+	{
+		const Color messageColor =
+			isPlayerMessage
+			? GetAuraChatClientColor(clientIndex)
+			: defaultColor;
+
+		m_pChatHistory->InsertColorChange(
+			messageColor);
+
+		m_pChatHistory->InsertString(
+			cleanText);
+
+		m_pChatHistory->InsertFade(
+			CHAT_DISPLAY_TIME,
+			2.5f);
+	}
+
+	// End the fade ranges so future messages receive new timings.
+	m_pChatHistory->InsertFade(
+		-1,
+		-1);
+
+	m_pChatHistory->GotoTextEnd();
 }
 
 void CChatPanel::FadeChatHistory()

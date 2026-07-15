@@ -39,6 +39,12 @@ public:
 protected:
 	void ApplySchemeSettings(
 		vgui2::IScheme* scheme) override;
+
+	void OnKeyCodeTyped(
+		vgui2::KeyCode code) override;
+
+	void OnKeyCodePressed(
+		vgui2::KeyCode code) override;
 };
 
 class CAuraChatLine final
@@ -200,6 +206,12 @@ public:
 protected:
 	void ApplySchemeSettings(
 		vgui2::IScheme* scheme) override;
+
+	void OnKeyCodeTyped(
+		vgui2::KeyCode code) override;
+
+	void OnKeyCodePressed(
+		vgui2::KeyCode code) override;
 
 	void PerformLayout() override;
 	void OnThink() override;
