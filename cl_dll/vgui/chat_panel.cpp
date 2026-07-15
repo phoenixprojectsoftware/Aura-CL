@@ -8,6 +8,7 @@
 #include <vgui/ISurface.h>
 #include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
+#include <vgui/IPanel.h>
 #include <vgui/ILocalize.h>
 
 #include <vgui_controls/Label.h>
@@ -860,6 +861,9 @@ CChatPanel::CChatPanel(
 	SetPaintBackgroundEnabled(true);
 	SetPaintBorderEnabled(true);
 
+	MakePopup();
+	SetZPos(-30);
+
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 
@@ -980,18 +984,25 @@ void CChatPanel::StartMessageMode(
 		inputPanel->SetEnabled(true);
 		inputPanel->SetKeyBoardInputEnabled(true);
 		inputPanel->SetMouseInputEnabled(true);
-	}
 
-	// Request focus through the wrapper, as ZP does.
-	m_pChatInput->RequestFocus();
+#ifdef _DEBUG
+		// Aura's older Panel::RequestFocus() only propagates a focus
+		// request through the parent hierarchy. Request focus directly
+		// for the actual TextEntry through IPanel instead.
+		vgui2::ipanel()->RequestFocus(
+			inputPanel->GetVPanel());
 
-	// Also request it directly on the TextEntry. This avoids relying on
-	// Aura's older Panel::RequestFocus implementation to honour
-	// GetCurrentKeyFocus().
-	if (inputPanel)
-	{
-		inputPanel->RequestFocus();
+		const vgui2::VPANEL focusedPanel =
+			vgui2::input()->GetFocus();
+
+		gEngfuncs.Con_Printf(
+			"Chat focus: wanted %u, got %u\n",
+			static_cast<unsigned int>(
+				inputPanel->GetVPanel()),
+			static_cast<unsigned int>(
+				focusedPanel));
 	}
+#endif
 
 	MoveToFront();
 
