@@ -757,8 +757,6 @@ void CScorePanel::ShowPanel(bool state)
 	{
 		SetVisible(true);
 
-		EnableMousePointer(true);
-
 		m_flNextUpdateTime = 0.0;
 		m_iSelectedClient = 0;
 

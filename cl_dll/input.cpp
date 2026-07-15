@@ -529,18 +529,23 @@ void IN_StrafeUp(void) {KeyUp(&in_strafe);}
 // needs capture by hud/vgui also
 extern void __CmdFunc_InputPlayerSpecial(void);
 
-void IN_Attack2Down(void) 
+void IN_Attack2Down(void)
 {
-	if (IsVGUI2ScoreBoardMouseActive())
+	if (IsVGUI2ScoreBoardVisible())
+	{
+		if (!IsVGUI2ScoreBoardMouseActive())
+		{
+			ActivateScoreBoardMouse();
+		}
+
+		// consume secondary attack while the scoreboard is open
 		return;
+	}
+
 	KeyDown(&in_attack2);
-
-#ifdef _TFC
-	__CmdFunc_InputPlayerSpecial();
-#endif
-
-	gHUD.m_Spectator.HandleButtonsDown( IN_ATTACK2 );
+	gHUD.m_Spectator.HandleButtonsDown(IN_ATTACK2);
 }
+
 
 void IN_Attack2Up(void) {KeyUp(&in_attack2);}
 void IN_UseDown (void)
@@ -580,10 +585,17 @@ void IN_GraphUp(void) {KeyUp(&in_graph);}
 
 void IN_AttackDown(void)
 {
-	if (IsVGUI2ScoreBoardMouseActive())
+	if (IsVGUI2ScoreBoardVisible())
+	{
+		if (!IsVGUI2ScoreBoardMouseActive())
+			ActivateScoreBoardMouse();
+
+		// consume all primary attack presses while scoreboard is open
 		return;
-	KeyDown( &in_attack );
-	gHUD.m_Spectator.HandleButtonsDown( IN_ATTACK );
+	}
+
+	KeyDown(&in_attack);
+	gHUD.m_Spectator.HandleButtonsDown(IN_ATTACK);
 }
 
 void IN_AttackUp(void)

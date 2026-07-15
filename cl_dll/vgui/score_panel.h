@@ -41,6 +41,8 @@ public:
 
 	MESSAGE_FUNC_INT(OnItemContextMenu, "ItemContextMenu", itemID);
 
+	void EnableMousePointer(bool enable);
+
 	bool IsMousePointerEnabled() const
 	{
 		return m_bMousePointerEnabled;
@@ -71,7 +73,6 @@ private:
 
 	static bool ScoreSort(vgui2::SectionedListPanel* list, int itemID1, int itemID2);
 
-	void EnableMousePointer(bool enable);
 	void OpenPlayerMenu(int itemID);
 	void ToggleSelectedPlayerMute();
 
