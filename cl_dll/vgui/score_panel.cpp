@@ -27,6 +27,7 @@
 #include "../hud.h"
 #include "../voice_status.h"
 #include "../steam_id.h"
+#include "../color_tags.h"
 
 #include <steamworks/steam_api.h>
 
@@ -610,7 +611,11 @@ void CScorePanel::UpdatePlayerList()
 
 		playerData->SetString("status", isMuted ? "Muted" : "");
 
-		playerData->SetString("name", playerInfo.name);
+		char displayName[256];
+
+		color_tags::strip_color_tags(displayName, playerInfo.name, sizeof(displayName));
+
+		playerData->SetString("name", displayName);
 		playerData->SetInt("score_value", extraInfo.frags);
 		playerData->SetInt("deaths_value", extraInfo.deaths);
 
