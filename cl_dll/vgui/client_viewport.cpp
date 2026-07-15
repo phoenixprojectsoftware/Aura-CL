@@ -6,6 +6,7 @@
 
 #include "client_viewport.h"
 #include "score_panel.h"
+#include "chat_panel.h"
 
 #include "bridge.h"
 
@@ -16,7 +17,8 @@ CClientViewport* g_pViewport = nullptr;
 
 CClientViewport::CClientViewport()
 	: BaseClass(nullptr, "CClientViewport"),
-	m_pScorePanel(nullptr)
+	m_pScorePanel(nullptr),
+	m_pChatPanel(nullptr)
 {
 	Assert(!g_pViewport);
 	g_pViewport = this;
@@ -30,6 +32,7 @@ CClientViewport::CClientViewport()
 	InvalidateLayout(true, true);
 
 	m_pScorePanel = new CScorePanel(this);
+	m_pChatPanel = new CChatPanel(this);
 
 	PerformLayout();
 	HideClientUI();
@@ -162,4 +165,20 @@ void ActivateScoreBoardMouse()
 
 	if (scoreBoard)
 		scoreBoard->EnableMousePointer(true);
+}
+
+void CClientViewport::PrintChat(const char* text, int clientIndex)
+{
+	SetVisible(true);
+
+	if (m_pChatPanel)
+	{
+		m_pChatPanel->Print(text, clientIndex);
+	}
+}
+
+void PrintVGUI2Chat(const char* text, int clientIndex)
+{
+	if (g_pViewport)
+		g_pViewport->PrintChat(text, clientIndex);
 }

@@ -27,6 +27,7 @@
 #include <stdio.h>
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 #include "discord_integration.h"
 
 extern float *GetClientColor( int clientIndex );
@@ -284,6 +285,8 @@ void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIn
 		PlaySound(m_HUD_saytext_sound_path->string, m_HUD_saytext_sound->value);
 
 	Y_START = ScreenHeight - 60 - ( line_height * (MAX_LINES+2) );
+
+	PrintVGUI2Chat(pszBuf, clientIndex);
 }
 
 void CHudSayText :: EnsureTextFitsInOneLineAndWrapIfHaveTo( int line )

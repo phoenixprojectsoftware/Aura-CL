@@ -3,6 +3,7 @@
 #include <vgui_controls/EditablePanel.h>
 
 class CScorePanel;
+class CChatPanel;
 
 class CClientViewport : public vgui2::EditablePanel {
 	DECLARE_CLASS_SIMPLE(CClientViewport, vgui2::EditablePanel);
@@ -27,11 +28,19 @@ public:
 		return m_pScorePanel;
 	}
 
+	CChatPanel* GetChatPanel() const
+	{
+		return m_pChatPanel;
+	}
+
+	void PrintChat(const char* text, int clientIndex);
+
 protected:
 	void PerformLayout() override;
 
 private:
 	CScorePanel* m_pScorePanel;
+	CChatPanel* m_pChatPanel;
 };
 
 extern CClientViewport* g_pViewport;

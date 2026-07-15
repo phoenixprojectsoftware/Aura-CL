@@ -1,5 +1,7 @@
 add_sources(
 	bridge.h
+	chat_panel.cpp
+	chat_panel.h
 	client_viewport.cpp
 	client_viewport.h
 	score_panel.cpp
