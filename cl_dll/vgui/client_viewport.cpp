@@ -125,6 +125,11 @@ void CClientViewport::PerformLayout()
 
 void CClientViewport::StartChatMessageMode(int messageMode)
 {
+	if (m_pScorePanel && m_pScorePanel->IsVisible())
+	{
+		HideScoreBoard();
+	}
+
 	ActivateClientUI();
 
 	SetVisible(true);
@@ -167,6 +172,9 @@ bool VGUI2ViewportAvailable()
 
 void ShowVGUI2ScoreBoard()
 {
+	if (IsVGUI2ChatActive())
+		return;
+
 	if (g_pViewport)
 		g_pViewport->ShowScoreBoard();
 }
@@ -202,6 +210,16 @@ void ActivateScoreBoardMouse()
 
 	if (scoreBoard)
 		scoreBoard->EnableMousePointer(true);
+}
+
+bool IsVGUI2ChatActive()
+{
+	if (!g_pViewport)
+		return false;
+
+	CChatPanel* chat = g_pViewport->GetChatPanel();
+
+	return chat && chat->GetMessageMode() != MM_NONE;
 }
 
 void PrintVGUI2Chat(const char* text, int clientIndex)

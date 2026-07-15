@@ -101,6 +101,7 @@ int ScrollTextUp( void )
 
 int CHudSayText :: Draw( float flTime )
 {
+#if 0
 	int y = Y_START;
 
 	if ( ( gViewPort && gViewPort->AllowedToPrintText() == FALSE) || !m_HUD_saytext->value )
@@ -159,7 +160,7 @@ int CHudSayText :: Draw( float flTime )
 
 		y += line_height;
 	}
-
+#endif
 	return 1;
 }
 

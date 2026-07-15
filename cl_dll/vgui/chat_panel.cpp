@@ -19,6 +19,7 @@
 #include "bridge.h"
 
 #include "../hud.h"
+#include "../color_tags.h"
 
 extern "C"
 {
@@ -408,11 +409,9 @@ void CAuraChatEntry::OnKeyCodeTyped(
 	vgui2::KeyCode code)
 {
 	if (code == vgui2::KEY_ENTER ||
-		code == vgui2::KEY_PAD_ENTER ||
-		code == vgui2::KEY_ESCAPE)
+		code == vgui2::KEY_PAD_ENTER)
 	{
-		if (code != vgui2::KEY_ESCAPE &&
-			m_pChatPanel)
+		if (m_pChatPanel)
 		{
 			PostMessage(
 				m_pChatPanel,
@@ -420,6 +419,11 @@ void CAuraChatEntry::OnKeyCodeTyped(
 					"ChatEntrySend"));
 		}
 
+		return;
+	}
+
+	if (code == vgui2::KEY_ESCAPE)
+	{
 		if (m_pChatPanel)
 		{
 			PostMessage(
@@ -433,7 +437,6 @@ void CAuraChatEntry::OnKeyCodeTyped(
 
 	if (code == vgui2::KEY_TAB)
 	{
-		// Prevent VGUI from moving keyboard focus away from the entry.
 		return;
 	}
 
@@ -911,7 +914,7 @@ CChatPanel::CChatPanel(
 	m_pChatHistory->SetMaximumCharCount(
 		127 * 100);
 
-	m_pChatHistory->SetVisible(false);
+	m_pChatHistory->SetVisible(true);
 
 	m_pChatLine =
 		new CAuraChatLine(
@@ -1222,6 +1225,8 @@ void CChatPanel::Send()
 void CChatPanel::OnChatEntrySend()
 {
 	Send();
+
+	StopVGUI2ChatMessageMode();
 }
 
 void CChatPanel::OnChatEntryStopMessageMode()
@@ -1243,14 +1248,35 @@ const char* CChatPanel::GetName()
 
 void CChatPanel::Reset()
 {
+	PreventGameUIEscape(false);
+
 	if (m_iMessageMode != MM_NONE)
+	{
 		StopMessageMode();
+	}
 
 	if (m_pChatHistory)
 	{
 		m_pChatHistory->SetText("");
 		m_pChatHistory->InsertFade(-1, -1);
+		m_pChatHistory->SetVerticalScrollbar(false);
+		m_pChatHistory->SetMouseInputEnabled(false);
+		m_pChatHistory->SetPaintBorderEnabled(false);
+		m_pChatHistory->SetVisible(true);
 	}
+
+	if (m_pChatInput)
+	{
+		m_pChatInput->ClearEntry();
+		m_pChatInput->SetVisible(false);
+	}
+
+	m_iMessageMode = MM_NONE;
+	m_flHistoryFadeTime = 0.0;
+
+	SetPaintBackgroundEnabled(false);
+	SetKeyBoardInputEnabled(false);
+	SetMouseInputEnabled(false);
 
 	SetVisible(true);
 }
@@ -1382,6 +1408,7 @@ void CChatPanel::AddToHistory(
 	}
 
 	char cleanText[4096];
+	char strippedText[4096];
 
 	strncpy(
 		cleanText,
@@ -1392,39 +1419,52 @@ void CChatPanel::AddToHistory(
 		sizeof(cleanText) - 1] =
 		'\0';
 
-		std::size_t length =
-			strlen(cleanText);
+		strippedText[0] =
+			'\0';
 
+		// Destination first, source second.
+		color_tags::strip_color_tags(
+			strippedText,
+			cleanText,
+			sizeof(strippedText));
+
+		std::size_t length =
+			strlen(strippedText);
+
+		// Remove line endings supplied by SayText.
 		while (length > 0 &&
-			(cleanText[length - 1] == '\n' ||
-				cleanText[length - 1] == '\r'))
+			(strippedText[length - 1] == '\n' ||
+				strippedText[length - 1] == '\r'))
 		{
-			cleanText[length - 1] =
+			strippedText[length - 1] =
 				'\0';
 
 			--length;
 		}
 
-		if (cleanText[0] == '\0')
+		if (strippedText[0] == '\0')
+		{
 			return;
+		}
 
-		// Source chat starts each message on a fresh line.
-		m_pChatHistory->InsertString("\n");
-
+		// Append without clearing the existing map-long history.
 		InsertFormattedChatText(
 			m_pChatHistory,
-			cleanText,
+			strippedText,
 			clientIndex,
 			m_DefaultTextColor,
 			255,
 			false);
 
-		// The message remains stored, but fades from the gameplay view.
+		m_pChatHistory->InsertString(
+			"\n");
+
+		// Keep this message stored but fade it from the gameplay display.
 		m_pChatHistory->InsertFade(
 			CHAT_DISPLAY_TIME,
 			2.5f);
 
-		// End the fade range so the next message gets its own timing.
+		// Ensure the next message receives its own fade range.
 		m_pChatHistory->InsertFade(
 			-1,
 			-1);
