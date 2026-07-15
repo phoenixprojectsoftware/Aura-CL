@@ -197,13 +197,13 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 			new CSteamAvatarImage();
 
 		avatar->SetSize(
-			vgui2::scheme()->GetProportionalScaledValue(24),
-			vgui2::scheme()->GetProportionalScaledValue(24));
+			vgui2::scheme()->GetProportionalScaledValue(18),
+			vgui2::scheme()->GetProportionalScaledValue(18));
 
 		m_pAvatars[clientIndex] = avatar;
 
 		m_pPlayerList->SetLineSpacingOverride(
-			vgui2::scheme()->GetProportionalScaledValue(28));
+			vgui2::scheme()->GetProportionalScaledValue(21));
 
 		m_pImageList->SetImageAtIndex(
 			clientIndex,
@@ -337,7 +337,7 @@ void CScorePanel::AddPlayerColumns(
 	bool showStatHeadings)
 {
 	const int nameWidth =
-		vgui2::scheme()->GetProportionalScaledValue(186);
+		vgui2::scheme()->GetProportionalScaledValue(208);
 
 	const int scoreWidth =
 		vgui2::scheme()->GetProportionalScaledValue(70);
@@ -349,10 +349,10 @@ void CScorePanel::AddPlayerColumns(
 		vgui2::scheme()->GetProportionalScaledValue(70);
 
 	const int statusWidth =
-		vgui2::scheme()->GetProportionalScaledValue(60);
+		vgui2::scheme()->GetProportionalScaledValue(48);
 
 	const int avatarWidth =
-		vgui2::scheme()->GetProportionalScaledValue(34);
+		vgui2::scheme()->GetProportionalScaledValue(24);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -808,7 +808,7 @@ void CScorePanel::PerformLayout()
 
 	const int wide = vgui2::scheme()->GetProportionalScaledValue(520);
 
-	const int tall = vgui2::scheme()->GetProportionalScaledValue(340);
+	const int tall = vgui2::scheme()->GetProportionalScaledValue(380);
 
 	SetBounds((parentWide - wide) / 2, (parentTall - tall) / 2, wide, tall);
 
@@ -819,13 +819,13 @@ void CScorePanel::PerformLayout()
 		vgui2::scheme()->GetProportionalScaledValue(34);
 
 	const int headerTall =
-		vgui2::scheme()->GetProportionalScaledValue(24);
+		vgui2::scheme()->GetProportionalScaledValue(20);
 
 	const int headerGap =
-		vgui2::scheme()->GetProportionalScaledValue(4);
+		vgui2::scheme()->GetProportionalScaledValue(2);
 
 	const int bottomMargin =
-		vgui2::scheme()->GetProportionalScaledValue(12);
+		vgui2::scheme()->GetProportionalScaledValue(8);
 
 	const int headerWide =
 		wide - sideMargin * 2;
