@@ -347,7 +347,10 @@ void CScorePanel::CreateSections()
 			AddPlayerColumns(
 				sectionID,
 				team.name,
-				true);
+				true,
+				true,
+				team.frags,
+				team.ping);
 
 			ApplyTeamSectionColor(sectionID, team.teamnumber);
 		}
@@ -366,7 +369,8 @@ void CScorePanel::CreateSections()
 		AddPlayerColumns(
 			SECTION_PLAYERS,
 			"Players",
-			true);
+			true,
+			false);
 	}
 
 	m_pPlayerList->AddSection(
@@ -377,6 +381,7 @@ void CScorePanel::CreateSections()
 	AddPlayerColumns(
 		SECTION_SPECTATORS,
 		"Spectators",
+		false,
 		false);
 
 	if (m_hHeaderFont != vgui2::INVALID_FONT)
@@ -417,7 +422,10 @@ void CScorePanel::CreateSections()
 void CScorePanel::AddPlayerColumns(
 	int sectionID,
 	const char* sectionName,
-	bool showStatHeadings)
+	bool showStatHeadings,
+	bool showTeamSummary,
+	int teamScore,
+	int averagePing)
 {
 	const int nameWidth =
 		vgui2::scheme()->GetProportionalScaledValue(190);
@@ -439,6 +447,43 @@ void CScorePanel::AddPlayerColumns(
 
 	const int developerWidth =
 		vgui2::scheme()->GetProportionalScaledValue(18);
+
+	char scoreHeading[32];
+	char pingHeading[32];
+
+	scoreHeading[0] = '\0';
+	pingHeading[0] = '\0';
+
+	if (showTeamSummary)
+	{
+		snprintf(
+			scoreHeading,
+			sizeof(scoreHeading),
+			"%d",
+			teamScore);
+
+		snprintf(
+			pingHeading,
+			sizeof(pingHeading),
+			"%d",
+			averagePing);
+	}
+	else if (showStatHeadings)
+	{
+		strncpy(
+			scoreHeading,
+			"Score",
+			sizeof(scoreHeading) - 1);
+
+		scoreHeading[sizeof(scoreHeading) - 1] = '\0';
+
+		strncpy(
+			pingHeading,
+			"Ping",
+			sizeof(pingHeading) - 1);
+
+		pingHeading[sizeof(pingHeading) - 1] = '\0';
+	}
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -474,7 +519,7 @@ void CScorePanel::AddPlayerColumns(
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
 		"score",
-		showStatHeadings ? "Score" : "",
+		scoreHeading,
 		vgui2::SectionedListPanel::COLUMN_BRIGHT |
 		vgui2::SectionedListPanel::COLUMN_CENTER,
 		scoreWidth,
@@ -492,7 +537,7 @@ void CScorePanel::AddPlayerColumns(
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
 		"ping",
-		showStatHeadings ? "Ping" : "",
+		pingHeading,
 		vgui2::SectionedListPanel::COLUMN_BRIGHT |
 		vgui2::SectionedListPanel::COLUMN_CENTER,
 		pingWidth,

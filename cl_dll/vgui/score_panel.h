@@ -72,7 +72,7 @@ private:
 	};
 
 	void CreateSections();
-	void AddPlayerColumns(int sectionID, const char* sectionName, bool showStatHeadings);
+	void AddPlayerColumns(int sectionID, const char* sectionName, bool showStatHeadings, bool showTeamSummary = false, int teamScore = 0, int averagePing = 0);
 	void ApplyTeamSectionColor(int sectionID, int teamNumber);
 	void UpdateHeader();
 	void UpdatePlayerList();
