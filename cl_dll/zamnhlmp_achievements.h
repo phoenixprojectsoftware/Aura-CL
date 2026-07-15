@@ -25,13 +25,31 @@ static const char* g_PhoenixSteamIDs[] = {
 	"0:1:457283837", // berony
 	"0:1:516167454", // hitoshii
 	"0:0:421607015", // galexion
-	"0:0:105253777" // finger
+	"0:0:105253777", // finger
 	"0:1:77747696", // playmann
 	"0:0:102486805", // ivan naii_
 	"0:1:175018298", // maxresdefault
 
 };
 static const int g_NumPhoenixIDs = sizeof(g_PhoenixSteamIDs) / sizeof(g_PhoenixSteamIDs[0]);
+
+inline bool IsPhoenixID(const char* steamID)
+{
+	if (!steamID || steamID[0] == '\0')
+	{
+		return false;
+	}
+
+	for (int index = 0; index < g_NumPhoenixIDs; ++index)
+	{
+		if (strcmp(steamID, g_PhoenixSteamIDs[index]) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 static const char* g_LANSteamID[] = {
 	"ID_LAN", // LAN

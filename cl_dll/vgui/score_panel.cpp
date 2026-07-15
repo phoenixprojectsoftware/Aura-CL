@@ -24,6 +24,7 @@
 #include "bridge.h"
 #include "score_panel.h"
 #include "steam_avatar.h"
+#include "phoenix_emblem.h"
 #include "viewport_panel_names.h"
 
 #include "../hud.h"
@@ -31,7 +32,7 @@
 #include "../steam_id.h"
 #include "../color_tags.h"
 
-#include <steamworks/steam_api.h>
+#include "../achievement_manager.h"
 
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
@@ -135,6 +136,9 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_pImageList(nullptr),
 	m_hHeaderFont(vgui2::INVALID_FONT),
 	m_hPlayerFont(vgui2::INVALID_FONT),
+	m_hDeveloperFont(vgui2::INVALID_FONT),
+	m_pPhoenixEmblem(nullptr),
+	m_iPhoenixEmblemImageIndex(0),
 	m_flNextUpdateTime(0.0)
 {
 	SetTitle(" ", true);
@@ -231,6 +235,23 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 			avatar);
 	}
 
+	m_pPhoenixEmblem =
+		new CPhoenixEmblemImage();
+
+	m_pPhoenixEmblem->SetSize(
+		vgui2::scheme()->GetProportionalScaledValue(16),
+		vgui2::scheme()->GetProportionalScaledValue(16));
+
+	m_pPhoenixEmblem->SetColor(
+		Color(191, 0, 255, 255));
+
+	m_iPhoenixEmblemImageIndex =
+		SCOREBOARD_MAX_PLAYERS + 1;
+
+	m_pImageList->SetImageAtIndex(
+		m_iPhoenixEmblemImageIndex,
+		m_pPhoenixEmblem);
+
 	LoadControlSettings(
 		"ui/resource/ScorePanel.res");
 
@@ -247,6 +268,7 @@ CScorePanel::~CScorePanel()
 	// m_pPlayerList owns m_pImageList.
 	// m_pImageList owns the avatar image objects.
 	m_pImageList = nullptr;
+	m_pPhoenixEmblem = nullptr;
 
 	for (int clientIndex = 0;
 		clientIndex <= SCOREBOARD_MAX_PLAYERS;
@@ -398,7 +420,7 @@ void CScorePanel::AddPlayerColumns(
 	bool showStatHeadings)
 {
 	const int nameWidth =
-		vgui2::scheme()->GetProportionalScaledValue(208);
+		vgui2::scheme()->GetProportionalScaledValue(190);
 
 	const int scoreWidth =
 		vgui2::scheme()->GetProportionalScaledValue(70);
@@ -415,6 +437,9 @@ void CScorePanel::AddPlayerColumns(
 	const int avatarWidth =
 		vgui2::scheme()->GetProportionalScaledValue(24);
 
+	const int developerWidth =
+		vgui2::scheme()->GetProportionalScaledValue(18);
+
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
 		"avatar",
@@ -422,6 +447,14 @@ void CScorePanel::AddPlayerColumns(
 		vgui2::SectionedListPanel::COLUMN_IMAGE |
 			vgui2::SectionedListPanel::COLUMN_CENTER,
 		avatarWidth);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"developer",
+		"",
+		vgui2::SectionedListPanel::COLUMN_IMAGE |
+			vgui2::SectionedListPanel::COLUMN_CENTER,
+		statusWidth);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -639,6 +672,13 @@ void CScorePanel::UpdatePlayerList()
 		const std::string& steam2ID = steam_id::get_steam_id(clientIndex - 1);
 		const std::uint64_t steamID = Steam2ToSteamID64(steam2ID);
 
+		const bool isPhoenixDeveloper =
+			IsPhoenixID(steam2ID.c_str());
+
+		if (isPhoenixDeveloper)
+			if (!isAchievementUnlocked(ACH_PHOENIX_PARTY))
+				UnlockAchievement(ACH_PHOENIX_PARTY);
+
 #ifdef _DEBUG
 		static bool printedSteamIDs[
 			SCOREBOARD_MAX_PLAYERS + 1] = {};
@@ -670,6 +710,12 @@ void CScorePanel::UpdatePlayerList()
 			"avatar",
 			steamID != 0
 			? clientIndex
+			: 0);
+
+		playerData->SetInt(
+			"developer",
+			isPhoenixDeveloper
+			? m_iPhoenixEmblemImageIndex
 			: 0);
 
 		bool isMuted = false;
@@ -895,6 +941,11 @@ void CScorePanel::ApplySchemeSettings(
 	m_hPlayerFont =
 		scheme->GetFont(
 			"ScoreboardPlayer",
+			false);
+
+	m_hDeveloperFont =
+		scheme->GetFont(
+			"ScoreboardDeveloper",
 			false);
 
 	if (m_hHeaderFont != vgui2::INVALID_FONT &&

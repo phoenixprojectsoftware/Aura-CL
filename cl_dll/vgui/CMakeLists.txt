@@ -4,6 +4,8 @@ add_sources(
 	client_viewport.h
 	score_panel.cpp
 	score_panel.h
+	phoenix_emblem.cpp
+	phoenix_emblem.h
 	steam_avatar.cpp
 	steam_avatar.h
 	IViewportPanel.h
