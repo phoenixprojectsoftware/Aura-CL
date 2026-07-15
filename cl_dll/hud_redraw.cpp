@@ -25,6 +25,7 @@
 #include "video/video_player.h"
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 
 #define MAX_LOGO_FRAMES 56
 
@@ -121,59 +122,81 @@ int CHud :: Redraw( float flTime, int intermission )
 	if ( m_flTimeDelta < 0 )
 		m_flTimeDelta = 0;
 
-	// Bring up the scoreboard during intermission
-	if (gViewPort)
+	// Bring up the scoreboard during intermission.
+	if (m_iIntermission && !intermission)
 	{
-		if ( m_iIntermission && !intermission )
-		{
-			// Have to do this here so the scoreboard goes away
-			m_iIntermission = intermission;
-			gViewPort->HideCommandMenu();
-			gViewPort->HideScoreBoard();
-			gViewPort->UpdateSpectatorPanel();
-			bEndMusic = false;
+		// Set this before hiding the scoreboard so its intermission
+		// protection no longer prevents it from closing.
+		m_iIntermission = intermission;
 
-			if (!bStartMusic)
-			{
-				gEngfuncs.pfnClientCmd("mp3 play sound/music/MX_A5_SUBMIX7_TRIM.mp3\n");
-				bStartMusic = true;
-			}
-		}
-		else if ( !m_iIntermission && intermission )
+		if (gViewPort)
 		{
-			m_iIntermission = intermission;
-			CenterPrint("");
+			gViewPort->HideCommandMenu();
+			gViewPort->UpdateSpectatorPanel();
+		}
+
+		HideVGUI2ScoreBoard();
+
+		bEndMusic = false;
+
+		if (!bStartMusic)
+		{
+			gEngfuncs.pfnClientCmd(
+				"mp3 play sound/music/MX_A5_SUBMIX7_TRIM.mp3\n");
+
+			bStartMusic = true;
+		}
+	}
+	else if (!m_iIntermission && intermission)
+	{
+		m_iIntermission = intermission;
+
+		CenterPrint("");
+
+		if (gViewPort)
+		{
 			gViewPort->HideCommandMenu();
 			gViewPort->HideVGUIMenu();
-			gViewPort->ShowScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
-			bStartMusic = false;
+		}
 
-			if (!bEndMusic)
-			{
-				gEngfuncs.pfnClientCmd("mp3 play sound/music/MX_A5_SUBMIX8.mp3\n");
+		ShowVGUI2ScoreBoard();
+
+		bStartMusic = false;
+
+		if (!bEndMusic)
+		{
+			gEngfuncs.pfnClientCmd(
+				"mp3 play sound/music/MX_A5_SUBMIX8.mp3\n");
+
 #ifdef _STEAMWORKS
-				if (SteamUserStats())
+			if (SteamUserStats())
+			{
+				if (SteamUserStats()->GetStat(
+					PLR_MATCH_STATS,
+					&matchStatValue))
 				{
-					if (SteamUserStats()->GetStat(PLR_MATCH_STATS, &matchStatValue))
-					{
-						SteamUserStats()->SetStat(PLR_MATCH_STATS, matchStatValue + 1);
-						SteamUserStats()->StoreStats();
-						gEngfuncs.Con_Printf("Match stat incremented to %d\n", matchStatValue + 1);
-					}
-					else
-						gEngfuncs.Con_Printf("The STAT INCREMENT failed because the API key hasn't been published or something. Idk I just work here.\nSay hiya to Midge for me, Homer.\n");
+					SteamUserStats()->SetStat(
+						PLR_MATCH_STATS,
+						matchStatValue + 1);
+
+					SteamUserStats()->StoreStats();
+
+					gEngfuncs.Con_Printf(
+						"Match stat incremented to %d\n",
+						matchStatValue + 1);
 				}
-#endif
-				bEndMusic = true;
+				else
+				{
+					gEngfuncs.Con_Printf(
+						"The STAT INCREMENT failed because the API key "
+						"hasn't been published or something. Idk I just "
+						"work here.\nSay hiya to Midge for me, Homer.\n");
+				}
 			}
+#endif
 
-			// Take a screenshot if the client's got the cvar set
-			if ( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )
-				m_flShotTime = flTime + 1.0;	// Take a screenshot in a second
-
-			if ( m_pCvarAutostop->value > 0.0f )
-				m_flStopTime = flTime + 3.0; // Stop demo recording in three seconds
+			bEndMusic = true;
 		}
 	}
 

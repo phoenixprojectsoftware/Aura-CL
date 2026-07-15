@@ -92,6 +92,10 @@ void CClientViewport::ShowScoreBoard()
 
 void CClientViewport::HideScoreBoard()
 {
+	// the intermission scoreboard remains on-screen until we leave
+	if (gHUD.m_iIntermission)
+		return;
+
 	SetMouseInputEnabled(false);
 
 	if (m_pScorePanel)
