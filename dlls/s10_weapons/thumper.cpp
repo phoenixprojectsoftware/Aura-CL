@@ -30,7 +30,7 @@ void CThumper::Spawn()
 	Precache();
 
 	m_iId = WEAPON_THUMPER;
-	SET_MODEL(ENT(pev), "models/w_railgun.mdl");
+	SET_MODEL(ENT(pev), "models/weapons/thumper/w_rock2.mdl");
 
 	m_iDefaultAmmo = THUMPER_DEFAULT_GIVE;
 
@@ -40,7 +40,7 @@ void CThumper::Spawn()
 void CThumper::Precache()
 {
 	PRECACHE_MODEL("models/weapons/thumper/v_rock2.mdl");
-	PRECACHE_MODEL("models/w_railgun.mdl");
+	PRECACHE_MODEL("models/weapons/thumper/w_rock2.mdl");
 	PRECACHE_MODEL("models/weapons/thumper/p_rock2.mdl");
 
 	PRECACHE_SOUND("weapons/hx40/hx40_fire.wav");
