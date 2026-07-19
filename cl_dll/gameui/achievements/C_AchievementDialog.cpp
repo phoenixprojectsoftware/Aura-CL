@@ -195,8 +195,6 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 	SetKeyBoardInputEnabled(true);
 	SetMouseInputEnabled(true);
 
-	MoveToCenterOfScreen();
-
 	SetProportional(false);
 	SetTitleBarVisible(true);
 	SetMinimizeButtonVisible(false);
@@ -249,6 +247,8 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 
 	ui_TotalProgress = GetChildPanel("PercentageBar", vgui2::ImagePanel);
 	ui_TotalProgress->SetFillColor(Color(191, 0, 255, 255));
+
+	MoveToCenterOfScreen();
 }
 
 void C_AchievementDialog::OnTick()
