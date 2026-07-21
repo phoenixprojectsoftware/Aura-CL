@@ -280,7 +280,13 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 	if ((char)victim == -1)
 	{
 		rgDeathNoticeList[i].iNonPlayerKill = TRUE;
-		strcpy(rgDeathNoticeList[i].szVictim, killedwith + 2);
+
+		// firefight kill etc. - we prevent corrupted data here
+		strncpy(rgDeathNoticeList[i].szVictim, "an enemy", sizeof(rgDeathNoticeList[i].szVictim));
+#ifdef _DEBUG
+		ConsolePrint("FIREFIGHT KILL DETECTED\n");
+#endif
+		rgDeathNoticeList[i].szVictim[sizeof(rgDeathNoticeList[i].szVictim) - 1] = 0;
 	}
 	else
 	{
