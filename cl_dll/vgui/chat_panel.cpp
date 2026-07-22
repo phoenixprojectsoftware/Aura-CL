@@ -77,8 +77,10 @@ static Color GetConsoleColor()
 		}
 	}
 
+	gEngfuncs.Con_Printf("CHAT COLOUR: %d %d %d", r, g, b);
+
 	r = clamp(r, 0, 255);
-	g = clamp(r, 0, 255);
+	g = clamp(g, 0, 255);
 	b = clamp(b, 0, 255);
 
 	return Color(r, g, b, 255);
