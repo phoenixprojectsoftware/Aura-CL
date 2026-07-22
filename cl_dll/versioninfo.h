@@ -1,8 +1,12 @@
 // Aura Version Info Header
 // If you're using Aura for your own mod, change the values for the zamnhlmp definers.
 
+// Aura Version
+#define AURA_VER_MAJOR 3
+#define AURA_VERSION_MINOR 0
+#define AURA_VERSION_PATCH 0
+
 // These are in the order they appear in PrintVersion()
-#define auraVersion "v3.0"
 #ifdef _HALO
 #define gameName "Halo: GoldSource"
 #else

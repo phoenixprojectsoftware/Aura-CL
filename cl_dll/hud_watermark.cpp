@@ -158,5 +158,11 @@ int CHudWatermark::Draw(float time)
 	}
 #endif
 
+	if (!IsBetaApp() && gHUD.m_Settings.IsOldServer())
+	{
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 8, "OUTDATED SERVER!", 255, 0, 0);
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 9, "Whoever is running this server must update it.", 255, 0, 0);
+	}
+
 	return 0;
 }

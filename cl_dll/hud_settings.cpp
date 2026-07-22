@@ -6,11 +6,26 @@
 
 DECLARE_MESSAGE(m_Settings, Settings);
 
+static bool IsAuraVerOld(const char* pszVersion)
+{
+	if (!pszVersion || !pszVersion[0])
+		return true;
+
+	int major = 0;
+	int minor = 0;
+
+	if (sscanf(pszVersion, "%d.%d", &major, &minor) < 1)
+		return true;
+
+	return major < AURA_VER_MAJOR;
+}
+
 int CHudSettings::Init()
 {
 	HOOK_MESSAGE(Settings);
 
 	m_iFlags = 0;
+	m_bOldBadVersion = false;
 
 	gamemode[ARRAYSIZE(gamemode) - 1] = '\0';
 	ag_version[ARRAYSIZE(ag_version) - 1] = '\0';
@@ -121,6 +136,8 @@ int CHudSettings::MsgFunc_Settings(const char* name, int size, void* buf)
 	weapon_stay = (READ_BYTE() != 0);
 
 	strncpy(ag_version, READ_STRING(), ARRAYSIZE(ag_version) - 1);
+	m_bOldBadVersion = IsAuraVerOld(ag_version);
+
 	strncpy(wallgauss, READ_STRING(), ARRAYSIZE(wallgauss) - 1);
 	strncpy(headshot, READ_STRING(), ARRAYSIZE(headshot) - 1);
 	strncpy(blast_radius, READ_STRING(), ARRAYSIZE(blast_radius) - 1);

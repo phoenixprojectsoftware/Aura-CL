@@ -637,7 +637,7 @@ int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
 void PrintVersion()
 {
 	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
-	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
+	gEngfuncs.Con_Printf("\n  Aura %d.%d.%d", AURA_VER_MAJOR,AURA_VERSION_MINOR,AURA_VERSION_PATCH);
 	gEngfuncs.Con_Printf("\n  %s", gameName);
 	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
 	gEngfuncs.Con_Printf("\n  Aura SDK:");
