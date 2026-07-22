@@ -76,7 +76,7 @@ public:
 #define	WEAPON_GLOCK			2
 #define WEAPON_PYTHON			3
 #define WEAPON_MP5				4
-#define WEAPON_CHAINGUN			5
+// #define WEAPON_CHAINGUN			5 // our last weapon slot?!
 #define WEAPON_CROSSBOW			6
 #define WEAPON_SHOTGUN			7
 #define WEAPON_RPG				8
@@ -105,16 +105,15 @@ public:
 #endif
 
 #define WEAPON_BATTLERIFLE 30
-#define WEAPON_HLDMAR 32
-#define WEAPON_RAILGUN 33
-#define WEAPON_HEALER 34
-#define WEAPON_THUMPER 35
+#define WEAPON_HLDMAR 28
+#define WEAPON_HEALER 29
+#define WEAPON_THUMPER 21
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
 #define WEAPON_SUIT				31	// ?????
 
-#define MAX_WEAPONS			40
+#define MAX_WEAPONS			32
 
 
 #define MAX_NORMAL_BATTERY	100

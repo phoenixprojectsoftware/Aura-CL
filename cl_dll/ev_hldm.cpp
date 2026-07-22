@@ -121,8 +121,6 @@ void EV_FireM249(struct event_args_s* args);
 void EV_SniperRifle(struct event_args_s* args);
 void EV_Knife(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
-void EV_RayTouch(particle_s* particle);
-void EV_FireRailgun(event_args_t* args);
 void EV_FireThumper(event_args_t* args);
 
 #ifdef _HALO
@@ -1088,86 +1086,6 @@ void EV_FireBattleRifle(event_args_t* args)
 }
 //======================
 //	    BATTLERIFLE END
-//======================
-
-//======================
-//	    RAILGUN START
-//======================
-void EV_RayTouch(particle_s* particle)
-{
-	vec3_t start = particle->org - particle->vel.Normalize() * 32;
-	vec3_t end = particle->org + particle->vel.Normalize() * 32;
-
-	pmtrace_t tr;
-	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
-	gEngfuncs.pEventAPI->EV_PushPMStates();
-	gEngfuncs.pEventAPI->EV_SetSolidPlayers(-1);
-	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(start, end, PM_STUDIO_BOX, -1, &tr);
-
-	int idx;
-	char decalname[32];
-	physent_t* pe;
-
-	pe = gEngfuncs.pEventAPI->EV_GetPhysent(tr.ent);
-	if (pe && (/*pev->solid == SOLID_BSP || */pe->movetype == MOVETYPE_PUSHSTEP))
-	{
-		decalname[0] = '\0';
-		idx = gEngfuncs.pfnRandomLong(0, 4);
-		sprintf(decalname, "{shot%i", idx + 1);
-		EV_HLDM_GunshotDecalTrace(&tr, decalname);
-
-		if (gEngfuncs.PM_PointContents(tr.endpos, NULL) != CONTENTS_WATER)
-			gEngfuncs.pEfxAPI->R_SparkShower(tr.endpos);
-	}
-
-	gEngfuncs.pEventAPI->EV_PopPMStates();
-}
-
-void EV_FireRailgun(event_args_t* args)
-{
-	int idx;
-	vec3_t origin, forward, right, up;
-
-	idx = args->entindex;
-	EV_GetGunPosition(args, origin, args->origin);
-	AngleVectors(args->angles, forward, right, up);
-
-	origin = origin - up * 4 + right * 4 + forward * 2;
-
-	vec3_t dest;
-	VectorMA(origin, 8192, forward, dest);
-
-	pmtrace_t tr;
-	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
-	gEngfuncs.pEventAPI->EV_PushPMStates();
-	gEngfuncs.pEventAPI->EV_SetSolidPlayers(idx - 1);
-	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(origin, dest, PM_STUDIO_BOX, -1, &tr);
-	gEngfuncs.pEventAPI->EV_PopPMStates();
-
-	vec3_t vel, dir, end;
-	VectorCopy(tr.endpos, end);
-	VectorSubtract(end, origin, dir);
-
-	float len = dir.Length();
-	float speed = 2000;
-
-	VectorNormalize(dir);
-	VectorScale(dir, speed, vel);
-
-	gEngfuncs.pEfxAPI->R_UserTracerParticle(origin, vel, len / speed, 2, 0.2, 0, EV_RayTouch);
-
-	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/railgun.wav", 1.0, ATTN_NORM, 0, PITCH_NORM);
-
-	if (EV_IsLocal(idx))
-	{
-		gEngfuncs.pEventAPI->EV_WeaponAnimation(1, 0); // 1 == RAILGUN_FIRE. cba to put the enum in the header tbh.
-		Punch(-3, 0, 0);
-	}
-}
-//======================
-//	    RAILGUN END
 //======================
 
 //======================
