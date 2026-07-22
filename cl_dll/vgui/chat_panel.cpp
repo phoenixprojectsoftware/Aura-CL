@@ -21,6 +21,7 @@
 #include "../hud.h"
 #include "../color_tags.h"
 
+
 extern "C"
 {
 	void IN_DeactivateMouse();
@@ -52,6 +53,35 @@ namespace
 	EngineCommandFunction g_pOriginalMessageMode2 = nullptr;
 
 	CChatPanel* g_pAuraChatPanel = nullptr;
+}
+
+static Color GetConsoleColor()
+{
+	const char* pszConColor = gEngfuncs.pfnGetCvarString("con_color");
+
+	int r = 255;
+	int g = 178;
+	int b = 0;
+
+	if (pszConColor && pszConColor[0])
+	{
+		int parsedR = r;
+		int parsedG = g;
+		int parsedB = b;
+
+		if (sscanf(pszConColor, "%d %d %d", &parsedR, &parsedG, &parsedB) == 3)
+		{
+			r = parsedR;
+			g = parsedG;
+			b = parsedB;
+		}
+	}
+
+	r = clamp(r, 0, 255);
+	g = clamp(r, 0, 255);
+	b = clamp(b, 0, 255);
+
+	return Color(r, g, b, 255);
 }
 
 static AuraCmdFunction* CommandFromHandle(unsigned int handle)
@@ -1343,10 +1373,7 @@ void CChatPanel::ApplySchemeSettings(
 			"ChatFont",
 			false);
 
-	m_DefaultTextColor =
-		scheme->GetColor(
-			"ChatTextColor",
-			Color(255, 178, 0, 255));
+	m_DefaultTextColor = GetConsoleColor();
 
 	const Color backgroundColor =
 		scheme->GetColor(
