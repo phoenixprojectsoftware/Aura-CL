@@ -1011,6 +1011,8 @@ CChatPanel::~CChatPanel()
 void CChatPanel::StartMessageMode(
 	int messageMode)
 {
+	m_DefaultTextColor = GetConsoleColor();
+
 	if (!m_pChatInput)
 		return;
 
