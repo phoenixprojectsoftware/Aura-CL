@@ -311,7 +311,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 #if defined(_STEAMWORKS) && !defined(_HALO)
 		if (!SteamUserStats())
 			gEngfuncs.Con_Printf("Failed to update Steam Stats because it's NULL.\n");
-		if (SteamUserStats())
+		if (SteamUserStats() && INSTAGIB != g_iGameType && OITC != g_iGameType)
 		{
 			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &plrKillStatValue))
 			{
