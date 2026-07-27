@@ -721,8 +721,8 @@ void CScorePanel::UpdatePlayerList()
 			IsPhoenixID(steam2ID.c_str());
 
 		if (isPhoenixDeveloper)
-			if (!isAchievementUnlocked(ACH_PHOENIX_PARTY))
-				UnlockAchievement(ACH_PHOENIX_PARTY);
+			if (!g_AchievementMgr.isAchievementUnlocked(ACH_PHOENIX_PARTY))
+				g_AchievementMgr.UnlockAchievement(ACH_PHOENIX_PARTY);
 
 #ifdef _DEBUG
 		static bool printedSteamIDs[

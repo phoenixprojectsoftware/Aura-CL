@@ -187,8 +187,8 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	CL_LoadGameUI();
 
 #ifndef _HALO
-	if (!isAchievementUnlocked(3))
-		UnlockAchievement(3);
+	if (!g_AchievementMgr.isAchievementUnlocked(3))
+		g_AchievementMgr.UnlockAchievement(3);
 
 	InitGreeting();
 

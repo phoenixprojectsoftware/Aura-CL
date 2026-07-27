@@ -9,12 +9,18 @@
  *
  ****/
 
+#include "stage_level.h"
 #include "achievement_manager.h"
 #include <ctime>
 
 #if defined (_STEAMWORKS) && !defined (_HALO)
-void UnlockAchievement(int achievementID)
+CAchievementMgr g_AchievementMgr;
+
+void CAchievementMgr::UnlockAchievement(int achievementID)
 {
+	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
 	const char* apiName = GetAchievementAPIName(achievementID);
 	if (apiName && SteamUserStats())
 	{
@@ -25,8 +31,11 @@ void UnlockAchievement(int achievementID)
 	}
 }
 
-void UnlockAchievementByName(const char* apiName)
+void CAchievementMgr::UnlockAchievementByName(const char* apiName)
 {
+	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
 	if (!apiName || !apiName[0])
 		return;
 
@@ -39,7 +48,7 @@ void UnlockAchievementByName(const char* apiName)
 	}
 }
 
-bool isAchievementUnlocked(int achievementID)
+bool CAchievementMgr::isAchievementUnlocked(int achievementID)
 {
 	const char* apiName = GetAchievementAPIName(achievementID);
 	if (apiName && SteamUserStats())
@@ -51,7 +60,7 @@ bool isAchievementUnlocked(int achievementID)
 	return false;
 }
 
-void CheckSpecialDay()
+void CAchievementMgr::CheckSpecialDay()
 {
 	std::time_t t = std::time(nullptr);
 	std::tm* now = std::localtime(&t);
@@ -68,6 +77,20 @@ void CheckSpecialDay()
 	if (day == 20)
 		if (!isAchievementUnlocked(4))
 			UnlockAchievement(4);
+}
+
+void CAchievementMgr::StatIncrement(const char* pchName)
+{
+	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
+	int statValue = 0;
+
+	if (SteamUserStats() && SteamUserStats()->GetStat(pchName, &statValue))
+	{
+		SteamUserStats()->SetStat(pchName, statValue + 1);
+		SteamUserStats()->StoreStats();
+	}
 }
 
 #endif

@@ -120,6 +120,10 @@ add_sources(
 	rainbow.cpp
 	rainbow.h
 	saytext.cpp
+	sha256.c
+	sha256.h
+	stage_level.cpp
+	stage_level.h
 	status_icons.cpp
 	statusbar.cpp
 	steam_id.cpp

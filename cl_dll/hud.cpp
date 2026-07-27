@@ -350,7 +350,7 @@ int __MsgFunc_Achievement(const char* name, int size, void* buf)
 		return 1;
 
 #if defined(_STEAMWORKS) && !defined(_HALO)
-	UnlockAchievementByName(pszAchievement);
+	g_AchievementMgr.UnlockAchievementByName(pszAchievement);
 #endif
 
 	return 1;
@@ -1020,7 +1020,7 @@ void CHud :: VidInit( void )
 	GetClientVoiceMgr()->VidInit();
 
 #if defined(_STEAMWORKS) && !defined(_HALO)
-	CheckSpecialDay();
+	g_AchievementMgr.CheckSpecialDay();
 #endif
 }
 

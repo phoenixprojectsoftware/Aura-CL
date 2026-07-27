@@ -170,30 +170,7 @@ int CHud :: Redraw( float flTime, int intermission )
 				"mp3 play sound/music/MX_A5_SUBMIX8.mp3\n");
 
 #ifdef _STEAMWORKS
-			if (SteamUserStats())
-			{
-				if (SteamUserStats()->GetStat(
-					PLR_MATCH_STATS,
-					&matchStatValue))
-				{
-					SteamUserStats()->SetStat(
-						PLR_MATCH_STATS,
-						matchStatValue + 1);
-
-					SteamUserStats()->StoreStats();
-
-					gEngfuncs.Con_Printf(
-						"Match stat incremented to %d\n",
-						matchStatValue + 1);
-				}
-				else
-				{
-					gEngfuncs.Con_Printf(
-						"The STAT INCREMENT failed because the API key "
-						"hasn't been published or something. Idk I just "
-						"work here.\nSay hiya to Midge for me, Homer.\n");
-				}
-			}
+			g_AchievementMgr.StatIncrement(PLR_MATCH_STATS);
 #endif
 
 			bEndMusic = true;

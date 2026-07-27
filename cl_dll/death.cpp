@@ -309,40 +309,29 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		!rgDeathNoticeList[i].iSuicide)
 	{
 #if defined(_STEAMWORKS) && !defined(_HALO)
-		if (!SteamUserStats())
-			gEngfuncs.Con_Printf("Failed to update Steam Stats because it's NULL.\n");
-		if (SteamUserStats() && INSTAGIB != g_iGameType && OITC != g_iGameType)
+		if (INSTAGIB != g_iGameType && OITC != g_iGameType)
 		{
-			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &plrKillStatValue))
-			{
-				SteamUserStats()->SetStat(PLR_KILL_STATS, plrKillStatValue + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", plrKillStatValue + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The STAT INCREMENT failed because the API key hasn't been published or something. Idk I just work here.\nSay hiya to Midge for me, Homer.\n");
-			}
+			g_AchievementMgr.StatIncrement(PLR_KILL_STATS);
 		}
 
-		if (!isAchievementUnlocked(1))
+		if (!g_AchievementMgr.isAchievementUnlocked(1))
 		{
-			UnlockAchievement(1);
+			g_AchievementMgr.UnlockAchievement(1);
 			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
 		}
 
 		// DISPLACER ACHIEVEMENT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "displacer_ball"))
 		{
-			if (!isAchievementUnlocked(19))
-				UnlockAchievement(19);
+			if (!g_AchievementMgr.isAchievementUnlocked(19))
+				g_AchievementMgr.UnlockAchievement(19);
 		}
 
 		// PENGUIN ACHIEVEMENT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "penguin"))
 		{
-			if (!isAchievementUnlocked(20))
-				UnlockAchievement(20);
+			if (!g_AchievementMgr.isAchievementUnlocked(20))
+				g_AchievementMgr.UnlockAchievement(20);
 			else
 				gEngfuncs.Con_Printf("It looks like you've already done this. Very clever....\n");
 		}
@@ -350,67 +339,33 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		// TRIPMINE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
 		{
-			if (SteamUserStats()->GetStat(TRIPMINE_KILL_STATS, &tripmineKillStat))
-			{
-				SteamUserStats()->SetStat(TRIPMINE_KILL_STATS, tripmineKillStat + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Tripmine kill stat incremented to %d\n", tripmineKillStat + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The tripmine Steam Stat failed.\n");
-			}
+			g_AchievementMgr.StatIncrement(TRIPMINE_KILL_STATS);
 		}
 
 		// SNIPER RIFLE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "sniperrifle"))
 		{
-			if (SteamUserStats()->GetStat(SNIPER_KILL_STATS, &sniperKillStat))
-			{
-				SteamUserStats()->SetStat(SNIPER_KILL_STATS, sniperKillStat + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Sniper Rifle kill stat incremented to %d\n", sniperKillStat + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The sniper Steam Stat failed.\n");
-			}
+			g_AchievementMgr.StatIncrement(SNIPER_KILL_STATS);
 		}
 
 		// SNARK KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "snark"))
 		{
-			if (SteamUserStats()->GetStat(SNARK_KILL_STATS, &snarkKillStat))
-			{
-				SteamUserStats()->SetStat(SNARK_KILL_STATS, snarkKillStat + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Snark kill stat incremented to %d\n", snarkKillStat + 1);
-			}
-			else
-				gEngfuncs.Con_Printf("The Snark Steam Stat failed.\n");
+			g_AchievementMgr.StatIncrement(SNARK_KILL_STATS);
 		}
 
 		// CLOSE CALL ACHIEVEMENT
 		if (gHUD.m_Health.m_iHealth <= 10)
-			if (!isAchievementUnlocked(6))
-				UnlockAchievement(6);
+			if (!g_AchievementMgr.isAchievementUnlocked(6))
+				g_AchievementMgr.UnlockAchievement(6);
 
 		// POINTY END ACHIEVEMENT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "crowbar") || !stricmp(rgDeathNoticeList[i].szWeapon, "knife") || (!stricmp(rgDeathNoticeList[i].szWeapon, "pipewrench")))
 		{
-			if (!isAchievementUnlocked(21))
-				UnlockAchievement(21);
+			if (!g_AchievementMgr.isAchievementUnlocked(21))
+				g_AchievementMgr.UnlockAchievement(21);
 
-			if (SteamUserStats()->GetStat(PLR_MELEE_KILLS_STATS, &plrMeleeKillStat))
-			{
-				SteamUserStats()->SetStat(PLR_MELEE_KILLS_STATS, plrMeleeKillStat + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Melee kill stat incremented to %d\n", plrMeleeKillStat + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The melee kill Steam Stat failed.\n");
-			}
+			g_AchievementMgr.StatIncrement(PLR_MELEE_KILLS_STATS);
 		}
 
 		// UNDERWATER KILL STAT
@@ -418,16 +373,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		extern int g_iClientWaterLevel;
 		if (g_iClientWaterLevel >= 2)
 		{
-			if (SteamUserStats()->GetStat(PLR_UW_KILLS_STATS, &uwKills))
-			{
-				SteamUserStats()->SetStat(PLR_UW_KILLS_STATS, uwKills + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Underwater kill stat incremented to %d\n", uwKills + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The underwater kill Steam Stat failed.\n");
-			}
+			g_AchievementMgr.StatIncrement(PLR_UW_KILLS_STATS);
 		}
 #endif
 
