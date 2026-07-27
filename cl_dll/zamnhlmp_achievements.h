@@ -112,7 +112,8 @@ inline const char* GetAchievementAPIName(int achievementID)
 // =====================
 // STATISTICS START
 // =====================
-#define PLR_KILL_STATS "plr_kill"
+#define PLR_KILL_STATS "player_kill" // new key name after system overhaul
+#define OLD_KILL_STAT "plr_kill"
 #define PLR_UW_KILLS_STATS "uw_kill"
 #define PLR_MELEE_KILLS_STATS "ml_kill"
 #define XFIRE_WIN_STATS "xfire_win"

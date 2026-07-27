@@ -193,6 +193,13 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	InitGreeting();
 
 	g_Leaderboards.Init();
+
+	int oldKillStatTransfer;
+	if (SteamUserStats() && SteamUserStats()->GetStat(OLD_KILL_STAT, &oldKillStatTransfer))
+	{
+		SteamUserStats()->SetStat(PLR_KILL_STATS, oldKillStatTransfer);
+		SteamUserStats()->StoreStats();
+	}
 #endif
 
 	gVideoPlayer.Init();

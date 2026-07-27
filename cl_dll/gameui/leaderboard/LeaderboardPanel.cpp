@@ -12,6 +12,7 @@
 #ifndef _HALO
 
 #include "LeaderboardPanel.h"
+#include "../../achievement_manager.h"
 
 #include <vgui/ISurface.h>
 #include <vgui/IScheme.h>
@@ -32,7 +33,7 @@ namespace
 
 	static const SteamStatRow g_PlayerStats[] =
 	{
-		{ "plr_kill",        "Players Killed" },
+		{ PLR_KILL_STATS,        "Players Killed" },
 		{ "trp_kill",        "Players Killed with TRIPMINE" },
 		{ "sqk_kill",        "Players Killed with SNARK" },
 		{ "snp_kill",        "Players Killed with SNIPER RIFLE" },
