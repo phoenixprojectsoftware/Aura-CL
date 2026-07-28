@@ -1,6 +1,10 @@
 #ifndef VGUI_BRIDGE_H
 #define VGUI_BRIDGE_H
 
+// init
+void ClientViewport_VidInit();
+void ClientVGUI_RestoreProportionalBaseCallback();
+
 // Scoreboard
 bool VGUI2ViewportAvailable();
 void ShowVGUI2ScoreBoard();

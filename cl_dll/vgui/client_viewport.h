@@ -10,6 +10,7 @@ class CClientViewport : public vgui2::EditablePanel {
 
 public:
 	CClientViewport();
+	~CClientViewport() override;
 
 	void Start();
 	void VidInit();

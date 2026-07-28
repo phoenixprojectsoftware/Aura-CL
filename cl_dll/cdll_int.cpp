@@ -45,6 +45,7 @@ extern "C"
 #include "tri.h"
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 #include "console.h"
 #include "audio/openal_wav.h"
 
@@ -225,6 +226,9 @@ int CL_DLLEXPORT HUD_VidInit( void )
 	gHUD.VidInit();
 
 	VGui_Startup();
+
+	ClientViewport_VidInit();
+	ClientVGUI_RestoreProportionalBaseCallback();
 
 	return 1;
 }

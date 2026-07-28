@@ -38,6 +38,14 @@ CClientViewport::CClientViewport()
 	HideClientUI();
 }
 
+CClientViewport::~CClientViewport()
+{
+	if (g_pViewport == this)
+	{
+		g_pViewport = nullptr;
+	}
+}
+
 void CClientViewport::Start()
 {
 	// The scoreboard is created in the constructor.
@@ -241,5 +249,13 @@ void StopVGUI2ChatMessageMode()
 	if (g_pViewport)
 	{
 		g_pViewport->StopChatMessageMode();
+	}
+}
+
+void ClientViewport_VidInit()
+{
+	if (g_pViewport)
+	{
+		g_pViewport->VidInit();
 	}
 }
