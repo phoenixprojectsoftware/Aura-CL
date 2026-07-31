@@ -33,13 +33,61 @@ namespace
 
 	static const SteamStatRow g_PlayerStats[] =
 	{
+		// pre 2.10.1
 		{ PLR_KILL_STATS,        "Players Killed" },
-		{ "trp_kill",        "Players Killed with TRIPMINE" },
-		{ "sqk_kill",        "Players Killed with SNARK" },
-		{ "snp_kill",        "Players Killed with SNIPER RIFLE" },
-		{ "matches_played",  "Matches Played" },
-		{ "uw_kill",         "Players Killed While Underwater" },
-		{ "ml_kill",         "Players Killed With Melee Weapons" },
+		{ PLR_MATCH_STATS,  "Matches Finished" },
+		{ PLR_UW_KILLS_STATS,         "Players Killed While Underwater" },
+		{ PLR_MELEE_KILLS_STATS,         "Players Killed With Melee Weapons" },
+
+		// post 2.10.1
+		// WEAPONS
+		// TIER 2
+		{GLOCK_SHOTS, "GLOCK - shots fired"},
+		{GLOCK_KILLS, "GLOCK- kills"},
+		{MAGNUM_SHOTS, ".357 MAGNUM - shots fired"},
+		{MAGNUM_KILLS, ".357 MAGNUM - kills"},
+		{DEAGLE_SHOTS, "DESERT EAGLE - shots fired"},
+		{DEAGLE_KILLS, "DESERT EAGLE - kills"},
+		// TIER 3
+		{MP5_SHOTS, "9mm ASSAULT RIFLE - shots fired"},
+		{MP5_ALTFIRE, "9mm ASSAULT RIFLE - M203s fired"},
+		{MP5_KILLS, "9mm ASSAULT RIFLE - kills"},
+		{M203_KILLS, "M203 GRENADE - kills"},
+		{OLR_SHOTS, "OPERATOR LIGHT RIFLE - shots fired"},
+		{OLR_KILLS, "OPERATOR LIGHT RIFLE - kills"},
+		{SHOTGUN_SHOTS, "SHOTGUN - shots fired"},
+		{SHOTGUN_KILLS, "SHOTGUN - kills"},
+		{XBOW_SHOTS, "CROSSBOW - bolts fired"},
+		{XBOW_KILLS, "CROSSBOW - kills"},
+		// TIER 4
+		{RPG_SHOTS, "ROCKET LAUNCHER - rockets propelled"},
+		{RPG_KILLS, "ROCKET LAUNCHER - kills"},
+		{HX40_SHOTS, "HX-40 THUMPER - M203s fired"},
+		{TAU_SHOTS, "TAU-X3 CANNON - shots fired"},
+		{TAU_KILLS, "TAU-X3 CANNON - kills"},
+		{GLUON_KILLS, "GLUON GUN - kills"},
+		{HIVEHAND_SHOTS, "HIVEHAND - shots fired"},
+		{HIVEHAND_KILLS, "HIVEHAND - kills"},
+		// TIER 5
+		{TRIPMINE_SHOTS, "LASER TRIPMINES PLACED"},
+		{TRIPMINE_KILLS, "LASER TRIPMINE - kills"},
+		{SNARK_SHOTS, "SNARKS DROPPED"},
+		{ SNARK_KILLS,        "SNARK - kills" },
+		{PENGUIN_SHOTS, "PENGUINS DROPPED"},
+		{PENGUIN_KILLS, "PENGUIN - kills"},
+		// TIER 6
+		{SAW_SHOTS, "M249 - shots fired"},
+		{SAW_KILLS, "M249 - kills"},
+		{DISPLACER_SHOTS, "XV11382 DISPLACER CANNON - portals fired"},
+		{DISPLACER_SELF, "XV11382 DISPLACER CANNON - self-displacements performed"},
+		{DISPLACER_KILLS, "XV11382 DISPLACER CANNON - kills"},
+		{SNIPER_SHOTS, "SNIPER RIFLE - shots fired"},
+		{ SNIPER_KILLS,        "SNIPER RIFLE - kills" },
+		// TIER 7
+		{SPORE_SHOTS, "SPORE LAUNCHER - shots fired"},
+		{SPORE_KILLS, "SPORE LAUNCHER - kills"},
+		{SHOCK_SHOTS, "SHOCK RIFLE - shots fired"},
+		{SHOCK_KILLS, "SHOCK RIFLE - kills"}
 	};
 }
 

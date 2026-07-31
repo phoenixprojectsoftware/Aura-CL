@@ -79,7 +79,7 @@ void CAchievementMgr::CheckSpecialDay()
 			UnlockAchievement(4);
 }
 
-void CAchievementMgr::StatIncrement(const char* pchName)
+void CAchievementMgr::StatIncrement(const char* pchName, int increment)
 {
 	if (!g_StageLevel.IsCurrentMapHashValid())
 		return;
@@ -88,7 +88,7 @@ void CAchievementMgr::StatIncrement(const char* pchName)
 
 	if (SteamUserStats() && SteamUserStats()->GetStat(pchName, &statValue))
 	{
-		SteamUserStats()->SetStat(pchName, statValue + 1);
+		SteamUserStats()->SetStat(pchName, statValue + increment);
 		SteamUserStats()->StoreStats();
 	}
 }

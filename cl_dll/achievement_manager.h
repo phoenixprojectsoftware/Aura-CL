@@ -25,7 +25,7 @@ public:
 
 	void CheckSpecialDay();
 
-	void StatIncrement(const char* pchName);
+	void StatIncrement(const char* pchName, int increment = 1);
 };
 
 extern CAchievementMgr g_AchievementMgr;

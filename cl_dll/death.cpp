@@ -339,19 +339,19 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		// TRIPMINE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
 		{
-			g_AchievementMgr.StatIncrement(TRIPMINE_KILL_STATS);
+			g_AchievementMgr.StatIncrement(TRIPMINE_KILLS);
 		}
 
 		// SNIPER RIFLE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "sniperrifle"))
 		{
-			g_AchievementMgr.StatIncrement(SNIPER_KILL_STATS);
+			g_AchievementMgr.StatIncrement(SNIPER_KILLS);
 		}
 
 		// SNARK KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "snark"))
 		{
-			g_AchievementMgr.StatIncrement(SNARK_KILL_STATS);
+			g_AchievementMgr.StatIncrement(SNARK_KILLS);
 		}
 
 		// CLOSE CALL ACHIEVEMENT

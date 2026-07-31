@@ -27,7 +27,7 @@
 #include <SDL2/SDL.h>
 
 #ifdef _STEAMWORKS
-#include <steamworks/steam_api.h>
+#include "achievement_manager.h"
 #endif
 
 #include "eventscripts.h"
@@ -2559,6 +2559,14 @@ void EV_FireDisplacer(event_args_t* args)
 		{
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(DISPLACER_FIRE, 0);
 			Punch(5, 0, 0);
+			if (!args->bparam1)
+			{
+				g_AchievementMgr.StatIncrement(DISPLACER_SELF);
+			}
+			else
+			{
+				g_AchievementMgr.StatIncrement(DISPLACER_SHOTS);
+			}
 		}
 
 		break;
@@ -2601,6 +2609,7 @@ void EV_FireM249(event_args_t* args)
 
 		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-2, 2));
 		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
+		g_AchievementMgr.StatIncrement(SAW_SHOTS);
 	}
 
 	Legacy_Vector ShellVelocity;
@@ -2672,6 +2681,9 @@ void EV_PenguinFire(event_args_t* args)
 	{
 		if (args->ducking)
 			origin.z += 18;
+
+		Punch(20, 0, 0);
+		g_AchievementMgr.StatIncrement(PENGUIN_SHOTS);
 
 		gEngfuncs.pEventAPI->EV_PushPMStates();
 		gEngfuncs.pEventAPI->EV_SetSolidPlayers(args->entindex - 1);
