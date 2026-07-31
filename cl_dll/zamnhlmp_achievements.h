@@ -22,7 +22,7 @@ static const char* g_PhoenixSteamIDs[] = {
 	"0:1:54795934", // jan
 	"0:1:63945665", // rafael
 	"0:1:484919737", // frostlander
-	"0:1:457283837", // berony
+	"0:0:457283837", // berony
 	"0:1:516167454", // hitoshii
 	"0:0:421607015", // galexion
 	"0:0:105253777", // finger
