@@ -15,26 +15,12 @@
 #if defined (_STEAMWORKS) && !defined (_HALO)
 void UnlockAchievement(int achievementID)
 {
-	const char* apiName = GetAchievementAPIName(achievementID);
-	if (apiName && SteamUserStats())
-	{
-		if (SteamUserStats()->SetAchievement(apiName))
-		{
-			SteamUserStats()->StoreStats();
-		}
-	}
+	return;
 }
 
 bool isAchievementUnlocked(int achievementID)
 {
-	const char* apiName = GetAchievementAPIName(achievementID);
-	if (apiName && SteamUserStats())
-	{
-		bool achieved = false;
-		SteamUserStats()->GetAchievement(apiName, &achieved);
-		return achieved;
-	}
-	return false;
+	return true;
 }
 
 #ifdef DATE_ACH

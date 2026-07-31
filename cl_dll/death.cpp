@@ -294,31 +294,6 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		!rgDeathNoticeList[i].iNonPlayerKill &&
 		!rgDeathNoticeList[i].iSuicide)
 	{
-#if defined(_STEAMWORKS) && !defined(_HALO)
-		if (!SteamUserStats())
-			gEngfuncs.Con_Printf("Failed to update Steam Stats because it's NULL.\n");
-		if (SteamUserStats())
-		{
-			int32 statValue = 0;
-			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &statValue))
-			{
-				SteamUserStats()->SetStat(PLR_KILL_STATS, statValue + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", statValue + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The STAT INCREMENT failed because the API key hasn't been published or something. Idk I just work here.\nSay hiya to Midge for me, Homer.\n");
-			}
-		}
-
-		if (!isAchievementUnlocked(1))
-		{
-			UnlockAchievement(1);
-			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
-		}
-#endif
-
 		if (m_pCvarKillSnd->value > 0.0f)
 			PlaySound(m_pCvarKillSndPath->string, m_pCvarKillSnd->value);
 	}
