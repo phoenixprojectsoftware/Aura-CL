@@ -159,7 +159,7 @@ int __cdecl GameCompare(vgui2::ListPanel* pPanel, const vgui2::ListPanelItem& p1
 		return 0;
 
 	// make sure we haven't added the same server to the list twice
-	Assert(p1.userData != p2.userData);
+	if (p1.userData == p2.userData) return 0;
 
 	return Q_stricmp(s1->m_szGameDescription, s2->m_szGameDescription);
 }

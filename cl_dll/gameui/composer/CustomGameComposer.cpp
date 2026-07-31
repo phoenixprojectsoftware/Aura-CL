@@ -17,6 +17,7 @@
 #include <KeyValues.h>
 #include "../../engineclientcmd.h"
 #include <tier0/dbg.h>
+#include <steamworks/steam_api.h>
 
 #ifdef _HALO
 CUtlVector<CUtlString> m_excludedMaps;
@@ -24,7 +25,15 @@ CUtlVector<CUtlString> m_excludedMaps;
 
 using namespace vgui2;
 
-#define GMLIST_TALL 400
+#define COMPOSER_WIDE 720
+#define COMPOSER_TALL 585
+
+#define MAP_LIST_WIDE 300
+#define GAMEMODE_LIST_WIDE 350
+#define SELECTION_LIST_TALL 205
+
+#define OPTIONS_WIDE 700
+#define OPTIONS_TALL 270
 
 static bool WriteComposerCfg(const char* text)
 {
@@ -45,31 +54,40 @@ static bool WriteComposerCfg(const char* text)
 CCustomGameComposer::CCustomGameComposer(Panel* pParent) : Frame(pParent, "CustomGameComposer")
 {
 	SetTitle("#Phoenix_CustomGameTitle", true);
-	SetSize(800, 800);
+
+	SetSize(COMPOSER_WIDE, COMPOSER_TALL);
 	SetMoveable(true);
 	SetSizeable(false);
 	SetDeleteSelfOnClose(true);
-	MoveToCenterOfScreen();
 
+	// map selection
 	m_pMapList = new CMapListPanel(this);
-	m_pMapList->SetBounds(10, 40, 250, 500);
+	m_pMapList->SetBounds(10, 40, MAP_LIST_WIDE, SELECTION_LIST_TALL);
+
 #ifdef _HALO
 	m_pMapList->LoadMapFilter();
 #endif
+
 	m_pMapList->LoadMaps();
 
+	// gamemode selection
 	m_pGamemodeList = new CGamemodeListPanel(this);
-	m_pGamemodeList->SetBounds(270, 40, 200, GMLIST_TALL);
+	m_pGamemodeList->SetBounds(320, 40, GAMEMODE_LIST_WIDE, SELECTION_LIST_TALL);
+
 	m_pGamemodeList->LoadGamemodesFromDir();
 
+	// server options
 	m_pOptionsPanel = new CComposerOptionsPanel(this);
-	m_pOptionsPanel->SetBounds(480, 40, 300, 700);
+	m_pOptionsPanel->SetBounds(10, 255, OPTIONS_WIDE, OPTIONS_TALL);
 
-	m_pStartButton = new Button(this, "StartButton", "Start Game", this, "startgame");
-	m_pStartButton->SetBounds(480, 750, 140, 30);
+	// bottom buttons
+	m_pStartButton = new Button(this, "StartButton", "START GAME", this, "startgame");
+	m_pStartButton->SetBounds(450, 540, 125, 28);
 
-	m_pCancelButton = new Button(this, "CancelButton", "Cancel", this, "cancel");
-	m_pCancelButton->SetBounds(640, 750, 140, 30);
+	m_pCancelButton = new Button(this, "CancelButton", "CANCEL", this, "cancel");
+	m_pCancelButton->SetBounds(585, 540, 125, 28);
+
+	MoveToCenterOfScreen();
 }
 
 void CCustomGameComposer::OnCommand(const char* command)
@@ -90,6 +108,8 @@ void CCustomGameComposer::OnCommand(const char* command)
 		const char* weaponsStay = m_pOptionsPanel->GetWeaponsStay();
 		const char* forceRespawn = m_pOptionsPanel->GetForceRespawn();
 		const char* allowCheats = m_pOptionsPanel->GetAllowCheats();
+		const char* allowVotes = m_pOptionsPanel->GetAllowVote();
+		const char* autoBal = m_pOptionsPanel->GetAutoBalance();
 
 		char config[2048];
 		m_pOptionsPanel->GetConfig(config, sizeof(config));
@@ -109,7 +129,9 @@ void CCustomGameComposer::OnCommand(const char* command)
 			"mp_friendlyfire %s \n"
 			"mp_weaponstay %s \n"
 			"mp_forcerespawn %s\n"
-			"sv_cheats %s \n", gamemode, fraglimit, timelimit, infiniteAmmo, spawnSystem, autoGM, flashlight, fallDamage, friendlyFire, weaponsStay, forceRespawn, allowCheats);
+			"sv_cheats %s \n"
+			"sv_aura_allow_vote %s\n"
+			"sv_aura_autobalance %s\n", gamemode, fraglimit, timelimit, infiniteAmmo, spawnSystem, autoGM, flashlight, fallDamage, friendlyFire, weaponsStay, forceRespawn, allowCheats, allowVotes, autoBal);
 
 		if (!WriteComposerCfg(out))
 		{
@@ -254,20 +276,12 @@ void CCustomGameComposer::OnKeyCodePressed(vgui2::KeyCode code)
 CMapListPanel::CMapListPanel(Panel* pParent) : Panel(pParent, "MapListPanel")
 {
 	m_pList = new ListPanel(this, "MapList");
-	m_pList->SetBounds(0, 0, 250, 400);
-	m_pList->AddColumnHeader(0, "name", "Map", 128);
+	m_pList->SetBounds(0, 0, MAP_LIST_WIDE, SELECTION_LIST_TALL);
+	m_pList->AddColumnHeader(0, "name", "Map", MAP_LIST_WIDE - 20);
 	m_pList->SetColumnVisible(0, true);
 	m_pList->SetMultiselectEnabled(false);
 	m_pList->SetSelectIndividualCells(true); // not sure about keeping this
 	m_pList->AddActionSignalTarget(this);
-
-	m_pThumbnail = new ImagePanel(this, "MapThumbnail");
-	m_pThumbnail->SetBounds(0, 410, 250, 150);
-	m_pThumbnail->SetImage("ui/gfx/vgui/nomap.tga"); // fallback
-	m_pThumbnail->SetShouldScaleImage(true);
-	m_pThumbnail->SetShouldCenterImage(true);
-	m_pThumbnail->SetScaleAmount(1.0f);
-	m_pThumbnail->SetPos(4, 4);
 }
 
 void CMapListPanel::SetMapThumbnail(const char* mapName)
@@ -321,8 +335,8 @@ const char* CMapListPanel::GetSelectedMap()
 CGamemodeListPanel::CGamemodeListPanel(Panel* pParent) : Panel(pParent, "GamemodeListPanel")
 {
 	m_pList = new ListPanel(this, "GamemodeList");
-	m_pList->SetBounds(0, 0, 200, GMLIST_TALL);
-	m_pList->AddColumnHeader(0, "name", "Gamemode", 128);
+	m_pList->SetBounds(0, 0, GAMEMODE_LIST_WIDE, SELECTION_LIST_TALL);
+	m_pList->AddColumnHeader(0, "name", "Gamemode", GAMEMODE_LIST_WIDE - 20);
 	m_pList->SetColumnVisible(0, true);
 	m_pList->SetMultiselectEnabled(false);
 }
@@ -460,105 +474,437 @@ const char* CGamemodeListPanel::GetSelectedGamemode()
 //
 // CComposeOptionsPanel
 //
-CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent) : Panel(pParent, "ComposerOptionsPanel")
+CComposerOptionsPanel::CComposerOptionsPanel(Panel* pParent)
+	: Panel(pParent, "ComposerOptionsPanel")
 {
+	const int labelWide = 110;
+	const int controlWide = 205;
+	const int controlTall = 20;
+	const int rowTall = 28;
+
+	const int leftLabelX = 5;
+	const int leftControlX = 115;
+
+	const int rightLabelX = 355;
+	const int rightControlX = 465;
+
 	int y = 0;
 
-	// HOSTNAME
-	m_lServerName = new Label(this, "ServerLabel", "Hostname");
-	m_lServerName->SetBounds(10, y, 200, 20);
-	y += 30;
+	//
+	// Row 1: Hostname / Max players
+	//
+	m_lServerName = new Label(
+		this,
+		"ServerLabel",
+		"Hostname"
+	);
 
-	m_pServerName = new TextEntry(this, "ServerName");
-	m_pServerName->R_BOUNDARY;
-	m_pServerName->SetText("Cross Product Server");
-	y += 30;
+	m_lServerName->SetBounds(
+		leftLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
 
-	// MAXPLAYERS
-	m_lMaxplayers = new Label(this, "PlayersLabel", "Max Players");
-	m_lMaxplayers->R_BOUNDARY;
-	y += 30;
+	m_pServerName = new TextEntry(
+		this,
+		"ServerName"
+	);
 
-	m_pMaxplayers = new TextEntry(this, "MaxPeepee");
-	m_pMaxplayers->SetBounds(10, y, 200, 20);
-	m_pMaxplayers->SetText("12");
-	y += 30;
+	m_pServerName->SetBounds(
+		leftControlX,
+		y,
+		controlWide,
+		controlTall
+	);
 
-	// CHECK BUTTONS
-	m_pLAN = new CheckButton(this, "LAN", "Local server");
-	m_pLAN->SetBounds(5, y, 200, 20); y += 25;
+	const char* username = SteamFriends()
+		? SteamFriends()->GetPersonaName()
+		: "Player";
 
-	m_pRealisticFall = new CheckButton(this, "Fall", "Realistic fall damage");
-	m_pRealisticFall->SetBounds(5, y, 200, 20); y += 25;
+	char usernameBuffer[256];
 
-	m_pAutoGamemode = new CheckButton(this, "AutoGM", "Auto gamemode switch for CTF maps");
-	m_pAutoGamemode->SetBounds(5, y, 250, 20); y += 25;
+	Q_snprintf(
+		usernameBuffer,
+		sizeof(usernameBuffer),
+		"%s's custom game",
+		username
+	);
 
-	m_pFlashlight = new CheckButton(this, "Flash", "Enable Flashlight");
-	m_pFlashlight->SetBounds(5, y, 250, 20); y += 25;
+	m_pServerName->SetText(usernameBuffer);
 
-	m_pFriendlyFire = new CheckButton(this, "FF", "Friendly Fire");
-	m_pFriendlyFire->SetBounds(5, y, 200, 20); y += 25;
+	m_lMaxplayers = new Label(
+		this,
+		"PlayersLabel",
+		"Max Players"
+	);
 
-	m_pWeaponsStay = new CheckButton(this, "WS", "Weapons Stay");
-	m_pWeaponsStay->SetBounds(5, y, 200, 20); y += 25;
+	m_lMaxplayers->SetBounds(
+		rightLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
 
-	m_pForceRespawn = new CheckButton(this, "FR", "Force Respawn");
-	m_pForceRespawn->SetBounds(5, y, 200, 20); y += 25;
+	m_pMaxplayers = new Slider(
+		this,
+		"MaxPlayers"
+	);
 
-	m_pAllowCheats = new CheckButton(this, "Cheats", "Allow Cheats");
-	m_pAllowCheats->SetBounds(5, y, 200, 20); y += 25;
+	m_pMaxplayers->SetBounds(
+		rightControlX,
+		y,
+		170,
+		controlTall
+	);
 
-	// SPAWN SYSTEM
-	m_lSpawnSystem = new Label(this, "SpawnLabel", "Spawn System");
-	m_lSpawnSystem->R_BOUNDARY;
-	y += 30;
+	m_pMaxplayers->SetRange(2, 16);
+	m_pMaxplayers->SetNumTicks(4);
+	m_pMaxplayers->SetValue(16);
+	m_pMaxplayers->SetTickCaptions("2", "16");
+	m_pMaxplayers->AddActionSignalTarget(this);
 
-	m_pSpawnSystem = new ComboBox(this, "SpawnSystem", 3, false);
+	MaxplayersValue = new Label(
+		this,
+		"PlayersVal",
+		"16"
+	);
+
+	MaxplayersValue->SetBounds(
+		645,
+		y,
+		35,
+		controlTall
+	);
+
+	y += rowTall;
+
+	//
+	// Row 2: Spawn system / Infinite ammo
+	//
+	m_lSpawnSystem = new Label(
+		this,
+		"SpawnLabel",
+		"Spawn System"
+	);
+
+	m_lSpawnSystem->SetBounds(
+		leftLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
+
+	m_pSpawnSystem = new ComboBox(
+		this,
+		"SpawnSystem",
+		3,
+		false
+	);
+
+	m_pSpawnSystem->SetBounds(
+		leftControlX,
+		y,
+		controlWide,
+		controlTall
+	);
+
 	m_pSpawnSystem->AddItem("Sequential", nullptr);
 	m_pSpawnSystem->AddItem("Random", nullptr);
 	m_pSpawnSystem->AddItem("Far", nullptr);
 	m_pSpawnSystem->ActivateItem(0);
-	m_pSpawnSystem->SetBounds(10, y, 200, 20); y += 30;
 
-	// INFINITE AMMO
-	m_lInfiniteAmmo = new Label(this, "InfiniteLabel", "Infinite Ammo Mode");
-	m_lInfiniteAmmo->R_BOUNDARY;
-	y += 30;
+	m_lInfiniteAmmo = new Label(
+		this,
+		"InfiniteLabel",
+		"Infinite Ammo"
+	);
 
-	m_pInfiniteAmmo = new ComboBox(this, "InfiniteAmmo", 3, false);
+	m_lInfiniteAmmo->SetBounds(
+		rightLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
+
+	m_pInfiniteAmmo = new ComboBox(
+		this,
+		"InfiniteAmmo",
+		3,
+		false
+	);
+
+	m_pInfiniteAmmo->SetBounds(
+		rightControlX,
+		y,
+		controlWide,
+		controlTall
+	);
+
 	m_pInfiniteAmmo->AddItem("Off", nullptr);
 	m_pInfiniteAmmo->AddItem("Clip", nullptr);
 	m_pInfiniteAmmo->AddItem("Full", nullptr);
 	m_pInfiniteAmmo->ActivateItem(0);
-	m_pInfiniteAmmo->SetBounds(10, y, 200, 20); y += 30;
 
-	// MAPCYCLE
-	m_lMapcycle = new Label(this, "CycleLabel", "Mapcycle");
-	m_lMapcycle->R_BOUNDARY;
-	y += 30;
+	y += rowTall;
 
-	m_pMapcycle = new ComboBox(this, "Mapcycle", 8, false);
+	//
+	// Row 3: Mapcycle / Frag limit
+	//
+	m_lMapcycle = new Label(
+		this,
+		"CycleLabel",
+		"Mapcycle"
+	);
+
+	m_lMapcycle->SetBounds(
+		leftLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
+
+	m_pMapcycle = new ComboBox(
+		this,
+		"Mapcycle",
+		8,
+		false
+	);
+
+	m_pMapcycle->SetBounds(
+		leftControlX,
+		y,
+		controlWide,
+		controlTall
+	);
+
 	LoadMapcycles();
-	m_pMapcycle->SetBounds(10, y, 200, 20); y += 30;
 
-	// FRAG LIMIT
-	m_lFragLimit = new Label(this, "FragLabel", "Frag Limit");
-	m_lFragLimit->R_BOUNDARY;
-	y += 30;
+	m_lFragLimit = new Label(
+		this,
+		"FragLabel",
+		"Frag Limit"
+	);
 
-	m_pFragLimit = new TextEntry(this, "FragLimit");
-	m_pFragLimit->SetBounds(10, y, 200, 20);
-	m_pFragLimit->SetText("50"); y += 30;
+	m_lFragLimit->SetBounds(
+		rightLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
 
-	// TIME LIMIT
-	m_lTimeLimit = new Label(this, "TimeLabel", "Time Limit");
-	m_lTimeLimit->R_BOUNDARY;
-	y += 30;
+	m_pFragLimit = new TextEntry(
+		this,
+		"FragLimit"
+	);
 
-	m_pTimeLimit = new TextEntry(this, "TimeLimit");
-	m_pTimeLimit->SetBounds(10, y, 200, 20);
-	m_pTimeLimit->SetText("15"); y += 30;
+	m_pFragLimit->SetBounds(
+		rightControlX,
+		y,
+		controlWide,
+		controlTall
+	);
+
+	m_pFragLimit->SetText("50");
+
+	y += rowTall;
+
+	//
+	// Row 4: Time limit
+	//
+	m_lTimeLimit = new Label(
+		this,
+		"TimeLabel",
+		"Time Limit"
+	);
+
+	m_lTimeLimit->SetBounds(
+		leftLabelX,
+		y,
+		labelWide,
+		controlTall
+	);
+
+	m_pTimeLimit = new TextEntry(
+		this,
+		"TimeLimit"
+	);
+
+	m_pTimeLimit->SetBounds(
+		leftControlX,
+		y,
+		controlWide,
+		controlTall
+	);
+
+	m_pTimeLimit->SetText("15");
+
+	y += 34;
+
+	//
+	// Checkbox grid
+	//
+	const int checkWide = 165;
+	const int checkTall = 20;
+	const int checkRowTall = 24;
+
+	const int column0 = 5;
+	const int column1 = 175;
+	const int column2 = 345;
+	const int column3 = 515;
+
+	// Row 1
+	m_pLAN = new CheckButton(
+		this,
+		"LAN",
+		"Local Server"
+	);
+
+	m_pLAN->SetBounds(
+		column0,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pRealisticFall = new CheckButton(
+		this,
+		"Fall",
+		"Realistic Fall"
+	);
+
+	m_pRealisticFall->SetBounds(
+		column1,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pAutoGamemode = new CheckButton(
+		this,
+		"AutoGM",
+		"Auto CTF Mode"
+	);
+
+	m_pAutoGamemode->SetBounds(
+		column2,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pFlashlight = new CheckButton(
+		this,
+		"Flash",
+		"Flashlight"
+	);
+
+	m_pFlashlight->SetBounds(
+		column3,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pFlashlight->SetSelected(true);
+
+	y += checkRowTall;
+
+	// Row 2
+	m_pFriendlyFire = new CheckButton(
+		this,
+		"FF",
+		"Friendly Fire"
+	);
+
+	m_pFriendlyFire->SetBounds(
+		column0,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pWeaponsStay = new CheckButton(
+		this,
+		"WS",
+		"Weapons Stay"
+	);
+
+	m_pWeaponsStay->SetBounds(
+		column1,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pForceRespawn = new CheckButton(
+		this,
+		"FR",
+		"Force Respawn"
+	);
+
+	m_pForceRespawn->SetBounds(
+		column2,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pAllowCheats = new CheckButton(
+		this,
+		"Cheats",
+		"Allow Cheats"
+	);
+
+	m_pAllowCheats->SetBounds(
+		column3,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	y += checkRowTall;
+
+	// Row 3
+	m_pAllowVote = new CheckButton(
+		this,
+		"Vote",
+		"Allow Voting"
+	);
+
+	m_pAllowVote->SetBounds(
+		column0,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pAllowVote->SetSelected(true);
+
+	m_pAutoBalancing = new CheckButton(
+		this,
+		"Bal",
+		"Auto-Balance"
+	);
+
+	m_pAutoBalancing->SetBounds(
+		column1,
+		y,
+		checkWide,
+		checkTall
+	);
+
+	m_pAutoBalancing->SetSelected(true);
+}
+
+void CComposerOptionsPanel::OnThink()
+{
+	int players = m_pMaxplayers->GetValue();
+	char val[64];
+	sprintf(val, "%d", players);
+	MaxplayersValue->SetText(val);
+
+	BaseClass::OnThink();
 }
 
 void CComposerOptionsPanel::LoadMapcycles()
@@ -690,6 +1036,16 @@ const char* CComposerOptionsPanel::GetAllowCheats()
 	return m_pAllowCheats->IsSelected() ? "1" : "0";
 }
 
+const char* CComposerOptionsPanel::GetAllowVote()
+{
+	return m_pAllowVote->IsSelected() ? "1" : "0";
+}
+
+const char* CComposerOptionsPanel::GetAutoBalance()
+{
+	return m_pAutoBalancing->IsSelected() ? "1" : "0";
+}
+
 void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 {
 	Q_strncpy(buffer, "", bufSize);
@@ -701,8 +1057,8 @@ void CComposerOptionsPanel::GetConfig(char* buffer, size_t bufSize)
 	Q_snprintf(line, sizeof(line), "deathmatch 1 \nhostname \"%s\"\n", tmp);
 	Q_strncat(buffer, line, bufSize);
 
-	m_pMaxplayers->GetText(tmp, sizeof(tmp));
-	Q_snprintf(line, sizeof(line), "maxplayers %s\n", tmp);
+	int players = m_pMaxplayers->GetValue();
+	Q_snprintf(line, sizeof(line), "maxplayers %d\n", players);
 	Q_strncat(buffer, line, bufSize);
 
 	if (m_pLAN->IsSelected())

@@ -25,6 +25,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include <string.h>
+#include <steamworks/steam_api.h>
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
@@ -121,7 +122,9 @@ HSPRITE LoadSprite(const char *pszName)
 	int iRes;
 	char sz[256]; 
 
-	if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		iRes = 640;
+	else if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 		iRes = 2560;
 	else if (ScreenWidth >= 1280 && ScreenHeight > 720)
 		iRes = 1280;

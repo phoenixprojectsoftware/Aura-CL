@@ -39,10 +39,20 @@
 
 #include "event_api.h"
 
-#ifdef _STEAMWORKS
+#if defined(_STEAMWORKS) && defined(_HALO)
 #include "steamworks/steam_api.h"
+#elif defined(_STEAMWORKS) && !defined(_HALO)
+#include "achievement_manager.h"
 #endif
 #include <dbg.h>
+
+#include "audio/music.h"
+#include "video/video_player.h"
+#include <ctime>
+#define GOOD_MORNING "greeting/MORNING.WAV"
+#define GOOD_AFTERNOON "greeting/AFTERNOON.WAV"
+#define GOOD_EVENING "greeting/EVENING.WAV"
+#define GREETING_DELAY 7.5 // how many seconds after launch to play the greeting sound
 
 extern tempent_s* pLaserSpot;
 
@@ -170,6 +180,26 @@ int __MsgFunc_GameMode(const char *pszName, int iSize, void *pbuf )
 int __MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
 {
 	return gHUD.MsgFunc_Gametype( pszName, iSize, pbuf );
+}
+
+int __MsgFunc_KOTHHill(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	char szHillName[64];
+	strncpy(szHillName, READ_STRING(), sizeof(szHillName) - 1);
+	szHillName[sizeof(szHillName) - 1] = '\0';
+
+	vec3_t origin;
+	origin[0] = READ_COORD();
+	origin[1] = READ_COORD();
+	origin[2] = READ_COORD();
+
+	PlaySound("koth/hill_change.wav", 1);
+
+	gHUD.m_KOTH.SetHill(szHillName, origin);
+
+	return 1;
 }
 
 int __MsgFunc_AllowSpec(const char *pszName, int iSize, void *pbuf)
@@ -306,6 +336,55 @@ int __MsgFunc_LaserSpot(const char* name, int size, void* buf)
 	}
 
 	gHUD.m_iLaserState = state;
+
+	return 1;
+}
+
+int __MsgFunc_Achievement(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	const char* pszAchievement = READ_STRING();
+
+	if (!pszAchievement || !pszAchievement[0])
+		return 1;
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	g_AchievementMgr.UnlockAchievementByName(pszAchievement);
+#endif
+
+	return 1;
+}
+
+int __MsgFunc_PlayVideo(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	std::string videoName = READ_STRING();
+	std::string audioName = READ_STRING();
+
+	if (videoName.empty())
+		return 1;
+
+	std::string videoPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + videoName;
+
+	std::string audioPath;
+	const char* pszAudioPath = nullptr;
+
+	if (!audioName.empty())
+	{
+		audioPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + audioName;
+		pszAudioPath = audioPath.c_str();
+	}
+
+	if (!gVideoPlayer.Play(videoPath.c_str(), pszAudioPath))
+	{
+		gEngfuncs.Con_Printf(
+			"PlayVideo message failed: video='%s' audio='%s'\n",
+			videoPath.c_str(),
+			pszAudioPath ? pszAudioPath : ""
+		);
+	}
 
 	return 1;
 }
@@ -558,15 +637,41 @@ int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
 void PrintVersion()
 {
 	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
-	gEngfuncs.Con_Printf("\n  Aura %s", auraVersion);
-	gEngfuncs.Con_Printf("\n  Half-Life: Cross Product Multiplayer");
+	gEngfuncs.Con_Printf("\n  Aura %d.%d.%d", AURA_VER_MAJOR,AURA_VERSION_MINOR,AURA_VERSION_PATCH);
+	gEngfuncs.Con_Printf("\n  %s", gameName);
 	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
 	gEngfuncs.Con_Printf("\n  Aura SDK:");
 	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
 	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
-	gEngfuncs.Con_Printf("\n  Configuration - %s", buildCfg);
+	gEngfuncs.Con_Printf("\n  Configuration - %s \n", buildCfg);
+	gEngfuncs.Con_Printf("\n  Build System - %s \n", buildSys);
 }
 
+void Cmd_PlayVideo()
+{
+	if (gEngfuncs.Cmd_Argc() < 2)
+	{
+		gEngfuncs.Con_Printf("Usage: playvideo <video.ogv> [audio.ogg]\n");
+		return;
+	}
+
+	const char* pszVideo = gEngfuncs.Cmd_Argv(1);
+
+	std::string videoPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszVideo;
+
+	std::string audioPath;
+	const char* pszAudioPath = nullptr;
+
+	if (gEngfuncs.Cmd_Argc() >= 3)
+	{
+		const char* pszAudio = gEngfuncs.Cmd_Argv(2);
+		audioPath = std::string(gEngfuncs.pfnGetGameDirectory()) + "/video/" + pszAudio;
+		pszAudioPath = audioPath.c_str();
+	}
+
+	if (!gVideoPlayer.Play(videoPath.c_str(), pszAudioPath))
+		gEngfuncs.Con_Printf("Failed to play video: %s\n", videoPath.c_str());
+}
 
 // This is called every time the DLL is loaded
 void CHud :: Init( void )
@@ -581,6 +686,7 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( Concuss );
 
 	HOOK_MESSAGE( Gametype );
+	HOOK_MESSAGE(KOTHHill);
 
 	// TFFree CommandMenu
 	HOOK_COMMAND( "+commandmenu", OpenCommandMenu );
@@ -626,6 +732,10 @@ void CHud :: Init( void )
 
 	HOOK_MESSAGE( LaserSpot );
 
+	HOOK_MESSAGE(Achievement);
+
+	HOOK_MESSAGE(PlayVideo);
+
 	gHUD.m_iLaserState = 0;
 
 	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO );		// controls whether or not to suicide immediately on TF class switch
@@ -664,6 +774,8 @@ void CHud :: Init( void )
 	// Version Info command. Runs PrintVersion() which reads info from versioninfo.h
 	gEngfuncs.pfnAddCommand("version_aura", PrintVersion);
 
+	gEngfuncs.pfnAddCommand("playvideo", Cmd_PlayVideo);
+
 	
 
 	// Clear any old HUD list
@@ -700,6 +812,7 @@ void CHud :: Init( void )
 	m_Countdown.Init();
 	m_Crosshairs.Init();
 	m_CTF.Init();
+	m_KOTH.Init();
 	m_CustomTimer.Init();
 	m_Jumpspeed.Init();
 	m_Debug.Init();
@@ -730,6 +843,10 @@ void CHud :: Init( void )
 	gEngfuncs.pfnClientCmd("richpresence_update\n");
 
 	SteamUtils()->SetOverlayNotificationPosition(k_EPositionTopLeft);
+#endif
+
+#ifdef _HALO
+	GetEngineBuildNumber();
 #endif
 }
 
@@ -785,7 +902,9 @@ void CHud :: VidInit( void )
 	m_hsprLogo = 0;	
 	m_hsprCursor = 0;
 
-	if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		m_iRes = 640;
+	else if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 		m_iRes = 2560;
 	else if (ScreenWidth >= 1280 && ScreenHeight > 720)
 		m_iRes = 1280;
@@ -880,6 +999,7 @@ void CHud :: VidInit( void )
 	m_Countdown.VidInit();
 	m_Crosshairs.VidInit();
 	m_CTF.VidInit();
+	m_KOTH.VidInit();
 	m_CustomTimer.VidInit();
 	m_Debug.VidInit();
 	m_Jumpspeed.VidInit();
@@ -898,6 +1018,52 @@ void CHud :: VidInit( void )
 	m_OldScoreBoard.VidInit();
 	//m_NameTagsVGUI.VidInit();
 	GetClientVoiceMgr()->VidInit();
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	g_AchievementMgr.CheckSpecialDay();
+#endif
+}
+
+#include "greeting.h"
+
+#include <ctime>
+
+static bool g_bGreetingStarted = false;
+static bool g_bGreetingPlayed = false;
+static std::time_t g_flGreetingStartTime = 0;
+
+void InitGreeting()
+{
+	g_bGreetingStarted = true;
+	g_bGreetingPlayed = false;
+	g_flGreetingStartTime = std::time(nullptr);
+}
+
+void UpdateGreeting()
+{
+	if (!g_bGreetingStarted || g_bGreetingPlayed)
+		return;
+
+	std::time_t t = std::time(nullptr);
+
+	if (t < g_flGreetingStartTime + GREETING_DELAY)
+		return;
+
+	std::tm* now = std::localtime(&t);
+
+	if (!now)
+		return;
+
+	const int hour = now->tm_hour;
+
+	if (hour >= 0 && hour < 12)
+		PlaySound(GOOD_MORNING, 1);
+	else if (hour >= 12 && hour < 18)
+		PlaySound(GOOD_AFTERNOON, 1);
+	else
+		PlaySound(GOOD_EVENING, 1);
+
+	g_bGreetingPlayed = true;
 }
 
 void CHud::Frame(double time)
@@ -1148,6 +1314,25 @@ float CHud::GetSensitivity( void )
 {
 	return m_flMouseSensitivity;
 }
+
+#ifdef _HALO
+void CHud::GetEngineBuildNumber()
+{
+	std::string version = gEngfuncs.pfnGetCvarString("sv_version");
+
+	auto lastsep = version.find_last_of(',');
+
+	if (lastsep == std::string::npos)
+		return;
+
+	version.erase(0, lastsep + 1);
+
+	m_iEngineBuildNumber = std::stol(version);
+
+	if (m_iEngineBuildNumber < 8684)
+		Error("Your Half-Life install is on the \"steam_legacy\" branch. Get off the game and fix it.");
+}
+#endif
 
 void CHud::CallOnNextFrame(std::function<void()> f)
 {

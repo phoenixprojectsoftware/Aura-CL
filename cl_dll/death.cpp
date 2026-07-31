@@ -26,6 +26,8 @@
 #include "vgui_TeamFortressViewport.h"
 
 #include "achievement_manager.h"
+#include "leaderboard_integration.h"
+#include "cl_gametype.h"
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );
 
@@ -163,19 +165,19 @@ int CHudDeathNotice::Draw(float flTime)
 			else if (isLocalKiller)
 			{
 				msg << "You killed " << victim;
-				if (*weapon)
+				if (*weapon && INSTAGIB != gHUD.GetGameType())
 					msg << " with " << weapon;
 			}
 			else if (isLocalVictim)
 			{
 				msg << killer << " killed you";
-				if (*weapon)
+				if (*weapon && INSTAGIB != gHUD.GetGameType())
 					msg << " with " << weapon;
 			}
 			else
 			{
 				msg << killer << " killed " << victim;
-				if (*weapon)
+				if (*weapon && INSTAGIB != gHUD.GetGameType())
 					msg << " with " << weapon;
 			}
 
@@ -202,6 +204,12 @@ int CHudDeathNotice::Draw(float flTime)
 
 	return 1;
 }
+
+int32 plrKillStatValue = 0;
+int32 plrMeleeKillStat = 0;
+int32 tripmineKillStat = 0;
+int32 sniperKillStat = 0;
+int32 snarkKillStat = 0;
 
 // This message handler may be better off elsewhere
 int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf)
@@ -272,7 +280,13 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 	if ((char)victim == -1)
 	{
 		rgDeathNoticeList[i].iNonPlayerKill = TRUE;
-		strcpy(rgDeathNoticeList[i].szVictim, killedwith + 2);
+
+		// firefight kill etc. - we prevent corrupted data here
+		strncpy(rgDeathNoticeList[i].szVictim, "an enemy", sizeof(rgDeathNoticeList[i].szVictim));
+#ifdef _DEBUG
+		ConsolePrint("FIREFIGHT KILL DETECTED\n");
+#endif
+		rgDeathNoticeList[i].szVictim[sizeof(rgDeathNoticeList[i].szVictim) - 1] = 0;
 	}
 	else
 	{
@@ -295,27 +309,71 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		!rgDeathNoticeList[i].iSuicide)
 	{
 #if defined(_STEAMWORKS) && !defined(_HALO)
-		if (!SteamUserStats())
-			gEngfuncs.Con_Printf("Failed to update Steam Stats because it's NULL.\n");
-		if (SteamUserStats())
+		if (INSTAGIB != g_iGameType && OITC != g_iGameType)
 		{
-			int32 statValue = 0;
-			if (SteamUserStats()->GetStat(PLR_KILL_STATS, &statValue))
-			{
-				SteamUserStats()->SetStat(PLR_KILL_STATS, statValue + 1);
-				SteamUserStats()->StoreStats();
-				gEngfuncs.Con_Printf("Player kill stat incremented to %d\n", statValue + 1);
-			}
-			else
-			{
-				gEngfuncs.Con_Printf("The STAT INCREMENT failed because the API key hasn't been published or something. Idk I just work here.\nSay hiya to Midge for me, Homer.\n");
-			}
+			g_AchievementMgr.StatIncrement(PLR_KILL_STATS);
 		}
 
-		if (!isAchievementUnlocked(1))
+		if (!g_AchievementMgr.isAchievementUnlocked(1))
 		{
-			UnlockAchievement(1);
+			g_AchievementMgr.UnlockAchievement(1);
 			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
+		}
+
+		// DISPLACER ACHIEVEMENT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "displacer_ball"))
+		{
+			if (!g_AchievementMgr.isAchievementUnlocked(19))
+				g_AchievementMgr.UnlockAchievement(19);
+		}
+
+		// PENGUIN ACHIEVEMENT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "penguin"))
+		{
+			if (!g_AchievementMgr.isAchievementUnlocked(20))
+				g_AchievementMgr.UnlockAchievement(20);
+			else
+				gEngfuncs.Con_Printf("It looks like you've already done this. Very clever....\n");
+		}
+
+		// TRIPMINE KILL STAT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
+		{
+			g_AchievementMgr.StatIncrement(TRIPMINE_KILL_STATS);
+		}
+
+		// SNIPER RIFLE KILL STAT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "sniperrifle"))
+		{
+			g_AchievementMgr.StatIncrement(SNIPER_KILL_STATS);
+		}
+
+		// SNARK KILL STAT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "snark"))
+		{
+			g_AchievementMgr.StatIncrement(SNARK_KILL_STATS);
+		}
+
+		// CLOSE CALL ACHIEVEMENT
+		if (gHUD.m_Health.m_iHealth <= 10)
+			if (!g_AchievementMgr.isAchievementUnlocked(6))
+				g_AchievementMgr.UnlockAchievement(6);
+
+		// POINTY END ACHIEVEMENT
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "crowbar") || !stricmp(rgDeathNoticeList[i].szWeapon, "knife") || (!stricmp(rgDeathNoticeList[i].szWeapon, "pipewrench")))
+		{
+			if (!g_AchievementMgr.isAchievementUnlocked(21))
+				g_AchievementMgr.UnlockAchievement(21);
+
+			g_AchievementMgr.StatIncrement(PLR_MELEE_KILLS_STATS);
+		}
+
+		// UNDERWATER KILL STAT
+		int uwKills = 0;
+		extern int g_iClientWaterLevel;
+		if (g_iClientWaterLevel >= 2)
+		{
+			g_AchievementMgr.StatIncrement(PLR_UW_KILLS_STATS);
 		}
 #endif
 
@@ -359,6 +417,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 				ConsolePrint("tau cannon");
 			else
 				ConsolePrint(rgDeathNoticeList[i].szWeapon);
+			// Shut up. Get out.
 		}
 	}
 	ConsolePrint("\n");

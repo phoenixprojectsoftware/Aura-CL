@@ -17,6 +17,7 @@
 #endif
 
 class CGameUITestPanel;
+class C_AchievementDialog;
 class CServerBrowser;
 // TODO: class CAdvOptionsDialog;
 // TODO: class C_AchievementDialog;
@@ -42,12 +43,18 @@ public:
 
 	void OpenTestPanel();
 	void OpenComposer();
+#ifndef _HALO
+	void OpenLeaderboard();
+#endif
+	C_AchievementDialog* GetAchievementDialog();
 	CServerBrowser* GetServerBrowser();
 	CWorkshopDialog* GetWorkshopDialog();
 
 	virtual void OnThink() override;
 
 	bool IsVACBanned() const;
+
+	void DownloadWorkshopAddon(PublishedFileId_t nWorkshopID);
 
 	void GetCurrentItems(std::vector<vgui2::WorkshopItem>& items);
 	void AutoMountWorkshopItem(vgui2::WorkshopItem &WorkshopFile);
@@ -61,17 +68,25 @@ public:
 	void SetWorkshopInfoBoxProgress(float flProgress);
 
 	bool WorkshopIDIsMounted(PublishedFileId_t nWorkshopID);
+	bool ShouldAutoMount(PublishedFileId_t nWorkshopID);
 
 	void OpenFileExplorer(int eFilter, const char* szFolder, const char* szPathID, DialogSelected_t pFunction);
 	void OpenFileExplorer(const char* szFolder, const char* szPathID, DialogSelected_t pFunction);
 
 	void ShowMessageDialog(const char* szTitle, const char* szDescription);
 
+	static inline CGameUIViewport* m_sInstance = nullptr;
+
 protected:
 	void UpdateAddonList();
 	void LoadWorkshop();
+	void CheckWorkshopSubscriptions();
+	bool HasSubscribedToItem(PublishedFileId_t nWorkshopID);
 	bool HasLoadedItem(PublishedFileId_t nWorkshopID);
 	void LoadWorkshopItems(bool bWorkshopFolder);
+
+	// Our subscribed items. If we sub to a new one we should mount it immediately.
+	std::vector<PublishedFileId_t> m_SubscribedItems;
 
 	// list of our sources
 	std::vector<vgui2::WorkshopItem> m_Items;
@@ -88,7 +103,9 @@ protected:
 	};
 	std::vector<PrepareForDownload> m_QueryRequests;
 	PrepareForDownload m_CurrentQueryItem;
+	bool m_bDownloadedItemsReady;
 	float m_flQueryWait;
+	void SetQueryWait(const float& flTime);
 	bool m_bPrepareForQueryDownload;
 	bool PrepareForQueryDownload();
 
@@ -97,6 +114,7 @@ private:
 	int m_bDelayedPreventEscape = 0;
 	vgui2::DHANDLE<CGameUITestPanel> m_hTestPanel;
 	// vgui2::DHANDLE<CCustomGameComposer> m_hCustomGameComposer;
+	vgui2::DHANDLE<C_AchievementDialog> m_hAchDialog;
 	vgui2::DHANDLE<CServerBrowser> m_hServerBrowser;
 	vgui2::DHANDLE<CWorkshopDialog> m_hWorkshopDialog;
 	vgui2::DHANDLE<CCreateWorkshopInfoBox> m_hWorkshopInfoBox;
@@ -113,7 +131,8 @@ private:
 		return handle;
 	}
 
-	static inline CGameUIViewport* m_sInstance = nullptr;
+	// Grab our stats on creation.
+	STEAM_CALLBACK(CGameUIViewport, OnDownloadItemResult, DownloadItemResult_t, m_steamcallback_OnDownloadItemResult);
 };
 
 #endif

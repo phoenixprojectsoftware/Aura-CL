@@ -9,6 +9,8 @@
  *
  ****/
 
+#pragma once
+
 #include <steamworks/steam_api.h>
 #include <string>
 
@@ -19,8 +21,35 @@ static const char* g_PhoenixSteamIDs[] = {
 	"0:0:192404376", // enzo
 	"0:1:54795934", // jan
 	"0:1:63945665", // rafael
+	"0:1:484919737", // frostlander
+	"0:1:457283837", // berony
+	"0:1:516167454", // hitoshii
+	"0:0:421607015", // galexion
+	"0:0:105253777", // finger
+	"0:1:77747696", // playmann
+	"0:0:102486805", // ivan naii_
+	"0:1:175018298", // maxresdefault
+
 };
 static const int g_NumPhoenixIDs = sizeof(g_PhoenixSteamIDs) / sizeof(g_PhoenixSteamIDs[0]);
+
+inline bool IsPhoenixID(const char* steamID)
+{
+	if (!steamID || steamID[0] == '\0')
+	{
+		return false;
+	}
+
+	for (int index = 0; index < g_NumPhoenixIDs; ++index)
+	{
+		if (strcmp(steamID, g_PhoenixSteamIDs[index]) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 static const char* g_LANSteamID[] = {
 	"ID_LAN", // LAN
@@ -37,6 +66,44 @@ inline const char* GetAchievementAPIName(int achievementID)
 		return "ACH_FIRST_BLOOD";
 	case 2:
 		return "ACH_LAN";
+	case 3:
+		return "ACH_WELCOME";
+	case 4:
+		return "ACH_PHOENIX_DAY";
+	case 5:
+		return "ACH_CST";
+	case 6:
+		return "ACH_CLOSE_CALL"; // Close Call
+	case 7:
+		return "ACH_O2";
+	case 8:
+		return "ACH_TRIFECTA";
+	case 9:
+		return "ACH_WES01";
+	case 10:
+		return "ACH_WES02";
+	case 11:
+		return "ACH_WES03";
+	case 12:
+		return "ACH_WES04";
+	case 13:
+		return "ACH_WES05";
+	case 14:
+		return "ACH_WES06";
+	case 15:
+		return "ACH_WES07";
+	case 16:
+		return "ACH_SNARKPIT";
+	case 17:
+		return "ACH_XFIRE_STRIKE";
+	case 18:
+		return "ACH_ROCKET";
+	case 19:
+		return "ACH_DISPLACER";
+	case 20:
+		return "ACH_PENGUIN";
+	case 21:
+		return "ACH_UNARMED"; // pointy end
 	default:
 		return nullptr;
 	}
@@ -45,7 +112,46 @@ inline const char* GetAchievementAPIName(int achievementID)
 // =====================
 // STATISTICS START
 // =====================
-#define PLR_KILL_STATS "plr_kill"
+#define PLR_KILL_STATS "player_kill" // new key name after system overhaul
+#define OLD_KILL_STAT "plr_kill"
+#define PLR_UW_KILLS_STATS "uw_kill"
+#define PLR_MELEE_KILLS_STATS "ml_kill"
+#define XFIRE_WIN_STATS "xfire_win"
+#define PLR_WIN_STATS "win"
+#define TRIPMINE_KILL_STATS "trp_kill"
+#define SNARK_KILL_STATS "sqk_kill"
+#define FLAG_CARRIER_KILL_STATS "flg_kill"
+#define SNIPER_KILL_STATS "snp_kill"
+#define KASINO_WIN_STATS "kasino_wins"
+#define SPRAY_STATS "spray"
+#define PLR_MATCH_STATS "matches_played"
 // =====================
 // STATISTICS END
 // =====================
+
+enum EAchievements
+{
+	ACH_KILLS100 = 0,
+	ACH_500KILLS,
+	ACH_1000KILLS,
+	ACH_KILLS10000,
+	ACH_FIRST_BLOOD,
+	ACH_O2,
+	ACH_UNARMED,
+	ACH_UNARMED25,
+	ACH_CLOSE_CALL,
+	ACH_XFIRE_STRIKE,
+	ACH_SNARKPIT,
+	ACH_WELCOME,
+	ACH_PHOENIX_PARTY,
+	ACH_PHOENIX_DAY,
+	ACH_CST,
+	ACH_TRIP20,
+	ACH_SNARK10,
+	ACH_SNIPER10,
+	ACH_DISPLACER,
+	ACH_PENGUIN,
+	ACH_MATCHES20,
+
+	ACHV_MAX
+};

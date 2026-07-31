@@ -1,3 +1,14 @@
 add_sources(
+	bridge.h
+	chat_panel.cpp
+	chat_panel.h
 	client_viewport.cpp
-	client_viewport.h)
+	client_viewport.h
+	score_panel.cpp
+	score_panel.h
+	phoenix_emblem.cpp
+	phoenix_emblem.h
+	steam_avatar.cpp
+	steam_avatar.h
+	IViewportPanel.h
+	viewport_panel_names.h)

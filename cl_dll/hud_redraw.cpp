@@ -20,10 +20,12 @@
 #include "cl_util.h"
 #include "bench.h"
 #ifdef _STEAMWORKS
-#include "steamworks/steam_api.h"
+#include "achievement_manager.h"
 #endif
+#include "video/video_player.h"
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 
 #define MAX_LOGO_FRAMES 56
 
@@ -104,6 +106,8 @@ void CheckSuspend();
 // returns 1 if they've changed, 0 otherwise
 extern cvar_t* r_pissfilter;
 
+int matchStatValue = 0;
+
 int CHud :: Redraw( float flTime, int intermission )
 {
 	m_fOldTime = m_flTime;	// save time of previous redraw
@@ -111,42 +115,75 @@ int CHud :: Redraw( float flTime, int intermission )
 	m_flTimeDelta = (double)m_flTime - m_fOldTime;
 	static float m_flShotTime = 0;
 	static float m_flStopTime = 0;
+	static bool bStartMusic = false;
+	static bool bEndMusic = false;
 
 	// Clock was reset, reset delta
 	if ( m_flTimeDelta < 0 )
 		m_flTimeDelta = 0;
 
-	// Bring up the scoreboard during intermission
-	if (gViewPort)
+	// Bring up the scoreboard during intermission.
+	if (m_iIntermission && !intermission)
 	{
-		if ( m_iIntermission && !intermission )
+		// Set this before hiding the scoreboard so its intermission
+		// protection no longer prevents it from closing.
+		m_iIntermission = intermission;
+
+		if (gViewPort)
 		{
-			// Have to do this here so the scoreboard goes away
-			m_iIntermission = intermission;
 			gViewPort->HideCommandMenu();
-			gViewPort->HideScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
 		}
-		else if ( !m_iIntermission && intermission )
+
+		HideVGUI2ScoreBoard();
+
+		bEndMusic = false;
+
+		if (!bStartMusic)
 		{
-			m_iIntermission = intermission;
+			gEngfuncs.pfnClientCmd(
+				"mp3 play sound/music/MX_A5_SUBMIX7_TRIM.mp3\n");
+
+			bStartMusic = true;
+		}
+	}
+	else if (!m_iIntermission && intermission)
+	{
+		m_iIntermission = intermission;
+
+		CenterPrint("");
+
+		if (gViewPort)
+		{
 			gViewPort->HideCommandMenu();
 			gViewPort->HideVGUIMenu();
-			gViewPort->ShowScoreBoard();
 			gViewPort->UpdateSpectatorPanel();
+		}
 
-			// Take a screenshot if the client's got the cvar set
-			if ( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )
-				m_flShotTime = flTime + 1.0;	// Take a screenshot in a second
+		ShowVGUI2ScoreBoard();
 
-			if ( m_pCvarAutostop->value > 0.0f )
-				m_flStopTime = flTime + 3.0; // Stop demo recording in three seconds
+		bStartMusic = false;
+
+		if (!bEndMusic)
+		{
+			gEngfuncs.pfnClientCmd(
+				"mp3 play sound/music/MX_A5_SUBMIX8.mp3\n");
+
+#ifdef _STEAMWORKS
+			g_AchievementMgr.StatIncrement(PLR_MATCH_STATS);
+#endif
+
+			bEndMusic = true;
 		}
 	}
 
 	if (m_flShotTime && m_flShotTime < flTime)
 	{
+#ifdef _STEAMWORKS
+		SteamScreenshots()->TriggerScreenshot();
+#else
 		gEngfuncs.pfnClientCmd("snapshot\n");
+#endif
 		m_flShotTime = 0;
 	}
 
@@ -296,6 +333,12 @@ int CHud :: Redraw( float flTime, int intermission )
 	SteamInput()->RunFrame();
 	UpdateControllerVibration();
 #endif
+
+	gVideoPlayer.Update(flTime);
+
+	if (gVideoPlayer.IsPlaying())
+		gVideoPlayer.Draw();
+
 	return 1;
 }
 

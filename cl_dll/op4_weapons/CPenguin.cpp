@@ -12,6 +12,7 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -219,3 +220,5 @@ int CPenguin::GetItemInfo(ItemInfo* p)
 
 	return 1;
 }
+
+#endif // _HALO

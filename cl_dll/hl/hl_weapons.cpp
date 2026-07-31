@@ -71,11 +71,11 @@ int giOldWeapons = 0;
 
 // HLDM Weapon placeholder entities.
 CGlock g_Glock;
-COne g_One;
 CCrowbar g_Crowbar;
 CPython g_Python;
 CMP5 g_Mp5;
 CCrossbow g_Crossbow;
+CBattleRifle g_BattleRifle;
 CShotgun g_Shotgun;
 CRpg g_Rpg;
 CGauss g_Gauss;
@@ -85,9 +85,12 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
+CSniperRifle g_SniperRifle;
+#ifndef _HALO
+COne g_One;
+CHLDMAR g_HLDMAR;
 CGrapple g_Grapple;
 CEagle g_Eagle;
-CSniperRifle g_SniperRifle;
 CKnife g_Knife;
 CPipewrench g_Pipewrench;
 CDisplacer g_Displacer;
@@ -95,6 +98,9 @@ CShockRifle g_ShockRifle;
 CSporeLauncher g_SporeLauncher;
 CM249 g_M249;
 CPenguin g_Penguin;
+CHealer g_Healer;
+CThumper g_Thumper;
+#endif
 
 /*
 ======================
@@ -372,6 +378,12 @@ Handles weapon firing, reloading, etc.
 */
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
+	// attack timers sometimes decrement to nearly FLT_MIN which doesn't pass the x= 0.0 check
+	// when that happens client-side attack events don't play but DO on the server
+	// a very small value fixes this without speeding up weapon attacks noticeably
+	// or creating the inverse problem of playing events twice. -wootguy
+	const float epsilon = 0.00001f;
+
 	if ((m_fInReload) && (m_pPlayer->m_flNextAttack <= 0.0))
 	{
 #if 0 // FIXME, need ammo on client to make this work right
@@ -387,12 +399,21 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fInReload = FALSE;
 	}
 
-	// attack timers sometimes decrement to nearly FLT_MIN which doesn't pass the x= 0.0 check
-	// when that happens client-side attack events don't play but DO on the server
-	// a very small value fixes this without speeding up weapon attacks noticeably
-	// or creating the inverse problem of playing events twice. -wootguy
-	const float epsilon = 0.00001f;
-	if ((m_pPlayer->pev->button & IN_ATTACK2) && (m_flNextSecondaryAttack <= epsilon))
+	// melee
+	if ((m_pPlayer->pev->button & IN_MELEE) && (m_flNextPrimaryAttack <= 0.0))
+	{
+		// cancel reload if in progress
+		if (m_fInReload)
+			m_fInReload = FALSE;
+
+		MeleeAttack();
+
+		// clear the melee button so it doesnt repeat in the same frame
+		m_pPlayer->pev->button &= ~IN_MELEE;
+		return;
+	}
+
+	if ((m_pPlayer->pev->button & IN_ATTACK2) && (m_flNextSecondaryAttack <= 0.0))
 	{
 		if ( pszAmmo2() && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
 		{
@@ -659,10 +680,10 @@ void HUD_InitClientWeapons( void )
 
 	// Allocate slot(s) for each weapon that we are going to be predicting
 	HUD_PrepEntity( &g_Glock	, &player );
-	HUD_PrepEntity(&g_One, &player);
 	HUD_PrepEntity( &g_Crowbar	, &player );
 	HUD_PrepEntity( &g_Python	, &player );
 	HUD_PrepEntity( &g_Mp5	, &player );
+	HUD_PrepEntity(&g_BattleRifle, &player);
 	HUD_PrepEntity( &g_Crossbow	, &player );
 	HUD_PrepEntity( &g_Shotgun	, &player );
 	HUD_PrepEntity( &g_Rpg	, &player );
@@ -673,9 +694,12 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Satchel	, &player );
 	HUD_PrepEntity( &g_Tripmine	, &player );
 	HUD_PrepEntity( &g_Snark	, &player );
+	HUD_PrepEntity(&g_SniperRifle, &player);
+#ifndef _HALO
+	HUD_PrepEntity(&g_One, &player);
+	HUD_PrepEntity(&g_HLDMAR, &player);
 	HUD_PrepEntity(&g_Grapple, &player);
 	HUD_PrepEntity(&g_Eagle, &player);
-	HUD_PrepEntity(&g_SniperRifle, &player);
 	HUD_PrepEntity(&g_Knife, &player);
 	HUD_PrepEntity(&g_Pipewrench, &player);
 	HUD_PrepEntity(&g_ShockRifle, &player);
@@ -683,6 +707,9 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity(&g_Displacer, &player);
 	HUD_PrepEntity(&g_M249, &player);
 	HUD_PrepEntity(&g_Penguin, &player);
+	HUD_PrepEntity(&g_Healer, &player);
+	HUD_PrepEntity(&g_Thumper, &player);
+#endif
 }
 
 /*
@@ -727,9 +754,9 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	{
 	case WEAPON_CROWBAR: return &g_Crowbar;
 	case WEAPON_GLOCK: return &g_Glock;
-	case WEAPON_ONE: return &g_One;
 	case WEAPON_PYTHON: return &g_Python;
 	case WEAPON_MP5: return &g_Mp5;
+	case WEAPON_BATTLERIFLE: return &g_BattleRifle;
 	case WEAPON_CROSSBOW: return &g_Crossbow;
 	case WEAPON_SHOTGUN: return &g_Shotgun;
 	case WEAPON_RPG: return &g_Rpg;
@@ -740,16 +767,22 @@ CBasePlayerWeapon* GetLocalWeapon(int id)
 	case WEAPON_SATCHEL: return &g_Satchel;
 	case WEAPON_TRIPMINE: return &g_Tripmine;
 	case WEAPON_SNARK: return &g_Snark;
+	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
+#ifndef _HALO
+	case WEAPON_ONE: return &g_One;
+	case WEAPON_HLDMAR: return &g_HLDMAR;
 	case WEAPON_GRAPPLE: return &g_Grapple;
 	case WEAPON_M249: return &g_M249;
 	case WEAPON_PENGUIN: return &g_Penguin;
-	case WEAPON_SNIPERRIFLE: return &g_SniperRifle;
 	case WEAPON_KNIFE: return &g_Knife;
 	case WEAPON_EAGLE: return &g_Eagle;
 	case WEAPON_PIPEWRENCH: return &g_Pipewrench;
 	case WEAPON_SHOCKRIFLE: return &g_ShockRifle;
 	case WEAPON_SPORELAUNCHER: return &g_SporeLauncher;
 	case WEAPON_DISPLACER: return &g_Displacer;
+	case WEAPON_HEALER: return &g_Healer;
+	case WEAPON_THUMPER: return &g_Thumper;
+#endif
 
 	default: return nullptr;
 	}
@@ -881,6 +914,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	//Stores all our ammo info, so the client side weapons can use them.
 	player.ammo_9mm			= (int)from->client.vuser1[0];
+	player.ammo_br = (int)from->client.vuser3[0];
 	player.ammo_357			= (int)from->client.vuser1[1];
 	player.ammo_argrens		= (int)from->client.vuser1[2];
 	player.ammo_762			= (int)from->client.vuser2[2];
@@ -957,6 +991,8 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	//HL Weapons
 	to->client.vuser1[0]				= player.ammo_9mm;
+
+	to->client.vuser3[0] = player.ammo_br;
 	to->client.vuser1[1]				= player.ammo_357;
 	to->client.vuser1[2]				= player.ammo_argrens;
 	to->client.vuser2.z					= player.ammo_762;
