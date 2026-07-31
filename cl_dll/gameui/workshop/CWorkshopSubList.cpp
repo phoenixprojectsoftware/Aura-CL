@@ -14,8 +14,6 @@
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/CheckButton.h>
 #include <KeyValues.h>
-#include <current_version.h>
-// #include <bhl_urls.h>
 #include "../../client_vgui.h"
 #include "../gameui_viewport.h"
 #include "CWorkshopSubList.h"
@@ -27,16 +25,12 @@ CWorkshopSubList::CWorkshopSubList(vgui2::Panel* parent)
 
 	// Our Item List
 	pList = new vgui2::WorkshopItemList(this, "listpanel");
-	pList->SetPos(15, 100);
-	pList->SetSize(600, 302);
 
 	// KeyValues
 	KeyValues* kv = new KeyValues("Categories", "Key", "Value");
 
 	// Category filter
 	pComboList = new vgui2::ComboBox(this, "category", vgui2::MAX_CATEGORY_FILTER, false);
-	pComboList->SetPos(25, 410);
-	pComboList->SetSize(235, 24);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_None", kv);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Map", kv);
 	pComboList->AddItem("#Phoenix_Workshop_CategoryFilter_Weapons", kv);
@@ -101,41 +95,31 @@ void CWorkshopSubList::UpdateItems()
 		Q_snprintf(buffer, sizeof(buffer), "%llu/thumb", item.uWorkshopID);
 
 		pIcon->SetImage(vgui2::scheme()->GetImage(buffer, false));
-		pIcon->SetSize(56, 56);
-		pIcon->SetPos(4, 4);
 		pIcon->SetShouldScaleImage(true);
 
 		// Font Text
 		vgui2::Label* pTitle = new vgui2::Label(this, "Title", "");
-		pTitle->SetSize(400, 20);
-		pTitle->SetPos(70, 5);
 		pTitle->SetPaintBackgroundEnabled(false);
-		hTextFont = pScheme->GetFont("AchievementItemTitle");
+		hTextFont = pScheme->GetFont("AchievementItemTitle", true);
 		if (hTextFont != vgui2::INVALID_FONT)
 			pTitle->SetFont(hTextFont);
 		pTitle->SetColorCodedText(item.szName);
 
 		vgui2::Label* pAuthor = new vgui2::Label(this, "Author", "");
-		pAuthor->SetSize(400, 20);
-		pAuthor->SetPos(70, 35);
 		pAuthor->SetPaintBackgroundEnabled(false);
-		hTextFont = pScheme->GetFont("AchievementItemDescription");
+		hTextFont = pScheme->GetFont("AchievementItemDescription", true);
 		if (hTextFont != vgui2::INVALID_FONT)
 			pAuthor->SetFont(hTextFont);
 		pAuthor->SetColorCodedText(item.szAuthor);
 
 		vgui2::Label* pDesc = new vgui2::Label(this, "Description", "");
-		pDesc->SetSize(400, 20);
-		pDesc->SetPos(70, 15);
 		pDesc->SetPaintBackgroundEnabled(false);
-		hTextFont = pScheme->GetFont("AchievementItemDescription");
+		hTextFont = pScheme->GetFont("AchievementItemDescription", true);
 		if (hTextFont != vgui2::INVALID_FONT)
 			pDesc->SetFont(hTextFont);
 		pDesc->SetColorCodedText(item.szDesc);
 
 		vgui2::CheckButton* pActivated = new vgui2::CheckButton(this, "CheckButton", "#Phoenix_Workshop_ActivateAddon");
-		pActivated->SetSize(400, 20);
-		pActivated->SetPos(70, 50);
 		pActivated->SetPaintBackgroundEnabled(false);
 		pActivated->SetSelected(item.bMounted);
 		Q_snprintf(buffer, sizeof(buffer), "MountAddon_%llu", item.uWorkshopID);
@@ -143,8 +127,6 @@ void CWorkshopSubList::UpdateItems()
 		pActivated->AddActionSignalTarget(this);
 
 		vgui2::Label* pError = new vgui2::Label(this, "Error", "");
-		pError->SetSize(400, 20);
-		pError->SetPos(4, 65);
 		pError->SetPaintBackgroundEnabled(false);
 
 		wchar_t* pStr = g_pVGuiLocalize->Find("Phoenix_Workshop_AddonError");
@@ -220,9 +202,10 @@ void CWorkshopSubList::OnCommand(const char* pcCommand)
 		vgui2::WorkshopItem item = CGameUIViewport::Get()->GetWorkshopItem(nWorkshopID);
 
 		CGameUIViewport::Get()->ShowWorkshopInfoBox(item.szName, item.bMounted ? WorkshopInfoBoxState::State_Dismounting : WorkshopInfoBoxState::State_Mounting);
-		CGameUIViewport::Get()->ShowWorkshopInfoBox(item.szName, WorkshopInfoBoxState::State_Done);
 		CGameUIViewport::Get()->MountWorkshopItem(item, nullptr, nullptr);
 	}
+	else if (!Q_stricmp(pcCommand, "Refresh"))
+		UpdateItems();
 	else
 	{
 		BaseClass::OnCommand(pcCommand);

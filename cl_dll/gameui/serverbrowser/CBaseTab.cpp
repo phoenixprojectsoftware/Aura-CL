@@ -44,10 +44,10 @@ CBaseTab::CBaseTab(vgui2::Panel* parent, const char* name, EPageType eType, cons
 	: PropertyPage(parent, name), m_pCustomResFilename(pCustomResFilename),
 	m_hRequest(NULL)
 {
-	SetSize(624, 278);
+	SetSize(GetScaledValue(624), GetScaledValue(278));
 	m_szMapFilter[0] = 0;
 	m_iPingFilter = 0;
-	// Default to Zombie Panic! AppID if this just shits itself.
+	// Default to the game's desired AppID if this just shits itself.
 	m_uLimitToAppID = SteamUtils() ? SteamUtils()->GetAppID() : AURA_APPID; // no magic number for AppID please. thanks.
 	m_iServerRefreshCount = 0;
 	m_bFilterNoFullServers = false;
@@ -76,6 +76,7 @@ CBaseTab::CBaseTab(vgui2::Panel* parent, const char* name, EPageType eType, cons
 	m_pAddCurrentServer = new vgui2::Button(this, "AddCurrentServerButton", "#ServerBrowser_AddCurrentServer");
 	m_pServerList = new CServerListPanel(this, "gamelist");
 	m_pServerList->SetAllowUserModificationOfColumns(true);
+	m_pServerList->SetColumnHeaderHeight(GetScaledValue(20));
 
 	m_pAddToFavoritesButton = new vgui2::Button(this, "AddToFavoritesButton", "");
 	m_pAddToFavoritesButton->SetEnabled(false);
@@ -568,7 +569,7 @@ void CBaseTab::OnButtonToggled(Panel* panel, int state)
 	{
 		int wide, tall;
 		GetSize(wide, tall);
-		SetSize(624, 278);
+		SetSize(GetScaledValue(624), GetScaledValue(278));
 
 		if (m_pCustomResFilename)
 		{
@@ -811,6 +812,10 @@ void CBaseTab::UpdateFilterSettings()
 		Q_snprintf(szRegCode, sizeof(szRegCode), "%i", regCode);
 		m_vecServerFilters.AddToTail(MatchMakingKeyValuePair_t("region", szRegCode));
 	}
+
+	// Johan: history should only check for dedicated servers, no p2p.
+	if (m_eMatchMakingType == eHistoryServer)
+		m_vecServerFilters.AddToTail(MatchMakingKeyValuePair_t("dedicated", "1"));
 
 	// copy filter settings into filter file
 	KeyValues* filter = CGameUIViewport::Get()->GetServerBrowser()->GetFilterSaveData(GetName());

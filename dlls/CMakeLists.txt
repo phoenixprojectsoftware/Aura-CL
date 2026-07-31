@@ -1,6 +1,8 @@
 add_subdirectory(wpn_shared)
+add_subdirectory(s10_weapons)
 
 add_sources(
+	br.cpp
     CDisplacer.cpp
     CDisplacer.h
     CEagle.h
@@ -25,6 +27,7 @@ add_sources(
 	egon.cpp
 	gauss.cpp
 	handgrenade.cpp
+	hldmar.cpp
 	hornetgun.cpp
 	mp5.cpp
 	python.cpp
@@ -34,4 +37,5 @@ add_sources(
 	skill.h
 	squeakgrenade.cpp
 	tripmine.cpp
-	UserMessages.h)
+	UserMessages.h
+	wpn_healer.cpp)

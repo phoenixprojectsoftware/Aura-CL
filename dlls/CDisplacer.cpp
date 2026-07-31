@@ -12,6 +12,7 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -459,3 +460,5 @@ int CDisplacer::GetItemInfo(ItemInfo* p)
 	p->iWeight = DISPLACER_WEIGHT;
 	return 1;
 }
+
+#endif // _HALO

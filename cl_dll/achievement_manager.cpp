@@ -9,12 +9,18 @@
  *
  ****/
 
+#include "stage_level.h"
 #include "achievement_manager.h"
 #include <ctime>
 
 #if defined (_STEAMWORKS) && !defined (_HALO)
-void UnlockAchievement(int achievementID)
+CAchievementMgr g_AchievementMgr;
+
+void CAchievementMgr::UnlockAchievement(int achievementID)
 {
+	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
 	const char* apiName = GetAchievementAPIName(achievementID);
 	if (apiName && SteamUserStats())
 	{
@@ -25,7 +31,24 @@ void UnlockAchievement(int achievementID)
 	}
 }
 
-bool isAchievementUnlocked(int achievementID)
+void CAchievementMgr::UnlockAchievementByName(const char* apiName)
+{
+	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
+	if (!apiName || !apiName[0])
+		return;
+
+	if (SteamUserStats())
+	{
+		if (SteamUserStats()->SetAchievement(apiName))
+		{
+			SteamUserStats()->StoreStats();
+		}
+	}
+}
+
+bool CAchievementMgr::isAchievementUnlocked(int achievementID)
 {
 	const char* apiName = GetAchievementAPIName(achievementID);
 	if (apiName && SteamUserStats())
@@ -37,22 +60,37 @@ bool isAchievementUnlocked(int achievementID)
 	return false;
 }
 
-#ifdef DATE_ACH
-bool IsSpecialDate()
+void CAchievementMgr::CheckSpecialDay()
 {
-	// Get the Steam server time
-	uint32 steamTime = SteamUtils()->GetServerRealTime();
+	std::time_t t = std::time(nullptr);
+	std::tm* now = std::localtime(&t);
 
-	// convert to calendar date
-	time_t t = static_cast<time_t>(steamTime);
-	tm* timeinfo = gmtime(&t); // UTC
+	if (!now)
+		return;
 
-	int day = timeinfo->tm_mday;
-	int month = timeinfo->tm_mon; // 0-based, so Jan is 0
+	int day = now->tm_mday;
 
-	// check if it's 5th April
-	return (day == 5 && month == 3);
+	if (day == 5)
+		if (!isAchievementUnlocked(5))
+			UnlockAchievement(5);
+
+	if (day == 20)
+		if (!isAchievementUnlocked(4))
+			UnlockAchievement(4);
 }
-#endif
+
+void CAchievementMgr::StatIncrement(const char* pchName)
+{
+	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
+	int statValue = 0;
+
+	if (SteamUserStats() && SteamUserStats()->GetStat(pchName, &statValue))
+	{
+		SteamUserStats()->SetStat(pchName, statValue + 1);
+		SteamUserStats()->StoreStats();
+	}
+}
 
 #endif

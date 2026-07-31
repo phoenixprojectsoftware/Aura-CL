@@ -1,0 +1,7 @@
+#ifndef VGUI_VIEWPORT_PANEL_NAMES_H
+#define VGUI_VIEWPORT_PANEL_NAMES_H
+
+#define PANEL_SCOREBOARD "scoreboard"
+#define PANEL_CHAT				 "chat"
+
+#endif

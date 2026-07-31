@@ -45,9 +45,86 @@ static const char* s_Messages[] = {
 	u8"TO PLAY A 1998 GAME"
 };
 
+static const char* s_Credits[] = {
+	u8"!!!! THE PHOENIX PROJECT SOFTWARE !!!!\n"
+	u8"!!!! AURA TECH TEAM !!!!\n"
+	u8"RafaXIS - co-creator of Cross Product, level design, audio, music\n"
+	u8"Sabian Roberts - co-creator of Cross Product, director, level design, programming, audio, music\n"
+	u8"\n"
+	u8"BlueNightHawk - programming\n"
+	u8"DeanAMX - programming\n"
+	u8"GlitchGod - level design\n"
+	u8"Ry13y04 - UX lead, gamemode design\n"
+	u8"naii_ - level design\n"
+	u8"\n"
+	u8"MTB - animator, viewmodels\n"
+	u8"Hitoshii - animator\n"
+	u8"\n"
+	u8"Boomerang_Monkey - tester\n"
+	u8"xSousa - tester\n"
+	u8"Unowninator - tester\n"
+	u8"Berony - tester\n"
+	u8"Galexion - tester\n"
+	u8"Frostlander - tester\n"
+	u8"\n"
+	u8"!!!! WITH SPECIAL THANKS TO !!!!\n"
+	u8"Martin Webrant & Adrenaline Gamer Team\n"
+	u8"YaLTeR\n"
+	u8"execut4ble\n"
+	u8"fireblizzard\n"
+	u8"tmp64\n"
+	u8"Admer456\n"
+	u8"Sam Vanheer\n"
+	u8"Joel Troch\n"
+	u8"DocRock\n"
+	u8"Mr.Slavik\n"
+	u8"...and all the players!\n"
+	u8"\n"
+	u8"!!!! CLOSED BETA TESTERS !!!!\n"
+	u8"!!!! STEAM LAUNCH - JUNE-AUGUST 2025 !!!!\n"
+	u8"Thank you to the following individuals for your generous assistance with getting the best possible launch on Steam, with the launch of Season 9 Patch II (v2.9.2).\n"
+	u8"Pete Borland (Lord Bork)\n"
+	u8"Dante Franklin (Captain Gamer)\n"
+	u8"Daniel Galiszewski (Danielko99922)\n"
+	u8"Michal Grzejszcyk (zaku1)\n"
+	u8"Williamd Johnson (WJKattMAN)\n"
+	u8"Egor Klushkin (WebPuck9)\n"
+	u8"Frederik Kronberg (Blubber the fat)\n"
+	u8"Vincent Prestigiacomo (Monkey)\n"
+	u8"\n"
+	u8"21.vasi\n"
+	u8"9mmar\n"
+	u8"arsmraz\n"
+	u8"Azelf89\n"
+	u8"Berony\n"
+	u8"CAE17\n"
+	u8"Citizen118\n"
+	u8"dsouza\n"
+	u8"dumkl\n"
+	u8"Frostlander\n"
+	u8"Galexion\n"
+	u8"HitoshiiAFK\n"
+	u8"Houndeye - Eilay 28\n"
+	u8"JS999\n"
+	u8"Kenzon hundred power\n"
+	u8"knoxed\n"
+	u8"Levi\n"
+	u8"Meowstic08\n"
+	u8"Napoleon\n"
+	u8"NerfMagnet\n"
+	u8"Skillez Elias\n"
+	u8"sooqui\n"
+	u8"Speaker\n"
+	u8"TheoTTG\n"
+	u8"Texas Offal\n"
+	u8"xdf\n"
+	u8"xstephx\n"
+	u8"Yoda\n"
+};
+
 CGameUITestPanel::CGameUITestPanel(vgui2::Panel* pParent) : BaseClass(pParent, "GameUITestPanel")
 {
-	SetTitle("VGUI2 TEST PANEL", false);
+	SetTitle("Credits", false);
 	SetSizeable(true);
 	SetSize(460, 230);
 	SetDeleteSelfOnClose(true);
@@ -75,8 +152,8 @@ void CGameUITestPanel::Activate()
 	BaseClass::Activate();
 
 	// select random msg
-	wchar_t wbuf[1024];
-	int idx = gEngfuncs.pfnRandomLong(0, std::size(s_Messages) - 1);
-	Q_UTF8ToWString(s_Messages[idx], wbuf, sizeof(wbuf));
+	wchar_t wbuf[8192];
+	int idx = gEngfuncs.pfnRandomLong(0, std::size(s_Credits) - 1);
+	Q_UTF8ToWString(s_Credits[idx], wbuf, sizeof(wbuf));
 	m_pText->SetText(wbuf);
 }

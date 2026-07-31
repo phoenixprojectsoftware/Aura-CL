@@ -12,18 +12,22 @@
 #include "CWorkshopSubUploaded.h"
 #include "CWorkshopSubUpload.h"
 
+#ifndef _HALO
 CON_COMMAND(gameui_workshop, "Opens Workshop dialog")
 {
 	CGameUIViewport::Get()->GetWorkshopDialog()->Activate();
 	g_pBaseUI->ActivateGameUI();
 }
+#endif
 
 CWorkshopDialog::CWorkshopDialog(vgui2::Panel* pParent)
 	: BaseClass(pParent, "WorkshopDialog")
 {
-	SetBounds(0, 0, 800, 600);
 	SetSizeable(false);
+	SetProportional(true);
 	SetDeleteSelfOnClose(true);
+
+	LoadControlSettings(VGUI2_ROOT_DIR "resource/workshop/base.res");
 
 	SetTitle("#Phoenix_Workshop", true);
 
@@ -33,7 +37,7 @@ CWorkshopDialog::CWorkshopDialog(vgui2::Panel* pParent)
 	SetApplyButtonVisible(false);
 	EnableApplyButton(false);
 	SetCancelButtonText("#PropertyDialog_Close");
-	GetPropertySheet()->SetTabWidth(84);
+	GetPropertySheet()->SetTabWidth(GetScaledValue(84));
 	MoveToCenterOfScreen();
 }
 

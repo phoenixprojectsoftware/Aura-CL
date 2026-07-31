@@ -11,36 +11,78 @@
 #include "cl_util.h"
 #include "vgui_TeamFortressViewport.h"
 #include "discord_integration.h"
+#include "achievement_manager.h"
 
 using namespace std::literals::string_literals;
+
+static char s_largeImageKey[64];
+
+bool IsBeta()
+{
+	return SteamUtils()->GetAppID() == 3903990;
+}
+
+bool ForceRetailID()
+{
+	return true;
+}
 
 namespace discord_integration
 {
 	namespace
 	{
 		// From Discord developer dashboard.
+#ifdef _HALO
+		constexpr const char CLIENT_ID[] = "1381646338604667072"; // Halo: GoldSource
+#else
 		constexpr const char CLIENT_ID[] = "836328170360799284";
+		constexpr const char BETA_ID[] = "1465161235669454944";
+#endif
 
+#ifdef _HALO
 		// This seems to be consistent across PCs.
-		constexpr const char STEAM_APP_ID[] = "3416640"; // This app ID will only launch zamnhlmp and not zamnhlmp_dev - so Discord invites will not work for
-																									   // zamnhlmp_dev builds of the game!
+		constexpr const char STEAM_APP_ID[] = "11600264564054163526";
+#else
+		// Half-Life: Cross Product Steam App ID
+		constexpr const char BETA_APP_ID[] = "3903990";
+		constexpr const char STEAM_APP_ID[] = "3416640";
+#endif
 		
 		// BlueNightHawk : Convert Uppercase Map Names to Lowercase. 2021.
 		void LowerCase(const char* in, char* out, int size) 
 		{
-			for (int i = 0; i < size; i++)
-			{
-				if (!out[i] || out[i] == '\0')
-				{
-					out[i] = in[i];
-					continue;
-				}
-				out[i] = (char)tolower(in[i]);
-			}
+			int i = 0;
+			for (; i < size - 1 && in[i] != '\0'; i++)
+				out[i] = (char)tolower((unsigned char)in[i]);
+			out[i] = '\0';
 		}
 
 
 		// Maps for which we have thumbnails.
+#ifdef _HALO
+		const std::unordered_set<std::string> maps_with_thumbnails{
+			// PLEASE SORT THESE IN ALPHABETICAL ORDER
+			// AND THAT THEY ARE CAPITALISED EXACTLY
+			// AS IN THE GAME FILES!!!
+			"BeaverCreek"s,
+			"BloodGulch"s,
+			"BoardingAction"s,
+			"BootCamp"s,
+			"Chillout"s,
+			"Chiron_TL34"s,
+			"Damnation"s,
+			"Damned_Event"s,
+			"Derelict"s,
+			"Downrush"s,
+			"FF_AmberClad"s,
+			"FF_Infinite_Succor"s,
+			"fire_range"s,
+			"Foundation"s,
+			"Lockout"s,
+			"Prisoner"s,
+			"Rat_Race"s
+		};
+#else
 		const std::unordered_set<std::string> maps_with_thumbnails{
 			// PLEASE SORT THESE IN ALPHABETICAL ORDER - AND MAKE SURE THAT THE MAP NAMES YOU PUT HERE 
 			// ARE EXACTLY AS THEY ARE CAPITALISED IN THE GAME FILES!
@@ -132,6 +174,7 @@ namespace discord_integration
 			"Xen"s,
 			"Xendance"s
 		};
+#endif
 
 		// Custom maps with thumbnails.
 		const std::unordered_set<std::string> custom_maps_with_thumbnails{
@@ -290,16 +333,16 @@ namespace discord_integration
 
 					// Get the map name and icon.
 					get_map_name(map_name, ARRAYSIZE(map_name));
-					if (map_name[0])
+					if (cur_state != game_state::NOT_PLAYING && map_name[0])
 					{
-						char newmapname[64];
+						// lowercased version into static buffer
+						for (int i = 0; i < (int)sizeof(s_largeImageKey) - 1 && map_name[i]; ++i)
+							s_largeImageKey[i] = (char)tolower((unsigned char)map_name[i]);
+						s_largeImageKey[strlen(map_name)] = '\0';
 
-						LowerCase((const char*)map_name, newmapname, ARRAYSIZE(map_name));
+						// verify the map is in the set
 						if (maps_with_thumbnails.find(map_name) != maps_with_thumbnails.cend())
-							presence.largeImageKey = newmapname;
-
-						if (custom_maps_with_thumbnails.find(map_name) != custom_maps_with_thumbnails.cend())
-							presence.largeImageKey = newmapname;
+							presence.largeImageKey = s_largeImageKey;
 
 						presence.largeImageText = map_name;
 					}
@@ -321,6 +364,9 @@ namespace discord_integration
 				}
 
 				presence.state = state.c_str();
+
+				gEngfuncs.Con_Printf("[DiscordRPC] largeImageKey = '%s'\n", presence.largeImageKey);
+				gEngfuncs.Con_Printf("[DiscordRPC] map_name = '%s'\n", map_name);
 
 				Discord_UpdatePresence(&presence);
 			}
@@ -387,7 +433,10 @@ namespace discord_integration
 		handlers.disconnected = handle_disconnected;
 		handlers.joinGame = handle_joinGame;
 		handlers.joinRequest = handle_joinRequest;
-		Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);
+		if (IsBeta() && !ForceRetailID())
+			Discord_Initialize(BETA_ID, &handlers, 1, BETA_APP_ID);
+		else
+			Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);
 
 		discord_state = std::make_unique<DiscordState>();
 

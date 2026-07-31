@@ -30,6 +30,8 @@
 #include "vgui_TeamFortressViewport.h"
 #include "cl_weapons.h"
 
+#include <steamworks/steam_api.h>
+
 WEAPON *gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
 						// this points to the active weapon menu item
 WEAPON *gpLastSel;		// Last weapon menu selection 
@@ -74,8 +76,9 @@ int WeaponsResource :: HasAmmo( WEAPON *p )
 void WeaponsResource :: LoadWeaponSprites( WEAPON *pWeapon )
 {
 	int i, iRes;
-
-	if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
+	if (SteamUtils()->IsSteamRunningOnSteamDeck())
+		iRes = 640;
+	else if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
 		iRes = 2560;
 	else if (ScreenWidth >= 1280 && ScreenHeight > 720)
 		iRes = 1280;
@@ -674,6 +677,8 @@ void CHudAmmo::Warning()
 	else if (!strcmp(pszWeaponName, "weapon_eagle")) lowAmmoThreshold = 2;
 	else if (!strcmp(pszWeaponName, "weapon_357")) lowAmmoThreshold = 1;
 	else if (!strcmp(pszWeaponName, "weapon_9mmAR")) lowAmmoThreshold = 10;
+	else if (!strcmp(pszWeaponName, "weapon_hldmar")) lowAmmoThreshold = 10;
+	else if (!strcmp(pszWeaponName, "weapon_br")) lowAmmoThreshold = 6;
 	else if (!strcmp(pszWeaponName, "weapon_shotgun")) lowAmmoThreshold = 2;
 	else if (!strcmp(pszWeaponName, "weapon_crossbow")) lowAmmoThreshold = 1;
 	else if (!strcmp(pszWeaponName, "weapon_m249")) lowAmmoThreshold = 15;

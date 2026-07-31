@@ -209,9 +209,10 @@ int WorkshopItemList::AddItem(vgui2::Panel* Texture, vgui2::Panel* Author, vgui2
 			nWorkshopID
 		)
 	);
-	hTextFont = pScheme->GetFont("AchievementItemDescription");
+	hTextFont = pScheme->GetFont("AchievementItemDescription", true);
 	if (hTextFont != vgui2::INVALID_FONT)
 		pWorkshopButton->SetFont(hTextFont);
+	pWorkshopButton->SetContentAlignment(vgui2::Label::Alignment::a_center);
 
 	newitem.button = pWorkshopButton;
 
@@ -227,10 +228,11 @@ int WorkshopItemList::AddItem(vgui2::Panel* Texture, vgui2::Panel* Author, vgui2
 				nWorkshopID
 			)
 		);
-		hTextFont = pScheme->GetFont("AchievementItemDescription");
+		hTextFont = pScheme->GetFont("AchievementItemDescription", true);
 		if (hTextFont != vgui2::INVALID_FONT)
 			pEditButton->SetFont(hTextFont);
 		newitem.button_edit = pEditButton;
+		pEditButton->SetContentAlignment(vgui2::Label::Alignment::a_center);
 	}
 	else
 		newitem.button_edit = nullptr;
@@ -438,8 +440,8 @@ void WorkshopItemList::PerformLayout()
 
 	int top = m_vbar->GetValue();
 
-	if (vpixels < 306)
-		vpixels = 306;
+	if (vpixels < GetScaledValue(306))
+		vpixels = GetScaledValue(306);
 
 	m_pPanelEmbedded->SetPos(0, -top);
 	m_pPanelEmbedded->SetSize(wide - m_vbar->GetWide(), vpixels);	// scrollbar will sit on top (zpos set explicitly)
@@ -453,7 +455,7 @@ void WorkshopItemList::PerformLayout()
 
 	// Now lay out the controls on the embedded panel
 	int y = 0;
-	int h = 73;
+	int h = GetScaledValue(73);
 
 	int xpos = m_iFirstColumnWidth + m_iPanelBuffer;
 
@@ -467,44 +469,44 @@ void WorkshopItemList::PerformLayout()
 
 		DATAITEM& item = m_DataItems[m_SortedItems[i]];
 
+		int hTall = GetScaledValue(73);
+
 		// Override the texture height
-		item.texture->SetTall(73);
+		item.texture->SetTall(hTall);
 
 		if (h < item.texture->GetTall())
 			h = item.texture->GetTall();
 
-		int imgw = 150;
+		int imgw = GetScaledValue(150);
 		item.texture->SetBounds(5, y, imgw, item.texture->GetTall());
 
-		int textx = 5 + imgw;
+		int textx = GetScaledValue(5) + imgw;
 
 		if (item.title)
-			item.title->SetBounds(textx + 5, y - 2, 400, 20);
+			item.title->SetBounds(textx + GetScaledValue(5), y - 2, GetScaledValue(300), GetScaledValue(20));
 
 		if (item.desc)
-			item.desc->SetBounds(textx + 8, y + 5, 490, 35);
+			item.desc->SetBounds(textx + GetScaledValue(8), y + GetScaledValue(5), GetScaledValue(250), GetScaledValue(35));
 
 		if (item.author)
-			item.author->SetBounds(textx + 8, y + 20, 490, 35);
+			item.author->SetBounds(textx + GetScaledValue(8), y + GetScaledValue(20), GetScaledValue(250), GetScaledValue(35));
 
 		if (item.activated)
 		{
-			item.activated->SetBounds(textx + 5, y + 38, 150, 35);
-			item.activated->SetEnabled(true);
+			item.activated->SetBounds(textx + GetScaledValue(5), y + GetScaledValue(38), GetScaledValue(150), GetScaledValue(35));			item.activated->SetEnabled(true);
 			item.activated->MoveToFront();
 		}
 
 		if (item.error_msg)
 		{
-			item.error_msg->SetBounds(wide - textx - 200, y + 40, 200, 35);
-			item.error_msg->SetFgColor(Color(255, 0, 0, 255));
+			item.error_msg->SetBounds(wide - textx - GetScaledValue(200), y + 40, GetScaledValue(200), GetScaledValue(35));			item.error_msg->SetFgColor(Color(255, 0, 0, 255));
 		}
 
 		if (item.button)
-			item.button->SetBounds(wide - 130, y - 2, 100, 24);
+			item.button->SetBounds(GetScaledValue(420), y - 2, GetScaledValue(70), GetScaledValue(18));
 
 		if (item.button_edit)
-			item.button_edit->SetBounds(wide - 130, y + 32, 100, 24);
+			item.button_edit->SetBounds(GetScaledValue(420), y + GetScaledValue(32), GetScaledValue(70), GetScaledValue(18));
 
 		if (iCurrentColumn >= m_iNumColumns - 1)
 		{

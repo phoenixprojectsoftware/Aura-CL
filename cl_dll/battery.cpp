@@ -171,17 +171,12 @@ int CHudBattery::Draw(float flTime)
 		b = 0;
 	}
 
-	float auraRegeneration = CVAR_GET_FLOAT("sv_aura_regeneration");
-
-	if (auraRegeneration != 0)
+	if (m_iBat <= 25)
 	{
-		if (m_iBat <= 10)
+		if (!Blinking)
 		{
-			if (!Blinking)
-			{
-				Blinking = true;
-			}
-
+			Blinking = true;
+		}
 		a = (int)(fabs(sin(flTime * 10)) * 256.0);
 	}
 	else
@@ -206,11 +201,9 @@ int CHudBattery::Draw(float flTime)
 		}
 		else
 			a = MIN_ALPHA;
-		}
-	
-	ScaleColors(r, g, b, a );
 	}
 
+	ScaleColors(r, g, b, a);
 	int iOffset = (m_prc1->bottom - m_prc1->top)/6;
 
 	y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;

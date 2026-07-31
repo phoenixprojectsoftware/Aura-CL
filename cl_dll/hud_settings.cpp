@@ -6,11 +6,26 @@
 
 DECLARE_MESSAGE(m_Settings, Settings);
 
+static bool IsAuraVerOld(const char* pszVersion)
+{
+	if (!pszVersion || !pszVersion[0])
+		return true;
+
+	int major = 0;
+	int minor = 0;
+
+	if (sscanf(pszVersion, "%d.%d", &major, &minor) < 1)
+		return true;
+
+	return major < AURA_VER_MAJOR;
+}
+
 int CHudSettings::Init()
 {
 	HOOK_MESSAGE(Settings);
 
 	m_iFlags = 0;
+	m_bOldBadVersion = false;
 
 	gamemode[ARRAYSIZE(gamemode) - 1] = '\0';
 	ag_version[ARRAYSIZE(ag_version) - 1] = '\0';
@@ -55,7 +70,11 @@ int CHudSettings::Draw(float time)
 		sprintf(str, "Aura %s", ag_version);
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
 
-		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), gamemode, r, g, b);
+		sprintf(str, "Gamemode:");
+		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, r, g, b);
+
+		sprintf(str, "%s", gamemode);
+		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight), str, 0, 255, 0);
 
 		sprintf(str, "Time limit: %hhd", time_limit);
 		gEngfuncs.pfnDrawString(x, (y += gHUD.m_scrinfo.iCharHeight / 2 * 3), str, r, g, b);
@@ -117,6 +136,8 @@ int CHudSettings::MsgFunc_Settings(const char* name, int size, void* buf)
 	weapon_stay = (READ_BYTE() != 0);
 
 	strncpy(ag_version, READ_STRING(), ARRAYSIZE(ag_version) - 1);
+	m_bOldBadVersion = IsAuraVerOld(ag_version);
+
 	strncpy(wallgauss, READ_STRING(), ARRAYSIZE(wallgauss) - 1);
 	strncpy(headshot, READ_STRING(), ARRAYSIZE(headshot) - 1);
 	strncpy(blast_radius, READ_STRING(), ARRAYSIZE(blast_radius) - 1);
@@ -138,6 +159,8 @@ int CHudSettings::MsgFunc_Settings(const char* name, int size, void* buf)
 
 	discord_integration::set_gamemode(gamemode);
 	discord_integration::set_match_is_on(match_is_on);
+
+	gHUD.m_Watermark.pszGamemode = gamemode;
 
 	return 1;
 }

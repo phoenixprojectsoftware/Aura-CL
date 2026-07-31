@@ -19,6 +19,8 @@
 //
 
 #include "hud.h"
+#include "audio/music.h"
+#include "video/video_player.h"
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
@@ -43,7 +45,9 @@ extern "C"
 #include "tri.h"
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 #include "console.h"
+#include "audio/openal_wav.h"
 
 cldll_enginefunc_t gEngfuncs;
 CHud gHUD;
@@ -60,6 +64,10 @@ IGameUI *g_pGameUI1 = nullptr;
 
 #include "discord_integration.h"
 #include "update_checker.h"
+
+#ifdef _STEAMWORKS
+#include "achievement_manager.h"
+#endif
 
 void CL_LoadParticleMan( void );
 void CL_UnloadParticleMan( void );
@@ -150,6 +158,12 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
+#ifndef _HALO
+#include "leaderboard_integration.h"
+#endif
+
+#include "greeting.h"
+
 int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 {
 	gEngfuncs = *pEnginefuncs;
@@ -164,11 +178,32 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	update_checker::check_for_updates();
 	discord_integration::initialize();
 
+	if (!g_SoundtrackSystem.Init())
+		gEngfuncs.Con_Printf("Failed to init openal\n");
+
 	CvarSystem::RegisterCvars();
 	console::Initialize();
 	EV_HookEvents();
 	CL_LoadParticleMan();
 	CL_LoadGameUI();
+
+#ifndef _HALO
+	if (!g_AchievementMgr.isAchievementUnlocked(3))
+		g_AchievementMgr.UnlockAchievement(3);
+
+	InitGreeting();
+
+	g_Leaderboards.Init();
+
+	int oldKillStatTransfer;
+	if (SteamUserStats() && SteamUserStats()->GetStat(OLD_KILL_STAT, &oldKillStatTransfer))
+	{
+		SteamUserStats()->SetStat(PLR_KILL_STATS, oldKillStatTransfer);
+		SteamUserStats()->StoreStats();
+	}
+#endif
+
+	gVideoPlayer.Init();
 
 	// get tracker interface, if any
 	return 1;
@@ -191,6 +226,9 @@ int CL_DLLEXPORT HUD_VidInit( void )
 	gHUD.VidInit();
 
 	VGui_Startup();
+
+	ClientViewport_VidInit();
+	ClientVGUI_RestoreProportionalBaseCallback();
 
 	return 1;
 }
@@ -255,6 +293,9 @@ int CL_DLLEXPORT HUD_UpdateClientData(client_data_t *pcldata, float flTime )
 
 	discord_integration::on_update_client_data();
 
+	g_SoundtrackSystem.SetVolumeFromCvar();
+	g_SoundtrackSystem.Update();
+
 	return gHUD.UpdateClientData(pcldata, flTime );
 }
 
@@ -290,6 +331,8 @@ void CL_DLLEXPORT HUD_Frame( double time )
 	GetClientVoiceMgr()->Frame(time);
 
 	discord_integration::on_frame();
+
+	UpdateGreeting();
 }
 
 
@@ -338,6 +381,10 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	CL_UnloadParticleMan();
 	console::HudShutdown();
 	discord_integration::shutdown();
+	g_SoundtrackSystem.Stop();
+	g_SoundtrackSystem.Shutdown();
+	g_MusicSystem.Shutdown();
+	gVideoPlayer.Shutdown();
 }
 
 //---------------------------------------------------

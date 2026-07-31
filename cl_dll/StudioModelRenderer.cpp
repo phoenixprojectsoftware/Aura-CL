@@ -376,6 +376,17 @@ void CStudioModelRenderer::StudioSlerpBones( vec4_t q1[], float pos1[][3], vec4_
 	}
 }
 
+bool CStudioModelRenderer::DoesPlayerRequireLightingAdjustment(const alight_t& lighting)
+{
+	if (!m_pCurrentEntity)
+		return false;
+	if (!m_pCurrentEntity->player)
+		return false;
+	if (lighting.shadelight < 60)
+		return true;
+	return false;
+}
+
 /*
 ====================
 StudioGetAnim
@@ -1274,6 +1285,10 @@ int CStudioModelRenderer::StudioDrawModel( int flags )
 
 		IEngineStudio.StudioEntityLight( &lighting );
 
+		// Override lighting to be more visible in darkness. -Johan
+		if (lighting.shadelight < 60)
+			lighting.shadelight = 60;
+
 		// model and frame independant
 		IEngineStudio.StudioSetupLighting (&lighting);
 
@@ -1823,6 +1838,10 @@ int CStudioModelRenderer::StudioDrawPlayer( int flags, entity_state_t *pplayer )
 		IEngineStudio.StudioDynamicLight(m_pCurrentEntity, &lighting );
 
 		IEngineStudio.StudioEntityLight( &lighting );
+
+		// Override lighting to be more visible in darkness. -Johan
+		if (lighting.shadelight < 60)
+			lighting.shadelight = 60;
 
 		// model and frame independant
 		IEngineStudio.StudioSetupLighting (&lighting);
