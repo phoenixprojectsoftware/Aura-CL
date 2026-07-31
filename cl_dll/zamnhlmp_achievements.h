@@ -29,7 +29,7 @@ static const char* g_PhoenixSteamIDs[] = {
 	"0:1:77747696", // playmann
 	"0:0:102486805", // ivan naii_
 	"0:1:175018298", // maxresdefault
-
+	"0:0:461917277" // Georgie L.
 };
 static const int g_NumPhoenixIDs = sizeof(g_PhoenixSteamIDs) / sizeof(g_PhoenixSteamIDs[0]);
 
