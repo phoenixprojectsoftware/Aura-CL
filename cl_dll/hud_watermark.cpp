@@ -127,13 +127,12 @@ int CHudWatermark::Draw(float time)
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 #ifndef _DEBUG
-		if (IsBetaApp())
-			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "OPEN BETA", 255, 0, 0);
-		else
-			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - INTERNAL USE ONLY", 255, 0, 0);
 
 		if (Neptune())
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 7, "STEAM DECK mode", 128, 128, 128);
+
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 10, "Property of The Phoenix Project Software SVG", r, g, b);
 #else
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "DEBUG BUILD - internal use only.", 255, 0, 0);
 #endif

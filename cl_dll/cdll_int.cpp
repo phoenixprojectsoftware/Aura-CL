@@ -222,7 +222,8 @@ so the HUD can reinitialize itself.
 
 int CL_DLLEXPORT HUD_VidInit( void )
 {
-//	RecClHudVidInit();
+	gVideoPlayer.Stop();
+
 	gHUD.VidInit();
 
 	VGui_Startup();
@@ -245,6 +246,8 @@ the hud variables.
 
 void CL_DLLEXPORT HUD_Init( void )
 {
+	gVideoPlayer.Stop();
+
 	console::HudInit();
 	InitInput();
 	gHUD.Init();

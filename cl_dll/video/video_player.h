@@ -32,6 +32,7 @@ private:
 	bool UploadFrame();
 	void CreateTextureIfNeeded();
 	void DestroyTexture();
+	std::string FindAutomaticAudioPath(const char* pszVideoPath) const;
 
 private:
 	CTheoraDecoder* m_pDecoder = nullptr;

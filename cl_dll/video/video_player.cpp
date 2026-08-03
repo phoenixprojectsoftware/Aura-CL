@@ -117,6 +117,9 @@ void CVideoPlayer::Stop()
 
 	m_iFrameTall = 0;
 	m_iFrameWide = 0;
+	m_flStartTime = 0.0f;
+
+	DestroyTexture();
 }
 
 void CVideoPlayer::Update(float flClientTime)
@@ -254,4 +257,33 @@ void CVideoPlayer::Draw()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glPopAttrib();
+}
+
+std::string CVideoPlayer::FindAutomaticAudioPath(const char* pszVideoPath) const
+{
+	if (!pszVideoPath || !pszVideoPath[0])
+		return {};
+
+	std::string audioPath = pszVideoPath;
+
+	const std::string::size_type slash = audioPath.find_last_of("/\\");
+
+	const std::string::size_type dot = audioPath.find_last_of('.');
+
+	if (dot == std::string::npos || (slash != std::string::npos && dot < slash))
+	{
+		audioPath += ".ogg";
+	}
+	else
+	{
+		audioPath.replace(dot, std::string::npos, ".ogg");
+	}
+
+	FILE* file = std::fopen(audioPath.c_str(), "rb");
+
+	if (!file)
+		return {};
+
+	std::fclose(file);
+	return audioPath;
 }
