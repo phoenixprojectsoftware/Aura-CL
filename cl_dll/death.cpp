@@ -50,6 +50,7 @@ static int DEATHNOTICE_DISPLAY_TIME = 6;
 #define DEATHNOTICE_TOP		32
 
 DeathNoticeItem rgDeathNoticeList[ MAX_DEATHNOTICES + 1 ];
+CAchievementMgr g_KillStats;
 
 float g_ColorBlue[3]	= { 0.6, 0.8, 1.0 };
 float g_ColorRed[3]		= { 1.0, 0.25, 0.25 };
@@ -320,11 +321,14 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			gEngfuncs.Con_Printf("You just earned GAMERSCORE, baby. Why? ACH_FIRST_BLOOD\n");
 		}
 
+		// KILL TRACKING - WEAPONS
 		// DISPLACER ACHIEVEMENT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "displacer_ball"))
 		{
 			if (!g_AchievementMgr.isAchievementUnlocked(19))
 				g_AchievementMgr.UnlockAchievement(19);
+
+			g_KillStats.StatIncrement(DISPLACER_KILLS);
 		}
 
 		// PENGUIN ACHIEVEMENT
@@ -334,24 +338,111 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 				g_AchievementMgr.UnlockAchievement(20);
 			else
 				gEngfuncs.Con_Printf("It looks like you've already done this. Very clever....\n");
+
+			g_KillStats.StatIncrement(PENGUIN_KILLS);
 		}
 
 		// TRIPMINE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
 		{
-			g_AchievementMgr.StatIncrement(TRIPMINE_KILLS);
+			g_KillStats.StatIncrement(TRIPMINE_KILLS);
 		}
 
 		// SNIPER RIFLE KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "sniperrifle"))
 		{
-			g_AchievementMgr.StatIncrement(SNIPER_KILLS);
+			g_KillStats.StatIncrement(SNIPER_KILLS);
 		}
 
 		// SNARK KILL STAT
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "snark"))
 		{
-			g_AchievementMgr.StatIncrement(SNARK_KILLS);
+			g_KillStats.StatIncrement(SNARK_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "gauss"))
+		{
+			g_KillStats.StatIncrement(TAU_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "egon"))
+		{
+			g_KillStats.StatIncrement(GLUON_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "glock"))
+		{
+			g_KillStats.StatIncrement(GLOCK_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "357"))
+		{
+			g_KillStats.StatIncrement(MAGNUM_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "desert_eagle"))
+		{
+			g_KillStats.StatIncrement(DEAGLE_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "9mmAR"))
+		{
+			g_KillStats.StatIncrement(MP5_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "grenade"))
+		{
+			g_KillStats.StatIncrement(GRENADE_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "br"))
+		{
+			g_KillStats.StatIncrement(OLR_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "shotgun"))
+		{
+			g_KillStats.StatIncrement(SHOTGUN_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "crossbow"))
+		{
+			g_KillStats.StatIncrement(XBOW_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "rpg"))
+		{
+			g_KillStats.StatIncrement(RPG_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "hornet"))
+		{
+			g_KillStats.StatIncrement(HIVEHAND_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "tripmine"))
+		{
+			g_KillStats.StatIncrement(TRIPMINE_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "satchel"))
+		{
+			g_KillStats.StatIncrement(SATCHEL_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "m249"))
+		{
+			g_KillStats.StatIncrement(SAW_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "spore"))
+		{
+			g_KillStats.StatIncrement(SPORE_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "shock_rifle"))
+		{
+			g_KillStats.StatIncrement(SHOCK_KILLS);
 		}
 
 		// CLOSE CALL ACHIEVEMENT
@@ -365,7 +456,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			if (!g_AchievementMgr.isAchievementUnlocked(21))
 				g_AchievementMgr.UnlockAchievement(21);
 
-			g_AchievementMgr.StatIncrement(PLR_MELEE_KILLS_STATS);
+			g_KillStats.StatIncrement(PLR_MELEE_KILLS_STATS);
 		}
 
 		// UNDERWATER KILL STAT

@@ -69,6 +69,8 @@ namespace
 		{HIVEHAND_SHOTS, "HIVEHAND - shots fired"},
 		{HIVEHAND_KILLS, "HIVEHAND - kills"},
 		// TIER 5
+		{GRENADE_KILLS, "GRENADE - kills"},
+		{SATCHEL_KILLS, "SATCHEL CHARGE - kills"},
 		{TRIPMINE_SHOTS, "LASER TRIPMINES PLACED"},
 		{TRIPMINE_KILLS, "LASER TRIPMINE - kills"},
 		{SNARK_SHOTS, "SNARKS DROPPED"},
@@ -98,7 +100,7 @@ CLeaderboardPanel::CLeaderboardPanel(VPANEL parent)
 {
 	SetParent(parent);
 	SetSize(500, 300);
-	SetTitle("Service Record", true);
+	SetTitle("SERVICE RECORD", true);
 	SetVisible(false);
 	SetSizeable(false);
 
