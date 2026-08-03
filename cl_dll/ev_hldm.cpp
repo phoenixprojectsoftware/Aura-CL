@@ -87,6 +87,8 @@ extern cvar_t* cl_shockrifle_punch_enabled;
 extern cvar_t* steam_vibrate_enabled;
 extern CHud gHUD;
 
+CAchievementMgr g_ShotStats;
+
 extern "C"
 {
 
@@ -604,6 +606,8 @@ void EV_FireGlock1( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(empty ? GLOCK_SHOOT_EMPTY : GLOCK_SHOOT, 2);
 
 		Punch(2, 0, 0);
+
+		g_ShotStats.StatIncrement(GLOCK_SHOTS);
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
@@ -677,6 +681,8 @@ void EV_FireGlock2( event_args_t *args )
 			Punch(2, -0.75, 0);
 			break;
 		}
+
+		g_ShotStats.StatIncrement(GLOCK_SHOTS);
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
@@ -750,6 +756,8 @@ void EV_FireShotGunDouble( event_args_t *args )
 		EV_MuzzleFlash();
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE2, 2 );
 		Punch( 10, 0, 0 );
+
+		g_ShotStats.StatIncrement(SHOTGUN_SHOTS, 2);
 	}
 
 	for ( j = 0; j < 2; j++ )
@@ -808,6 +816,8 @@ void EV_FireShotGunSingle( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE, 2 );
 
 		Punch( 5, 0, 0 );
+
+		g_ShotStats.StatIncrement(SHOTGUN_SHOTS);
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 32, -12, 6 );
@@ -871,6 +881,9 @@ void EV_FireMP5( event_args_t *args )
 		V_PunchAxis(0, gEngfuncs.pfnRandomFloat(-1, 1));
 		V_PunchAxis(1, gEngfuncs.pfnRandomFloat(-1, 1));
 		V_PunchAxis(2, gEngfuncs.pfnRandomFloat(-0.5, 0.5));
+
+		g_ShotStats.StatIncrement(MP5_SHOTS);
+
 	}
 
 	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
@@ -922,6 +935,9 @@ void EV_FireMP52( event_args_t *args )
 			gHUD.StartControllerVibration(0, 0, 0, 20000, 0.1f);
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( MP5_LAUNCH, 2 );
 		Punch( 10, 0, 0 );
+
+		g_ShotStats.StatIncrement(MP5_ALTFIRE);
+
 	}
 	
 	switch( gEngfuncs.pfnRandomLong( 0, 1 ) )
@@ -1063,6 +1079,9 @@ void EV_FireBattleRifle(event_args_t* args)
 		V_PunchAxis(0, -2);
 
 		// TODO: add Steam Controller Vibration
+
+		g_ShotStats.StatIncrement(OLR_SHOTS);
+
 	}
 
 	EV_GetDefaultShellInfo(args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4);
@@ -1105,6 +1124,9 @@ void EV_FireThumper(event_args_t* args)
 			gHUD.StartControllerVibration(0, 0, 0, 20000, 0.1f);
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(1, 2);
 		Punch(7.35, 0, 0);
+
+		g_ShotStats.StatIncrement(HX40_SHOTS);
+
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEP1, "weapons/hx40/hx40_fire.wav", 1, ATTN_NORM, 0, 94 + gEngfuncs.pfnRandomLong(0, 0xf));
@@ -1149,6 +1171,8 @@ void EV_FirePython( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( PYTHON_FIRE1, multiplayer ? 1 : 0 );
 
 		Punch( 10, 0, 0 );
+
+		g_ShotStats.StatIncrement(MAGNUM_SHOTS);
 	}
 
 	switch( gEngfuncs.pfnRandomLong( 0, 1 ) )
@@ -1279,6 +1303,8 @@ void EV_FireGauss( event_args_t *args )
 
 		if ( m_fPrimaryFire == false )
 			 g_flApplyVel = flDamage;	
+
+		g_ShotStats.StatIncrement(TAU_SHOTS);
 			 
 	}
 
@@ -1653,6 +1679,8 @@ void EV_FireCrossbow2( event_args_t *args )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE1, 1 );
 		else if ( args->iparam2 )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
+
+		g_ShotStats.StatIncrement(XBOW_SHOTS);
 	}
 
 	// Store off the old count
@@ -1732,6 +1760,8 @@ void EV_FireCrossbow( event_args_t *args )
 			gEngfuncs.pEventAPI->EV_WeaponAnimation( CROSSBOW_FIRE3, 1 );
 
 		Punch( 2, 0, 0 );
+
+		g_ShotStats.StatIncrement(XBOW_SHOTS);
 	}
 }
 //======================
@@ -1774,6 +1804,8 @@ void EV_FireRpg( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_FIRE2, 1 );
 	
 		Punch( 5, 0, 0 );
+
+		g_ShotStats.StatIncrement(RPG_SHOTS);
 	}
 }
 //======================
@@ -2037,6 +2069,8 @@ void EV_HornetGunFire( event_args_t *args )
 			break;
 		}
 
+		g_ShotStats.StatIncrement(HIVEHAND_SHOTS);
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation ( HGUN_SHOOT, 1 );
 	}
 
@@ -2082,6 +2116,8 @@ void EV_TripmineFire( event_args_t *args )
 		
 	if ( !EV_IsLocal ( idx ) )
 		return;
+
+	g_ShotStats.StatIncrement(TRIPMINE_SHOTS);
 
 	// Grab predicted result for local player
 	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight( view_ofs );
@@ -2135,6 +2171,8 @@ void EV_SnarkFire( event_args_t *args )
 		
 	if ( !EV_IsLocal ( idx ) )
 		return;
+
+	g_ShotStats.StatIncrement(SNARK_SHOTS);
 	
 	if ( args->ducking )
 		vecSrc = vecSrc - ( VEC_HULL_MIN - VEC_DUCK_HULL_MIN );
@@ -2179,6 +2217,8 @@ void EV_FireEagle(event_args_t* args)
 
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(bEmpty ? EAGLE_SHOOT_EMPTY : EAGLE_SHOOT, 0);
 		Punch(4, 0, 0);
+
+		g_ShotStats.StatIncrement(DEAGLE_SHOTS);
 	}
 
 	Legacy_Vector ShellVelocity;
@@ -2240,6 +2280,8 @@ void EV_SniperRifle(event_args_t* args)
 #ifndef _HALO
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(iClip <= 0 ? SNIPERRIFLE_FIRELASTROUND : SNIPERRIFLE_FIRE, 0);
 		Punch(2, 0, 0);
+
+		g_ShotStats.StatIncrement(SNIPER_SHOTS);
 #else
 		switch (gEngfuncs.pfnRandomLong(0, 2))
 		{
@@ -2447,6 +2489,8 @@ void EV_FireShockRifle(event_args_t* args)
 				Punch(-0.75, 0.75, 0);
 				break;
 			}
+
+			g_ShotStats.StatIncrement(SHOCK_SHOTS);
 	}
 
 	for (size_t uiIndex = 0; uiIndex < 3; ++uiIndex)
@@ -2476,6 +2520,8 @@ void EV_FireSpore(event_args_t* args)
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(SPLAUNCHER_FIRE, 0);
 
 		Punch(3, 0, 0);
+
+		g_ShotStats.StatIncrement(SPORE_SHOTS);
 
 		if (cl_entity_t* pViewModel = gEngfuncs.GetViewModel())
 		{
@@ -2683,7 +2729,7 @@ void EV_PenguinFire(event_args_t* args)
 			origin.z += 18;
 
 		Punch(20, 0, 0);
-		g_AchievementMgr.StatIncrement(PENGUIN_SHOTS);
+		g_ShotStats.StatIncrement(PENGUIN_SHOTS);
 
 		gEngfuncs.pEventAPI->EV_PushPMStates();
 		gEngfuncs.pEventAPI->EV_SetSolidPlayers(args->entindex - 1);
