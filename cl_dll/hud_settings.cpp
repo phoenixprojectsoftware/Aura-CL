@@ -17,7 +17,7 @@ static bool IsAuraVerOld(const char* pszVersion)
 	if (sscanf(pszVersion, "%d.%d", &major, &minor) < 1)
 		return true;
 
-	return major < AURA_VER_MAJOR;
+	return major < AURA_VER_MAJOR && minor < AURA_VERSION_MINOR;
 }
 
 int CHudSettings::Init()
