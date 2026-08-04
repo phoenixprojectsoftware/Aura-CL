@@ -66,6 +66,8 @@ add_sources(
 	hud_customtimer.h
 	hud_debug.cpp
 	hud_debug.h
+	hud_firefight.cpp
+	hud_firefight.h
 	hud_jumpspeed.cpp
 	hud_jumpspeed.h
 	hud_koth.cpp

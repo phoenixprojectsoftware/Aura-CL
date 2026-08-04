@@ -41,16 +41,13 @@ enum
 
 enum EStats
 {
-	plr_kill = 0,
+	player_kill = 0,
 	uw_kill,
 	ml_kill,
 	trp_kill,
 	sqk_kill,
 	snp_kill,
 	matches_played,
-	ZP_KILLS_SATCHEL,
-	ZP_KILLS_TNT,
-	ZP_KILLS_ZOMBIES,
 
 	STAT_MAX
 };
@@ -58,10 +55,10 @@ enum EStats
 DialogAchievement_t g_DAchievements[] =
 {
 	// Total Kills Achievements
-	_ACH_ID(ACH_KILLS100,					CATEGORY_KILLS,			plr_kill, 100),
-	_ACH_ID(ACH_500KILLS,					CATEGORY_KILLS,         plr_kill, 500),
-	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        plr_kill, 1000),
-	_ACH_ID(ACH_KILLS10000,              CATEGORY_KILLS,        plr_kill, 10000),
+	_ACH_ID(ACH_KILLS100,					CATEGORY_KILLS,			player_kill, 100),
+	_ACH_ID(ACH_500KILLS,					CATEGORY_KILLS,         player_kill, 500),
+	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        player_kill, 1000),
+	_ACH_ID(ACH_HELLO_STEAMDB,              CATEGORY_KILLS,        player_kill, 2500),
 	_ACH_ID(ACH_FIRST_BLOOD,               CATEGORY_KILLS,        NULL, NULL),
 	_ACH_ID(ACH_O2, CATEGORY_KILLS, uw_kill, 25),
 	_ACH_ID(ACH_UNARMED, CATEGORY_KILLS, NULL, NULL),
@@ -172,7 +169,7 @@ _DATA = s##_DATA;
 int CSteamAchievementsDialog::RequestValue(const char* ID)
 {
 	int returnvalue = 0;
-	if (!Q_strcmp("plr_kill", ID)) returnvalue = m_iAchKills_Total;
+	if (!Q_strcmp("player_kill", ID)) returnvalue = m_iAchKills_Total;
 	else if (!Q_strcmp("uw_kill", ID)) returnvalue = m_iAchKills_Water;
 	else if (!Q_strcmp("ml_kill", ID)) returnvalue = m_iAchKills_Melee;
 	else if (!Q_strcmp("trp_kill", ID)) returnvalue = m_iAchKills_Tripmine;

@@ -812,6 +812,7 @@ void CHud :: Init( void )
 	m_Countdown.Init();
 	m_Crosshairs.Init();
 	m_CTF.Init();
+	m_Firefight.Init();
 	m_KOTH.Init();
 	m_CustomTimer.Init();
 	m_Jumpspeed.Init();
@@ -999,6 +1000,7 @@ void CHud :: VidInit( void )
 	m_Countdown.VidInit();
 	m_Crosshairs.VidInit();
 	m_CTF.VidInit();
+	m_Firefight.VidInit();
 	m_KOTH.VidInit();
 	m_CustomTimer.VidInit();
 	m_Debug.VidInit();

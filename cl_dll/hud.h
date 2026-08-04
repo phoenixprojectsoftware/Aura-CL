@@ -126,6 +126,7 @@ struct HUDLIST {
 #include "hud_customtimer.h"
 #include "hud_ctf.h"
 #include "hud_debug.h"
+#include "hud_firefight.h"
 #include "hud_jumpspeed.h"
 #include "hud_koth.h"
 #include "hud_location.h"
@@ -748,6 +749,7 @@ public:
 	CHudCTF			m_CTF;
 	CHudCustomTimer m_CustomTimer;
 	CHudDebug		m_Debug;
+	CHudFirefight m_Firefight;
 	CHudLocation	m_Location;
 	CHudKOTH m_KOTH;
 	CHudNextMap		m_NextMap;
