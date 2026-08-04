@@ -30,6 +30,7 @@
 #include "cl_gametype.h"
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );
+DECLARE_MESSAGE(m_DeathNotice, FFKill);
 
 struct DeathNoticeItem {
 	char szKiller[MAX_PLAYER_NAME_LENGTH*2];
@@ -39,6 +40,7 @@ struct DeathNoticeItem {
 	int iSuicide;
 	int iTeamKill;
 	int iNonPlayerKill;
+	int iFirefightKill;
 	float flDisplayTime;
 	float *KillerColor;
 	float *VictimColor;
@@ -82,6 +84,7 @@ int CHudDeathNotice :: Init( void )
 	gHUD.AddHudElem( this );
 
 	HOOK_MESSAGE( DeathMsg );
+	HOOK_MESSAGE(FFKill);
 
 	CVAR_CREATE( "hud_deathnotice_time", "6", FCVAR_ARCHIVE );
 
@@ -148,7 +151,23 @@ int CHudDeathNotice::Draw(float flTime)
 				}
 			}
 
-			if (rgDeathNoticeList[i].iNonPlayerKill)
+			if (rgDeathNoticeList[i].iFirefightKill)
+			{
+				if (isLocalKiller)
+				{
+					msg << "You killed " << victim;
+				}
+				else
+				{
+					msg << killer << " killed " << victim;
+				}
+
+				if (*weapon)
+				{
+					msg << " with " << weapon;
+				}
+			}
+			else if (rgDeathNoticeList[i].iNonPlayerKill)
 			{
 				msg << killer << " destroyed " << victim;
 			}
@@ -516,6 +535,185 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 	return 1;
 }
 
+int CHudDeathNotice::MsgFunc_FFKill(
+	const char* pszName,
+	int iSize,
+	void* pbuf)
+{
+	m_iFlags |= HUD_ACTIVE;
 
+	BEGIN_READ(pbuf, iSize);
 
+	const int iKiller = READ_BYTE();
 
+	// READ_STRING() may reuse the same internal buffer, so copy each
+	// string before reading the next one.
+	char szMonsterName[
+		MAX_PLAYER_NAME_LENGTH * 2];
+
+	const char* pszReadMonsterName =
+		READ_STRING();
+
+	strncpy(
+		szMonsterName,
+		pszReadMonsterName ?
+		pszReadMonsterName :
+		"Enemy",
+		sizeof(szMonsterName) - 1);
+
+	szMonsterName[
+		sizeof(szMonsterName) - 1] = '\0';
+
+	char szWeaponName[32];
+
+	const char* pszReadWeaponName =
+		READ_STRING();
+
+	strncpy(
+		szWeaponName,
+		pszReadWeaponName ?
+		pszReadWeaponName :
+		"world",
+		sizeof(szWeaponName) - 1);
+
+	szWeaponName[
+		sizeof(szWeaponName) - 1] = '\0';
+
+	// Validate before accessing g_PlayerInfoList.
+	if (iKiller <= 0 ||
+		iKiller >= MAX_PLAYERS)
+	{
+		return 1;
+	}
+
+	if (gViewPort)
+	{
+		gViewPort->GetAllPlayersInfo();
+	}
+
+	const bool bLocalKiller =
+		g_PlayerInfoList[iKiller].thisplayer ||
+		g_iUser2 == iKiller;
+
+	int iNotice = 0;
+
+	for (iNotice = 0;
+		iNotice < MAX_DEATHNOTICES;
+		++iNotice)
+	{
+		if (rgDeathNoticeList[iNotice].iId == 0)
+		{
+			break;
+		}
+	}
+
+	if (iNotice == MAX_DEATHNOTICES)
+	{
+		memmove(
+			rgDeathNoticeList,
+			rgDeathNoticeList + 1,
+			sizeof(DeathNoticeItem) *
+			(MAX_DEATHNOTICES - 1));
+
+		iNotice =
+			MAX_DEATHNOTICES - 1;
+	}
+
+	DeathNoticeItem& notice =
+		rgDeathNoticeList[iNotice];
+
+	memset(
+		&notice,
+		0,
+		sizeof(notice));
+
+	const char* pszKillerName =
+		g_PlayerInfoList[iKiller].name;
+
+	if (!pszKillerName)
+	{
+		pszKillerName = "";
+	}
+
+	strncpy(
+		notice.szKiller,
+		pszKillerName,
+		sizeof(notice.szKiller) - 1);
+
+	notice.szKiller[
+		sizeof(notice.szKiller) - 1] = '\0';
+
+	strncpy(
+		notice.szVictim,
+		szMonsterName,
+		sizeof(notice.szVictim) - 1);
+
+	notice.szVictim[
+		sizeof(notice.szVictim) - 1] = '\0';
+
+	strncpy(
+		notice.szWeapon,
+		szWeaponName,
+		sizeof(notice.szWeapon) - 1);
+
+	notice.szWeapon[
+		sizeof(notice.szWeapon) - 1] = '\0';
+
+	notice.KillerColor =
+		GetClientColor(iKiller);
+
+	notice.VictimColor =
+		g_ColorGrey;
+
+	notice.iFirefightKill = TRUE;
+
+	char szSpriteName[64];
+
+	snprintf(
+		szSpriteName,
+		sizeof(szSpriteName),
+		"d_%s",
+		notice.szWeapon);
+
+	szSpriteName[
+		sizeof(szSpriteName) - 1] = '\0';
+
+	notice.iId =
+		gHUD.GetSpriteIndex(
+			szSpriteName);
+
+	// iId == 0 is also treated as an empty notice slot.
+	if (notice.iId <= 0)
+	{
+		notice.iId =
+			m_HUD_d_skull;
+	}
+
+	DEATHNOTICE_DISPLAY_TIME =
+		CVAR_GET_FLOAT(
+			"hud_deathnotice_time");
+
+	notice.flDisplayTime =
+		gHUD.m_flTime +
+		DEATHNOTICE_DISPLAY_TIME;
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	if (bLocalKiller)
+	{
+		g_AchievementMgr.StatIncrement(
+			PLR_KILL_STATS);
+	}
+#endif
+
+	if (bLocalKiller &&
+		m_pCvarKillSnd &&
+		m_pCvarKillSndPath &&
+		m_pCvarKillSnd->value > 0.0f)
+	{
+		PlaySound(
+			m_pCvarKillSndPath->string,
+			m_pCvarKillSnd->value);
+	}
+
+	return 1;
+}
