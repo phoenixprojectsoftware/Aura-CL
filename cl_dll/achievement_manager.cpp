@@ -31,6 +31,18 @@ void CAchievementMgr::UnlockAchievement(int achievementID)
 	}
 }
 
+void CAchievementMgr::SystemAchievement(int achievementID)
+{
+	const char* apiName = GetAchievementAPIName(achievementID);
+	if (apiName && SteamUserStats())
+	{
+		if (SteamUserStats()->SetAchievement(apiName))
+		{
+			SteamUserStats()->StoreStats();
+		}
+	}
+}
+
 void CAchievementMgr::UnlockAchievementByName(const char* apiName)
 {
 	if (!g_StageLevel.IsCurrentMapHashValid())
@@ -72,11 +84,11 @@ void CAchievementMgr::CheckSpecialDay()
 
 	if (day == 5)
 		if (!isAchievementUnlocked(5))
-			UnlockAchievement(5);
+			SystemAchievement(5);
 
 	if (day == 20)
 		if (!isAchievementUnlocked(4))
-			UnlockAchievement(4);
+			SystemAchievement(4);
 }
 
 void CAchievementMgr::StatIncrement(const char* pchName)

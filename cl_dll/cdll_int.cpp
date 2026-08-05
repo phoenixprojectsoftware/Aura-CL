@@ -189,7 +189,7 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 
 #ifndef _HALO
 	if (!g_AchievementMgr.isAchievementUnlocked(3))
-		g_AchievementMgr.UnlockAchievement(3);
+		g_AchievementMgr.SystemAchievement(3);
 
 	InitGreeting();
 

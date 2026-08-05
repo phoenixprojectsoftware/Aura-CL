@@ -19,6 +19,8 @@ class CAchievementMgr
 public:
 	void UnlockAchievement(int achievementID);
 
+	void SystemAchievement(int achievementID); // an achievement which doesn't need map verification.
+
 	void UnlockAchievementByName(const char* apiName);
 
 	bool isAchievementUnlocked(int achievementID);
@@ -28,5 +30,5 @@ public:
 	void StatIncrement(const char* pchName);
 };
 
-extern CAchievementMgr g_AchievementMgr;
+extern CAchievementMgr g_AchievementMgr; // global achievement object. don't use this too much.
 #endif
