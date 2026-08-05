@@ -79,6 +79,8 @@ add_sources(
 	hud_nextmap.h
 	hud_playerid.cpp
 	hud_playerid.h
+	hud_player_waypoints.cpp
+	hud_player_waypoints.h
 	hud_redraw.cpp
 	hud_scores.cpp
 	hud_scores.h

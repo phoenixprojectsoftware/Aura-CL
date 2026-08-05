@@ -820,6 +820,7 @@ void CHud :: Init( void )
 	m_Location.Init();
 	m_NextMap.Init();
 	m_PlayerId.Init();
+	m_PlayerWaypoints.Init();
 	m_Scores.Init();
 	m_Settings.Init();
 	m_Speedometer.Init();
@@ -1008,6 +1009,7 @@ void CHud :: VidInit( void )
 	m_Location.VidInit();
 	m_NextMap.VidInit();
 	m_PlayerId.VidInit();
+	m_PlayerWaypoints.VidInit();
 	m_NameTags.VidInit();
 	m_Scores.VidInit();
 	m_Settings.VidInit();

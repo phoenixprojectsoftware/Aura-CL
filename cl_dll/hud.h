@@ -133,6 +133,7 @@ struct HUDLIST {
 #include "hud_nextmap.h"
 #include "hud_oldscoreboard.h"
 #include "hud_playerid.h"
+#include "hud_player_waypoints.h"
 #include "hud_scores.h"
 #include "hud_settings.h"
 #include "hud_speedometer.h"
@@ -754,6 +755,7 @@ public:
 	CHudKOTH m_KOTH;
 	CHudNextMap		m_NextMap;
 	CHudPlayerId		m_PlayerId;
+	CHudPlayerWaypoints m_PlayerWaypoints;
 	CHudScores	m_Scores;
 	CHudSettings	m_Settings;
 	CHudSpeedometer	m_Speedometer;
