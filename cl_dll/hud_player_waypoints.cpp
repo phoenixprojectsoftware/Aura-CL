@@ -11,7 +11,7 @@
 
 DECLARE_MESSAGE(
 	m_PlayerWaypoints,
-	PlayerTargets);
+	PlyTargets);
 
 extern "C" float Distance(
 	const float* v1,
@@ -24,7 +24,7 @@ int CHudPlayerWaypoints::Init()
 {
 	gHUD.AddHudElem(this);
 
-	HOOK_MESSAGE(PlayerTargets);
+	HOOK_MESSAGE(PlyTargets);
 
 	m_iFlags |= HUD_ACTIVE;
 
@@ -43,7 +43,7 @@ void CHudPlayerWaypoints::Reset()
 	m_Targets.clear();
 }
 
-int CHudPlayerWaypoints::MsgFunc_PlayerTargets(
+int CHudPlayerWaypoints::MsgFunc_PlyTargets(
 	const char* pszName,
 	int iSize,
 	void* pbuf)

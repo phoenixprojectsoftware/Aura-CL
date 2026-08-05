@@ -10,7 +10,7 @@ public:
 	int Draw(float flTime) override;
 	void Reset() override;
 
-	int MsgFunc_PlayerTargets(const char* pszName, int iSize, void* pbuf);
+	int MsgFunc_PlyTargets(const char* pszName, int iSize, void* pbuf);
 
 private:
 	bool ProjectTargetToScreen(const float* pOrigin, float& x, float& y, bool& bOffscreen);
