@@ -1025,6 +1025,10 @@ void CHud :: VidInit( void )
 
 #if defined(_STEAMWORKS) && !defined(_HALO)
 	g_AchievementMgr.CheckSpecialDay();
+
+	// move "it's not shutting down" to HUD initialization. a safer client launch. -sabian
+	if (!g_AchievementMgr.isAchievementUnlocked(3))
+		g_AchievementMgr.SystemAchievement(3);
 #endif
 }
 

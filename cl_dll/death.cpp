@@ -26,7 +26,6 @@
 #include "vgui_TeamFortressViewport.h"
 
 #include "achievement_manager.h"
-#include "leaderboard_integration.h"
 #include "cl_gametype.h"
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg );

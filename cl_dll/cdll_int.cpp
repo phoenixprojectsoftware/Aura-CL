@@ -158,10 +158,6 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
-#ifndef _HALO
-#include "leaderboard_integration.h"
-#endif
-
 #include "greeting.h"
 
 int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
@@ -188,12 +184,7 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	CL_LoadGameUI();
 
 #ifndef _HALO
-	if (!g_AchievementMgr.isAchievementUnlocked(3))
-		g_AchievementMgr.SystemAchievement(3);
-
 	InitGreeting();
-
-	g_Leaderboards.Init();
 
 	int oldKillStatTransfer;
 	if (SteamUserStats() && SteamUserStats()->GetStat(OLD_KILL_STAT, &oldKillStatTransfer))
