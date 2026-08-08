@@ -169,7 +169,7 @@ inline const char* GetAchievementAPIName(int achievementID)
 
 enum EAchievements
 {
-	ACH_KILLS100 = 0,
+	ACH_100KILLS = 0,
 	ACH_500KILLS,
 	ACH_1000KILLS,
 	ACH_HELLO_STEAMDB,

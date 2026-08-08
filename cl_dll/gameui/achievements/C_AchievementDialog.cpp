@@ -55,7 +55,7 @@ enum EStats
 DialogAchievement_t g_DAchievements[] =
 {
 	// Total Kills Achievements
-	_ACH_ID(ACH_KILLS100,					CATEGORY_KILLS,			player_kill, 100),
+	_ACH_ID(ACH_100KILLS,					CATEGORY_KILLS,			player_kill, 100),
 	_ACH_ID(ACH_500KILLS,					CATEGORY_KILLS,         player_kill, 500),
 	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        player_kill, 1000),
 	_ACH_ID(ACH_HELLO_STEAMDB,              CATEGORY_KILLS,        player_kill, 2500),
