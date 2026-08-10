@@ -11,6 +11,8 @@
 
 #include "stage_level.h"
 #include "achievement_manager.h"
+#include "hud.h"
+#include "cl_gametype.h"
 #include <ctime>
 
 #if defined (_STEAMWORKS) && !defined (_HALO)
@@ -19,6 +21,9 @@ CAchievementMgr g_AchievementMgr;
 void CAchievementMgr::UnlockAchievement(int achievementID)
 {
 	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
+	if (SANDBOX == g_iGameType)
 		return;
 
 	const char* apiName = GetAchievementAPIName(achievementID);
@@ -46,6 +51,9 @@ void CAchievementMgr::SystemAchievement(int achievementID)
 void CAchievementMgr::UnlockAchievementByName(const char* apiName)
 {
 	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
+	if (SANDBOX == g_iGameType)
 		return;
 
 	if (!apiName || !apiName[0])
@@ -94,6 +102,9 @@ void CAchievementMgr::CheckSpecialDay()
 void CAchievementMgr::StatIncrement(const char* pchName, int increment)
 {
 	if (!g_StageLevel.IsCurrentMapHashValid())
+		return;
+
+	if (SANDBOX == g_iGameType)
 		return;
 
 	int statValue = 0;

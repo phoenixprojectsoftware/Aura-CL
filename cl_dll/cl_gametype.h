@@ -29,7 +29,8 @@ enum GameType
 	CHILL,
 	TAUGUYS,
 	OITC,
-	KING
+	KING,
+	SANDBOX
 };
 
 extern int g_iGameType; // global gametype integer.
