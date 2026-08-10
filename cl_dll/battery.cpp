@@ -31,6 +31,7 @@
 #endif
 
 DECLARE_MESSAGE(m_Battery, Battery)
+DECLARE_MESSAGE(m_Battery, ShieldSnd)
 
 int CHudBattery::Init(void)
 {
@@ -39,6 +40,7 @@ int CHudBattery::Init(void)
 	m_iFlags = 0;
 
 	HOOK_MESSAGE(Battery);
+	HOOK_MESSAGE(ShieldSnd);
 
 	gHUD.AddHudElem(this);
 
@@ -58,53 +60,6 @@ int CHudBattery::VidInit(void)
 	m_fFade = 0;
 	return 1;
 };
-
-void CHudBattery::RunShieldPrediction(float time)
-{
-	if (m_iBat >= MAX_NORMAL_BATTERY)
-	{
-		if (!m_bShieldMaxxed)
-		{
-			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_STATIC, "player/shield_lp.wav");
-			m_bShieldMaxxed = true;
-		}
-	}
-	m_bShieldMaxxed = false;
-
-	if (m_iBat <= 0)
-	{
-		if (!m_bShieldEmpty && (time - m_flLastShieldSoundTime > 1.0f)) // prevent spamming the sound
-		{
-			gEngfuncs.pEventAPI->EV_PlaySound(0, legacy_vec3_origin, CHAN_AUTO, "player/shield_empty.wav", 0.85, ATTN_NORM, 0, PITCH_NORM);
-			gEngfuncs.pEventAPI->EV_PlaySound(0, legacy_vec3_origin, CHAN_AUTO, "player/shield_depleted2.wav", 0.7, ATTN_NORM, 0, PITCH_NORM);
-			m_bShieldEmpty = true;
-			m_flLastShieldSoundTime = time; // update the last sound time
-		}
-	}
-	else
-	{
-		if (m_bShieldEmpty)
-		{
-			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_AUTO, "player/shield_empty.wav");
-			m_bShieldEmpty = false;
-		}
-
-		if (m_iBat <= 10)
-		{
-			if (!m_bShieldLow && (time - m_flLastShieldSoundTime > 1.0f))
-			{
-				gEngfuncs.pEventAPI->EV_PlaySound(0, legacy_vec3_origin, CHAN_AUTO, "player/shield_low.wav", 0.75, ATTN_NORM, 0, PITCH_NORM);
-				m_bShieldLow = true;
-				m_flLastShieldSoundTime = time; // update the last sound time
-			}
-		}
-		else if (m_bShieldLow)
-		{
-			gEngfuncs.pEventAPI->EV_StopSound(0, CHAN_AUTO, "player/shield_low.wav");
-			m_bShieldLow = false;
-		}
-	}
-}
 
 int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 {
@@ -133,6 +88,74 @@ int CHudBattery:: MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf )
 	return 1;
 }
 
+int CHudBattery::MsgFunc_ShieldSnd(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+	const int iAction = READ_BYTE();
+	const int iSound = READ_BYTE();
+
+	cl_entity_t* pLocalPlayer = gEngfuncs.GetLocalPlayer();
+
+	if (!pLocalPlayer)
+		return 1;
+
+	const char* pszSample = NULL;
+	int iChannel = CHAN_AUTO;
+	float flVolume = 1.0f;
+
+	switch (iSound)
+	{
+	case SHIELD_SOUND_EMPTY:
+		pszSample = "player/shield_empty.wav";
+		iChannel = CHAN_STATIC;
+		flVolume = 0.85f;
+		break;
+
+	case SHIELD_SOUND_LOW:
+		pszSample = "player/shield_low.wav";
+		iChannel = CHAN_STATIC;
+		flVolume = 0.75f;
+		break;
+
+	case SHIELD_SOUND_REGEN_LOOP:
+		pszSample = "player/shield_lp.wav";
+		iChannel = CHAN_STATIC;
+		flVolume = 0.85f;
+		break;
+
+	case SHIELD_SOUND_REGEN_START:
+		pszSample = "player/shield_start.wav";
+		iChannel = CHAN_VOICE;
+		flVolume = 1.0f;
+		break;
+
+	case SHIELD_SOUND_REGEN_FINISH:
+		pszSample = "player/shield_finish.wav";
+		iChannel = CHAN_VOICE;
+		flVolume = 1.0f;
+		break;
+
+	case SHIELD_SOUND_REGEN_INTERRUPT:
+		pszSample = "items/suitchargeno1.wav";
+		iChannel = CHAN_VOICE;
+		flVolume = 1.0f;
+		break;
+
+	default:
+		return 1;
+	}
+
+	if (iAction == SHIELD_SOUND_PLAY)
+	{
+		gEngfuncs.pEventAPI->EV_PlaySound(pLocalPlayer->index, pLocalPlayer->origin, iChannel, pszSample, flVolume, ATTN_NORM, 0, PITCH_NORM);
+	}
+	else if (iAction == SHIELD_SOUND_STOP)
+	{
+		gEngfuncs.pEventAPI->EV_StopSound(pLocalPlayer->index, iChannel, pszSample);
+	}
+
+	return 1;
+}
 
 int CHudBattery::Draw(float flTime)
 {
@@ -155,10 +178,7 @@ int CHudBattery::Draw(float flTime)
 	rc.top += m_iHeight * ((float)(100 - (min(100, m_iBat))) * 0.01);	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 #endif
 
-	RunShieldPrediction(flTime); // Run shield prediction, if applicable
-
 	// DeanAMX: Flash the armour HUD on zero.
-
 	UnpackRGB(r, g, b, RGB_DEFAULT);
 	if (m_iBat > 25)
 	{
