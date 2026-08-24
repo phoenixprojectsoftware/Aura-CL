@@ -388,17 +388,12 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 			g_KillStats.StatIncrement(GLUON_KILLS);
 		}
 
-		if (!stricmp(rgDeathNoticeList[i].szWeapon, "glock"))
-		{
-			g_KillStats.StatIncrement(GLOCK_KILLS);
-		}
-
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "357"))
 		{
 			g_KillStats.StatIncrement(MAGNUM_KILLS);
 		}
 
-		if (!stricmp(rgDeathNoticeList[i].szWeapon, "desert_eagle"))
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "eagle"))
 		{
 			g_KillStats.StatIncrement(DEAGLE_KILLS);
 		}
@@ -461,6 +456,11 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 		if (!stricmp(rgDeathNoticeList[i].szWeapon, "shock_rifle"))
 		{
 			g_KillStats.StatIncrement(SHOCK_KILLS);
+		}
+
+		if (!stricmp(rgDeathNoticeList[i].szWeapon, "9mmhandgun"))
+		{
+			g_KillStats.StatIncrement(GLOCK_KILLS);
 		}
 
 		// CLOSE CALL ACHIEVEMENT
