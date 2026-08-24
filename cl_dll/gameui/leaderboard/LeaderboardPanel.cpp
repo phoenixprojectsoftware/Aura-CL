@@ -80,8 +80,6 @@ namespace
 		// TIER 6
 		{SAW_SHOTS, "M249 - shots fired"},
 		{SAW_KILLS, "M249 - kills"},
-		{DISPLACER_SHOTS, "XV11382 DISPLACER CANNON - portals fired"},
-		{DISPLACER_SELF, "XV11382 DISPLACER CANNON - self-displacements performed"},
 		{DISPLACER_KILLS, "XV11382 DISPLACER CANNON - kills"},
 		{SNIPER_SHOTS, "SNIPER RIFLE - shots fired"},
 		{ SNIPER_KILLS,        "SNIPER RIFLE - kills" },

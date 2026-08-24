@@ -2590,7 +2590,6 @@ void EV_FireDisplacer(event_args_t* args)
 				args->entindex, args->origin,
 				CHAN_WEAPON, "weapons/displacer_fire.wav",
 				gEngfuncs.pfnRandomFloat(0.8, 0.9), ATTN_NORM, 0, PITCH_NORM);
-
 				Punch(2, 0, 0);
 		}
 		else
@@ -2600,21 +2599,6 @@ void EV_FireDisplacer(event_args_t* args)
 				CHAN_WEAPON, "weapons/displacer_self.wav",
 				gEngfuncs.pfnRandomFloat(0.8, 0.9), ATTN_NORM, 0, PITCH_NORM);
 		}
-
-		if (EV_IsLocal(args->entindex))
-		{
-			gEngfuncs.pEventAPI->EV_WeaponAnimation(DISPLACER_FIRE, 0);
-			Punch(5, 0, 0);
-			if (!args->bparam1)
-			{
-				g_AchievementMgr.StatIncrement(DISPLACER_SELF);
-			}
-			else
-			{
-				g_AchievementMgr.StatIncrement(DISPLACER_SHOTS);
-			}
-		}
-
 		break;
 	}
 
