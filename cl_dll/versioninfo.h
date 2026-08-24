@@ -3,7 +3,7 @@
 
 // Aura Version
 #define AURA_VER_MAJOR 3
-#define AURA_VERSION_MINOR 1
+#define AURA_VERSION_MINOR 2
 #define AURA_VERSION_PATCH 0
 
 // These are in the order they appear in PrintVersion()
