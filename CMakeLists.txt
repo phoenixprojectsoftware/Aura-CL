@@ -67,6 +67,39 @@ set(CMAKE_SHARED_LINKER_FLAGS_HALORELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}"
 project(Aura-Client)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# ---------------------------------------------------------------------------
+# Aura build timestamp
+# ---------------------------------------------------------------------------
+
+set(
+	AURA_BUILD_INFO_HEADER
+	"${CMAKE_BINARY_DIR}/generated/build_info_generated.h"
+)
+
+file(
+	MAKE_DIRECTORY
+	"${CMAKE_BINARY_DIR}/generated"
+)
+
+add_custom_target(
+	aura_build_info
+	ALL
+
+	COMMAND
+		${CMAKE_COMMAND}
+		"-DINPUT_FILE=${CMAKE_SOURCE_DIR}/cl_dll/build_info_generated.h.in"
+		"-DOUTPUT_FILE=${AURA_BUILD_INFO_HEADER}"
+		-P "${CMAKE_SOURCE_DIR}/CMake/GenerateBuildInfo.cmake"
+
+	BYPRODUCTS
+		"${AURA_BUILD_INFO_HEADER}"
+
+	COMMENT
+		"Updating Aura build timestamp"
+
+	VERBATIM
+)
+
 # WINDOWS ONLY - REQUIRE THE LOCAL 3903990 INSTALL 
 if(WIN32)
 	set(GAME_PATH "" CACHE PATH "Path to the Cross Product Beta app's hl.exe")
@@ -338,6 +371,8 @@ if(IS_STEAM_BUILD)
         target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/libsteam_api.so)
     endif()
 endif()
+
+add_dependencies(client aura_build_info)
 
 target_compile_definitions(client PRIVATE
     -DCLIENT_DLL

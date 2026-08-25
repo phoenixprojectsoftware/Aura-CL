@@ -8,6 +8,8 @@ add_subdirectory(s10_weapons)
 add_subdirectory(video)
 
 add_sources(
+	build_info.cpp
+	build_info.h
 	achievement_manager.cpp
 	achievement_manager.h
 	ammo.cpp

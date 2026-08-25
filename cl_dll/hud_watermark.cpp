@@ -2,6 +2,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "update_checker.h"
+#include "build_info.h"
 #include "versioninfo.h"
 #ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
@@ -116,6 +117,9 @@ int CHudWatermark::Draw(float time)
 	int textWidth = strlen(steamIDString) * charWidth;
 #endif
 
+	char szBuildDate[64];
+	snprintf(szBuildDate, sizeof(szBuildDate), "Client built %s", AuraBuildDate());
+
 #if !defined(CLOSED_BETA)
 	if (hud_watermark->value == 1)
 	{
@@ -123,7 +127,7 @@ int CHudWatermark::Draw(float time)
 #if defined(_STEAMWORKS) && defined(CLOSED_BETA) || defined(_DEBUG)
 		DRAW_STRING(ScreenWidth / 20, CharHeight, "BETA - work in progress", r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 2, zamnhlmpVersion, r, g, b); // read from version.txt
-		DRAW_STRING(ScreenWidth / 20, CharHeight * 3, "client built " __DATE__, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 3, szBuildDate, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 #ifndef _DEBUG
@@ -142,7 +146,7 @@ int CHudWatermark::Draw(float time)
 #else // Release
 		if (m_bDrawInfo)
 		{
-			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
+			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, szBuildDate, r, g, b);
 			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
 #ifndef _HALO
 			gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);

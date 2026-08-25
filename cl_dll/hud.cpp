@@ -35,6 +35,7 @@
 #include "forcemodel.h"
 #include "steam_id.h"
 
+#include "build_info.h"
 #include "versioninfo.h"
 
 #include "event_api.h"
@@ -636,15 +637,42 @@ int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
 
 void PrintVersion()
 {
-	gEngfuncs.Con_Printf("\n  Aura client build %s", __TIMESTAMP__);
-	gEngfuncs.Con_Printf("\n  Aura %d.%d.%d", AURA_VER_MAJOR,AURA_VERSION_MINOR,AURA_VERSION_PATCH);
-	gEngfuncs.Con_Printf("\n  %s", gameName);
-	gEngfuncs.Con_Printf("\n  Author(s): %s", Authors "\n");
-	gEngfuncs.Con_Printf("\n  Aura SDK:");
-	gEngfuncs.Con_Printf("\n  Client binary SDK - %s", auraCL);
-	gEngfuncs.Con_Printf("\n  Server binary - %s", auraSE);
-	gEngfuncs.Con_Printf("\n  Configuration - %s \n", buildCfg);
-	gEngfuncs.Con_Printf("\n  Build System - %s \n", buildSys);
+	gEngfuncs.Con_Printf(
+		"\n  Aura client build %s",
+		AuraBuildTimestamp());
+
+	gEngfuncs.Con_Printf(
+		"\n  Aura %d.%d.%d",
+		AURA_VER_MAJOR,
+		AURA_VERSION_MINOR,
+		AURA_VERSION_PATCH);
+
+	gEngfuncs.Con_Printf(
+		"\n  %s",
+		gameName);
+
+	gEngfuncs.Con_Printf(
+		"\n  Author(s): %s",
+		Authors "\n");
+
+	gEngfuncs.Con_Printf(
+		"\n  Aura SDK:");
+
+	gEngfuncs.Con_Printf(
+		"\n  Client binary SDK - %s",
+		auraCL);
+
+	gEngfuncs.Con_Printf(
+		"\n  Server binary - %s",
+		auraSE);
+
+	gEngfuncs.Con_Printf(
+		"\n  Configuration - %s \n",
+		buildCfg);
+
+	gEngfuncs.Con_Printf(
+		"\n  Build System - %s \n",
+		buildSys);
 }
 
 void Cmd_PlayVideo()
