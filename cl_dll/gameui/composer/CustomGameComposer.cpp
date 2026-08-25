@@ -1013,7 +1013,7 @@ const char* CComposerOptionsPanel::GetFlashlight()
 
 const char* CComposerOptionsPanel::GetFallDamage()
 {
-	return m_pRealisticFall->IsSelected() ? "1" : "0";
+	return m_pRealisticFall->IsSelected() ? "2" : "1";
 }
 
 const char* CComposerOptionsPanel::GetFriendlyFire()
