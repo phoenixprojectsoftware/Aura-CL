@@ -15,8 +15,8 @@ namespace console
 	using ::Color;
 
 #ifdef PLATFORM_WINDOWS
-	constexpr size_t PRINT_COLOR_OFFSET = 0x128;
-	constexpr size_t DPRINT_COLOR_OFFSET = 0x12C;
+	constexpr size_t PRINT_COLOR_OFFSET = 0x130;
+	constexpr size_t DPRINT_COLOR_OFFSET = 0x134;
 #else
 	constexpr size_t PRINT_COLOR_OFFSET = 0x124;
 	constexpr size_t DPRINT_COLOR_OFFSET = 0x128;
@@ -34,7 +34,7 @@ namespace console
 	//-----------------------------------------------------
 	// Default color for checking that offset is correct
 	static const Color s_DefaultColor = Color(216, 222, 211, 255);
-	static const Color s_DefaultDColor = Color(196, 181, 80, 255);
+	static const Color s_DefaultDColor = Color(214, 198, 86, 255);
 
 	// Used when failed to find color in GameUI
 	static Color s_StubColor = s_DefaultColor;
@@ -77,7 +77,7 @@ namespace console
 	static void ConsoleLambdaFix(const char* pszFormat, ...);
 
 	static void ConsolePrintRedirect(const char* pszFormat, ...);
-  
+
 	//-----------------------------------------------------
 	// Console redirection
 	// Con_Printf doesn't work until after HUD_Init finishes.
@@ -134,7 +134,7 @@ void console::HudPostInit()
 		gHUD.CallOnNextFrame([]() {
 			DisableEarlyCon();
 			DumpEarlyCon();
-		});
+			});
 	}
 }
 
@@ -147,7 +147,7 @@ void console::HudShutdown()
 {
 	if (!s_ConColor)
 		return ConColor::Cyan; //fallback
-	
+
 	return *s_ConColor;
 }
 
