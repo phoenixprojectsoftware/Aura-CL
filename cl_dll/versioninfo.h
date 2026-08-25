@@ -8,9 +8,9 @@
 
 // These are in the order they appear in PrintVersion()
 #ifdef _HALO
-#define gameName "Halo: GoldSource"
+#define gameName "EXCESSION PROJECT"
 #else
-#define gameName "Half-Life: Cross Product Multiplayer"
+#define gameName "CROSS PRODUCT MULTIPLAYER"
 #endif
 #define season "Season 10: Uplink"
 #define Authors "The Phoenix Project Software"
