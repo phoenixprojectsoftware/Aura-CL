@@ -34,17 +34,17 @@ namespace discord_integration
 		// From Discord developer dashboard.
 #ifdef _HALO
 		constexpr const char CLIENT_ID[] = "1381646338604667072"; // Halo: GoldSource
+		constexpr const char BETA_ID[] = "1465161235669454944";
 #else
 		constexpr const char CLIENT_ID[] = "836328170360799284";
-		constexpr const char BETA_ID[] = "1465161235669454944";
 #endif
 
 #ifdef _HALO
 		// This seems to be consistent across PCs.
 		constexpr const char STEAM_APP_ID[] = "11600264564054163526";
+		constexpr const char BETA_APP_ID[] = "3903990";
 #else
 		// Half-Life: Cross Product Steam App ID
-		constexpr const char BETA_APP_ID[] = "3903990";
 		constexpr const char STEAM_APP_ID[] = "3416640";
 #endif
 		

@@ -15,11 +15,11 @@
 #include "cl_gametype.h"
 #include <ctime>
 
-#if defined (_STEAMWORKS) && !defined (_HALO)
 CAchievementMgr g_AchievementMgr;
 
 void CAchievementMgr::UnlockAchievement(int achievementID)
 {
+#ifndef _HALO
 	if (!g_StageLevel.IsCurrentMapHashValid())
 		return;
 
@@ -34,10 +34,12 @@ void CAchievementMgr::UnlockAchievement(int achievementID)
 			SteamUserStats()->StoreStats();
 		}
 	}
+#endif
 }
 
 void CAchievementMgr::SystemAchievement(int achievementID)
 {
+#ifndef _HALO
 	const char* apiName = GetAchievementAPIName(achievementID);
 	if (apiName && SteamUserStats())
 	{
@@ -46,10 +48,12 @@ void CAchievementMgr::SystemAchievement(int achievementID)
 			SteamUserStats()->StoreStats();
 		}
 	}
+#endif
 }
 
 void CAchievementMgr::UnlockAchievementByName(const char* apiName)
 {
+#ifndef _HALO
 	if (!g_StageLevel.IsCurrentMapHashValid())
 		return;
 
@@ -66,10 +70,12 @@ void CAchievementMgr::UnlockAchievementByName(const char* apiName)
 			SteamUserStats()->StoreStats();
 		}
 	}
+#endif
 }
 
 bool CAchievementMgr::isAchievementUnlocked(int achievementID)
 {
+#ifndef _HALO
 	const char* apiName = GetAchievementAPIName(achievementID);
 	if (apiName && SteamUserStats())
 	{
@@ -77,11 +83,13 @@ bool CAchievementMgr::isAchievementUnlocked(int achievementID)
 		SteamUserStats()->GetAchievement(apiName, &achieved);
 		return achieved;
 	}
+#endif
 	return false;
 }
 
 void CAchievementMgr::CheckSpecialDay()
 {
+#ifndef _HALO
 	std::time_t t = std::time(nullptr);
 	std::tm* now = std::localtime(&t);
 
@@ -97,10 +105,12 @@ void CAchievementMgr::CheckSpecialDay()
 	if (day == 20)
 		if (!isAchievementUnlocked(4))
 			SystemAchievement(4);
+#endif
 }
 
 void CAchievementMgr::StatIncrement(const char* pchName, int increment)
 {
+#ifndef _HALO
 	if (!g_StageLevel.IsCurrentMapHashValid())
 		return;
 
@@ -114,6 +124,5 @@ void CAchievementMgr::StatIncrement(const char* pchName, int increment)
 		SteamUserStats()->SetStat(pchName, statValue + increment);
 		SteamUserStats()->StoreStats();
 	}
-}
-
 #endif
+}

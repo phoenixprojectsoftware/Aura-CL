@@ -158,6 +158,7 @@ public:
 #ifdef _HALO
 #define URANIUM_MAX_CARRY 50
 #define _9MM_MAX_CARRY 600 // AR
+#define ONE_MAX_CARRY 1
 #define _357_MAX_CARRY 200 // magnum?
 #define BUCKSHOT_MAX_CARRY 60 // shotgun
 #define BOLT_MAX_CARRY 24 // to become sniper
@@ -236,6 +237,7 @@ public:
 // the default amount of ammo that comes with each gun when it spawns
 #ifdef _HALO
 #define GLOCK_DEFAULT_GIVE 12
+#define ONE_DEFAULT_GIVE			1
 #define PYTHON_DEFAULT_GIVE 12
 #define MP5_DEFAULT_GIVE 60
 #define MP5_DEFAULT_AMMO 60

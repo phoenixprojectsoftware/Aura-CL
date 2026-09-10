@@ -28,8 +28,10 @@
 #define buildCfg "SteamRelease"
 #elif !defined(_DEBUG) && defined(_STEAMWORKS) && defined(CLOSED_BETA) && !defined(_HALO)
 #define buildCfg "SteamClosedBeta"
-#elif defined(_HALO) && !defined(_DEBUG)
+#elif defined(_HALO) && !defined(_DEBUG) && !defined(CLOSED_BETA)
 #define buildCfg "HaloRelease"
+#elif defined(_HALO) && !defined(_DEBUG) && defined(CLOSED_BETA)
+#define buildCfg "HaloClosedBeta"
 #elif defined(_HALO) && defined(_DEBUG)
 #define buildCfg "HaloDebug"
 #endif

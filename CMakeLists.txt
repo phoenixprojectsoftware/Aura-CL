@@ -29,39 +29,7 @@ unset(OPENAL_LIBRARY CACHE)
 
 
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>,$<CONFIG:HaloDebug>>:Debug>DLL")
-
-# Custom build types support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta;HaloDebug;HaloRelease" CACHE STRING "" FORCE)
-set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
-
-# Set custom flags for SteamDebug and SteamRelease
-set(CMAKE_C_FLAGS_STEAMDEBUG "${CMAKE_C_FLAGS_DEBUG}")
-set(CMAKE_CXX_FLAGS_STEAMDEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-set(CMAKE_EXE_LINKER_FLAGS_STEAMDEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
-set(CMAKE_SHARED_LINKER_FLAGS_STEAMDEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
-
-set(CMAKE_C_FLAGS_STEAMRELEASE "${CMAKE_C_FLAGS_RELEASE}")
-set(CMAKE_CXX_FLAGS_STEAMRELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_EXE_LINKER_FLAGS_STEAMRELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-set(CMAKE_SHARED_LINKER_FLAGS_STEAMRELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
-
-set(CMAKE_C_FLAGS_STEAMCLOSEDBETA "${CMAKE_C_FLAGS_RELEASE}")
-set(CMAKE_CXX_FLAGS_STEAMCLOSEDBETA "${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_EXE_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-set(CMAKE_SHARED_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
-
-# Set custom flags for HaloDebug and HaloRelease (clone of SteamDebug/SteamRelease + _HALO)
-set(CMAKE_C_FLAGS_HALODEBUG "${CMAKE_C_FLAGS_DEBUG}")
-set(CMAKE_CXX_FLAGS_HALODEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-set(CMAKE_EXE_LINKER_FLAGS_HALODEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
-set(CMAKE_SHARED_LINKER_FLAGS_HALODEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
-
-set(CMAKE_C_FLAGS_HALORELEASE "${CMAKE_C_FLAGS_RELEASE}")
-set(CMAKE_CXX_FLAGS_HALORELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_EXE_LINKER_FLAGS_HALORELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-set(CMAKE_SHARED_LINKER_FLAGS_HALORELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
-
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 # Project metadata
 project(Aura-Client)
@@ -107,6 +75,12 @@ if(WIN32)
 	if(NOT GAME_PATH)
 		message(FATAL_ERROR "GAME_PATH variable is REQUIRED on WINDOWS!!! GRR!!!!\n" "Or set GAME_PATH in CMake GUI before generating.")
 	endif()
+	
+	set(GAMEDIR "" CACHE STRING "Gamedir setting (zamnhlmp_dev or excession_dev")
+	
+	if(NOT GAMEDIR)
+		message(FATAL_ERROR "Gamedir variable is missing.")
+	endif()
 endif()
 
 include("CMake/helpers.cmake")
@@ -114,52 +88,6 @@ include("CMake/helpers.cmake")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# Detect if we're building a Steam-enabled configuration
-set(IS_STEAM_BUILD OFF)
-if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta|HaloDebug|HaloRelease")
-    set(IS_STEAM_BUILD ON)
-endif()
-
-# Add _STEAMWORKS define for IntelliSense and build config
-foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta HaloDebug HaloRelease)
-    string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
-    if(MSVC)
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
-            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
-            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
-        endif()
-    else()
-        # For GCC/Clang
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
-        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
-            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
-            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
-        endif()
-    endif()
-endforeach()
-
-# Add _HALO define for HaloDebug and HaloRelease
-foreach(HALO_CONFIG HaloDebug HaloRelease)
-    string(TOUPPER "${HALO_CONFIG}" UPPER_CONFIG)
-    if(MSVC)
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_HALO")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_HALO")
-    else()
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -D_HALO")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -D_HALO")
-    endif()
-endforeach()
-
-# Add _DEBUG define only for SteamDebug and HaloDebug
-set(CMAKE_C_FLAGS_STEAMDEBUG "${CMAKE_C_FLAGS_STEAMDEBUG} /D_DEBUG")
-set(CMAKE_CXX_FLAGS_STEAMDEBUG "${CMAKE_CXX_FLAGS_STEAMDEBUG} /D_DEBUG")
-
-set(CMAKE_C_FLAGS_HALODEBUG "${CMAKE_C_FLAGS_HALODEBUG} /D_DEBUG")
-set(CMAKE_CXX_FLAGS_HALODEBUG "${CMAKE_CXX_FLAGS_HALODEBUG} /D_DEBUG")
 
 # Set up some compiler-related things
 if(MSVC)
@@ -236,26 +164,19 @@ add_library(client SHARED ${SOURCE_FILES})
 if(WIN32)
     set_target_properties(client PROPERTIES
         VS_DEBUGGER_COMMAND "${GAME_PATH}/hl.exe"
-        VS_DEBUGGER_COMMAND_ARGUMENTS "-game zamnhlmp_dev -dev"
+        VS_DEBUGGER_COMMAND_ARGUMENTS "-game ${GAMEDIR} -dev"
         VS_DEBUGGER_WORKING_DIRECTORY "${GAME_PATH}"
     )
 	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT client)
 
 endif()
 
-# Add PHX_FINAL define for final/release shipping configs
-foreach(FINAL_CONFIG Release SteamRelease HaloRelease)
-    string(TOUPPER "${FINAL_CONFIG}" UPPER_CONFIG)
-    if(MSVC)
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DPHX_FINAL")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DPHX_FINAL")
-    else()
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -DPHX_FINAL")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -DPHX_FINAL")
-    endif()
-endforeach()
+# Add PHX_FINAL define for standard Release builds
+target_compile_definitions(client PRIVATE
+    $<$<CONFIG:Release>:PHX_FINAL>
+)
 
-target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES)
+target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES _STEAMWORKS)
 
 
 target_include_directories(client PRIVATE
@@ -265,6 +186,7 @@ target_include_directories(client PRIVATE
     engine
     external
     external/discord-rpc/include
+    external/steamworks
 	external/openal-soft/include
 	external/ogg/include
 	external/vorbis/include
@@ -276,11 +198,6 @@ target_include_directories(client PRIVATE
     utils/vgui/include
 	${SOURCE_SDK_INCLUDE_PATHS})
 
-# Steamworks include path
-if(IS_STEAM_BUILD)
-    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-endif()
 
 if(APPLE)
     target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
@@ -362,14 +279,10 @@ elseif(UNIX)
     endif()
 endif()
 
-# Steamworks support
-if(IS_STEAM_BUILD)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-    if(WIN32)
-        target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/steam_api.lib)
-    elseif(UNIX)
-        target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/libsteam_api.so)
-    endif()
+
+# Steamworks library
+if(UNIX AND NOT APPLE)
+    target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/libsteam_api.so)
 endif()
 
 add_dependencies(client aura_build_info)
@@ -384,12 +297,12 @@ target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg theora)
 if(WIN32)
     add_custom_command(TARGET client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory
-            "${GAME_PATH}/zamnhlmp_dev/cl_dll"
+            "${GAME_PATH}/${GAMEDIR}/cl_dlls"
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "$<TARGET_FILE_DIR:client>"
-            "${GAME_PATH}/zamnhlmp_dev/cl_dlls"
+            "${GAME_PATH}/${GAMEDIR}/cl_dlls"
 
-        COMMENT "Copying client build output to ${GAME_PATH}/zamnhlmp_dev/cl_dlls"
+        COMMENT "Copying client build output to ${GAME_PATH}/${GAMEDIR}/cl_dlls"
     )
 endif()
