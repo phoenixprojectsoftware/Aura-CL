@@ -12,6 +12,7 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -306,3 +307,5 @@ void CGrappleTip::SetPosition(const Legacy_Vector& vecOrigin, const Legacy_Vecto
 	pev->angles = vecAngles;
 	pev->owner = pOwner->edict();
 }
+
+#endif // _HALO

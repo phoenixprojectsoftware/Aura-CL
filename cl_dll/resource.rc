@@ -1,0 +1,34 @@
+#include <windows.h>
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,0,0,0
+ PRODUCTVERSION 3,0,0,0
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+ FILEFLAGS 0
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_DLL
+ FILESUBTYPE 0
+
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"   // LANG=English, CODEPAGE=Unicode
+        BEGIN
+            VALUE "CompanyName",      "The Phoenix Project Software\0"
+            VALUE "FileDescription",  "Aura Client\0"
+            VALUE "FileVersion",      "3.0.0.0\0"
+            VALUE "InternalName",     "client.dll\0"
+            VALUE "LegalCopyright",   "(C) 2021-2025 The Phoenix Project Software\0"
+            VALUE "OriginalFilename", "client.dll\0"
+            VALUE "ProductName",      "Aura-CL\0"
+            VALUE "ProductVersion",   "3.0.0.0\0"
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 0x04E4   // LANG_ENGLISH, CP_UNICODE
+    END
+END

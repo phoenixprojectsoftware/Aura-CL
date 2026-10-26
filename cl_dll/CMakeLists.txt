@@ -1,9 +1,15 @@
+add_subdirectory(audio)
 add_subdirectory(gameui)
+add_subdirectory(halo_weapons)
 add_subdirectory(hl)
 add_subdirectory(op4_weapons)
 add_subdirectory(vgui)
+add_subdirectory(s10_weapons)
+add_subdirectory(video)
 
 add_sources(
+	build_info.cpp
+	build_info.h
 	achievement_manager.cpp
 	achievement_manager.h
 	ammo.cpp
@@ -15,6 +21,7 @@ add_sources(
 	camera.h
 	cdll_int.cpp
 	cl_dll.h
+	cl_gametype.h
 	cl_util.h
 	cl_weapons.h
 	client_vgui.cpp
@@ -61,8 +68,12 @@ add_sources(
 	hud_customtimer.h
 	hud_debug.cpp
 	hud_debug.h
+	hud_firefight.cpp
+	hud_firefight.h
 	hud_jumpspeed.cpp
 	hud_jumpspeed.h
+	hud_koth.cpp
+	hud_koth.h
 	hud_location.cpp
 	hud_location.h
 	hud_msg.cpp
@@ -70,6 +81,8 @@ add_sources(
 	hud_nextmap.h
 	hud_playerid.cpp
 	hud_playerid.h
+	hud_player_waypoints.cpp
+	hud_player_waypoints.h
 	hud_redraw.cpp
 	hud_scores.cpp
 	hud_scores.h
@@ -111,6 +124,10 @@ add_sources(
 	rainbow.cpp
 	rainbow.h
 	saytext.cpp
+	sha256.c
+	sha256.h
+	stage_level.cpp
+	stage_level.h
 	status_icons.cpp
 	statusbar.cpp
 	steam_id.cpp
@@ -149,6 +166,5 @@ add_sources(
 	view.cpp
 	view.h
 	voice_status.cpp
-	weapons.h
-	wrect.h
-	zamnhlmp_achievements.h)
+	zamnhlmp_achievements.h
+	resource.rc)

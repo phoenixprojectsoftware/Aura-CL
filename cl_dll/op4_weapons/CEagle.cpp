@@ -12,6 +12,7 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -397,3 +398,5 @@ class CEagleAmmo : public CBasePlayerAmmo
 };
 
 LINK_ENTITY_TO_CLASS(ammo_eagleclip, CEagleAmmo);
+
+#endif // _HALO

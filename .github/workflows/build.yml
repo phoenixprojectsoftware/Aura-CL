@@ -23,6 +23,15 @@ jobs:
         run: cmake -T ${{ matrix.toolset }} -A Win32 -B build
       - name: Build
         run: cmake --build build -j $env:NUMBER_OF_PROCESSORS --config ${{ matrix.configuration }}
+      - name: Publish Windows Release
+        working-directory: build
+        uses: actions/upload-artifact@v4
+        with:
+            name: Aura-Client-Win32-Release
+            path: |
+                SteamRelease/client.dll
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux-gcc:
     name: build-linux (gcc-${{ matrix.gcc-ver }}, ${{ matrix.configuration }})

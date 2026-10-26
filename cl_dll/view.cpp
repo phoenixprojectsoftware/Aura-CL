@@ -1,4 +1,4 @@
-// view/refresh setup functions
+// view/refresh setup functions.
 #include <cmath>
 #include <algorithm>
 #include "hud.h"
@@ -6,6 +6,8 @@
 #include "cvardef.h"
 #include "usercmd.h"
 #include "const.h"
+
+#include "cl_gametype.h"
 
 #include "entity_state.h"
 #include "cl_entity.h"
@@ -28,6 +30,11 @@
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
+
+#ifndef M_PI_2
+#define M_PI_2 1.57079632679f
+#endif
+
 
 int CL_IsThirdPerson(void);
 void CL_CameraOffset(float* ofs);
@@ -61,6 +68,15 @@ extern kbutton_t	in_mlook;
 
 ref_params_s g_pparams;
 
+static bool g_bSpectatorInEyeRefdef = false;
+
+bool ShouldUseLegacyBob()
+{
+	int gametype = gHUD.GetGameType();
+
+	return gametype == GameType::HLDM;
+}
+
 /*
 The view is allowed to move slightly from it's true position for bobbing,
 but if it exceeds 8 pixels linear distance (spherical, not box), the list of
@@ -86,12 +102,22 @@ qboolean	v_resetCamera = 1;
 
 vec3_t ev_punchangle;
 
+extern Legacy_Vector g_vViewOrigin;
+extern Legacy_Vector g_vViewForward;
+extern Legacy_Vector g_vViewRight;
+extern Legacy_Vector g_vViewUp;
+
 cvar_t* scr_ofsx;
 cvar_t* scr_ofsy;
 cvar_t* scr_ofsz;
 
 cvar_t* v_centermove;
 cvar_t* v_centerspeed;
+
+cvar_t* cl_legacy_bob_enabled;
+cvar_t* cl_legacy_bobcycle;
+cvar_t* cl_legacy_bob;
+cvar_t* cl_legacy_bobup;
 
 cvar_t* cl_bobcycle_max;
 cvar_t* cl_bobup;
@@ -129,7 +155,7 @@ cvar_t	v_ipitch_level = { "v_ipitch_level", "0.3", 0, 0.3 };
 float	v_idlescale;  // used by TFC for concussion grenade effect
 
 cvar_s* crosshair_low;
-int HUD_LAG_VALUE; // The sensitivity of the HUD-sway effect is dependent on the screen resolution.
+int m_iHudLagSensitivity; // The sensitivity of the HUD-sway effect is dependent on the screen resolution.
 
 
 
@@ -190,6 +216,45 @@ void V_InterpolateAngles( float *start, float *end, float *output, float frac )
 
 	V_NormalizeAngles( output );
 } */
+
+// Quakeworld bob code
+float V_CalcLegacyBob(struct ref_params_s* pparams)
+{
+	static double bobtime;
+	static float bob;
+	float cycle;
+	static float lasttime;
+	vec3_t vel;
+
+	if (pparams->onground == -1 || pparams->time == lasttime)
+	{
+		return bob;
+	}
+
+	lasttime = pparams->time;
+
+	bobtime += pparams->frametime;
+	cycle = bobtime - (int)(bobtime / cl_legacy_bobcycle->value) * cl_legacy_bobcycle->value;
+	cycle /= cl_legacy_bobcycle->value;
+
+	if (cycle < cl_legacy_bobup->value)
+	{
+		cycle = M_PI * cycle / cl_legacy_bobup->value;
+	}
+	else
+	{
+		cycle = M_PI + M_PI * (cycle - cl_legacy_bobup->value) / (1.0 - cl_legacy_bobup->value);
+	}
+
+	VectorCopy(pparams->simvel, vel);
+	vel[2] = 0;
+
+	bob = sqrt(vel[0] * vel[0] + vel[1] * vel[1]) * cl_legacy_bob->value;
+	bob = bob * 0.3 + bob * 0.7 * sin(cycle);
+	bob = V_min(bob, 4);
+	bob = V_max(bob, -7);
+	return bob;
+}
 
 inline float RemapVal(float val, float A, float B, float C, float D)
 {
@@ -836,7 +901,7 @@ void NewPunch(float* ev_punchangle, float frametime)
 		//ev_punchangle[2] = clamp(ev_punchangle[2], -7, 7);
 	}
 }
-
+// Source style smooth-punch. Punch, Yaw, Roll.
 void Punch(float p, float y, float r)
 {
 	punch[0] -= p * 20;
@@ -884,17 +949,17 @@ void V_CalcViewModelLag(ref_params_t* pparams, cl_entity_s* view)
 		origin = origin + (vDifference * -1.0f) * flScale;
 
 		if (ScreenWidth >= 2560 && ScreenHeight >= 1600)
-			HUD_LAG_VALUE = 17;
+			m_iHudLagSensitivity = 17;
 		else if (ScreenWidth >= 1280 && ScreenHeight > 720)
-			HUD_LAG_VALUE = 13;
+			m_iHudLagSensitivity = 13;
 		else if (ScreenWidth >= 640)
-			HUD_LAG_VALUE = 8;
+			m_iHudLagSensitivity = 8;
 		else
-			HUD_LAG_VALUE = 2;
+			m_iHudLagSensitivity = 2;
 
 		// HUD lag
-		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * flScale), HUD_LAG_VALUE, 500) * 280.0f;
-		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * flScale), HUD_LAG_VALUE, 500, 2) * 280.0f;
+		gHUD.m_flHudLagOfs[0] += V_CalcRoll(vOriginalAngles, ((vDifference * -1.0f) * flScale), m_iHudLagSensitivity, 500) * 280.0f;
+		gHUD.m_flHudLagOfs[1] += V_CalcRoll(vOriginalAngles, ((vDifference * 1.0f) * flScale), m_iHudLagSensitivity, 500, 2) * 280.0f;
 		view->origin = view->origin + (vDifference * -1.0f) * flScale;
 	}
 	AngleVectors(InvPitch(vOriginalAngles), forward, right, up);
@@ -986,6 +1051,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 {
 	cl_entity_t* ent, * view;
 	int				i;
+	float bob = 0.0f;
 
 	vec3_t camAngles, camForward, camRight, camUp;
 
@@ -1015,7 +1081,14 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// model origin for the view
 
 	// add view height
-	VectorAdd(pparams->simorg, pparams->viewheight, pparams->vieworg);
+	// in spectator first-person, V_GetInEyePos already returns the target player's
+	// actual eye origin, so do not add spectator viewheight again.
+	if (g_bSpectatorInEyeRefdef)
+	{
+		VectorCopy(pparams->simorg, pparams->vieworg);
+	}
+	else
+		VectorAdd(pparams->simorg, pparams->viewheight, pparams->vieworg);
 
 	VectorCopy(pparams->cl_viewangles, pparams->viewangles);
 
@@ -1070,9 +1143,17 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	V_CalcGunAngle(pparams);
 
 	// Use predicted origin as view origin.
-	VectorCopy(pparams->simorg, view->origin);
-	view->origin[2] += (waterOffset);
-	VectorAdd(view->origin, pparams->viewheight, view->origin);
+	if (g_bSpectatorInEyeRefdef)
+	{
+		VectorCopy(pparams->simorg, view->origin);
+		view->origin[2] += waterOffset;
+	}
+	else
+	{
+		VectorCopy(pparams->simorg, view->origin);
+		view->origin[2] += waterOffset;
+		VectorAdd(view->origin, pparams->viewheight, view->origin);
+	}
 
 	// Change the origin from which the camera is looking at the viewmodel
 	// This does not change the angles of the viewmodel camera
@@ -1098,14 +1179,38 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// Let the viewmodel shake at about 10% of the amplitude
 	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
 
-	V_ApplyBob(pparams, view);
+	// VIEW BOBBING
+	if (ShouldUseLegacyBob())
+	{
+		bob = V_CalcLegacyBob(pparams);
+
+		VectorCopy(pparams->simorg, pparams->vieworg);
+		for (int i = 0; i < 3; i++)
+			pparams->vieworg[i] -= bob * 0.4 * pparams->forward[i];
+
+		VectorAdd(pparams->vieworg, pparams->viewheight, pparams->vieworg);
+
+		// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
+		// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
+		// with view model distortion, this may be a cause. (SJB). 
+		view->origin[2] -= 1;
+	}
+	else
+	{ 
+		V_ApplyBob(pparams, view);
+		V_CalcViewModelLag(pparams, view);
+		V_RetractWeapon(pparams, view);
+		V_Jump(pparams, view);
+	}
+
+	// throw in a little tilt.
+	/*
+	view->angles[YAW] -= bob * 0.5;
+	view->angles[ROLL] -= bob * 1;
+	view->angles[PITCH] -= bob * 0.3;
+	*/
 
 	VectorCopy(view->angles, view->curstate.angles);
-
-	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
-	// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
-	// with view model distortion, this may be a cause. (SJB). 
-	// view->origin[2] -= 1;
 
 	// fudge position around to keep amount of weapon visible
 	// roughly equal with different FOV
@@ -1141,12 +1246,6 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	NewPunch((float*)&ev_punchangle, pparams->frametime);
 	view->angles = view->angles + ev_punchangle + sv_punchangle;
 	// view->curstate.angles = view->curstate.angles + ev_punchangle + Legacy_Vector(pparams->punchangle);
-
-	if (cl_viewmodel_lag_enabled->value == 1) V_CalcViewModelLag(pparams, view);
-	V_RetractWeapon(pparams, view);
-
-	//V_PunchAngle(cl_jumpangle, pparams->frametime, cl_jumppunch);
-	V_Jump(pparams, view);
 
 	VectorAdd(pparams->viewangles, InvPitch(cl_jumpangle) / 3.0f, pparams->viewangles);
 	VectorAdd(view->angles, cl_jumpangle, view->angles);
@@ -1752,45 +1851,51 @@ void V_GetMapChasePosition(int target, float* cl_angles, float* origin, float* a
 	VectorMA(origin, -1536, forward, origin);
 }
 
+#define WEP(name) \
+	{ "models/p_" #name ".mdl", "models/v_" #name ".mdl" }
+
+#define SEASON10_WEP(path, model_name) \
+	{ "models/weapons/" #path "/p_" #model_name ".mdl", "models/weapons/" #path "/v_" #model_name ".mdl" }
+
 int V_FindViewModelByWeaponModel(int weaponindex)
 {
 
 	static const char* modelmap[][2] = {
 
-# ifdef _TFC	// TFC models override HL models
-		{ "models/p_mini.mdl",			"models/v_tfac.mdl"			},
-		{ "models/p_sniper.mdl",		"models/v_tfc_sniper.mdl"	},
-		{ "models/p_umbrella.mdl",		"models/v_umbrella.mdl"		},
-		{ "models/p_crowbar.mdl",		"models/v_tfc_crowbar.mdl"	},
-		{ "models/p_spanner.mdl",		"models/v_tfc_spanner.mdl"	},
-		{ "models/p_knife.mdl",			"models/v_tfc_knife.mdl"	},
-		{ "models/p_medkit.mdl",		"models/v_tfc_medkit.mdl"	},
-		{ "models/p_egon.mdl",			"models/v_flame.mdl"		},
-		{ "models/p_glauncher.mdl",		"models/v_tfgl.mdl"			},
-		{ "models/p_rpg.mdl",			"models/v_tfc_rpg.mdl"		},
-		{ "models/p_nailgun.mdl",		"models/v_tfc_nailgun.mdl"	},
-		{ "models/p_snailgun.mdl",		"models/v_tfc_supernailgun.mdl" },
-		{ "models/p_9mmhandgun.mdl",	"models/v_tfc_railgun.mdl"	},
-		{ "models/p_srpg.mdl",			"models/v_tfc_rpg.mdl"		},
-		{ "models/p_smallshotgun.mdl",	"models/v_tfc_12gauge.mdl"	},
-		{ "models/p_shotgun.mdl",		"models/v_tfc_shotgun.mdl"	},
-		{ "models/p_spygun.mdl",		"models/v_tfc_pistol.mdl"	},
-#endif
-		{ "models/p_crossbow.mdl",		"models/v_crossbow.mdl"		},
-		{ "models/p_crowbar.mdl",		"models/v_crowbar.mdl"		},
-		{ "models/p_egon.mdl",			"models/v_egon.mdl"			},
-		{ "models/p_gauss.mdl",			"models/v_gauss.mdl"		},
-		{ "models/p_9mmhandgun.mdl",	"models/v_9mmhandgun.mdl"	},
-		{ "models/p_grenade.mdl",		"models/v_grenade.mdl"		},
-		{ "models/p_hgun.mdl",			"models/v_hgun.mdl"			},
-		{ "models/p_9mmAR.mdl",			"models/v_9mmAR.mdl"		},
-		{ "models/p_357.mdl",			"models/v_357.mdl"			},
-		{ "models/p_rpg.mdl",			"models/v_rpg.mdl"			},
-		{ "models/p_shotgun.mdl",		"models/v_shotgun.mdl"		},
-		{ "models/p_squeak.mdl",		"models/v_squeak.mdl"		},
-		{ "models/p_tripmine.mdl",		"models/v_tripmine.mdl"		},
-		{ "models/p_satchel_radio.mdl",	"models/v_satchel_radio.mdl"},
-		{ "models/p_satchel.mdl",		"models/v_satchel.mdl"		},
+		WEP(crossbow),
+		WEP(crowbar),
+		WEP(egon),
+		WEP(gauss),
+		WEP(9mmhandgun),
+		WEP(grenade),
+		WEP(hgun),
+		WEP(9mmAR),
+		WEP(357),
+		WEP(rpg),
+		WEP(shotgun),
+		WEP(squeak),
+		WEP(tripmine),
+		WEP(satchel_radio),
+		WEP(satchel),
+
+		// Season 6 weapons
+		WEP(penguin),
+		WEP(spore_launcher),
+		WEP(saw),
+		WEP(bgrap),
+		WEP(desert_eagle),
+		WEP(displacer),
+		WEP(knife),
+		WEP(m40a1), // sniper
+		WEP(pipe_wrench),
+		WEP(shock),
+
+		// Season 10 weapons
+		SEASON10_WEP(thumper, rock2),
+		// FIXME: hldmtau tracking {"models/p_gauss.mdl", "v_hldmtau.mdl"},
+		// FIXME: hldmar tracking
+		SEASON10_WEP(br, br),
+		WEP(medkit),
 		{ NULL, NULL } };
 
 	struct model_s* weaponModel = IEngineStudio.GetModelByIndex(weaponindex);
@@ -1860,11 +1965,12 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 		}
 
 		// predict missing client data and set weapon model ( in HLTV mode or inset in eye mode )
-#ifdef _TFC
-		if (gEngfuncs.IsSpectateOnly() || gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)
-#else
-		if (gEngfuncs.IsSpectateOnly())
-#endif
+// Predict missing client data and set weapon model.
+// Do this for normal multiplayer OBS_IN_EYE too, not just HLTV/spectate-only.
+		const bool bFullScreenInEye = (g_iUser1 == OBS_IN_EYE);
+		const bool bInsetInEye = (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE);
+
+		if (bFullScreenInEye || bInsetInEye || gEngfuncs.IsSpectateOnly())
 		{
 			V_GetInEyePos(g_iUser2, pparams->simorg, pparams->cl_viewangles);
 
@@ -1874,18 +1980,16 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 
 			if (lastWeaponModelIndex != ent->curstate.weaponmodel)
 			{
-				// weapon model changed
-
 				lastWeaponModelIndex = ent->curstate.weaponmodel;
 				lastViewModelIndex = V_FindViewModelByWeaponModel(lastWeaponModelIndex);
+
 				if (lastViewModelIndex)
 				{
-					gEngfuncs.pfnWeaponAnim(0, 0);	// reset weapon animation
+					gEngfuncs.pfnWeaponAnim(0, 0);
 				}
 				else
 				{
-					// model not found
-					gunModel->model = NULL;	// disable weapon model
+					gunModel->model = NULL;
 					lastWeaponModelIndex = lastViewModelIndex = 0;
 				}
 			}
@@ -1900,14 +2004,14 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 			}
 			else
 			{
-				gunModel->model = NULL;	// disable weaopn model
+				gunModel->model = NULL;
 			}
 		}
 		else
 		{
 			// only get viewangles from entity
 			VectorCopy(ent->angles, pparams->cl_viewangles);
-			pparams->cl_viewangles[PITCH] *= -3.0f;	// see CL_ProcessEntityUpdate()
+			pparams->cl_viewangles[PITCH] *= -3.0f;
 		}
 	}
 
@@ -1932,7 +2036,10 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 			gHUD.m_Spectator.GetDirectorCamera(v_origin, v_angles);
 			break;
 
-		case OBS_IN_EYE:   V_CalcNormalRefdef(pparams);
+		case OBS_IN_EYE:   
+			g_bSpectatorInEyeRefdef = true;
+			V_CalcNormalRefdef(pparams);
+			g_bSpectatorInEyeRefdef = false;
 			break;
 
 		case OBS_MAP_FREE:	pparams->onlyClientDraw = true;
@@ -1967,7 +2074,10 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 		case INSET_CHASE_FREE: V_GetChasePos(g_iUser2, v_cl_angles, v_origin, v_angles);
 			break;
 
-		case INSET_IN_EYE:	V_CalcNormalRefdef(pparams);
+		case INSET_IN_EYE:	
+			g_bSpectatorInEyeRefdef = true;
+			V_CalcNormalRefdef(pparams);
+			g_bSpectatorInEyeRefdef = false;
 			break;
 
 		case INSET_MAP_FREE:	pparams->onlyClientDraw = true;
@@ -1995,10 +2105,11 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 }
 
 
-
+int g_iClientWaterLevel = 0;
 void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 {
 	//	RecClCalcRefdef(pparams);
+	g_iClientWaterLevel = pparams->waterlevel;
 
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
 	gHUD.m_StrafeGuide.Update(pparams);
@@ -2045,60 +2156,62 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)
 	bool bJustJumped = (!bOnGround && gHUD.m_bWasJumping);
 	bool bJustLanded = (bOnGround && !gHUD.m_bWasJumping);
 	
-	// on jump, store starting Z position
-	if (bJustJumped)
+	if (!ShouldUseLegacyBob())
 	{
-#ifdef _DEBUG
-		gEngfuncs.Con_Printf("Jump initiated.\n");
-#endif
-		gHUD.m_flTargetJumpBob = 2.0f;
-		gHUD.m_flAirborneStartZ = pparams->simorg[2]; // store z for fall tracking
-	}
-
-	// on land compare fall height
-	if (bJustLanded)
-	{
-		float flFallDistance = gHUD.m_flAirborneStartZ - pparams->simorg[2];
-
-		if (flFallDistance > 50.0f)
+		// on jump, store starting Z position
+		if (bJustJumped)
 		{
 #ifdef _DEBUG
-			gEngfuncs.Con_Printf("Landing bob triggered\n");
+			gEngfuncs.Con_Printf("Jump initiated.\n");
 #endif
-			gHUD.m_flTargetJumpBob = -2.5f; // thump upward
+			gHUD.m_flTargetJumpBob = 2.0f;
+			gHUD.m_flAirborneStartZ = pparams->simorg[2]; // store z for fall tracking
 		}
-	}
-	
-	// update state for next frame
-	gHUD.m_bWasJumping = bOnGround;
 
-	// smooth approach
-	float approachSpeed = 10.0f;
-
-	if (gHUD.m_flJumpViewmodelBob != gHUD.m_flTargetJumpBob)
-	{
-		float delta = gHUD.m_flTargetJumpBob - gHUD.m_flJumpViewmodelBob;
-		float step = pparams->frametime * approachSpeed;
-
-		// clamp step so we don't overshoot
-		if (fabs(delta) < step)
+		// on land compare fall height
+		if (bJustLanded)
 		{
-			gHUD.m_flJumpViewmodelBob = gHUD.m_flTargetJumpBob;
-		}
-		else
-		{
-			gHUD.m_flJumpViewmodelBob += (delta > 0.0f ? step : -step);
-		}
-	}
-	
-	// smooth comeback
-	if (gHUD.m_flJumpViewmodelBob == gHUD.m_flTargetJumpBob && gHUD.m_flJumpViewmodelBob != 0.0f)
-	{
-		gHUD.m_flTargetJumpBob = 0.0f;
-	}
-	// apply to vieworigin
-	pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
+			float flFallDistance = gHUD.m_flAirborneStartZ - pparams->simorg[2];
 
+			if (flFallDistance > 50.0f)
+			{
+#ifdef _DEBUG
+				gEngfuncs.Con_Printf("Landing bob triggered\n");
+#endif
+				gHUD.m_flTargetJumpBob = -2.5f; // thump upward
+			}
+		}
+
+		// update state for next frame
+		gHUD.m_bWasJumping = bOnGround;
+
+		// smooth approach
+		float approachSpeed = 10.0f;
+
+		if (gHUD.m_flJumpViewmodelBob != gHUD.m_flTargetJumpBob)
+		{
+			float delta = gHUD.m_flTargetJumpBob - gHUD.m_flJumpViewmodelBob;
+			float step = pparams->frametime * approachSpeed;
+
+			// clamp step so we don't overshoot
+			if (fabs(delta) < step)
+			{
+				gHUD.m_flJumpViewmodelBob = gHUD.m_flTargetJumpBob;
+			}
+			else
+			{
+				gHUD.m_flJumpViewmodelBob += (delta > 0.0f ? step : -step);
+			}
+		}
+
+		// smooth comeback
+		if (gHUD.m_flJumpViewmodelBob == gHUD.m_flTargetJumpBob && gHUD.m_flJumpViewmodelBob != 0.0f)
+		{
+			gHUD.m_flTargetJumpBob = 0.0f;
+		}
+		// apply to vieworigin
+		pparams->vieworg[2] += gHUD.m_flJumpViewmodelBob;
+	}
 	//-- Sabian Roberts
 }
 
@@ -2146,6 +2259,11 @@ void V_Init(void)
 
 	v_centermove = gEngfuncs.pfnRegisterVariable("v_centermove", "0.15", 0);
 	v_centerspeed = gEngfuncs.pfnRegisterVariable("v_centerspeed", "500", 0);
+
+	cl_legacy_bob_enabled = gEngfuncs.pfnRegisterVariable("cl_legacy_bob_enabled", "0", FCVAR_ARCHIVE);
+	cl_legacy_bobcycle = gEngfuncs.pfnRegisterVariable("cl_legacy_bobcycle", "0.8", FCVAR_ARCHIVE);
+	cl_legacy_bob = gEngfuncs.pfnRegisterVariable("cl_legacy_bob", "0.01", FCVAR_ARCHIVE);
+	cl_legacy_bobup = gEngfuncs.pfnRegisterVariable("cl_legacy_bobup", "0.5", FCVAR_ARCHIVE);
 
 	cl_bobcycle_max = gEngfuncs.pfnRegisterVariable("cl_bobcycle_max", "0.45", 0);
 	cl_bobup = gEngfuncs.pfnRegisterVariable("cl_bobup", "0.5", 0);

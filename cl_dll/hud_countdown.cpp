@@ -86,7 +86,7 @@ static const char* countdown_music[] = {
 	"cd", //6
 	"cd", //7
 	"cd", //8
-	"cd play 7", //9
+	"mp3 play sound/music/MX_A5_SUBMIX7_TRIM.mp3", //9
 	"cd stop" //10
 };
 

@@ -41,12 +41,20 @@ void CSniperRifle::Precache()
 
 	m_iId = WEAPON_SNIPERRIFLE;
 
+#ifndef _HALO
+	// Cross Product
 	PRECACHE_MODEL("models/w_m40a1.mdl");
 	PRECACHE_MODEL("models/v_m40a1.mdl");
 	PRECACHE_MODEL("models/p_m40a1.mdl");
-
+#else
+	// Halo: GoldSource
+	PRECACHE_MODEL("models/w_sniper.mdl");
+	PRECACHE_MODEL("models/v_sniper.mdl");
+	PRECACHE_MODEL("models/p_sniper.mdl");
+#endif
 	PRECACHE_SOUND("weapons/sniper_fire.wav");
 	PRECACHE_SOUND("weapons/sniper_zoom.wav");
+	PRECACHE_SOUND("weapons/sniper_zoom2.wav");
 	PRECACHE_SOUND("weapons/sniper_reload_first_seq.wav");
 	PRECACHE_SOUND("weapons/sniper_reload_second_seq.wav");
 	PRECACHE_SOUND("weapons/sniper_miss.wav");
@@ -60,9 +68,13 @@ void CSniperRifle::Spawn()
 {
 	Precache();
 
+#ifdef _HALO
+	SET_MODEL(edict(), "models/w_sniper.mdl");
+	m_iDefaultAmmo = CROSSBOW_DEFAULT_GIVE;
+#else
 	SET_MODEL(edict(), "models/w_m40a1.mdl");
-
 	m_iDefaultAmmo = SNIPERRIFLE_DEFAULT_GIVE;
+#endif
 
 	FallInit(); // get ready to fall down.
 }
@@ -81,7 +93,11 @@ BOOL CSniperRifle::AddToPlayer(CBasePlayer* pPlayer)
 
 BOOL CSniperRifle::Deploy()
 {
+#ifndef _HALO
 	return BaseClass::DefaultDeploy("models/v_m40a1.mdl", "models/p_m40a1.mdl", SNIPERRIFLE_DRAW, "bow");
+#else
+	return BaseClass::DefaultDeploy("models/v_sniper.mdl", "models/p_sniper.mdl", SNIPERRIFLE_DRAW1, "bow");
+#endif
 }
 
 void CSniperRifle::Holster(int skiplocal)
@@ -93,7 +109,11 @@ void CSniperRifle::Holster(int skiplocal)
 
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.25;
 
+#ifndef _HALO
 	SendWeaponAnim(SNIPERRIFLE_HOLSTER);
+#else
+	SendWeaponAnim(SNIPERRIFLE_HOLSTER1);
+#endif
 }
 
 void CSniperRifle::WeaponIdle()
@@ -105,18 +125,27 @@ void CSniperRifle::WeaponIdle()
 
 	if (m_bReloading && gpGlobals->time >= m_flReloadStart + 2.324)
 	{
+#ifndef _HALO
 		SendWeaponAnim(SNIPERRIFLE_RELOAD2);
+#else
+		SendWeaponAnim(SNIPERRIFLE_RELOAD);
+#endif
 		m_bReloading = false;
 	}
 
 	if (m_flTimeWeaponIdle < UTIL_WeaponTimeBase())
 	{
+#ifndef _HALO
 		if (m_iClip)
 			SendWeaponAnim(SNIPERRIFLE_SLOWIDLE);
 		else
 			SendWeaponAnim(SNIPERRIFLE_SLOWIDLE2);
-
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 4.348;
+#else
+		if (m_iClip)
+			SendWeaponAnim(SNIPERRIFLE_FIDGET1);
+		else
+			SendWeaponAnim(SNIPERRIFLE_FIDGET2);
+#endif
 	}
 }
 
@@ -161,13 +190,20 @@ void CSniperRifle::PrimaryAttack()
 		m_iClip, m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()],
 		0, 0);
 
+#ifndef _HALO
 	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 2.0f;
+#else
+	m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 0.65f;
+#endif
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 2.0f;
 }
 
 void CSniperRifle::SecondaryAttack()
 {
-	EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/sniper_zoom.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
+	if (!m_bInZoom)
+		EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/sniper_zoom.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
+	else
+		EMIT_SOUND_DYN(m_pPlayer->edict(), CHAN_ITEM, "weapons/sniper_zoom2.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM);
 
 	m_bInZoom = !m_bInZoom;
 
@@ -191,17 +227,33 @@ void CSniperRifle::Reload()
 
 		if (m_iClip)
 		{
+#ifdef _HALO
+			if (DefaultReload(CROSSBOW_MAX_CLIP, SNIPERRIFLE_RELOAD, 4.0))
+			{
+				m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 4.0;
+			}
+#else
 			if (DefaultReload(SNIPERRIFLE_MAX_CLIP, SNIPERRIFLE_RELOAD3, 2.324, 1))
 			{
 				m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 2.324;
 			}
+#endif
 		}
+#ifdef _HALO
+		else if (DefaultReload(CROSSBOW_MAX_CLIP, SNIPERRIFLE_RELOAD, 4.0))
+		{
+			m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 4.0;
+			m_flReloadStart = gpGlobals->time;
+			m_bReloading = true;
+		}
+#else
 		else if (DefaultReload(SNIPERRIFLE_MAX_CLIP, SNIPERRIFLE_RELOAD1, 2.324, 1))
 		{
 			m_flNextPrimaryAttack = UTIL_WeaponTimeBase() + 4.102;
 			m_flReloadStart = gpGlobals->time;
 			m_bReloading = true;
 		}
+#endif
 		else
 		{
 			m_bReloading = false;
@@ -219,11 +271,19 @@ int CSniperRifle::iItemSlot()
 int CSniperRifle::GetItemInfo(ItemInfo* p)
 {
 	p->pszAmmo1 = "762";
+#ifdef _HALO
+	p->iMaxAmmo1 = BOLT_MAX_CARRY;
+#else
 	p->iMaxAmmo1 = SNIPERRIFLE_MAX_CARRY;
+#endif
 	p->pszName = STRING(pev->classname);
 	p->pszAmmo2 = 0;
 	p->iMaxAmmo2 = WEAPON_NOCLIP;
+#ifdef _HALO
+	p->iMaxClip = BOLT_MAX_CARRY;
+#else
 	p->iMaxClip = SNIPERRIFLE_MAX_CLIP;
+#endif
 	p->iSlot = 5;
 	p->iPosition = 2;
 	p->iFlags = 0;
@@ -270,7 +330,11 @@ public:
 
 	BOOL AddAmmo(CBaseEntity* pOther) override
 	{
+#ifdef _HALO
+		if (pOther->GiveAmmo(AMMO_CROSSBOWCLIP_GIVE, "762", BOLT_MAX_CARRY) != -1)
+#else
 		if (pOther->GiveAmmo(AMMO_SNIPERRIFLE_GIVE, "762", SNIPERRIFLE_MAX_CARRY) != -1)
+#endif
 		{
 			EMIT_SOUND(edict(), CHAN_ITEM, "items/9mmclip1.wav", VOL_NORM, ATTN_NORM);
 

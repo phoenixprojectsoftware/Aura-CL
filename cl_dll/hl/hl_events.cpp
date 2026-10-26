@@ -25,6 +25,8 @@ void EV_FireShotGunSingle( struct event_args_s *args  );
 void EV_FireShotGunDouble( struct event_args_s *args  );
 void EV_FireMP5( struct event_args_s *args  );
 void EV_FireMP52( struct event_args_s *args  );
+void EV_FireHLDMAR(struct event_args_s* args);
+void EV_FireHLDMAR2(struct event_args_s* args);
 void EV_FirePython( struct event_args_s *args  );
 void EV_FireGauss( struct event_args_s *args  );
 void EV_SpinGauss( struct event_args_s *args  );
@@ -46,6 +48,12 @@ void EV_FireSpore(struct event_args_s* args);
 void EV_FireDisplacer(struct event_args_s* args);
 void EV_FireM249(struct event_args_s* args);
 void EV_PenguinFire(event_args_t* args);
+void EV_FireBattleRifle(event_args_t* args);
+void EV_FireThumper(event_args_t* args);
+
+#ifdef _HALO
+void EV_FireSMG(event_args_t* args);
+#endif
 
 
 
@@ -73,6 +81,8 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent( "events/shotgun2.sc",				EV_FireShotGunDouble );
 	gEngfuncs.pfnHookEvent( "events/mp5.sc",					EV_FireMP5 );
 	gEngfuncs.pfnHookEvent( "events/mp52.sc",					EV_FireMP52 );
+	gEngfuncs.pfnHookEvent("events/hldmar.sc", EV_FireHLDMAR);
+	gEngfuncs.pfnHookEvent("events/hldmar2.sc", EV_FireHLDMAR2);
 	gEngfuncs.pfnHookEvent( "events/python.sc",					EV_FirePython );
 	gEngfuncs.pfnHookEvent( "events/gauss.sc",					EV_FireGauss );
 	gEngfuncs.pfnHookEvent( "events/gaussspin.sc",				EV_SpinGauss );
@@ -95,4 +105,11 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent("events/displacer.sc", EV_FireDisplacer);
 	gEngfuncs.pfnHookEvent("events/m249.sc", EV_FireM249);
 	gEngfuncs.pfnHookEvent("events/penguinfire.sc", EV_PenguinFire);
+	gEngfuncs.pfnHookEvent("events/olr.sc", EV_FireBattleRifle);
+	gEngfuncs.pfnHookEvent("events/thumper.sc", EV_FireThumper);
+
+#ifdef _HALO
+	gEngfuncs.pfnHookEvent("events/m7.sc", EV_FireSMG);
+	// gEngfuncs.pfnHookEvent("events/crowbar.sc", EV_Crowbar);
+#endif
 }

@@ -12,6 +12,8 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#ifndef _HALO
+
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -115,7 +117,7 @@ BOOL CShockRifle::Deploy()
 {
 	if (UTIL_IsMultiplayer())
 	{
-		m_flRechargeTime = gpGlobals->time + 0.25;
+		m_flRechargeTime = gpGlobals->time + 0.1;
 	}
 	else
 	{
@@ -303,7 +305,7 @@ void CShockRifle::RechargeAmmo(bool bLoud)
 
 		if (UTIL_IsMultiplayer())
 		{
-			m_flRechargeTime += 0.25;
+			m_flRechargeTime += 0.1;
 		}
 		else
 		{
@@ -332,3 +334,5 @@ int CShockRifle::GetItemInfo(ItemInfo* p)
 	p->iWeight = SHOCKRIFLE_WEIGHT;
 	return 1;
 }
+
+#endif // _HALO

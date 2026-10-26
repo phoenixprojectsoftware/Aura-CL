@@ -14,6 +14,7 @@
 ****/
 #if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
 
+#include "../cl_dll/cl_gametype.h"
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -45,16 +46,10 @@ LINK_ENTITY_TO_CLASS( weapon_gauss, CGauss );
 
 float CGauss::GetFullChargeTime( void )
 {
-#ifdef CLIENT_DLL
-	if ( bIsMultiplayer() )
-#else
-	if ( g_pGameRules->IsMultiplayer() )
-#endif
-	{
-		return 1.5;
-	}
-
-	return 4;
+	if (g_iGameType == GameType::TAUGUYS)
+		return 20;
+	else
+		return 1.4;
 }
 
 #ifdef CLIENT_DLL
@@ -78,6 +73,8 @@ void CGauss::Precache( void )
 	PRECACHE_MODEL("models/w_gauss.mdl");
 	PRECACHE_MODEL("models/v_gauss.mdl");
 	PRECACHE_MODEL("models/p_gauss.mdl");
+
+	PRECACHE_MODEL("models/weapons/hldmtau/v_hldmtau.mdl");
 
 	PRECACHE_SOUND("items/9mmclip1.wav");
 
@@ -127,7 +124,10 @@ int CGauss::GetItemInfo(ItemInfo *p)
 BOOL CGauss::Deploy( )
 {
 	m_pPlayer->m_flPlayAftershock = 0.0;
-	return DefaultDeploy( "models/v_gauss.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss" );
+	if (GameType::HLDM == g_iGameType)
+		return DefaultDeploy("models/weapons/hldmtau/v_hldmtau.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
+	else
+		return DefaultDeploy("models/v_gauss.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
 }
 
 void CGauss::Holster( int skiplocal /* = 0 */ )
@@ -277,7 +277,7 @@ void CGauss::SecondaryAttack()
 		m_pPlayer->m_iWeaponVolume = GAUSS_PRIMARY_CHARGE_VOLUME;
 		
 		// m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1;
-		if ( m_pPlayer->m_flStartCharge < gpGlobals->time - 10 )
+		if ( GetFullChargeTime() + m_pPlayer->m_flStartCharge < gpGlobals->time - 10 )
 		{
 			// Player charged up too long. Zap him.
 			EMIT_SOUND_DYN(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro4.wav", 1.0, ATTN_NORM, 0, 80 + RANDOM_LONG(0,0x3f));

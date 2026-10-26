@@ -14,6 +14,7 @@ typedef	enum
 	BULLET_NONE = 0,
 	BULLET_PLAYER_9MM, // glock
 	BULLET_PLAYER_MP5, // mp5
+	BULLET_PLAYER_OLR, // battlerifle
 	BULLET_PLAYER_357, // python
 	BULLET_PLAYER_BUCKSHOT, // shotgun
 	BULLET_PLAYER_CROWBAR, // crowbar swipe
@@ -65,6 +66,18 @@ enum mp5_e
 	MP5_FIRE3,
 };
 
+enum olr_e
+{
+	OLR_LONGIDLE = 0,
+	OLR_IDLE1,
+	OLR_LAUNCH,
+	OLR_RELOAD,
+	OLR_DEPLOY,
+	OLR_FIRE1,
+	OLR_FIRE2,
+	OLR_FIRE3,
+};
+
 enum python_e {
 	PYTHON_IDLE1 = 0,
 	PYTHON_FIDGET,
@@ -89,6 +102,18 @@ enum gauss_e {
 	GAUSS_FIRE2,
 	GAUSS_HOLSTER,
 	GAUSS_DRAW
+};
+
+enum m7_e
+{
+	M7_LONGIDLE = 0,
+	M7_IDLE1,
+	M7_LAUNCH,
+	M7_RELOAD,
+	M7_DEPLOY,
+	M7_FIRE1,
+	M7_FIRE2,
+	M7_FIRE3,
 };
 
 void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName );

@@ -12,6 +12,7 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#ifndef _HALO
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -30,3 +31,5 @@ CEagleLaser* CEagleLaser::CreateSpot()
 
 	return pSpot;
 }
+
+#endif

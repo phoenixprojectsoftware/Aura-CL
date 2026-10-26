@@ -14,8 +14,6 @@
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/CheckButton.h>
 #include <KeyValues.h>
-#include <current_version.h>
-// #include <bhl_urls.h>
 #include "../../client_vgui.h"
 #include "../gameui_viewport.h"
 #include "CWorkshopSubList.h"
@@ -207,6 +205,8 @@ void CWorkshopSubList::OnCommand(const char* pcCommand)
 		CGameUIViewport::Get()->ShowWorkshopInfoBox(item.szName, WorkshopInfoBoxState::State_Done);
 		CGameUIViewport::Get()->MountWorkshopItem(item, nullptr, nullptr);
 	}
+	else if (!Q_stricmp(pcCommand, "Refresh"))
+		UpdateItems();
 	else
 	{
 		BaseClass::OnCommand(pcCommand);

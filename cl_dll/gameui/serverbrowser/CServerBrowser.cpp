@@ -20,6 +20,7 @@
 #include "IBaseUI.h"
 #include "../../console.h"
 
+#ifndef _HALO
 CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 {
 	// Since this command is called from game menu using "engine gameui_serverbrowser"
@@ -29,6 +30,7 @@ CON_COMMAND(gameui_serverbrowser, "Opens Server Browser")
 	CGameUIViewport::Get()->GetServerBrowser()->OpenBrowser();
 	g_pBaseUI->ActivateGameUI();
 }
+#endif
 
 /*
 	This is a replica of Source Engine's Server Browser
@@ -459,10 +461,6 @@ void CServerBrowser::SaveUserData()
 		m_pSavedData->SetString("GameList", "friends");
 	else if (m_pGameList == m_pHistory)
 		m_pSavedData->SetString("GameList", "history");
-#if defined( _HALO )
-	else if (m_pGameList == m_pPublicLobbies)
-		m_pSavedData->SetString("GameList", "lobbies"); // let's call these Lobbies in HaloGS instead.
-#endif
 	else
 		m_pSavedData->SetString("GameList", "internet");
 

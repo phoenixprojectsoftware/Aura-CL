@@ -39,6 +39,9 @@ public:
 	// Local interfaces
 	//
 
+	// Determine if lighting adjustments are needed for player model
+	bool DoesPlayerRequireLightingAdjustment(const alight_t& lighting);
+
 	// Look up animation data for sequence
 	virtual mstudioanim_t *StudioGetAnim ( model_t *m_pSubModel, mstudioseqdesc_t *pseqdesc );
 

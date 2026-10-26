@@ -9,13 +9,26 @@
  *
  ****/
 
-#if defined (_STEAMWORKS) && !defined (_HALO)
+#if defined (_STEAMWORKS)
 #include "zamnhlmp_achievements.h"
 
 #pragma once
 
-void UnlockAchievement(int achievementID);
+class CAchievementMgr
+{
+public:
+	void UnlockAchievement(int achievementID);
 
-bool isAchievementUnlocked(int achievementID);
+	void SystemAchievement(int achievementID); // an achievement which doesn't need map verification.
 
+	void UnlockAchievementByName(const char* apiName);
+
+	bool isAchievementUnlocked(int achievementID);
+
+	void CheckSpecialDay();
+
+	void StatIncrement(const char* pchName, int increment = 1);
+};
+
+extern CAchievementMgr g_AchievementMgr; // global achievement object. don't use this too much.
 #endif

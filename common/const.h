@@ -112,6 +112,7 @@
 #define EF_NIGHTVISION			256 // player nightvision
 #define EF_SNIPERLASER			512 // sniper laser effect
 #define EF_FIBERCAMERA			1024// fiber camera
+#define EF_REDLIGHT 2048 // red dlight from entity attachment 1
 
 
 // entity flags
@@ -609,6 +610,22 @@
 #define CONTENT_SLIME	-4
 #define CONTENT_LAVA	-5
 #define CONTENT_SKY		-6
+
+enum AuraShieldSoundAction
+{
+	SHIELD_SOUND_PLAY = 0,
+	SHIELD_SOUND_STOP
+};
+
+enum AuraShieldSoundId
+{
+	SHIELD_SOUND_EMPTY = 0,
+	SHIELD_SOUND_LOW,
+	SHIELD_SOUND_REGEN_LOOP,
+	SHIELD_SOUND_REGEN_START,
+	SHIELD_SOUND_REGEN_FINISH,
+	SHIELD_SOUND_REGEN_INTERRUPT
+};
 
 // channels
 #define CHAN_AUTO			0

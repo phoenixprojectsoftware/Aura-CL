@@ -1,68 +1,93 @@
+# Aura-CL
+
 set(CMAKE_POLICY_VERSION_MINIMUM 3.23)
 cmake_minimum_required(VERSION 3.23)
+set(ALSOFT_USE_CPP20_MODULES OFF CACHE BOOL "Disable OpenAL C++20 modules" FORCE)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF CACHE BOOL "Disable module scanning" FORCE)
+set(ALSOFT_UTILS OFF CACHE BOOL "" FORCE)
+set(ALSOFT_TESTS OFF CACHE BOOL "" FORCE)
+set(ALSOFT_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<OR:$<CONFIG:Debug>,$<CONFIG:SteamDebug>>:Debug>DLL")
+set(ALSOFT_INSTALL OFF CACHE BOOL "" FORCE)
 
-# Custom build types support
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;SteamDebug;SteamRelease;SteamClosedBeta" CACHE STRING "" FORCE)
-set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
+set(ALSOFT_NO_CONFIG_UTIL OFF CACHE BOOL "" FORCE)
 
-# Set custom flags for SteamDebug and SteamRelease
-set(CMAKE_C_FLAGS_STEAMDEBUG "${CMAKE_C_FLAGS_DEBUG}")
-set(CMAKE_CXX_FLAGS_STEAMDEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-set(CMAKE_EXE_LINKER_FLAGS_STEAMDEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
-set(CMAKE_SHARED_LINKER_FLAGS_STEAMDEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(OGG_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(VORBIS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(VORBIS_ENABLE_DOCS OFF CACHE BOOL "" FORCE)
 
-set(CMAKE_C_FLAGS_STEAMRELEASE "${CMAKE_C_FLAGS_RELEASE}")
-set(CMAKE_CXX_FLAGS_STEAMRELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_EXE_LINKER_FLAGS_STEAMRELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-set(CMAKE_SHARED_LINKER_FLAGS_STEAMRELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+# Completely disable system OpenAL discovery
+set(OpenAL_ROOT "" CACHE PATH "" FORCE)
+set(OPENAL_LIBRARY "" CACHE FILEPATH "" FORCE)
+set(OPENAL_INCLUDE_DIR "" CACHE PATH "" FORCE)
+set(OPENAL_INCLUDE_DIRS "" CACHE PATH "" FORCE)
+set(OPENAL_FOUND FALSE CACHE BOOL "" FORCE)
+unset(OpenAL_ROOT CACHE)
+unset(OPENAL_INCLUDE_DIR CACHE)
+unset(OPENAL_LIBRARY CACHE)
 
-set(CMAKE_C_FLAGS_STEAMCLOSEDBETA "${CMAKE_C_FLAGS_RELEASE}")
-set(CMAKE_CXX_FLAGS_STEAMCLOSEDBETA "${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_EXE_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-set(CMAKE_SHARED_LINKER_FLAGS_STEAMCLOSEDBETA "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 # Project metadata
 project(Aura-Client)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# ---------------------------------------------------------------------------
+# Aura build timestamp
+# ---------------------------------------------------------------------------
+
+set(
+	AURA_BUILD_INFO_HEADER
+	"${CMAKE_BINARY_DIR}/generated/build_info_generated.h"
+)
+
+file(
+	MAKE_DIRECTORY
+	"${CMAKE_BINARY_DIR}/generated"
+)
+
+add_custom_target(
+	aura_build_info
+	ALL
+
+	COMMAND
+		${CMAKE_COMMAND}
+		"-DINPUT_FILE=${CMAKE_SOURCE_DIR}/cl_dll/build_info_generated.h.in"
+		"-DOUTPUT_FILE=${AURA_BUILD_INFO_HEADER}"
+		-P "${CMAKE_SOURCE_DIR}/CMake/GenerateBuildInfo.cmake"
+
+	BYPRODUCTS
+		"${AURA_BUILD_INFO_HEADER}"
+
+	COMMENT
+		"Updating Aura build timestamp"
+
+	VERBATIM
+)
+
+# WINDOWS ONLY - REQUIRE THE LOCAL 3903990 INSTALL 
+if(WIN32)
+	set(GAME_PATH "" CACHE PATH "Path to the Cross Product Beta app's hl.exe")
+	
+	if(NOT GAME_PATH)
+		message(FATAL_ERROR "GAME_PATH variable is REQUIRED on WINDOWS!!! GRR!!!!\n" "Or set GAME_PATH in CMake GUI before generating.")
+	endif()
+	
+	set(GAMEDIR "" CACHE STRING "Gamedir setting (zamnhlmp_dev or excession_dev")
+	
+	if(NOT GAMEDIR)
+		message(FATAL_ERROR "Gamedir variable is missing.")
+	endif()
+endif()
 
 include("CMake/helpers.cmake")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# Detect if we're building a Steam-enabled configuration
-set(IS_STEAM_BUILD OFF)
-if(CMAKE_BUILD_TYPE MATCHES "SteamDebug|SteamRelease|SteamClosedBeta")
-    set(IS_STEAM_BUILD ON)
-endif()
-
-# Add _STEAMWORKS define for IntelliSense and build config
-foreach(STEAM_CONFIG SteamDebug SteamRelease SteamClosedBeta)
-    string(TOUPPER "${STEAM_CONFIG}" UPPER_CONFIG)
-    if(MSVC)
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /D_STEAMWORKS")
-        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
-            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
-            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} /DCLOSED_BETA")
-        endif()
-    else()
-        # For GCC/Clang
-        set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
-        set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -D_STEAMWORKS")
-        if("${STEAM_CONFIG}" STREQUAL "SteamClosedBeta")
-            set(CMAKE_C_FLAGS_${UPPER_CONFIG} "${CMAKE_C_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
-            set(CMAKE_CXX_FLAGS_${UPPER_CONFIG} "${CMAKE_CXX_FLAGS_${UPPER_CONFIG}} -DCLOSED_BETA")
-        endif()
-    endif()
-endforeach()
-
-# Add _DEBUG define only for SteamDebug
-set(CMAKE_C_FLAGS_STEAMDEBUG "${CMAKE_C_FLAGS_STEAMDEBUG} /D_DEBUG")
-set(CMAKE_CXX_FLAGS_STEAMDEBUG "${CMAKE_CXX_FLAGS_STEAMDEBUG} /D_DEBUG")
 
 # Set up some compiler-related things
 if(MSVC)
@@ -87,30 +112,6 @@ else()
     endif()
 endif()
 
-# Set up current_version.h (unchanged)
-find_package(Git)
-if(GIT_FOUND)
-    message(STATUS "Found git at ${GIT_EXECUTABLE}")
-    execute_process(COMMAND "${GIT_EXECUTABLE}" show -s --format=%ct
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            OUTPUT_VARIABLE CURRENT_VERSION
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            RESULT_VARIABLE CURRENT_VERSION_RESULT)
-
-    if(CURRENT_VERSION_RESULT EQUAL "0")
-        set(CURRENT_VERSION "${CURRENT_VERSION}ull")
-        message(STATUS "Set current version to ${CURRENT_VERSION}")
-    else()
-        set(CURRENT_VERSION UINT64_MAX)
-        message(WARNING "Could not get current version from git; update checking will be disabled")
-    endif()
-else()
-    set(CURRENT_VERSION UINT64_MAX)
-    message(WARNING "Could not find git; update checking will be disabled")
-endif()
-
-configure_file(cl_dll/current_version.h.in current_version.h)
-
 # Add discord-rpc (unchanged)
 set(BUILD_EXAMPLES OFF CACHE BOOL "build discord-rpc examples" FORCE)
 set(CLANG_FORMAT_SUFFIX "-dummy")
@@ -126,8 +127,10 @@ else()
 endif()
 
 # Enable SSE globally for all targets (needed for mathlib.h intrinsics)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+if(UNIX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse -msse2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2")
+endif()
 
 # Source layout
 add_subdirectory(cl_dll)
@@ -136,15 +139,44 @@ add_subdirectory(dlls)
 add_subdirectory(game_shared)
 add_subdirectory(pm_shared)
 add_subdirectory(public)
+add_subdirectory(external/openal-soft)
+add_subdirectory(external/ogg)
+add_subdirectory(external/vorbis)
 add_subdirectory(source_sdk)
+add_subdirectory(external/spectra)
+add_subdirectory(external/theora)
 
 get_property(SOURCE_FILES GLOBAL PROPERTY SOURCE_FILES)
-set(SOURCE_FILES ${SOURCE_FILES} "${CMAKE_BINARY_DIR}/current_version.h")
+
+# Preserve source folder structure in Visual Studio filters
+if(MSVC)
+    source_group(
+        TREE "${CMAKE_SOURCE_DIR}"
+        PREFIX "Source Files"
+        FILES ${SOURCE_FILES}
+    )
+endif()
 
 set(CMAKE_SHARED_LIBRARY_PREFIX  "")
 add_library(client SHARED ${SOURCE_FILES})
 
-target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES)
+# Visual Studio debugger settings for the client DLL project.
+if(WIN32)
+    set_target_properties(client PROPERTIES
+        VS_DEBUGGER_COMMAND "${GAME_PATH}/hl.exe"
+        VS_DEBUGGER_COMMAND_ARGUMENTS "-game ${GAMEDIR} -dev"
+        VS_DEBUGGER_WORKING_DIRECTORY "${GAME_PATH}"
+    )
+	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT client)
+
+endif()
+
+# Add PHX_FINAL define for standard Release builds
+target_compile_definitions(client PRIVATE
+    $<$<CONFIG:Release>:PHX_FINAL>
+)
+
+target_compile_definitions(client PRIVATE ${SOURCE_SDK_DEFINES} VERSION_SAFE_STEAM_API_INTERFACES _STEAMWORKS)
 
 
 target_include_directories(client PRIVATE
@@ -154,17 +186,18 @@ target_include_directories(client PRIVATE
     engine
     external
     external/discord-rpc/include
+    external/steamworks
+	external/openal-soft/include
+	external/ogg/include
+	external/vorbis/include
+    external/drmp3
+	external/theora/include
     game_shared
     pm_shared
     public
     utils/vgui/include
 	${SOURCE_SDK_INCLUDE_PATHS})
 
-# Steamworks include path
-if(IS_STEAM_BUILD)
-    target_include_directories(client PRIVATE ${CMAKE_SOURCE_DIR}/external/steamworks)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-endif()
 
 if(APPLE)
     target_include_directories(client SYSTEM PRIVATE /usr/include/malloc)
@@ -246,19 +279,30 @@ elseif(UNIX)
     endif()
 endif()
 
-# Steamworks support
-if(IS_STEAM_BUILD)
-    target_compile_definitions(client PRIVATE _STEAMWORKS)
-    if(WIN32)
-        target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/steam_api.lib)
-    elseif(UNIX)
-        target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/libsteam_api.so)
-    endif()
+
+# Steamworks library
+if(UNIX AND NOT APPLE)
+    target_link_libraries(client ${CMAKE_SOURCE_DIR}/lib/libsteam_api.so)
 endif()
+
+add_dependencies(client aura_build_info)
 
 target_compile_definitions(client PRIVATE
     -DCLIENT_DLL
-    -DCLIENT_WEAPONS
-    -DUPDATE_CHECK)
+    -DCLIENT_WEAPONS)
+	
+target_link_libraries(client discord-rpc OpenAL vorbisfile vorbis ogg theora)
 
-target_link_libraries(client discord-rpc)
+# Windows-only: copy built client files into the local game folder for debugging.
+if(WIN32)
+    add_custom_command(TARGET client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            "${GAME_PATH}/${GAMEDIR}/cl_dlls"
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "$<TARGET_FILE_DIR:client>"
+            "${GAME_PATH}/${GAMEDIR}/cl_dlls"
+
+        COMMENT "Copying client build output to ${GAME_PATH}/${GAMEDIR}/cl_dlls"
+    )
+endif()

@@ -5,6 +5,7 @@ class CHudNextMap : public CHudBase
 {
 	float draw_until;
 	char next_map[32];
+	char next_mode[64];
 
 public:
 	virtual int Init();

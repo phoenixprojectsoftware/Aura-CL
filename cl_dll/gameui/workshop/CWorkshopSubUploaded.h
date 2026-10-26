@@ -24,6 +24,9 @@ public:
 	virtual void ApplySchemeSettings(vgui2::IScheme* pScheme);
 	virtual void PerformLayout();
 
+	virtual void OnCommand(const char* pcCommand);
+	virtual void RefreshItems();
+
 protected:
 	void OnSendQueryUGCRequest(SteamUGCQueryCompleted_t* pCallback, bool bIOFailure);
 	CCallResult<CWorkshopSubUploaded, SteamUGCQueryCompleted_t> m_SteamCallResultOnSendQueryUGCRequest;
