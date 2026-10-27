@@ -77,7 +77,7 @@ public:
 #define	WEAPON_GLOCK			2
 #define WEAPON_PYTHON			3
 #define WEAPON_MP5				4
-// #define WEAPON_CHAINGUN			5 // our last weapon slot?!
+#define WEAPON_FRUIT		5 // our last weapon slot?!
 #define WEAPON_CROSSBOW			6
 #define WEAPON_SHOTGUN			7
 #define WEAPON_RPG				8
@@ -99,7 +99,6 @@ public:
 #define WEAPON_KNIFE 25
 #define WEAPON_PENGUIN   26
 #define WEAPON_ONE 27
-#define WEAPON_FRUIT 28
 
 #ifdef _HALO
 #define WEAPON_SMG 28
