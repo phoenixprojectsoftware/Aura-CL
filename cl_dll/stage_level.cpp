@@ -72,7 +72,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"City",
 		{
-			"f7496763ecbc69e6a70fb2d80818bbb9dd9cde6c57955f7e3faf9347d8ec29ed",
+			"5482a96fd0473c17019c0fe35be46744a0c13cc67eb21c596e13f478a79b955f",
 			nullptr,
 			nullptr,
 			nullptr
@@ -81,7 +81,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Cloaca",
 		{
-			"0d6aef9e6f1fbd9dc72f5ba3f947e0f8cc3c5f2793bfd9333a3621857391a8dc",
+			"db188d2e810293321d9e5d2b8a6b0fb8965371ea3142d3446f2dfd6c0675b71f",
 			nullptr,
 			nullptr,
 			nullptr
@@ -99,7 +99,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Corssfire",
 		{
-			"8f09823b83b656b88e8b1189118ab7f9906df56d10aac8c21878850c60d9612a",
+			"e61e7c80504763531037db4d2494f0c1b7edc9901b63ccfa72384839d5d2291b",
 			nullptr,
 			nullptr,
 			nullptr
@@ -171,7 +171,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Gasworks",
 		{
-			"a45b9b2f08422f091a5f4702b03def741b2fbac41422ff168bab9a65c84fe65e",
+			"cfd816817655515f9143dc73af13dc0740f88dd10bd85ad68e2bb2090ab67f86",
 			nullptr,
 			nullptr,
 			nullptr
@@ -198,7 +198,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Kasino",
 		{
-			"82931d5e43d5b09660e704db03e18f86bdc435f9d8b6b053a506183fb3ab446a",
+			"64d288dbe6c1b85af98e1c138a7e9e3ad35c7eb69efbc4187e30992c928896b0",
 			nullptr,
 			nullptr,
 			nullptr
@@ -216,7 +216,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Mall",
 		{
-			"f78c89b9ec8c42b0b66fc23d2c33e2c8d12b2256fa99bb27464da86c7cf1a7a2",
+			"ee3d43169298c9d8519c4a04cca3caf59992568faa1617fc430b76a88d2a021e",
 			nullptr,
 			nullptr,
 			nullptr
@@ -225,7 +225,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Nivalis",
 		{
-			"736370750c498e88bcc10ac3aff69410f3b2186e9822a97357355a406576303f",
+			"c498433dd7fb09b1e6cf0e92f20a0a30ded7f78019b179c554330f92df51e516",
 			nullptr,
 			nullptr,
 			nullptr
