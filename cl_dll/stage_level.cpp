@@ -72,7 +72,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"City",
 		{
-			"614a14685936fc9a10d8cfde62826be8e1b4351aa09f0e5d53f5ae53dd41a3f5",
+			"f7496763ecbc69e6a70fb2d80818bbb9dd9cde6c57955f7e3faf9347d8ec29ed",
 			nullptr,
 			nullptr,
 			nullptr
@@ -81,7 +81,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Cloaca",
 		{
-			"4f491c2487d250c234e18f4bb1de655f55eac47fd917f5c5055a7cebc4bcca01",
+			"0d6aef9e6f1fbd9dc72f5ba3f947e0f8cc3c5f2793bfd9333a3621857391a8dc",
 			nullptr,
 			nullptr,
 			nullptr
@@ -117,7 +117,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Crossfire",
 		{
-			"af360af90581710859b20c70b9ed559385bd0c7aae666ab1a276ac28f38a659b",
+			"d98d8eae2ee7bc833050fbb8b389c71683382568cd1c67f7cf19454087d50227",
 			nullptr,
 			nullptr,
 			nullptr
@@ -169,6 +169,15 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 		}
 	},
 	{
+		"Gasworks",
+		{
+			"a45b9b2f08422f091a5f4702b03def741b2fbac41422ff168bab9a65c84fe65e",
+			nullptr,
+			nullptr,
+			nullptr
+		}
+	},
+	{
 		"Gauntlet",
 		{
 			"3aa8938c283fe425d7ace913336b522a16ea195b09fa586d842320a15df79150",
@@ -189,7 +198,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Kasino",
 		{
-			"b148a958965eac739f85f547583c1dbdc48e8f8ee55929fac59c08b8d23da747",
+			"82931d5e43d5b09660e704db03e18f86bdc435f9d8b6b053a506183fb3ab446a",
 			nullptr,
 			nullptr,
 			nullptr
@@ -207,7 +216,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Mall",
 		{
-			"11fb1d82b588e17a6ce77e7d3bc8dae0d70a23e8c03412bff3bfda969e8227f1",
+			"f78c89b9ec8c42b0b66fc23d2c33e2c8d12b2256fa99bb27464da86c7cf1a7a2",
 			nullptr,
 			nullptr,
 			nullptr
@@ -216,7 +225,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Nivalis",
 		{
-			"6a9ea3e2a682b1c83cf94317db2f660bedce05e4de303e67ebc3068a20cdf933",
+			"736370750c498e88bcc10ac3aff69410f3b2186e9822a97357355a406576303f",
 			nullptr,
 			nullptr,
 			nullptr
@@ -252,7 +261,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Rust",
 		{
-			"73dfd03e6da129438ccf20a594893c26e04adca497bb15e1df08d18bcf5060c2",
+			"43c1436afc3ae7151376569100dd8e26b4ae3bf942afd73a1506eee81c620fb9",
 			nullptr,
 			nullptr,
 			nullptr
