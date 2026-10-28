@@ -357,6 +357,25 @@ int __MsgFunc_Achievement(const char* name, int size, void* buf)
 	return 1;
 }
 
+int __MsgFunc_StatInc(const char* name, int size, void* buf)
+{
+	BEGIN_READ(buf, size);
+
+	const char* pszStat = READ_STRING();
+
+	if (!pszStat || !pszStat[0])
+		return 1;
+
+#if defined(_STEAMWORKS) && !defined(_HALO)
+	g_AchievementMgr.StatIncrement(pszStat);
+#ifdef _DEBUG
+	gEngfuncs.Con_DPrintf("[MsgFunc_StatInc] received increment for %s \n", pszStat);
+#endif
+#endif
+
+	return 1;
+}
+
 int __MsgFunc_PlayVideo(const char* name, int size, void* buf)
 {
 	BEGIN_READ(buf, size);
@@ -761,6 +780,7 @@ void CHud :: Init( void )
 	HOOK_MESSAGE( LaserSpot );
 
 	HOOK_MESSAGE(Achievement);
+	HOOK_MESSAGE(StatInc);
 
 	HOOK_MESSAGE(PlayVideo);
 
