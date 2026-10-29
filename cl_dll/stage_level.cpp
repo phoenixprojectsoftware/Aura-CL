@@ -99,7 +99,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Corssfire",
 		{
-			"e61e7c80504763531037db4d2494f0c1b7edc9901b63ccfa72384839d5d2291b",
+			"8f09823b83b656b88e8b1189118ab7f9906df56d10aac8c21878850c60d9612a",
 			nullptr,
 			nullptr,
 			nullptr
@@ -117,7 +117,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Crossfire",
 		{
-			"d98d8eae2ee7bc833050fbb8b389c71683382568cd1c67f7cf19454087d50227",
+			"e61e7c80504763531037db4d2494f0c1b7edc9901b63ccfa72384839d5d2291b",
 			nullptr,
 			nullptr,
 			nullptr
