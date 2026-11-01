@@ -915,6 +915,7 @@ void CComposerOptionsPanel::LoadMapcycles()
 	const char* pszFilename = g_pFullFileSystem->FindFirst("mapcycles/*.mc", &findHandle);
 
 	CUtlVector<CUtlString> addedCycles; // track added mapcycles to avoid duplicates
+	int iDefaultMapcycle = -1;
 
 	while (pszFilename)
 	{
@@ -948,7 +949,13 @@ void CComposerOptionsPanel::LoadMapcycles()
 		}
 
 		addedCycles.AddToTail(szBase); // remember we added this mapcycle
-		m_pMapcycle->AddItem(szBase, nullptr); // add the mapcycle to the list
+		const int iItemID = m_pMapcycle->AddItem(szBase, nullptr);
+
+		// remember the default mapcycle's item ID
+		if (!Q_stricmp(szBase, "default"))
+		{
+			iDefaultMapcycle = iItemID;
+		}
 
 #ifdef _DEBUG
 		Msg("LoadMapcycles() found mapcycle: %s\n", szBase);
@@ -957,7 +964,11 @@ void CComposerOptionsPanel::LoadMapcycles()
 
 	g_pFullFileSystem->FindClose(findHandle);
 
-	if (m_pMapcycle->GetItemCount() > 0)
+	if (iDefaultMapcycle != -1)
+	{
+		m_pMapcycle->ActivateItemByRow(m_pMapcycle->GetItemIDFromRow(iDefaultMapcycle));
+	}
+	else if (m_pMapcycle->GetItemCount() > 0)
 	{
 		m_pMapcycle->ActivateItem(0);
 	}
