@@ -30,7 +30,8 @@ enum GameType
 	TAUGUYS,
 	OITC,
 	KING,
-	SANDBOX
+	SANDBOX,
+	DVP // Developers vs. Players
 };
 
 extern int g_iGameType; // global gametype integer.
