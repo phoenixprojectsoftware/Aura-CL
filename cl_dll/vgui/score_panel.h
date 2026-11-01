@@ -13,6 +13,7 @@
 
 class CSteamAvatarImage;
 class CPhoenixEmblemImage;
+class CCTFFlagImage;
 
 namespace vgui2
 {
@@ -102,6 +103,8 @@ private:
 	CSteamAvatarImage* m_pAvatars[SCOREBOARD_MAX_PLAYERS + 1];
 	CPhoenixEmblemImage* m_pPhoenixEmblem;
 	int m_iPhoenixEmblemImageIndex;
+	CCTFFlagImage* m_pCTFFlagImage;
+	int m_iCTFFlagImageIndex;
 
 	vgui2::HFont m_hHeaderFont;
 	vgui2::HFont m_hPlayerFont;

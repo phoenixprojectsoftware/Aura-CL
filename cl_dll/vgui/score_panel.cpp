@@ -15,6 +15,7 @@
 #include <vgui/IInputInternal.h>
 #include <vgui/ISurface.h>
 #include <vgui/IScheme.h>
+#include <vgui/IImage.h>
 
 #include <vgui_controls/ImageList.h>
 #include <vgui_controls/Label.h>
@@ -22,6 +23,7 @@
 #include <vgui_controls/SectionedListPanel.h>
 
 #include "bridge.h"
+#include "../cl_gametype.h"
 #include "score_panel.h"
 #include "steam_avatar.h"
 #include "phoenix_emblem.h"
@@ -123,6 +125,71 @@ static void GetDisplayMapName(
 	}
 }
 
+class CCTFFlagImage final : public vgui2::IImage
+{
+public:
+	CCTFFlagImage()
+		: m_iX(0),
+		m_iY(0),
+		m_iWide(16),
+		m_iTall(16),
+		m_iTextureID(-1),
+		m_Color(255, 255, 255, 255)
+	{
+	}
+
+	void Paint() override
+	{
+		if (m_iTextureID == -1)
+		{
+			m_iTextureID = vgui2::surface()->CreateNewTextureID();
+
+			vgui2::surface()->DrawSetTextureFile(m_iTextureID, "ui/gfx/vgui/CTFFlag_TGA", true, false);
+		}
+
+		vgui2::surface()->DrawSetColor(m_Color);
+		vgui2::surface()->DrawSetTexture(m_iTextureID);
+
+		vgui2::surface()->DrawTexturedRect(m_iX, m_iY, m_iX + m_iWide, m_iY + m_iTall);
+	}
+
+	void SetPos(int x, int y) override
+	{
+		m_iX = x;
+		m_iY = y;
+	}
+
+	void GetContentSize(int& wide, int& tall) override
+	{
+		GetSize(wide, tall);
+	}
+
+	void GetSize(int& wide, int& tall) override
+	{
+		wide = m_iWide;
+		tall = m_iTall;
+	}
+
+	void SetSize(int wide, int tall) override
+	{
+		m_iWide = wide;
+		m_iTall = tall;
+	}
+
+	void SetColor(Color color) override
+	{
+		m_Color = color;
+	}
+
+private:
+	int m_iX;
+	int m_iY;
+	int m_iWide;
+	int m_iTall;
+	int m_iTextureID;
+	Color m_Color;
+};
+
 CScorePanel::CScorePanel(vgui2::Panel* parent)
 	: BaseClass(parent, PANEL_SCOREBOARD),
 	m_pServerNameLabel(nullptr),
@@ -139,6 +206,8 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 	m_hDeveloperFont(vgui2::INVALID_FONT),
 	m_pPhoenixEmblem(nullptr),
 	m_iPhoenixEmblemImageIndex(0),
+	m_pCTFFlagImage(nullptr),
+	m_iCTFFlagImageIndex(0),
 	m_flNextUpdateTime(0.0)
 {
 	SetTitle(" ", true);
@@ -252,6 +321,18 @@ CScorePanel::CScorePanel(vgui2::Panel* parent)
 		m_iPhoenixEmblemImageIndex,
 		m_pPhoenixEmblem);
 
+	m_pCTFFlagImage = new CCTFFlagImage();
+
+	m_pCTFFlagImage->SetSize(
+		vgui2::scheme()->GetProportionalScaledValue(16),
+		vgui2::scheme()->GetProportionalScaledValue(16));
+
+	m_iCTFFlagImageIndex = SCOREBOARD_MAX_PLAYERS + 2;
+
+	m_pImageList->SetImageAtIndex(
+		m_iCTFFlagImageIndex,
+		m_pCTFFlagImage);
+
 	LoadControlSettings(
 		"ui/resource/ScorePanel.res");
 
@@ -269,6 +350,7 @@ CScorePanel::~CScorePanel()
 	// m_pImageList owns the avatar image objects.
 	m_pImageList = nullptr;
 	m_pPhoenixEmblem = nullptr;
+	m_pCTFFlagImage = nullptr;
 
 	for (int clientIndex = 0;
 		clientIndex <= SCOREBOARD_MAX_PLAYERS;
@@ -448,6 +530,9 @@ void CScorePanel::AddPlayerColumns(
 	const int developerWidth =
 		vgui2::scheme()->GetProportionalScaledValue(18);
 
+	const int flagWidth =
+		vgui2::scheme()->GetProportionalScaledValue(18);
+
 	char scoreHeading[32];
 	char pingHeading[32];
 
@@ -500,6 +585,14 @@ void CScorePanel::AddPlayerColumns(
 		vgui2::SectionedListPanel::COLUMN_IMAGE |
 			vgui2::SectionedListPanel::COLUMN_CENTER,
 		developerWidth);
+
+	m_pPlayerList->AddColumnToSection(
+		sectionID,
+		"flag",
+		"",
+		vgui2::SectionedListPanel::COLUMN_IMAGE |
+			vgui2::SectionedListPanel::COLUMN_CENTER,
+		flagWidth);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -761,6 +854,17 @@ void CScorePanel::UpdatePlayerList()
 			"developer",
 			isPhoenixDeveloper
 			? m_iPhoenixEmblemImageIndex
+			: 0);
+
+		const bool isFlagCarrier =
+			gHUD.GetGameType() == GameType::CTF &&
+			(gHUD.m_CTF.GetBlueFlagPlayerIndex() == clientIndex ||
+				gHUD.m_CTF.GetRedFlagPlayerIndex() == clientIndex);
+
+		playerData->SetInt(
+			"flag",
+			isFlagCarrier
+			? m_iCTFFlagImageIndex
 			: 0);
 
 		bool isMuted = false;
@@ -1033,7 +1137,7 @@ void CScorePanel::PerformLayout()
 	}
 
 	const int wide =
-		vgui2::scheme()->GetProportionalScaledValue(520);
+		vgui2::scheme()->GetProportionalScaledValue(540);
 
 	const int tall =
 		vgui2::scheme()->GetProportionalScaledValue(380);
