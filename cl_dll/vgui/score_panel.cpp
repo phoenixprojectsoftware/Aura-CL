@@ -428,7 +428,7 @@ void CScorePanel::AddPlayerColumns(
 	int averagePing)
 {
 	const int nameWidth =
-		vgui2::scheme()->GetProportionalScaledValue(190);
+		vgui2::scheme()->GetProportionalScaledValue(170);
 
 	const int scoreWidth =
 		vgui2::scheme()->GetProportionalScaledValue(70);
@@ -499,7 +499,7 @@ void CScorePanel::AddPlayerColumns(
 		"",
 		vgui2::SectionedListPanel::COLUMN_IMAGE |
 			vgui2::SectionedListPanel::COLUMN_CENTER,
-		statusWidth);
+		developerWidth);
 
 	m_pPlayerList->AddColumnToSection(
 		sectionID,
@@ -981,17 +981,17 @@ void CScorePanel::ApplySchemeSettings(
 	m_hHeaderFont =
 		scheme->GetFont(
 			"ScoreboardHeader",
-			false);
+			true);
 
 	m_hPlayerFont =
 		scheme->GetFont(
 			"ScoreboardPlayer",
-			false);
+			true);
 
 	m_hDeveloperFont =
 		scheme->GetFont(
 			"ScoreboardDeveloper",
-			false);
+			true);
 
 	if (m_hHeaderFont != vgui2::INVALID_FONT &&
 		m_pPlayerList)
