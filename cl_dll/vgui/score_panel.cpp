@@ -35,6 +35,7 @@
 #include "../color_tags.h"
 
 #include "../achievement_manager.h"
+#include "../dvp_display.h"
 
 extern int iTeamColors[5][3];
 extern int iNumberOfTeamColors;
@@ -426,9 +427,14 @@ void CScorePanel::CreateSections()
 				sectionID,
 				true);
 
+			const bool isDevVsPlayers =
+				gHUD.GetGameType() == GameType::DVP;
+
+			const char* displayTeamName = DVPLabel(team.name, isDevVsPlayers);
+
 			AddPlayerColumns(
 				sectionID,
-				team.name,
+				displayTeamName,
 				true,
 				true,
 				team.frags,

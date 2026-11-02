@@ -37,6 +37,7 @@ add_sources(
 	demo.h
 	discord_integration.cpp
 	discord_integration.h
+	dvp_display.h
 	entity.cpp
 	ehandle.cpp
 	ev_common.cpp
