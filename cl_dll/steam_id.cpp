@@ -13,6 +13,7 @@
 
 #ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
+#include "zamnhlmp_achievements.h"
 #endif
 
 namespace steam_id
@@ -135,35 +136,74 @@ namespace steam_id
 		}
 
 #ifdef _STEAMWORKS
-		void apply_real_name()
+		void sync_local_name()
 		{
-			if (!SteamUser() || !SteamUser()->BLoggedOn())
+			if (!SteamUser() || !SteamFriends() || !SteamUser()->BLoggedOn())
 				return;
 
-			CSteamID steamID = SteamUser()->GetSteamID();
-			uint32 accountID = steamID.GetAccountID();
+			const char* steamName = SteamFriends()->GetPersonaName();
 
-			// Convert AccountID -> Steam2 format (STEAM_0:Y:Z)
-			uint32 Y = accountID & 1;      // auth server bit
-			uint32 Z = accountID / 2;      // account number
+			if (!steamName || !steamName[0])
+				return;
+
+			std::string desiredName = steamName;
+
+			// obtain our steam account id
+			const CSteamID steamID = SteamUser()->GetSteamID();
+			const uint32 accountID = steamID.GetAccountID();
+
+			const uint32 Y = accountID & 1;
+			const uint32 Z = accountID / 2;
 
 			char steam2ID[64];
-			snprintf(steam2ID, sizeof(steam2ID), "0:%u:%u", Y, Z); // do we need to have "STEAM_" in front of this?
 
-			auto it = steam_id_to_real_name.find(steam2ID);
-			if (it != steam_id_to_real_name.end())
+			snprintf(steam2ID, sizeof(steam2ID), "0:%u:%u", Y, Z);
+
+			// phoenix developers will keep their [TPPS] tags
+			if (showing_real_names && IsPhoenixID(steam2ID))
 			{
-				const std::string& realName = it->second;
-				char cmd[128];
-				snprintf(cmd, sizeof(cmd), "name \"%s\"\n", realName.c_str());
-				gEngfuncs.pfnClientCmd(cmd);
+				const auto it = steam_id_to_real_name.find(steam2ID);
 
-				gEngfuncs.Con_Printf("Set local player name to real name: %s (ID: %s)\n",
-					realName.c_str(), steam2ID);
+				if (it != steam_id_to_real_name.end() && !it->second.empty())
+				{
+					desiredName = it->second;
+				}
 			}
-			else
+
+			// remote control characters etc
+			for (char& c : desiredName)
 			{
-				gEngfuncs.Con_DPrintf("apply_real_name: no match for %s\n", steam2ID);
+				if (c == '\r' || c == '\n' || c == '\t' || c == '%' || static_cast<unsigned char>(c) < 32)
+				{
+					c = ' ';
+				}
+			}
+
+			// respect goldsource conventional 31 byte player name limit
+			constexpr size_t MAX_NAME_BYTES = 31;
+
+			if (desiredName.size() > MAX_NAME_BYTES)
+			{
+				size_t cut = MAX_NAME_BYTES;
+
+				while (cut > 0 && (static_cast<unsigned char>(desiredName[cut]) & 0xC0) == 0x80)
+				{
+					--cut;
+				}
+
+				desiredName.resize(cut);
+			}
+
+			if (desiredName.empty())
+				return;
+
+			const char* currentName = gEngfuncs.pfnGetCvarString("name");
+
+			// only update when necessary
+			if (!currentName || desiredName != currentName)
+			{
+				gEngfuncs.Cvar_Set("name", (char*)desiredName.c_str());
+				gEngfuncs.Con_Printf("[SteamName] Applied player name: %s\n", desiredName.c_str());
 			}
 		}
 #endif
@@ -175,11 +215,12 @@ namespace steam_id
 			auto end = std::chrono::steady_clock::now();
 
 			update_real_names();
-#ifdef _STEAMWORKS
-			apply_real_name();
-#endif
 
 			showing_real_names = true;
+
+#ifdef _STEAMWORKS
+			sync_local_name();
+#endif
 
 			gEngfuncs.Con_Printf(
 				"Loaded %llu real names.\n",
@@ -223,5 +264,22 @@ namespace steam_id
 	const std::string& get_real_name(size_t player_index)
 	{
 		return real_names[player_index];
+	}
+
+	void enforce_local_name()
+	{
+#ifdef _STEAMWORKS
+		static auto nextCheck = std::chrono::steady_clock::time_point{};
+
+		const auto now = std::chrono::steady_clock::now();
+
+		if (now < nextCheck)
+			return;
+
+		// check four times per second
+		nextCheck = now + std::chrono::milliseconds(250);
+
+		sync_local_name();
+#endif
 	}
 }

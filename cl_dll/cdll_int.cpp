@@ -65,6 +65,8 @@ IGameUI *g_pGameUI1 = nullptr;
 #include "discord_integration.h"
 #include "update_checker.h"
 
+#include "steam_id.h"
+
 #ifdef _STEAMWORKS
 #include "achievement_manager.h"
 #endif
@@ -322,6 +324,10 @@ void CL_DLLEXPORT HUD_Frame( double time )
 	ServersThink( time );
 
 	gHUD.Frame(time);
+
+	// keep the local player name synced with Steam
+	steam_id::enforce_local_name();
+
 	GetClientVoiceMgr()->Frame(time);
 
 	discord_integration::on_frame();
