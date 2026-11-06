@@ -160,6 +160,7 @@ inline const char* GetAchievementAPIName(int achievementID)
 #define SHOCK_KILLS "shock_kills"
 #define SATCHEL_KILLS "satchel_kills"
 #define GRENADE_KILLS "grenade_kills"
+#define HORSE_FEED "zak_apples"
 
 
 // =====================

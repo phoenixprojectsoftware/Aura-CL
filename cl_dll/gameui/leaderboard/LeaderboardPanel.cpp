@@ -87,7 +87,10 @@ namespace
 		{SPORE_SHOTS, "SPORE LAUNCHER - shots fired"},
 		{SPORE_KILLS, "SPORE LAUNCHER - kills"},
 		{SHOCK_SHOTS, "SHOCK RIFLE - shots fired"},
-		{SHOCK_KILLS, "SHOCK RIFLE - kills"}
+		{SHOCK_KILLS, "SHOCK RIFLE - kills"},
+
+		// SEASONAL STUFF
+		{HORSE_FEED, "TIMES I FED ZAK THE HORSE"}
 	};
 }
 
