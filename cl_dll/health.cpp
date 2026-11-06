@@ -258,7 +258,8 @@ int CHudHealth::Draw(float flTime)
 			a = (int)(fabs(sin(gHUD.m_flTime * 10)) * 256.0); // flash
 		}
 
-		FillRGBA(x, y, iWidth, iHeight, r, g, b, a);
+		// Draw the |
+		// FillRGBA(x, y, iWidth, iHeight, r, g, b, a);
 	}
 
 	DrawDamage(flTime);
