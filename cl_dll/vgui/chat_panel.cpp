@@ -1013,6 +1013,9 @@ CChatPanel::~CChatPanel()
 void CChatPanel::StartMessageMode(
 	int messageMode)
 {
+	if (!IsChatEnabled())
+		return;
+
 	m_DefaultTextColor = GetConsoleColor();
 
 	if (!m_pChatInput)
@@ -1335,13 +1338,13 @@ void CChatPanel::Reset()
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 
-	SetVisible(true);
+	SetVisible(IsChatEnabled());
 }
 
 void CChatPanel::ShowPanel(
 	bool state)
 {
-	SetVisible(state);
+	SetVisible(state && IsChatEnabled());
 }
 
 vgui2::VPANEL CChatPanel::GetVPanel()
@@ -1460,6 +1463,9 @@ void CChatPanel::Print(
 	const char* text,
 	int clientIndex)
 {
+	if (!IsChatEnabled())
+		return;
+
 	if (!text ||
 		text[0] == '\0')
 	{
@@ -1691,6 +1697,21 @@ Color CChatPanel::GetClientColor(
 void CChatPanel::OnThink()
 {
 	BaseClass::OnThink();
+
+	if (!IsChatEnabled())
+	{
+		if (m_iMessageMode != MM_NONE)
+		{
+			StopMessageMode();
+		}
+
+		if (IsVisible())
+		{
+			SetVisible(false);
+		}
+
+		return;
+	}
 
 	FadeChatHistory();
 }

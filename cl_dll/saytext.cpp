@@ -218,6 +218,9 @@ static void convert_locations(char* dest, const char* src, size_t count, int pla
 
 void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIndex )
 {
+	if (!IsChatEnabled())
+		return;
+
 	if ( gViewPort && gViewPort->AllowedToPrintText() == FALSE )
 	{
 		// Print it straight to the console

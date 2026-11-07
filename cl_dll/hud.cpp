@@ -787,6 +787,7 @@ void CHud :: Init( void )
 	default_fov = CVAR_CREATE( "default_fov", "90", FCVAR_ARCHIVE );
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
+	CVAR_CREATE("cl_chat_enabled", "1", FCVAR_ARCHIVE);
 	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
 	m_pCvarDrawMessagesAlways = CVAR_CREATE( "cl_draw_messages_always", "0", FCVAR_ARCHIVE );
 	m_pCvarAutostop = CVAR_CREATE("cl_autostop", "0", FCVAR_ARCHIVE);

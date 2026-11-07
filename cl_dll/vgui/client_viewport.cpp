@@ -133,6 +133,9 @@ void CClientViewport::PerformLayout()
 
 void CClientViewport::StartChatMessageMode(int messageMode)
 {
+	if (!IsChatEnabled())
+		return;
+
 	if (m_pScorePanel && m_pScorePanel->IsVisible())
 	{
 		HideScoreBoard();
@@ -163,6 +166,9 @@ void CClientViewport::StopChatMessageMode()
 
 void CClientViewport::PrintChat(const char* text, int clientIndex)
 {
+	if (!IsChatEnabled())
+		return;
+
 	SetVisible(true);
 
 	if (m_pChatPanel)
@@ -218,6 +224,11 @@ void ActivateScoreBoardMouse()
 
 	if (scoreBoard)
 		scoreBoard->EnableMousePointer(true);
+}
+
+bool IsChatEnabled()
+{
+	return gEngfuncs.pfnGetCvarFloat("cl_chat_enabled") != 0.0f;
 }
 
 bool IsVGUI2ChatActive()

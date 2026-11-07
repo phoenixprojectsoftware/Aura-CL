@@ -14,6 +14,7 @@ bool IsVGUI2ScoreBoardVisible();
 void ActivateScoreBoardMouse();
 
 // Chat
+bool IsChatEnabled();
 bool IsVGUI2ChatActive();
 void PrintVGUI2Chat(const char* text, int clientIndex);
 void StartVGUI2ChatMessageMode(int messageMode);
