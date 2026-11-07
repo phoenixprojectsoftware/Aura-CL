@@ -252,7 +252,7 @@ const CStageLevel::StageMap CStageLevel::s_OfficialMaps[] =
 	{
 		"Rust",
 		{
-			"73dfd03e6da129438ccf20a594893c26e04adca497bb15e1df08d18bcf5060c2",
+			"08158edc55a7f4a417b88ecbfe132ca734e612831df28a01dc65d924cc0f2243",
 			nullptr,
 			nullptr,
 			nullptr
