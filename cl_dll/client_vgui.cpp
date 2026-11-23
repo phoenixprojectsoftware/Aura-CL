@@ -20,6 +20,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Controls.h>
 #include <convar.h>
+#include "vgui/bridge.h"
 #include "console.h"
 #include "client_vgui.h"
 #include "vgui/client_viewport.h"
@@ -55,17 +56,51 @@ void CClientVGUI::Initialize(CreateInterfaceFn* pFactories, int iNumFactories)
 	// HL25 == 640x480->1280x720
 	vgui2::VGui_SetProportionalBaseCallback(&GetProportionalBase);
 
-	// Add language files
-	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/vgui2_%language%.txt");
-	g_pVGuiLocalize->AddFile(g_pFullFileSystem, VGUI2_ROOT_DIR "resource/language/achievements_%language%.txt");
+	// LOCALIZATION - load English first, then use the selected language, if available, as an overlay.
+	const bool loadedVguiEnglish =
+		g_pVGuiLocalize->AddFile(
+			g_pFullFileSystem,
+			VGUI2_ROOT_DIR "resource/language/vgui2_english.txt"
+		);
 
-	new CGameUIViewport;
-	new CClientViewport;
+	const bool loadedAchievementsEnglish =
+		g_pVGuiLocalize->AddFile(
+			g_pFullFileSystem,
+			VGUI2_ROOT_DIR "resource/language/achievements_english.txt"
+		);
+
+	const bool loadedVguiCurrent =
+		g_pVGuiLocalize->AddFile(
+			g_pFullFileSystem,
+			VGUI2_ROOT_DIR "resource/language/vgui2_%language%.txt"
+		);
+
+	const bool loadedAchievementsCurrent =
+		g_pVGuiLocalize->AddFile(
+			g_pFullFileSystem,
+			VGUI2_ROOT_DIR "resource/language/achievements_%language%.txt"
+		);
+
+	Msg(
+		"Localization files: English VGUI=%d, English achievements=%d, "
+		"current VGUI=%d, current achievements=%d\n",
+		loadedVguiEnglish,
+		loadedAchievementsEnglish,
+		loadedVguiCurrent,
+		loadedAchievementsCurrent
+	);
+
+	if (!CGameUIViewport::Get())
+		new CGameUIViewport;
+
+	if (!g_pViewport)
+		new CClientViewport;
 }
 
 void CClientVGUI::Start()
 {
-
+	if (g_pViewport)
+		g_pViewport->Start();
 }
 
 void CClientVGUI::SetParent(vgui2::VPANEL parent)
@@ -79,7 +114,7 @@ int CClientVGUI::UseVGUI1()
 
 void CClientVGUI::HideScoreBoard()
 {
-	// g_pViewport->HideScoreBoard();
+	g_pViewport->HideScoreBoard();
 }
 
 void CClientVGUI::HideAllVGUIMenu()
@@ -146,4 +181,9 @@ CON_COMMAND(vgui_dumptree, "Dumps VGUI2 panel tree for debugging.")
 {
 	ConPrintf("Green - visible\nRed - hidden\n\n");
 	DumpPanel(g_pEngineVGui->GetPanel(PANEL_ROOT), 0, true);
+}
+
+void ClientVGUI_RestoreProportionalBaseCallback()
+{
+	vgui2::VGui_SetProportionalBaseCallback(&CClientVGUI::GetProportionalBase);
 }

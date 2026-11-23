@@ -28,7 +28,10 @@ enum GameType
 	BUSTERS,
 	CHILL,
 	TAUGUYS,
-	OITC
+	OITC,
+	KING,
+	SANDBOX,
+	DVP // Developers vs. Players
 };
 
 extern int g_iGameType; // global gametype integer.

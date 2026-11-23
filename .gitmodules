@@ -19,6 +19,9 @@
 [submodule "external/spectra"]
 	path = external/spectra
 	url = https://github.com/phoenixprojectsoftware/Spectra.git
+[submodule "external/theora"]
+	path = external/theora
+	url = https://github.com/theoreticalphysicsftw/libtheora_cmake.git
 [submodule "external/rmlui"]
 	path = external/rmlui
 	url = https://github.com/mikke89/RmlUi.git

@@ -117,7 +117,28 @@ void CHud :: MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 int CHud :: MsgFunc_GameMode(const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
-	m_Teamplay = READ_BYTE();
+
+	const int previousTeamplay = m_Teamplay;
+	const int newTeamplay = READ_BYTE();
+
+	static char preferredPlayerModel[64] = { 0 };
+
+	if (!previousTeamplay && newTeamplay)
+	{
+		const char* currentModel = gEngfuncs.pfnGetCvarString("model");
+
+		if (currentModel && currentModel[0])
+		{
+			strncpy(preferredPlayerModel, currentModel, sizeof(preferredPlayerModel) - 1);
+
+			preferredPlayerModel[sizeof(preferredPlayerModel) - 1] = '\0';
+		}
+	}
+	else if (previousTeamplay && !newTeamplay && preferredPlayerModel[0])
+	{
+		gEngfuncs.Cvar_Set("model", preferredPlayerModel);
+	}
+	m_Teamplay = newTeamplay;
 
 #ifdef _STEAMWORKS
 	if (m_Teamplay)

@@ -1,12 +1,16 @@
 // Aura Version Info Header
 // If you're using Aura for your own mod, change the values for the zamnhlmp definers.
 
+// Aura Version
+#define AURA_VER_MAJOR 3
+#define AURA_VERSION_MINOR 4
+#define AURA_VERSION_PATCH 0
+
 // These are in the order they appear in PrintVersion()
-#define auraVersion "v3.0"
 #ifdef _HALO
-#define gameName "Halo: GoldSource"
+#define gameName "EXCESSION PROJECT"
 #else
-#define gameName "Half-Life: Cross Product Multiplayer"
+#define gameName "CROSS PRODUCT MULTIPLAYER"
 #endif
 #define season "Season 10: Uplink"
 #define Authors "The Phoenix Project Software"
@@ -24,8 +28,10 @@
 #define buildCfg "SteamRelease"
 #elif !defined(_DEBUG) && defined(_STEAMWORKS) && defined(CLOSED_BETA) && !defined(_HALO)
 #define buildCfg "SteamClosedBeta"
-#elif defined(_HALO) && !defined(_DEBUG)
+#elif defined(_HALO) && !defined(_DEBUG) && !defined(CLOSED_BETA)
 #define buildCfg "HaloRelease"
+#elif defined(_HALO) && !defined(_DEBUG) && defined(CLOSED_BETA)
+#define buildCfg "HaloClosedBeta"
 #elif defined(_HALO) && defined(_DEBUG)
 #define buildCfg "HaloDebug"
 #endif

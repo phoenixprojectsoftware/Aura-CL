@@ -2083,15 +2083,19 @@ void TeamFortressViewport::UpdateCursorState()
 		App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::scu_arrow) );
 		return;
 	}
-	else if ( m_pCurrentCommandMenu )
+	else if (m_pCurrentCommandMenu)
 	{
-		// commandmenu doesn't have cursor if hud_capturemouse is turned off
-		if ( gHUD.m_pCvarStealMouse->value != 0.0f )
-		{
-			IN_SetVisibleMouse(true);
-			App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::scu_arrow) );
-			return;
-		}
+		// The command menu is a clickable VGUI1 panel, so it should always
+		// receive a visible pointer regardless of hud_capturemouse.
+		IN_SetVisibleMouse(true);
+
+		App::getInstance()->setCursorOveride(
+			App::getInstance()->getScheme()->getCursor(
+				Scheme::scu_arrow
+			)
+		);
+
+		return;
 	}
 
 	App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::scu_none) );
@@ -2440,12 +2444,16 @@ int TeamFortressViewport::MsgFunc_RandomPC( const char *pszName, int iSize, void
 
 	return 1;
 }
-
+#include "vgui/bridge.h"
 int TeamFortressViewport::MsgFunc_ServerName( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
 
 	strncpy( m_szServerName, READ_STRING(), sizeof(m_szServerName) );
+
+	// copy the server name to the global data
+	strncpy(gServerName, m_szServerName, sizeof(gServerName));
+
 	m_szServerName[sizeof(m_szServerName) - 1] = 0;
 
 	return 1;

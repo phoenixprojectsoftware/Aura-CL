@@ -126,11 +126,14 @@ struct HUDLIST {
 #include "hud_customtimer.h"
 #include "hud_ctf.h"
 #include "hud_debug.h"
+#include "hud_firefight.h"
 #include "hud_jumpspeed.h"
+#include "hud_koth.h"
 #include "hud_location.h"
 #include "hud_nextmap.h"
 #include "hud_oldscoreboard.h"
 #include "hud_playerid.h"
+#include "hud_player_waypoints.h"
 #include "hud_scores.h"
 #include "hud_settings.h"
 #include "hud_speedometer.h"
@@ -328,6 +331,7 @@ public:
 	int VidInit( void );
 	int Draw( float flTime );
 	int MsgFunc_DeathMsg( const char *pszName, int iSize, void *pbuf );
+	int MsgFunc_FFKill(const char* pszName, int iSize, void* pbuf);
 
 private:
 	int m_HUD_d_skull;  // sprite index of skull icon
@@ -387,7 +391,9 @@ public:
 	int VidInit( void );
 	int Draw(float flTime);
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
-	void RunShieldPrediction(float time); // NEW: run shield prediction for battery
+
+	int MsgFunc_ShieldSnd(const char* pszName, int iSize, void* pbuf);
+
 	bool Blinking;
 	
 private:
@@ -397,11 +403,6 @@ private:
 	wrect_t *m_prc2;
 	int	  m_iBat;	
 	int	  m_iBatMax;
-	float m_flLastShieldSoundTime = 0;
-	bool m_bShieldEmpty = false;
-	bool m_bShieldLow = false;
-	bool m_bShieldMaxxed = false;
-	bool m_bShieldRegenOn = false; // NEW: shield regen on/off
 	float m_fFade;
 	int	  m_iHeight;		// width of the battery innards
 };
@@ -746,9 +747,12 @@ public:
 	CHudCTF			m_CTF;
 	CHudCustomTimer m_CustomTimer;
 	CHudDebug		m_Debug;
+	CHudFirefight m_Firefight;
 	CHudLocation	m_Location;
+	CHudKOTH m_KOTH;
 	CHudNextMap		m_NextMap;
 	CHudPlayerId		m_PlayerId;
+	CHudPlayerWaypoints m_PlayerWaypoints;
 	CHudScores	m_Scores;
 	CHudSettings	m_Settings;
 	CHudSpeedometer	m_Speedometer;

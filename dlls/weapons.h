@@ -76,7 +76,7 @@ public:
 #define	WEAPON_GLOCK			2
 #define WEAPON_PYTHON			3
 #define WEAPON_MP5				4
-#define WEAPON_CHAINGUN			5
+// #define WEAPON_CHAINGUN			5 // our last weapon slot?!
 #define WEAPON_CROSSBOW			6
 #define WEAPON_SHOTGUN			7
 #define WEAPON_RPG				8
@@ -105,16 +105,15 @@ public:
 #endif
 
 #define WEAPON_BATTLERIFLE 30
-#define WEAPON_HLDMAR 32
-#define WEAPON_RAILGUN 33
-#define WEAPON_HEALER 34
-#define WEAPON_THUMPER 35
+#define WEAPON_HLDMAR 28
+#define WEAPON_HEALER 29
+#define WEAPON_THUMPER 21
 
 #define WEAPON_ALLWEAPONS		(~(1<<WEAPON_SUIT))
 
 #define WEAPON_SUIT				31	// ?????
 
-#define MAX_WEAPONS			40
+#define MAX_WEAPONS			32
 
 
 #define MAX_NORMAL_BATTERY	100
@@ -159,6 +158,7 @@ public:
 #ifdef _HALO
 #define URANIUM_MAX_CARRY 50
 #define _9MM_MAX_CARRY 600 // AR
+#define ONE_MAX_CARRY 1
 #define _357_MAX_CARRY 200 // magnum?
 #define BUCKSHOT_MAX_CARRY 60 // shotgun
 #define BOLT_MAX_CARRY 24 // to become sniper
@@ -237,6 +237,7 @@ public:
 // the default amount of ammo that comes with each gun when it spawns
 #ifdef _HALO
 #define GLOCK_DEFAULT_GIVE 12
+#define ONE_DEFAULT_GIVE			1
 #define PYTHON_DEFAULT_GIVE 12
 #define MP5_DEFAULT_GIVE 60
 #define MP5_DEFAULT_AMMO 60
@@ -932,36 +933,23 @@ public:
 	BOOL Deploy() override;
 	void Holster(int skiplocal) override;
 	void PrimaryAttack() override;
+	void SecondaryAttack() override;
+	void ToggleZoom();
 	void Reload() override;
 	void WeaponIdle() override;
 
-#ifndef CLIENT_DLL
-	int Save(CSave& save) override;
-	int Restore(CRestore& restore) override;
-	static TYPEDESCRIPTION m_SaveData[];
-#endif
-
 private:
 	unsigned short m_usThumper;
-	BOOL m_bReloading;
-	float m_flReloadStartTime;
-	float m_flReloadStart;
+	bool m_bInZoom;
 };
 
 enum thumper_e
 {
+	THUMPER_DRAW = 0,
+	THUMPER_FIRE,
 	THUMPER_IDLE1,
 	THUMPER_IDLE2,
-	THUMPER_FIRE1,
-	THUMPER_FIRE2,
-	THUMPER_RELOAD1,
-	THUMPER_RELOAD2,
-	THUMPER_RELOAD3,
-	THUMPER_RELOAD4,
-	THUMPER_DRAW,
-	THUMPER_DRAW2,
-	THUMPER_HOLSTER,
-	THUMPER_HOLSTER2
+	THUMPER_RELOAD
 };
 
 enum m7_e

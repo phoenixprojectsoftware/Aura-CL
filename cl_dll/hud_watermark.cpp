@@ -2,6 +2,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "update_checker.h"
+#include "build_info.h"
 #include "versioninfo.h"
 #ifdef _STEAMWORKS
 #include <steamworks/steam_api.h>
@@ -116,6 +117,9 @@ int CHudWatermark::Draw(float time)
 	int textWidth = strlen(steamIDString) * charWidth;
 #endif
 
+	char szBuildDate[64];
+	snprintf(szBuildDate, sizeof(szBuildDate), "Client built %s", AuraBuildDate());
+
 #if !defined(CLOSED_BETA)
 	if (hud_watermark->value == 1)
 	{
@@ -123,27 +127,26 @@ int CHudWatermark::Draw(float time)
 #if defined(_STEAMWORKS) && defined(CLOSED_BETA) || defined(_DEBUG)
 		DRAW_STRING(ScreenWidth / 20, CharHeight, "BETA - work in progress", r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 2, zamnhlmpVersion, r, g, b); // read from version.txt
-		DRAW_STRING(ScreenWidth / 20, CharHeight * 3, "client built " __DATE__, r, g, b);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 3, szBuildDate, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 4, username, r, g, b);
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 5, steamIDString, r, g, b);
 #ifndef _DEBUG
-		if (IsBetaApp())
-			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - internal use only", 255, 0, 0);
-		else
-			DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "report issues in SteamDiscussions. . .", 255, 0, 0);
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "CONFIDENTIAL - INTERNAL USE ONLY", 255, 0, 0);
 
 		if (Neptune())
 			DRAW_STRING(ScreenWidth / 20, CharHeight * 7, "STEAM DECK mode", 128, 128, 128);
+
+		DRAW_STRING(ScreenWidth / 20, CharHeight * 10, "Property of The Phoenix Project Software SVG", r, g, b);
 #else
 		DRAW_STRING(ScreenWidth / 20, CharHeight * 6, "DEBUG BUILD - internal use only.", 255, 0, 0);
 #endif
 		if (!pszGamemode.empty())
 			DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, pszGamemode.c_str(), r, g, b);
-		DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
+		// DRAW_STRING((ScreenWidth - textWidth) / 2, ScreenHeight - CharHeight * 2, steamIDString, r, g, b);
 #else // Release
 		if (m_bDrawInfo)
 		{
-			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Aura client build " __DATE__, r, g, b);
+			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, szBuildDate, r, g, b);
 			DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, displayString, r, g, b); // read from version.txt
 #ifndef _HALO
 			gEngfuncs.pfnDrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, season, r, g, b);
@@ -157,6 +160,12 @@ int CHudWatermark::Draw(float time)
 #if !defined(CLOSED_BETA)
 	}
 #endif
+
+	if (!IsBetaApp() && gHUD.m_Settings.IsOldServer())
+	{
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 8, "OUTDATED SERVER!", 255, 0, 0);
+		DRAW_STRING(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 9, "Whoever is running this server must update it.", 255, 0, 0);
+	}
 
 	return 0;
 }

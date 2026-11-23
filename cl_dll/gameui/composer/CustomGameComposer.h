@@ -94,6 +94,8 @@ class CComposerOptionsPanel : public Panel
 public:
 	CComposerOptionsPanel(Panel* pParent);
 
+	void OnThink();
+
 	void LoadMapcycles();
 
 	const char* GetFragLimit();
@@ -107,6 +109,9 @@ public:
 	const char* GetWeaponsStay();
 	const char* GetForceRespawn();
 	const char* GetAllowCheats();
+	const char* GetAllowVote();
+	const char* GetAutoBalance();
+
 	void GetConfig(char* buffer, size_t bufSize);
 
 private:
@@ -114,7 +119,8 @@ private:
 	TextEntry* m_pServerName;
 
 	Label* m_lMaxplayers;
-	TextEntry* m_pMaxplayers;
+	Slider* m_pMaxplayers;
+	Label* MaxplayersValue;
 
 	CheckButton* m_pUseSteamNetwork;
 	CheckButton* m_pLAN;
@@ -125,6 +131,8 @@ private:
 	CheckButton* m_pWeaponsStay;
 	CheckButton* m_pForceRespawn;
 	CheckButton* m_pAllowCheats;
+	CheckButton* m_pAllowVote;
+	CheckButton* m_pAutoBalancing;
 
 	Label* m_lSpawnSystem;
 	ComboBox* m_pSpawnSystem;

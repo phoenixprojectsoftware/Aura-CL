@@ -3,6 +3,8 @@
 #include <vgui/VGUI2.h>
 #include <IClientVGUI.h>
 
+#define GetChildPanel(_Name, _Class) dynamic_cast<_Class*>(FindChildByName(_Name))
+
 #define VGUI2_ROOT_DIR "ui/"
 
 class CClientVGUI : public IClientVGUI
@@ -17,9 +19,6 @@ public:
 	virtual void ActivateClientUI();
 	virtual void HideClientUI();
 	virtual void Shutdown();
-
-private:
-	// gets the base res for vgui proportional scaling
 	static void GetProportionalBase(int& wide, int& tall);
 };
 

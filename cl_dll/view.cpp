@@ -68,6 +68,8 @@ extern kbutton_t	in_mlook;
 
 ref_params_s g_pparams;
 
+static bool g_bSpectatorInEyeRefdef = false;
+
 bool ShouldUseLegacyBob()
 {
 	int gametype = gHUD.GetGameType();
@@ -1079,7 +1081,14 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// model origin for the view
 
 	// add view height
-	VectorAdd(pparams->simorg, pparams->viewheight, pparams->vieworg);
+	// in spectator first-person, V_GetInEyePos already returns the target player's
+	// actual eye origin, so do not add spectator viewheight again.
+	if (g_bSpectatorInEyeRefdef)
+	{
+		VectorCopy(pparams->simorg, pparams->vieworg);
+	}
+	else
+		VectorAdd(pparams->simorg, pparams->viewheight, pparams->vieworg);
 
 	VectorCopy(pparams->cl_viewangles, pparams->viewangles);
 
@@ -1134,9 +1143,17 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	V_CalcGunAngle(pparams);
 
 	// Use predicted origin as view origin.
-	VectorCopy(pparams->simorg, view->origin);
-	view->origin[2] += (waterOffset);
-	VectorAdd(view->origin, pparams->viewheight, view->origin);
+	if (g_bSpectatorInEyeRefdef)
+	{
+		VectorCopy(pparams->simorg, view->origin);
+		view->origin[2] += waterOffset;
+	}
+	else
+	{
+		VectorCopy(pparams->simorg, view->origin);
+		view->origin[2] += waterOffset;
+		VectorAdd(view->origin, pparams->viewheight, view->origin);
+	}
 
 	// Change the origin from which the camera is looking at the viewmodel
 	// This does not change the angles of the viewmodel camera
@@ -1834,45 +1851,51 @@ void V_GetMapChasePosition(int target, float* cl_angles, float* origin, float* a
 	VectorMA(origin, -1536, forward, origin);
 }
 
+#define WEP(name) \
+	{ "models/p_" #name ".mdl", "models/v_" #name ".mdl" }
+
+#define SEASON10_WEP(path, model_name) \
+	{ "models/weapons/" #path "/p_" #model_name ".mdl", "models/weapons/" #path "/v_" #model_name ".mdl" }
+
 int V_FindViewModelByWeaponModel(int weaponindex)
 {
 
 	static const char* modelmap[][2] = {
 
-# ifdef _TFC	// TFC models override HL models
-		{ "models/p_mini.mdl",			"models/v_tfac.mdl"			},
-		{ "models/p_sniper.mdl",		"models/v_tfc_sniper.mdl"	},
-		{ "models/p_umbrella.mdl",		"models/v_umbrella.mdl"		},
-		{ "models/p_crowbar.mdl",		"models/v_tfc_crowbar.mdl"	},
-		{ "models/p_spanner.mdl",		"models/v_tfc_spanner.mdl"	},
-		{ "models/p_knife.mdl",			"models/v_tfc_knife.mdl"	},
-		{ "models/p_medkit.mdl",		"models/v_tfc_medkit.mdl"	},
-		{ "models/p_egon.mdl",			"models/v_flame.mdl"		},
-		{ "models/p_glauncher.mdl",		"models/v_tfgl.mdl"			},
-		{ "models/p_rpg.mdl",			"models/v_tfc_rpg.mdl"		},
-		{ "models/p_nailgun.mdl",		"models/v_tfc_nailgun.mdl"	},
-		{ "models/p_snailgun.mdl",		"models/v_tfc_supernailgun.mdl" },
-		{ "models/p_9mmhandgun.mdl",	"models/v_tfc_railgun.mdl"	},
-		{ "models/p_srpg.mdl",			"models/v_tfc_rpg.mdl"		},
-		{ "models/p_smallshotgun.mdl",	"models/v_tfc_12gauge.mdl"	},
-		{ "models/p_shotgun.mdl",		"models/v_tfc_shotgun.mdl"	},
-		{ "models/p_spygun.mdl",		"models/v_tfc_pistol.mdl"	},
-#endif
-		{ "models/p_crossbow.mdl",		"models/v_crossbow.mdl"		},
-		{ "models/p_crowbar.mdl",		"models/v_crowbar.mdl"		},
-		{ "models/p_egon.mdl",			"models/v_egon.mdl"			},
-		{ "models/p_gauss.mdl",			"models/v_gauss.mdl"		},
-		{ "models/p_9mmhandgun.mdl",	"models/v_9mmhandgun.mdl"	},
-		{ "models/p_grenade.mdl",		"models/v_grenade.mdl"		},
-		{ "models/p_hgun.mdl",			"models/v_hgun.mdl"			},
-		{ "models/p_9mmAR.mdl",			"models/v_9mmAR.mdl"		},
-		{ "models/p_357.mdl",			"models/v_357.mdl"			},
-		{ "models/p_rpg.mdl",			"models/v_rpg.mdl"			},
-		{ "models/p_shotgun.mdl",		"models/v_shotgun.mdl"		},
-		{ "models/p_squeak.mdl",		"models/v_squeak.mdl"		},
-		{ "models/p_tripmine.mdl",		"models/v_tripmine.mdl"		},
-		{ "models/p_satchel_radio.mdl",	"models/v_satchel_radio.mdl"},
-		{ "models/p_satchel.mdl",		"models/v_satchel.mdl"		},
+		WEP(crossbow),
+		WEP(crowbar),
+		WEP(egon),
+		WEP(gauss),
+		WEP(9mmhandgun),
+		WEP(grenade),
+		WEP(hgun),
+		WEP(9mmAR),
+		WEP(357),
+		WEP(rpg),
+		WEP(shotgun),
+		WEP(squeak),
+		WEP(tripmine),
+		WEP(satchel_radio),
+		WEP(satchel),
+
+		// Season 6 weapons
+		WEP(penguin),
+		WEP(spore_launcher),
+		WEP(saw),
+		WEP(bgrap),
+		WEP(desert_eagle),
+		WEP(displacer),
+		WEP(knife),
+		WEP(m40a1), // sniper
+		WEP(pipe_wrench),
+		WEP(shock),
+
+		// Season 10 weapons
+		SEASON10_WEP(thumper, rock2),
+		// FIXME: hldmtau tracking {"models/p_gauss.mdl", "v_hldmtau.mdl"},
+		// FIXME: hldmar tracking
+		SEASON10_WEP(br, br),
+		WEP(medkit),
 		{ NULL, NULL } };
 
 	struct model_s* weaponModel = IEngineStudio.GetModelByIndex(weaponindex);
@@ -1942,11 +1965,12 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 		}
 
 		// predict missing client data and set weapon model ( in HLTV mode or inset in eye mode )
-#ifdef _TFC
-		if (gEngfuncs.IsSpectateOnly() || gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)
-#else
-		if (gEngfuncs.IsSpectateOnly())
-#endif
+// Predict missing client data and set weapon model.
+// Do this for normal multiplayer OBS_IN_EYE too, not just HLTV/spectate-only.
+		const bool bFullScreenInEye = (g_iUser1 == OBS_IN_EYE);
+		const bool bInsetInEye = (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE);
+
+		if (bFullScreenInEye || bInsetInEye || gEngfuncs.IsSpectateOnly())
 		{
 			V_GetInEyePos(g_iUser2, pparams->simorg, pparams->cl_viewangles);
 
@@ -1956,18 +1980,16 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 
 			if (lastWeaponModelIndex != ent->curstate.weaponmodel)
 			{
-				// weapon model changed
-
 				lastWeaponModelIndex = ent->curstate.weaponmodel;
 				lastViewModelIndex = V_FindViewModelByWeaponModel(lastWeaponModelIndex);
+
 				if (lastViewModelIndex)
 				{
-					gEngfuncs.pfnWeaponAnim(0, 0);	// reset weapon animation
+					gEngfuncs.pfnWeaponAnim(0, 0);
 				}
 				else
 				{
-					// model not found
-					gunModel->model = NULL;	// disable weapon model
+					gunModel->model = NULL;
 					lastWeaponModelIndex = lastViewModelIndex = 0;
 				}
 			}
@@ -1982,14 +2004,14 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 			}
 			else
 			{
-				gunModel->model = NULL;	// disable weaopn model
+				gunModel->model = NULL;
 			}
 		}
 		else
 		{
 			// only get viewangles from entity
 			VectorCopy(ent->angles, pparams->cl_viewangles);
-			pparams->cl_viewangles[PITCH] *= -3.0f;	// see CL_ProcessEntityUpdate()
+			pparams->cl_viewangles[PITCH] *= -3.0f;
 		}
 	}
 
@@ -2014,7 +2036,10 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 			gHUD.m_Spectator.GetDirectorCamera(v_origin, v_angles);
 			break;
 
-		case OBS_IN_EYE:   V_CalcNormalRefdef(pparams);
+		case OBS_IN_EYE:   
+			g_bSpectatorInEyeRefdef = true;
+			V_CalcNormalRefdef(pparams);
+			g_bSpectatorInEyeRefdef = false;
 			break;
 
 		case OBS_MAP_FREE:	pparams->onlyClientDraw = true;
@@ -2049,7 +2074,10 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 		case INSET_CHASE_FREE: V_GetChasePos(g_iUser2, v_cl_angles, v_origin, v_angles);
 			break;
 
-		case INSET_IN_EYE:	V_CalcNormalRefdef(pparams);
+		case INSET_IN_EYE:	
+			g_bSpectatorInEyeRefdef = true;
+			V_CalcNormalRefdef(pparams);
+			g_bSpectatorInEyeRefdef = false;
 			break;
 
 		case INSET_MAP_FREE:	pparams->onlyClientDraw = true;

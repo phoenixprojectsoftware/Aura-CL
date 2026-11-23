@@ -5,9 +5,12 @@ add_subdirectory(hl)
 add_subdirectory(op4_weapons)
 add_subdirectory(vgui)
 add_subdirectory(s10_weapons)
+add_subdirectory(video)
 add_subdirectory(menu)
 
 add_sources(
+	build_info.cpp
+	build_info.h
 	achievement_manager.cpp
 	achievement_manager.h
 	ammo.cpp
@@ -35,6 +38,7 @@ add_sources(
 	demo.h
 	discord_integration.cpp
 	discord_integration.h
+	dvp_display.h
 	entity.cpp
 	ehandle.cpp
 	ev_common.cpp
@@ -66,8 +70,12 @@ add_sources(
 	hud_customtimer.h
 	hud_debug.cpp
 	hud_debug.h
+	hud_firefight.cpp
+	hud_firefight.h
 	hud_jumpspeed.cpp
 	hud_jumpspeed.h
+	hud_koth.cpp
+	hud_koth.h
 	hud_location.cpp
 	hud_location.h
 	hud_msg.cpp
@@ -75,6 +83,8 @@ add_sources(
 	hud_nextmap.h
 	hud_playerid.cpp
 	hud_playerid.h
+	hud_player_waypoints.cpp
+	hud_player_waypoints.h
 	hud_redraw.cpp
 	hud_scores.cpp
 	hud_scores.h
@@ -111,13 +121,15 @@ add_sources(
 	interpolation.cpp
 	interpolation.h
 	kbutton.h
-	leaderboard_integration.cpp
-	leaderboard_integration.h
 	menu.cpp
 	message.cpp
 	rainbow.cpp
 	rainbow.h
 	saytext.cpp
+	sha256.c
+	sha256.h
+	stage_level.cpp
+	stage_level.h
 	status_icons.cpp
 	statusbar.cpp
 	steam_id.cpp

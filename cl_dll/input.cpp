@@ -22,7 +22,10 @@ extern "C"
 #include <ctype.h>
 #include "Exports.h"
 
+#include "video/video_player.h"
+
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 
 #include "discord_integration.h"
 
@@ -431,6 +434,19 @@ int CL_DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBind
 {
 //	RecClKeyEvent(down, keynum, pszCurrentBinding);
 
+	/*
+	if (gVideoPlayer.IsPlaying())
+	{
+		if (down && (keynum == K_ESCAPE || keynum == K_SPACE || keynum == K_ENTER || keynum == K_KP_ENTER))
+		{
+			gVideoPlayer.Stop();
+			return 0;
+		}
+
+		return 0;
+	}
+	*/
+
 	if (gViewPort)
 		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
 	
@@ -513,16 +529,23 @@ void IN_StrafeUp(void) {KeyUp(&in_strafe);}
 // needs capture by hud/vgui also
 extern void __CmdFunc_InputPlayerSpecial(void);
 
-void IN_Attack2Down(void) 
+void IN_Attack2Down(void)
 {
+	if (IsVGUI2ScoreBoardVisible())
+	{
+		if (!IsVGUI2ScoreBoardMouseActive())
+		{
+			ActivateScoreBoardMouse();
+		}
+
+		// consume secondary attack while the scoreboard is open
+		return;
+	}
+
 	KeyDown(&in_attack2);
-
-#ifdef _TFC
-	__CmdFunc_InputPlayerSpecial();
-#endif
-
-	gHUD.m_Spectator.HandleButtonsDown( IN_ATTACK2 );
+	gHUD.m_Spectator.HandleButtonsDown(IN_ATTACK2);
 }
+
 
 void IN_Attack2Up(void) {KeyUp(&in_attack2);}
 void IN_UseDown (void)
@@ -562,8 +585,17 @@ void IN_GraphUp(void) {KeyUp(&in_graph);}
 
 void IN_AttackDown(void)
 {
-	KeyDown( &in_attack );
-	gHUD.m_Spectator.HandleButtonsDown( IN_ATTACK );
+	if (IsVGUI2ScoreBoardVisible())
+	{
+		if (!IsVGUI2ScoreBoardMouseActive())
+			ActivateScoreBoardMouse();
+
+		// consume all primary attack presses while scoreboard is open
+		return;
+	}
+
+	KeyDown(&in_attack);
+	gHUD.m_Spectator.HandleButtonsDown(IN_ATTACK);
 }
 
 void IN_AttackUp(void)
@@ -599,7 +631,11 @@ void IN_Impulse (void)
 void IN_ScoreDown(void)
 {
 	KeyDown(&in_score);
-	if ( gViewPort )
+	if (VGUI2ViewportAvailable())
+	{
+		ShowVGUI2ScoreBoard();
+	}
+	else if ( gViewPort )
 	{
 		gViewPort->ShowScoreBoard();
 	}
@@ -608,7 +644,11 @@ void IN_ScoreDown(void)
 void IN_ScoreUp(void)
 {
 	KeyUp(&in_score);
-	if ( gViewPort )
+	if (VGUI2ViewportAvailable())
+	{
+		HideVGUI2ScoreBoard();
+	}
+	else if ( gViewPort )
 	{
 		gViewPort->HideScoreBoard();
 	}
@@ -853,6 +893,17 @@ void CL_DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int ac
 	else
 	{
 		VectorCopy( oldangles, cmd->viewangles );
+	}
+
+	if (gVideoPlayer.IsPlaying() && cmd)
+	{
+		cmd->forwardmove = 0.0f;
+		cmd->sidemove = 0.0f;
+		cmd->upmove = 0.0f;
+
+		cmd->buttons = 0;
+		cmd->impulse = 0;
+		cmd->weaponselect = 0;
 	}
 
 	Bench_SetViewAngles( 1, (float *)&cmd->viewangles, frametime, cmd );

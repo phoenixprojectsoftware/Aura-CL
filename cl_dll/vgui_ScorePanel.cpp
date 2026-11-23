@@ -1023,8 +1023,8 @@ void ScorePanel::FillGrid()
 		{
 			gEngfuncs.Con_DPrintf("PHOENIX STEAM ID FOUND!! UNLOCKING ACHIEVEMENT!!\n");
 
-			if (!isAchievementUnlocked(0))
-				UnlockAchievement(0);
+			if (!g_AchievementMgr.isAchievementUnlocked(0))
+				g_AchievementMgr.UnlockAchievement(0);
 
 			PhoenixPartyUnlockTried = true;
 		}
@@ -1032,8 +1032,8 @@ void ScorePanel::FillGrid()
 		if (foundLan)
 		{
 			gEngfuncs.Con_DPrintf("LAN STEAM ID FOUND!! UNLOCKING ACHIEVEMENT!!\n");
-			if (!isAchievementUnlocked(2))
-				UnlockAchievement(2);
+			if (!g_AchievementMgr.isAchievementUnlocked(2))
+				g_AchievementMgr.UnlockAchievement(2);
 			LANUnlockTried = true;
 		}
 #endif

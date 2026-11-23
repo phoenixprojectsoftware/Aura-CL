@@ -32,19 +32,20 @@ namespace discord_integration
 	namespace
 	{
 		// From Discord developer dashboard.
+		constexpr const char BETA_ID[] = "1465161235669454944";
 #ifdef _HALO
 		constexpr const char CLIENT_ID[] = "1381646338604667072"; // Halo: GoldSource
 #else
 		constexpr const char CLIENT_ID[] = "836328170360799284";
-		constexpr const char BETA_ID[] = "1465161235669454944";
 #endif
+
+		constexpr const char BETA_APP_ID[] = "3903990";
 
 #ifdef _HALO
 		// This seems to be consistent across PCs.
 		constexpr const char STEAM_APP_ID[] = "11600264564054163526";
 #else
 		// Half-Life: Cross Product Steam App ID
-		constexpr const char BETA_APP_ID[] = "3903990";
 		constexpr const char STEAM_APP_ID[] = "3416640";
 #endif
 		

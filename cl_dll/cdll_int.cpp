@@ -20,6 +20,7 @@
 #include "menu/GameMenu.h"
 #include "hud.h"
 #include "audio/music.h"
+#include "video/video_player.h"
 #include "cl_util.h"
 #include "netadr.h"
 #undef INTERFACE_H
@@ -44,6 +45,7 @@ extern "C"
 #include "tri.h"
 
 #include "vgui_TeamFortressViewport.h"
+#include "vgui/bridge.h"
 #include "console.h"
 #include "audio/openal_wav.h"
 
@@ -62,6 +64,8 @@ IGameUI *g_pGameUI1 = nullptr;
 
 #include "discord_integration.h"
 #include "update_checker.h"
+
+#include "steam_id.h"
 
 #ifdef _STEAMWORKS
 #include "achievement_manager.h"
@@ -156,10 +160,6 @@ void CL_DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
 	PM_Move( ppmove, server );
 }
 
-#ifndef _HALO
-#include "leaderboard_integration.h"
-#endif
-
 #include "greeting.h"
 
 int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
@@ -186,13 +186,17 @@ int CL_DLLEXPORT Initialize( cldll_enginefunc_t *pEnginefuncs, int iVersion )
 	CL_LoadGameUI();
 
 #ifndef _HALO
-	if (!isAchievementUnlocked(3))
-		UnlockAchievement(3);
-
 	InitGreeting();
 
-	g_Leaderboards.Init();
+	int oldKillStatTransfer;
+	if (SteamUserStats() && SteamUserStats()->GetStat(OLD_KILL_STAT, &oldKillStatTransfer))
+	{
+		SteamUserStats()->SetStat(PLR_KILL_STATS, oldKillStatTransfer);
+		SteamUserStats()->StoreStats();
+	}
 #endif
+
+	gVideoPlayer.Init();
 
 	g_GameMenu.Init();
 
@@ -213,10 +217,14 @@ so the HUD can reinitialize itself.
 
 int CL_DLLEXPORT HUD_VidInit( void )
 {
-//	RecClHudVidInit();
+	gVideoPlayer.Stop();
+
 	gHUD.VidInit();
 
 	VGui_Startup();
+
+	ClientViewport_VidInit();
+	ClientVGUI_RestoreProportionalBaseCallback();
 
 	return 1;
 }
@@ -233,6 +241,8 @@ the hud variables.
 
 void CL_DLLEXPORT HUD_Init( void )
 {
+	gVideoPlayer.Stop();
+
 	console::HudInit();
 	InitInput();
 	gHUD.Init();
@@ -318,6 +328,10 @@ void CL_DLLEXPORT HUD_Frame( double time )
 	ServersThink( time );
 
 	gHUD.Frame(time);
+
+	// keep the local player name synced with Steam
+	steam_id::enforce_local_name();
+
 	GetClientVoiceMgr()->Frame(time);
 
 	discord_integration::on_frame();
@@ -374,6 +388,7 @@ void CL_DLLEXPORT HUD_Shutdown(void)
 	g_SoundtrackSystem.Stop();
 	g_SoundtrackSystem.Shutdown();
 	g_MusicSystem.Shutdown();
+	gVideoPlayer.Shutdown();
 	g_GameMenu.Shutdown();
 }
 

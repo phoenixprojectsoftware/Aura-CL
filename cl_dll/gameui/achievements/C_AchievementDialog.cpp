@@ -41,16 +41,13 @@ enum
 
 enum EStats
 {
-	plr_kill = 0,
+	player_kill = 0,
 	uw_kill,
 	ml_kill,
 	trp_kill,
 	sqk_kill,
 	snp_kill,
 	matches_played,
-	ZP_KILLS_SATCHEL,
-	ZP_KILLS_TNT,
-	ZP_KILLS_ZOMBIES,
 
 	STAT_MAX
 };
@@ -58,10 +55,10 @@ enum EStats
 DialogAchievement_t g_DAchievements[] =
 {
 	// Total Kills Achievements
-	_ACH_ID(ACH_KILLS100,					CATEGORY_KILLS,			plr_kill, 100),
-	_ACH_ID(ACH_500KILLS,					CATEGORY_KILLS,         plr_kill, 500),
-	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        plr_kill, 1000),
-	_ACH_ID(ACH_KILLS10000,              CATEGORY_KILLS,        plr_kill, 10000),
+	_ACH_ID(ACH_100KILLS,					CATEGORY_KILLS,			player_kill, 100),
+	_ACH_ID(ACH_500KILLS,					CATEGORY_KILLS,         player_kill, 500),
+	_ACH_ID(ACH_1000KILLS,               CATEGORY_KILLS,        player_kill, 1000),
+	_ACH_ID(ACH_HELLO_STEAMDB,              CATEGORY_KILLS,        player_kill, 2500),
 	_ACH_ID(ACH_FIRST_BLOOD,               CATEGORY_KILLS,        NULL, NULL),
 	_ACH_ID(ACH_O2, CATEGORY_KILLS, uw_kill, 25),
 	_ACH_ID(ACH_UNARMED, CATEGORY_KILLS, NULL, NULL),
@@ -70,15 +67,17 @@ DialogAchievement_t g_DAchievements[] =
 	// Conditionals
 	_ACH_ID(ACH_CLOSE_CALL, CATEGORY_GENERAL, NULL, NULL),
 
+	// Objectives
+	_ACH_ID(ACH_XFIRE_STRIKE, CATEGORY_GENERAL, NULL, NULL),
+	_ACH_ID(ACH_SNARKPIT, CATEGORY_GENERAL, NULL, NULL),
+
 	// Specials
-	_ACH_ID(ACH_LAN, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_WELCOME, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_PHOENIX_PARTY, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_PHOENIX_DAY, CATEGORY_GENERAL, NULL, NULL),
 	_ACH_ID(ACH_CST, CATEGORY_GENERAL, NULL, NULL),
 
 	// Weapon Specific Kills
-	_ACH_ID(ACH_TRIFECTA,					CATEGORY_KILLS,			NULL, NULL),
 	_ACH_ID(ACH_TRIP20,					CATEGORY_KILLS,			trp_kill, 20),
 	_ACH_ID(ACH_SNARK10,					CATEGORY_KILLS,			sqk_kill, 10),
 	_ACH_ID(ACH_SNIPER10,					CATEGORY_KILLS,			snp_kill, 10),
@@ -170,7 +169,7 @@ _DATA = s##_DATA;
 int CSteamAchievementsDialog::RequestValue(const char* ID)
 {
 	int returnvalue = 0;
-	if (!Q_strcmp("plr_kill", ID)) returnvalue = m_iAchKills_Total;
+	if (!Q_strcmp("player_kill", ID)) returnvalue = m_iAchKills_Total;
 	else if (!Q_strcmp("uw_kill", ID)) returnvalue = m_iAchKills_Water;
 	else if (!Q_strcmp("ml_kill", ID)) returnvalue = m_iAchKills_Melee;
 	else if (!Q_strcmp("trp_kill", ID)) returnvalue = m_iAchKills_Tripmine;
@@ -193,8 +192,6 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 	SetKeyBoardInputEnabled(true);
 	SetMouseInputEnabled(true);
 
-	MoveToCenterOfScreen();
-
 	SetProportional(false);
 	SetTitleBarVisible(true);
 	SetMinimizeButtonVisible(false);
@@ -203,6 +200,7 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 	SetSizeable(false);
 	SetMoveable(true);
 	SetVisible(true);
+	SetProportional(true);
 	SetDeleteSelfOnClose(true);
 
 	bool bRet = SteamAPI_IsSteamRunning();
@@ -211,7 +209,7 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 
 	SetScheme(vgui2::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "resource/ClientSourceScheme.res", "ClientSourceScheme"));
 
-	LoadControlSettings(VGUI2_ROOT_DIR "resource/zps/zp_achievementsdialog.res");
+	LoadControlSettings(VGUI2_ROOT_DIR "resource/achievement/achievementsdialog.res");
 
 	vgui2::ivgui()->AddTickSignal(GetVPanel(), 25);
 
@@ -230,30 +228,24 @@ C_AchievementDialog::C_AchievementDialog(vgui2::Panel* pParent)
 	vgui2::IScheme* pScheme = vgui2::scheme()->GetIScheme(vgui2::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "resource/ClientSourceScheme.res", "ClientSourceScheme"));
 
 	// Should we hide achieved ones?
-	ui_AchvTaken = new vgui2::CheckButton(this, "HideAchieved", "#ZP_UI_Achievement_Hide_Achieved");
-	ui_AchvTaken->SetPos(260, 410);
-	ui_AchvTaken->SetSize(150, 24);
+	ui_AchvTaken = GetChildPanel("HideAchieved", vgui2::CheckButton);
 	ui_AchvTaken->SetCommand("hide_achieved");
 	ui_AchvTaken->SetSelected(HideAchieved);
 
 	// Our achievements listing
-	ui_AchvPList = new AchievementList(this, "listpanel_achievements");
-	ui_AchvPList->SetPos(15, 100);
-	ui_AchvPList->SetSize(600, 302);
+	ui_AchvPList = GetChildPanel("listpanel_achievements", AchievementList);
 
 	// Setup achievement progress
-	ui_CurrentCompleted = new vgui2::Label(this, "PercentageText", "0%");
+	ui_CurrentCompleted = GetChildPanel("PercentageText", vgui2::Label);
 	hTextFont = pScheme->GetFont("AchievementItemDescription");
 	if (hTextFont != vgui2::INVALID_FONT)
 		ui_CurrentCompleted->SetFont(hTextFont);
-	ui_CurrentCompleted->SetPos(407, 46);
-	ui_CurrentCompleted->SetSize(200, 20);
 	ui_CurrentCompleted->SetContentAlignment(vgui2::Label::a_east);
 
-	ui_TotalProgress = new vgui2::ImagePanel(this, "PercentageBar");
-	ui_TotalProgress->SetPos(23, 67);
-	ui_TotalProgress->SetSize(0, 16);
-	ui_TotalProgress->SetFillColor(Color(142, 20, 48, 255));
+	ui_TotalProgress = GetChildPanel("PercentageBar", vgui2::ImagePanel);
+	ui_TotalProgress->SetFillColor(Color(191, 0, 255, 255));
+
+	MoveToCenterOfScreen();
 }
 
 void C_AchievementDialog::OnTick()
@@ -282,20 +274,20 @@ void C_AchievementDialog::OnTick()
 
 	// Get propper ratio of the bar
 	float ratio = miCompletedAchievements / (float)miTotalAchievements;
-	int   realpos = ratio * 584;
+	int   realpos = ratio * GetScaledValue(484);
 
 	// Make our position bigger!
 	for (int i_pos = 0; i_pos < realpos; i_pos++)
 		miProgressBar = i_pos;
 
-	if (miProgressBar < 584)
+	if (miProgressBar < GetScaledValue(484))
 		miProgressBar = miProgressBar;
 	else
-		miProgressBar = 584;
+		miProgressBar = GetScaledValue(484);
 
 	Q_snprintf(buffer, sizeof(buffer), "%d%%", (int)(ratio * 100));
 	ui_CurrentCompleted->SetText(buffer);
-	ui_TotalProgress->SetSize(miProgressBar, 16);
+	ui_TotalProgress->SetSize(miProgressBar, GetScaledValue(16));
 
 	LoadAchievements();
 }
@@ -341,14 +333,15 @@ ReadAchievement:
 		Q_snprintf(buffer, sizeof(buffer), "ui/achievements/%s", ach.m_pchAchievementID);
 
 	imagePanel->SetImage(vgui2::scheme()->GetImage(buffer, false));
-	imagePanel->SetSize(56, 56);
-	imagePanel->SetPos(4, 4);
+	imagePanel->SetSize(GetScaledValue(56), GetScaledValue(56));
+	imagePanel->SetPos(GetScaledValue(4), GetScaledValue(4));
+	imagePanel->SetShouldScaleImage(true);
 
 	// Font Text
 	Q_snprintf(buffer, sizeof(buffer), "#Phoenix_%s_NAME", ach.m_pchAchievementID);
 	vgui2::Label* label_title = new vgui2::Label(this, "AchievementTitle", buffer);
-	label_title->SetSize(400, 20);
-	label_title->SetPos(70, 5);
+	label_title->SetSize(GetScaledValue(400), GetScaledValue(20));
+	label_title->SetPos(GetScaledValue(70), GetScaledValue(5));
 	label_title->SetPaintBackgroundEnabled(false);
 	hTextFont = pScheme->GetFont("AchievementItemTitle");
 	if (hTextFont != vgui2::INVALID_FONT)
@@ -356,8 +349,8 @@ ReadAchievement:
 
 	Q_snprintf(buffer, sizeof(buffer), "#Phoenix_%s_DESC", ach.m_pchAchievementID);
 	vgui2::Label* label_desc = new vgui2::Label(this, "AchievementDescription", buffer);
-	label_desc->SetSize(490, 40);
-	label_desc->SetPos(71, 22);
+	label_desc->SetSize(GetScaledValue(490), GetScaledValue(40));
+	label_desc->SetPos(GetScaledValue(71), GetScaledValue(22));
 	label_desc->SetPaintBackgroundEnabled(false);
 	hTextFont = pScheme->GetFont("AchievementItemDescription");
 	if (hTextFont != vgui2::INVALID_FONT)
@@ -380,12 +373,13 @@ ReadAchievement:
 		label_achievement_progress_num->SetPaintBackgroundEnabled(false);
 
 		label_achievement_progress_bg = new vgui2::ImagePanel(this, "AchievementProgressBarBG");
-		label_achievement_progress_bg->SetSize(475, 12);
+		label_achievement_progress_bg->SetSize(GetScaledValue(475), GetScaledValue(12));
 		label_achievement_progress_bg->SetFillColor(Color(32, 32, 32, 255));
 
 		label_achievement_progress = new vgui2::ImagePanel(this, "AchievementProgressBar");
-		label_achievement_progress->SetSize(475, 12);
+		label_achievement_progress->SetSize(GetScaledValue(475), GetScaledValue(12));
 		label_achievement_progress->SetFillColor(Color(142, 20, 48, 255));
+		label_achievement_progress->SetShouldScaleImage(true);
 
 		// Achievement progress
 		iValue = ach.tmp_ivalue;
@@ -401,8 +395,9 @@ ReadAchievement:
 	vgui2::ImagePanel* AchievedBG = new vgui2::ImagePanel(this, "AchievementIcon");
 	if (ach.m_bAchieved)
 		AchievedBG->SetImage(vgui2::scheme()->GetImage("ui/gfx/ach_obtained", false));
-	AchievedBG->SetSize(50, 56);
-	AchievedBG->SetPos(4, 4);
+	AchievedBG->SetSize(GetScaledValue(50), GetScaledValue(50));
+	AchievedBG->SetPos(GetScaledValue(4), GetScaledValue(4));
+	AchievedBG->SetShouldScaleImage(true);
 
 	// Add Label and Image to PanelListPanel
 	ui_AchvPList->AddItem(

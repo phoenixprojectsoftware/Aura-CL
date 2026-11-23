@@ -22,16 +22,33 @@ static const char* g_PhoenixSteamIDs[] = {
 	"0:1:54795934", // jan
 	"0:1:63945665", // rafael
 	"0:1:484919737", // frostlander
-	"0:1:457283837", // berony
 	"0:1:516167454", // hitoshii
 	"0:0:421607015", // galexion
-	"0:0:105253777" // finger
+	"0:0:105253777", // finger
 	"0:1:77747696", // playmann
 	"0:0:102486805", // ivan naii_
 	"0:1:175018298", // maxresdefault
-
+	"0:0:461917277" // Georgie L.
 };
 static const int g_NumPhoenixIDs = sizeof(g_PhoenixSteamIDs) / sizeof(g_PhoenixSteamIDs[0]);
+
+inline bool IsPhoenixID(const char* steamID)
+{
+	if (!steamID || steamID[0] == '\0')
+	{
+		return false;
+	}
+
+	for (int index = 0; index < g_NumPhoenixIDs; ++index)
+	{
+		if (strcmp(steamID, g_PhoenixSteamIDs[index]) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 static const char* g_LANSteamID[] = {
 	"ID_LAN", // LAN
@@ -94,39 +111,79 @@ inline const char* GetAchievementAPIName(int achievementID)
 // =====================
 // STATISTICS START
 // =====================
-#define PLR_KILL_STATS "plr_kill"
+#define PLR_KILL_STATS "player_kill" // new key name after system overhaul
+#define OLD_KILL_STAT "plr_kill"
 #define PLR_UW_KILLS_STATS "uw_kill"
 #define PLR_MELEE_KILLS_STATS "ml_kill"
-#define XFIRE_WIN_STATS "xfire_win"
-#define PLR_WIN_STATS "win"
-#define TRIPMINE_KILL_STATS "trp_kill"
-#define SNARK_KILL_STATS "sqk_kill"
-#define FLAG_CARRIER_KILL_STATS "flg_kill"
-#define SNIPER_KILL_STATS "snp_kill"
-#define KASINO_WIN_STATS "kasino_wins"
-#define SPRAY_STATS "spray"
 #define PLR_MATCH_STATS "matches_played"
+
+#define GLOCK_SHOTS "glock_shots"
+#define GLOCK_KILLS "glock_kills"
+#define MAGNUM_SHOTS "magnum_shots"
+#define MAGNUM_KILLS "magnum_kills"
+#define DEAGLE_SHOTS "deagle_shots"
+#define DEAGLE_KILLS "deagle_kills"
+#define MP5_SHOTS "mp5_shots"
+#define MP5_ALTFIRE "mp5_altfire"
+#define MP5_KILLS "mp5_kills"
+#define M203_KILLS "m203_kills"
+#define OLR_SHOTS "olr_shots"
+#define OLR_KILLS "olr_kills"
+#define SHOTGUN_SHOTS "shotgun_shots"
+#define SHOTGUN_KILLS "shotgun_kills"
+#define XBOW_SHOTS "xbow_shots"
+#define XBOW_KILLS "xbow_kills"
+#define RPG_SHOTS "rpg_shots"
+#define RPG_KILLS "rpg_kills"
+#define HX40_SHOTS "hx40_shots"
+#define TAU_SHOTS "tau_shots"
+#define TAU_KILLS "tau_kills"
+#define GLUON_KILLS "gluon_kills"
+#define HIVEHAND_SHOTS "hivehand_shots"
+#define HIVEHAND_KILLS "hivehand_kills"
+#define TRIPMINE_SHOTS "tripmine_shots"
+#define TRIPMINE_KILLS "trp_kill"
+#define SNARK_SHOTS "snark_shots"
+#define SNARK_KILLS "sqk_kill"
+#define PENGUIN_SHOTS "penguin_shots"
+#define PENGUIN_KILLS "penguin_kills"
+#define SAW_SHOTS "saw_shots"
+#define SAW_KILLS "saw_kills"
+#define DISPLACER_SHOTS "displacer_shots"
+#define DISPLACER_SELF "displacer_self"
+#define DISPLACER_KILLS "displacer_kills"
+#define SNIPER_SHOTS "sniper_shots"
+#define SNIPER_KILLS "snp_kill"
+#define SPORE_SHOTS "spore_shots"
+#define SPORE_KILLS "spore_kills"
+#define SHOCK_SHOTS "shock_shots"
+#define SHOCK_KILLS "shock_kills"
+#define SATCHEL_KILLS "satchel_kills"
+#define GRENADE_KILLS "grenade_kills"
+#define HORSE_FEED "zak_apples"
+
+
 // =====================
 // STATISTICS END
 // =====================
 
 enum EAchievements
 {
-	ACH_KILLS100 = 0,
+	ACH_100KILLS = 0,
 	ACH_500KILLS,
 	ACH_1000KILLS,
-	ACH_KILLS10000,
+	ACH_HELLO_STEAMDB,
 	ACH_FIRST_BLOOD,
 	ACH_O2,
 	ACH_UNARMED,
 	ACH_UNARMED25,
 	ACH_CLOSE_CALL,
-	ACH_LAN,
+	ACH_XFIRE_STRIKE,
+	ACH_SNARKPIT,
 	ACH_WELCOME,
 	ACH_PHOENIX_PARTY,
 	ACH_PHOENIX_DAY,
 	ACH_CST,
-	ACH_TRIFECTA,
 	ACH_TRIP20,
 	ACH_SNARK10,
 	ACH_SNIPER10,
